@@ -1,8 +1,19 @@
+import path from "path";
 import express from "express";
+
+const STATIC_HTML_FILES = path.join(__dirname, "..", "public");
 
 var app = express();
 
 app.use(express.static('public'));
+
+app.get("/narration/:fragmentId/:characterId", function(req, res) {
+    res.sendFile(path.resolve(path.join(STATIC_HTML_FILES, "read.html")));
+});
+
+app.get("/creation/:storyId", function(req, res) {
+    res.sendFile(path.resolve(path.join(STATIC_HTML_FILES, "write.html")));
+});
 
 app.get("/api/fragments/:fragmentId/:characterId", function(req, res) {
     res.json({
@@ -27,7 +38,7 @@ app.get("/api/fragments/:fragmentId/:characterId", function(req, res) {
                         {
                             "type": "image",
                             "attrs": {
-                                "src": "images/hoek.png",
+                                "src": "/images/hoek.png",
                                 "alt": "",
                                 "title": ""
                             },

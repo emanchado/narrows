@@ -7,19 +7,20 @@
     "babel-cli": "^6.14.0",
     "babel-plugin-transform-es2015-modules-commonjs": "^6.14.0",
     "babel-preset-es2015": "^6.14.0",
-    "browserify": "^13.1.0",
     "choo": "^3.3.0",
     "express": "^4.14.0",
     "prosemirror": "^0.10.0"
   },
   "scripts": {
     "start": "node build/index.js",
+    "startdev": "nodemon build/index.js",
     "buildbe": "babel --modules common -d build/ src/backend",
     "watchbe": "babel -w --modules common -d build/ src/backend",
-    "buildfe": "browserify src/frontend/index.js --outfile public/compiled/narrows.js",
-    "watchfe": "watchify src/frontend/index.js --outfile public/compiled/narrows.js"
+    "buildfe": "webpack",
+    "watchfe": "webpack --watch"
   },
   "devDependencies": {
-    "watchify": "^3.7.0"
+    "nodemon": "^1.10.2",
+    "webpack": "^1.13.2"
   }
 }

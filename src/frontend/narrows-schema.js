@@ -9,7 +9,7 @@ var model = require("prosemirror/dist/model"),
 class MentionMark extends MarkType {
     get attrs() {
         return {
-            mentionTarget: new Attribute
+            mentionTarget: new Attribute()
         };
     }
     get matchDOMTag() {
@@ -18,7 +18,8 @@ class MentionMark extends MarkType {
         })};
     }
     toDOM(node) { return ["span", {"data-mention": node.attrs.mentionTarget,
-                                   "class": "mention"}]; }
+                                   "class": "mention",
+                                   "title": node.attrs.mentionTarget}]; }
 }
 
 const narrowsSchema = new Schema({
@@ -49,4 +50,5 @@ const narrowsSchema = new Schema({
   }
 });
 
-module.exports = narrowsSchema;
+module.exports.schema = narrowsSchema;
+module.exports.MentionMark = MentionMark;

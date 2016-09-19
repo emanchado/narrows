@@ -2,10 +2,12 @@ const choo = require("choo");
 const html = require("choo/html");
 const http = require("choo/http");
 
-const narrowsSchema = require("./narrows-schema");
+const narrowsSchema = require("./narrows-schema").schema;
 const model = require("prosemirror/dist/model"),
       Node = model.Node;
 const extend = require("./extend");
+
+const MAX_BLURRINESS = 10;
 
 const app = choo();
 
@@ -28,6 +30,14 @@ app.model({
 
         markNarrationAsStarted: (data, state) => {
             return extend(state, { started: true });
+        },
+
+        pageScrolled: (data, state) => {
+            const blurriness = Math.min(window.scrollY / 40,
+                                        MAX_BLURRINESS);
+
+            console.log("Setting blurriness:", blurriness);
+            return extend(state, { backgroundBlurriness: blurriness });
         }
     },
     effects: {
@@ -46,17 +56,11 @@ app.model({
         },
 
         startNarration: (data, state, send, done) => {
-            const fragmentEl = document.getElementById("fragment-container");
-            // This is BAD. There's a race condition here!
-            setTimeout(() => {
-                fragmentEl.style.display = "block";
-                setTimeout(() => { fragmentEl.style.opacity = 1; }, 100);
-            }, 100);
-
             const audioEl = document.getElementById("background-music");
             audioEl.volume = 0;
             audioEl.play();
             bumpVolume(audioEl);
+
             send("markNarrationAsStarted", {}, done);
         },
 
@@ -69,7 +73,15 @@ app.model({
             }
             done();
         }
-    }
+    },
+
+    subscriptions: [
+        (send, done) => {
+            document.addEventListener("scroll", function(evt) {
+                send("pageScrolled", window.scrollY, done);
+            }, false);
+        }
+    ]
 });
 
 const loaderView = (state, prev, send) => html`
@@ -84,14 +96,24 @@ const loaderView = (state, prev, send) => html`
     </div>
 `;
 
+function backgroundImageStyle(state) {
+    const imageUrl = state.fragment ?
+              state.fragment.backgroundImage : '';
+    const filter = `blur(${ state.backgroundBlurriness || 0 }px)`;
+
+    return `background-image: url(${ imageUrl }); ` +
+        `-webkit-filter: ${ filter }; ` +
+        `-moz-filter: ${ filter }; ` +
+        `filter: ${ filter }`;
+}
+
 const fragmentView = (state, prev, send) => html`
-    <div id="fragment-container">
-      <div id="top-image"
-           style="background-image: url(${state.fragment ? state.fragment.backgroundImage : ''})">
-        ${state.fragment ? state.fragment.title : 'Untitled'}
+    <div id="fragment-container" style=${ state.started ? "display: block; opacity: 1" : "" }>
+      <div id="top-image" style=${ backgroundImageStyle(state) }>
+        ${ state.fragment ? state.fragment.title : 'Untitled' }
       </div>
       <img id="play-icon"
-           src="img/play-small.png"
+           src="/img/play-small.png"
            alt="Stop music"
            onclick=${() => { send("playPauseMusic"); }} />
       <audio id="background-music"
