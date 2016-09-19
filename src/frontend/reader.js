@@ -6,6 +6,7 @@ const narrowsSchema = require("./narrows-schema").schema;
 const model = require("prosemirror/dist/model"),
       Node = model.Node;
 const extend = require("./extend");
+const fullscreen = require("./fullscreen");
 
 const MAX_BLURRINESS = 10;
 
@@ -60,6 +61,8 @@ app.model({
             audioEl.volume = 0;
             audioEl.play();
             bumpVolume(audioEl);
+
+            fullscreen.enterFullscreen();
 
             send("markNarrationAsStarted", {}, done);
         },
