@@ -24,12 +24,18 @@ body {
 
     width: 100%;
     height: 120%;
+    padding-top: 200px;
 
     color: #e5e5e5;
 
     text-align: center;
     font-size: 60px;
-    padding-top: 200px;
+    text-shadow:
+       3px  3px 0 #000,
+      -1px -1px 0 #000,
+       1px -1px 0 #000,
+      -1px  1px 0 #000,
+       1px  1px 0 #000;
 }
 
 #play-icon {

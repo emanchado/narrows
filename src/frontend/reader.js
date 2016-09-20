@@ -7,10 +7,22 @@ const model = require("prosemirror/dist/model"),
       Node = model.Node;
 const extend = require("./extend");
 const fullscreen = require("./fullscreen");
+const editor = require("./editor");
 
 const MAX_BLURRINESS = 10;
 
 const app = choo();
+
+function getFragmentIdFromUrl(urlPath) {
+    return urlPath.
+        replace("/read/", "").
+        replace(new RegExp("/.*"), "");
+}
+function getCharacterTokenFromUrl(urlPath) {
+    return urlPath.
+        replace(new RegExp("/$"), "").
+        replace(new RegExp(".*/"), "");
+}
 
 function bumpVolume(audioEl) {
     audioEl.volume = Math.min(1, audioEl.volume + 0.02);
@@ -23,7 +35,11 @@ function bumpVolume(audioEl) {
 }
 
 app.model({
-    state: { fragment: null },
+    state: {
+        fragmentId: getFragmentIdFromUrl(location.pathname),
+        fragment: null,
+        characterToken: getCharacterTokenFromUrl(location.pathname)
+    },
     reducers: {
         receiveFragmentData: (fragmentData, state) => {
             return extend(state, { fragment: fragmentData });
@@ -37,19 +53,21 @@ app.model({
             const blurriness = Math.min(window.scrollY / 40,
                                         MAX_BLURRINESS);
 
-            console.log("Setting blurriness:", blurriness);
             return extend(state, { backgroundBlurriness: blurriness });
+        },
+
+        updateReactionText: (data, state) => {
+            return extend(state, { reaction: data.value });
         }
     },
     effects: {
         getFragment: (data, state, send, done) => {
-            http("/api/fragments/1/atana", (err, res, body) => {
+            http("/api/fragments/" + state.fragmentId + "/" + state.characterToken, (err, res, body) => {
                 const response = JSON.parse(body);
-                const node = Node.fromJSON(narrowsSchema, response.text);
 
                 send("receiveFragmentData",
                      {title: response.title,
-                      text: node,
+                      text: editor.importText(response.text),
                       audio: response.audio,
                       backgroundImage: response.backgroundImage},
                      done);
@@ -62,7 +80,7 @@ app.model({
             audioEl.play();
             bumpVolume(audioEl);
 
-            fullscreen.enterFullscreen();
+            // fullscreen.enterFullscreen();
 
             send("markNarrationAsStarted", {}, done);
         },
@@ -75,6 +93,21 @@ app.model({
                 audioEl.pause();
             }
             done();
+        },
+
+        sendReaction: (data, state, send, done) => {
+            const url = "/api/reactions/" + state.fragmentId + "/" +
+                      state.characterToken;
+
+            const xhr = new XMLHttpRequest();
+            xhr.open("POST", url);
+            xhr.setRequestHeader("Content-Type", "application/json");
+            xhr.addEventListener("load", function() {
+                const response = JSON.parse(this.responseText);
+                if (this.status >= 400) {
+                }
+            });
+            xhr.send(JSON.stringify({ text: state.reaction }));
         }
     },
 
@@ -101,7 +134,7 @@ const loaderView = (state, prev, send) => html`
 
 function backgroundImageStyle(state) {
     const imageUrl = state.fragment ?
-              state.fragment.backgroundImage : '';
+              ("/static/narrations/3/" + state.fragment.backgroundImage) : '';
     const filter = `blur(${ state.backgroundBlurriness || 0 }px)`;
 
     return `background-image: url(${ imageUrl }); ` +
@@ -120,7 +153,7 @@ const fragmentView = (state, prev, send) => html`
            alt="Stop music"
            onclick=${() => { send("playPauseMusic"); }} />
       <audio id="background-music"
-             src="${state.fragment ? state.fragment.audio : ''}"
+             src="${state.fragment ? ("/static/narrations/3/" + state.fragment.audio) : ''}"
              loop="true"
              preload="auto"></audio>
 
@@ -132,8 +165,9 @@ const fragmentView = (state, prev, send) => html`
         <textarea
            placeholder="How do you react? Try to consider several possibilities…"
            cols="80"
-           rows="10"></textarea>
-        <button>Send</button>
+           rows="10"
+           oninput=${ e => { send("updateReactionText", { value: e.target.value }); } }>${ state.reaction }</textarea>
+        <button onclick=${ () => send("sendReaction") }>Send</button>
       </div>
     </div>
 `;
@@ -143,7 +177,7 @@ const mainView = (state, prev, send) => html`
     ${state.started ? "" : loaderView(state, prev, send)}
 
     ${fragmentView(state, prev, send)}
-</main>
+  </main>
 `;
 
 app.router((route) => [

@@ -1,0 +1,72 @@
+@font-face {
+  font-family: "StoryFont";
+  src: url("../fonts/OldstyHPLHS.otf");
+}
+
+body {
+    background-color: #eee;
+    /* font-family: StoryFont; */
+    margin: 30px;
+}
+
+h1 {
+    margin-bottom: 10px;
+}
+
+nav {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+label {
+    font-weight: bold;
+}
+
+input, .ProseMirror-content {
+    font-family: StoryFont;
+}
+
+.editor-container .ProseMirror-content {
+    padding: 0px 10px;
+
+    outline: -webkit-focus-ring-color auto 5px;
+}
+
+.btn-default {
+    float: right;
+    border: 0;
+    padding: 5px 10px;
+
+    background-color: blue;
+    color: #eee;
+
+    font-size: 18px;
+}
+
+main.page-aside {
+    display: flex;
+}
+
+main.page-aside section {
+    margin-right: 20px;
+    flex-grow: 1;
+}
+
+.fragment-title {
+    font-size: 20px;
+}
+
+aside h2 {
+    margin-top: 0;
+}
+
+aside.participants {
+    width: 150px;
+    flex-shrink: 0;
+}
+aside.participants ul {
+    margin: 0;
+    padding-left: 20px;
+
+    font-size: 14px;
+}

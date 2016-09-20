@@ -1,10 +1,10 @@
-var schemaBasic = require("prosemirror/dist/schema-basic");
-var model = require("prosemirror/dist/model"),
-    Schema = model.Schema,
-    Mark = model.Mark,
-    MarkType = model.MarkType,
-    Attribute = model.Attribute,
-    Fragment = model.Fragment;
+const schemaBasic = require("prosemirror/dist/schema-basic");
+const model = require("prosemirror/dist/model"),
+      Schema = model.Schema,
+      Mark = model.Mark,
+      MarkType = model.MarkType,
+      Attribute = model.Attribute,
+      Fragment = model.Fragment;
 
 class MentionMark extends MarkType {
     get attrs() {
@@ -52,3 +52,4 @@ const narrowsSchema = new Schema({
 
 module.exports.schema = narrowsSchema;
 module.exports.MentionMark = MentionMark;
+module.exports.Image = schemaBasic.Image;
