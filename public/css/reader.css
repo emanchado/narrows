@@ -64,10 +64,24 @@ body {
     padding: 15px;
 }
 
+#start-ui button {
+    padding: 20px 30px;
+}
+
+#start-ui label {
+    font-size: 14px;
+}
+
 #fragment-container {
-    display: none;
-    opacity: 0;
     transition: opacity 7s;
+}
+
+.invisible {
+    display: none;
+}
+
+.transparent {
+    opacity: 0;
 }
 
 .fragment {

@@ -6,7 +6,6 @@ const narrowsSchema = require("./narrows-schema").schema;
 const model = require("prosemirror/dist/model"),
       Node = model.Node;
 const extend = require("./extend");
-const fullscreen = require("./fullscreen");
 const editor = require("./editor");
 
 const MAX_BLURRINESS = 10;
@@ -38,7 +37,8 @@ app.model({
     state: {
         fragmentId: getFragmentIdFromUrl(location.pathname),
         fragment: null,
-        characterToken: getCharacterTokenFromUrl(location.pathname)
+        characterToken: getCharacterTokenFromUrl(location.pathname),
+        backgroundMusic: true
     },
     reducers: {
         receiveFragmentData: (fragmentData, state) => {
@@ -58,6 +58,10 @@ app.model({
 
         updateReactionText: (data, state) => {
             return extend(state, { reaction: data.value });
+        },
+
+        toggleBackgroundMusic: (data, state) => {
+            return extend(state, { backgroundMusic: !state.backgroundMusic });
         }
     },
     effects: {
@@ -75,12 +79,21 @@ app.model({
         },
 
         startNarration: (data, state, send, done) => {
-            const audioEl = document.getElementById("background-music");
-            audioEl.volume = 0;
-            audioEl.play();
-            bumpVolume(audioEl);
+            if (state.backgroundMusic) {
+                const audioEl = document.getElementById("background-music");
+                audioEl.volume = 0;
+                audioEl.play();
+                bumpVolume(audioEl);
+            }
 
-            // fullscreen.enterFullscreen();
+            // First we need to make it appear on screen at all
+            // (remove the "invisible" classname, which sets "display:
+            // none") and then we'll remove the "transparent"
+            // classname, which sets "opacity: 0". If we remove both
+            // CSS properties at the same time, the opacity is not
+            // animated.
+            const fragmentContainer = document.getElementById("fragment-container");
+            fragmentContainer.className = "transparent";
 
             send("markNarrationAsStarted", {}, done);
         },
@@ -128,6 +141,13 @@ const loaderView = (state, prev, send) => html`
 
       <div id="start-ui">
         <button onclick=${() => send("startNarration")}>Start</button>
+
+        <br />
+        <input id="music"
+               type="checkbox"
+               checked="${ state.backgroundMusic ? "checked" : "false" }"
+               onclick=${ () => send("toggleBackgroundMusic") } />
+        <label for="music">Background music</label>
       </div>
     </div>
 `;
@@ -144,7 +164,7 @@ function backgroundImageStyle(state) {
 }
 
 const fragmentView = (state, prev, send) => html`
-    <div id="fragment-container" style=${ state.started ? "display: block; opacity: 1" : "" }>
+    <div id="fragment-container" class=${ state.started ? "" : "invisible transparent" }>
       <div id="top-image" style=${ backgroundImageStyle(state) }>
         ${ state.fragment ? state.fragment.title : 'Untitled' }
       </div>
@@ -174,9 +194,9 @@ const fragmentView = (state, prev, send) => html`
 
 const mainView = (state, prev, send) => html`
   <main onload=${() => send("getFragment")}>
-    ${state.started ? "" : loaderView(state, prev, send)}
+    ${ state.started ? "" : loaderView(state, prev, send) }
 
-    ${fragmentView(state, prev, send)}
+    ${ fragmentView(state, prev, send) }
   </main>
 `;
 
