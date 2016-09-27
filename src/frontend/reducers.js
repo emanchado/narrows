@@ -27,7 +27,8 @@ module.exports = {
 
     createEmptyEditor: (_, state) => {
         return extend(state, {
-            editor: editor.create()
+            editorNew: editor.create(editor.importText("")),
+            fragment: { title: "" }
         });
     }
 };

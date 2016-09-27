@@ -26,9 +26,26 @@ module.exports = {
     },
 
     saveFragment: (data, state, send, done) => {
-        const url = data.fragmentId ?
-                  "/api/fragments/" + data.fragmentId :
-                  "/api/narrations/" + data.narrationId + "/fragments";
+        const url = "/api/fragments/" + data.fragmentId;
+
+        const xhr = new XMLHttpRequest();
+        xhr.open("PUT", url);
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.addEventListener("load", function() {
+            const response = JSON.parse(this.responseText);
+
+            if (this.status >= 400) {
+                alert("Could not save fragment text: " + response.errorMessage);
+                return;
+            }
+        });
+        const jsonDoc = state.editor.doc.toJSON();
+        xhr.send(JSON.stringify({ title: state.fragment.title,
+                                  text: jsonDoc }));
+    },
+
+    saveNewFragment: (data, state, send, done) => {
+        const url = "/api/narrations/" + data.narrationId + "/fragments";
 
         const xhr = new XMLHttpRequest();
         xhr.open("POST", url);
@@ -41,16 +58,11 @@ module.exports = {
                 return;
             }
 
-            if (!data.fragmentId) {
-                send("location:setLocation", {location: "/fragments/" + response.id}, done);
-            }
+            send("location:setLocation", {location: "/fragments/" + response.id}, done);
         });
-        const jsonDoc = state.editor.doc.toJSON();
+        const jsonDoc = state.editorNew.doc.toJSON();
         xhr.send(JSON.stringify({ title: state.fragment.title,
                                   text: jsonDoc }));
-
-        // var f = Fragment.fromJSON(narrowsSchema, jsonDoc.content);
-        // document.getElementById("result").appendChild(f.toDOM());
     },
 
     addImage: (data, state, send, done) => {

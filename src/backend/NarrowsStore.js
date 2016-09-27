@@ -22,7 +22,7 @@ function convertToDb(fieldName) {
 
 function promoteBlockImages(block) {
     if (block.type === "paragraph" &&
-        block.content.length === 1 &&
+        block.content && block.content.length === 1 &&
         block.content[0].type === "image") {
         return block.content[0];
     }
@@ -69,15 +69,18 @@ class NarrowsStore {
 
         const fields = Object.keys(fragmentProps).map(convertToDb),
               fieldString = fields.join(", "),
-              placeholders = fields.map(f => "?").join(", "),
-              values = fields.map(f => fragmentProps[f]);
+              placeholderString = fields.map(f => "?").join(", "),
+              values = Object.keys(fragmentProps).map(f => fragmentProps[f]);
 
-        console.log("Saving", fieldString);
+        if (!fragmentProps.text) {
+            throw new Error("Cannot create a new fragment without text");
+        }
 
+        const self = this;
         this.db.run(
             `INSERT INTO fragments
                 (${ fieldString }, narration_id)
-                VALUES (${ placeholders }, ?)`,
+                VALUES (${ placeholderString }, ?)`,
             values.concat(narrationId),
             function(err) {
                 if (err) {
@@ -85,11 +88,9 @@ class NarrowsStore {
                     return;
                 }
 
-                // TODO: EBIL. PLZ REMOVE.
-                fragmentProps.id = this.lastID;
-                fragmentProps.narrationId = narrationId;
-                console.log("fragmentProps =", fragmentProps);
-                deferred.resolve(fragmentProps);
+                self.getFragment(this.lastID).then(fragment => {
+                    deferred.resolve(fragment);
+                });
             }
         );
 
