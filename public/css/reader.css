@@ -8,6 +8,7 @@ body {
     color: #e5e5e5;
     font-family: StoryFont;
     margin: 0;
+    margin-bottom: 40px;
 }
 
 #top-image {
@@ -152,4 +153,19 @@ body {
 
 .player-reply button {
     float: right;
+}
+
+.banner {
+    width: 50em;
+
+    margin: 20px auto;
+    padding: 10px 20px;
+}
+
+.banner-success {
+    background-color: #151;
+}
+
+.banner-error {
+    background-color: #511;
 }

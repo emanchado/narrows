@@ -38,7 +38,9 @@ app.model({
         fragmentId: getFragmentIdFromUrl(location.pathname),
         fragment: null,
         characterToken: getCharacterTokenFromUrl(location.pathname),
-        backgroundMusic: true
+        backgroundMusic: true,
+
+        banner: null
     },
     reducers: {
         receiveFragmentData: (fragmentData, state) => {
@@ -62,6 +64,24 @@ app.model({
 
         toggleBackgroundMusic: (data, state) => {
             return extend(state, { backgroundMusic: !state.backgroundMusic });
+        },
+
+        reactionSendingProblem: (data, state) => {
+            return extend(
+                state,
+                { banner: {
+                    type: "error",
+                    text: "There was a problem sending your reaction!\n" +
+                        "Maybe save the text somewhere just in case..."
+                } }
+            );
+        },
+
+        reactionSendingSuccess: (data, state) => {
+            return extend(state, { banner: { type: "success",
+                                             text: "Reaction registered"},
+                                   reaction: "",
+                                   reactionSent: true });
         }
     },
     effects: {
@@ -112,13 +132,22 @@ app.model({
             const url = "/api/reactions/" + state.fragmentId + "/" +
                       state.characterToken;
 
+            if (!state.reaction) {
+                done();
+                return;
+            }
+
             const xhr = new XMLHttpRequest();
             xhr.open("POST", url);
             xhr.setRequestHeader("Content-Type", "application/json");
             xhr.addEventListener("load", function() {
                 const response = JSON.parse(this.responseText);
                 if (this.status >= 400) {
+                    send("reactionSendingProblem", {response: this}, done);
+                    return;
                 }
+
+                send("reactionSendingSuccess", {}, done);
             });
             xhr.send(JSON.stringify({ text: state.reaction }));
         }
@@ -163,6 +192,12 @@ function backgroundImageStyle(state) {
         `filter: ${ filter }`;
 }
 
+const bannerView = (banner) => html`
+  <div class="banner banner-${ banner.type }">
+    ${ banner.text }
+  </div>
+`;
+
 const fragmentView = (state, prev, send) => html`
     <div id="fragment-container" class=${ state.started ? "" : "invisible transparent" }>
       <div id="top-image" style=${ backgroundImageStyle(state) }>
@@ -178,10 +213,12 @@ const fragmentView = (state, prev, send) => html`
              preload="auto"></audio>
 
       <div class="fragment">
-        ${state.fragment ? state.fragment.text.content.toDOM() : ""}
+        ${ state.fragment ? state.fragment.text.content.toDOM() : "" }
       </div>
 
-      <div class="player-reply">
+      ${ state.banner ? bannerView(state.banner) : "" }
+
+      <div class="player-reply ${ state.reactionSent ? "invisible" : "" }">
         <textarea
            placeholder="How do you react? Try to consider several possibilities…"
            cols="80"
