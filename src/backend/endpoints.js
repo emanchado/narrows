@@ -24,8 +24,22 @@ export function getFragment(req, res) {
         res.json(fragmentData);
     }).catch(err => {
         res.statusCode = 404;
-        res.json({ errorMessage: "Cannot find fragment " + fragmentId
-                   + ": " + err });
+        res.json({
+            errorMessage: `Cannot find fragment ${ fragmentId }: ${ err }`
+        });
+    });
+}
+
+export function getNarrationFragments(req, res) {
+    const narrationId = parseInt(req.params.narrId, 10);
+
+    store.getNarrationFragments(narrationId).then(fragmentListData => {
+        res.json({ fragments: fragmentListData });
+    }).catch(err => {
+        res.statusCode = 404;
+        res.json({
+            errorMessage: `Cannot find fragments for narration ${ narrationId }: ${ err }`
+        });
     });
 }
 

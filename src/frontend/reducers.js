@@ -6,6 +6,14 @@ module.exports = {
         return extend(state, { narration: narrationData });
     },
 
+    receiveNarrationFragmentsData: (narrationFragmentsData, state) => {
+        return extend(state, {
+            narration: extend(state.narration, {
+                fragments: narrationFragmentsData
+            })
+        });
+    },
+
     receiveFragmentData: (fragmentData, state) => {
         return extend(state, {
             fragment: fragmentData,

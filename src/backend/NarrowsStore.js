@@ -50,31 +50,77 @@ class NarrowsStore {
         return upgradeDb(this.db, migrations);
     }
 
-    // TODO: This is just a placeholder, always returns ALL fragments
     getNarration(id) {
         return Q.ninvoke(
             this.db,
-            "all",
-            "SELECT id, title FROM fragments ORDER BY id"
-        ).then(fragmentRows => {
-            return {
-                id: id,
-                fragments: fragmentRows
-            };
-        });
+            "get",
+            "SELECT * FROM narrations"
+        );
     }
 
+    getNarrationFragments(id) {
+        return Q.ninvoke(
+            this.db,
+            "all",
+            "SELECT * FROM fragments WHERE narration_id = ?",
+            id
+        );
+    }
+
+    _insertParticipants(id, participantIds) {
+        const promise = Q(true);
+
+        participantIds.forEach(pId => {
+            promise.then(() => {
+                return Q.ninvoke(
+                    this.db,
+                    "run",
+                    `INSERT INTO reactions (fragment_id, character_id)
+                            VALUES (?, ?)`,
+                    [id, pId]
+                );
+            });
+        });
+
+        return promise;
+    }
+
+    deleteFragment(id) {
+        return Q.ninvoke(
+            this.db,
+            "run",
+            "DELETE FROM fragments WHERE id = ?",
+            id
+        );
+    }
+
+    /**
+     * Creates a new fragment for the given narration, with the given
+     * properties. Properties have to include at least "text" (JSON in
+     * ProseMirror format) and "participants" (an array of ids for the
+     * characters in the fragment).
+     */
     createFragment(narrationId, fragmentProps) {
-        const deferred = Q.defer();
-
-        const fields = Object.keys(fragmentProps).map(convertToDb),
-              fieldString = fields.join(", "),
-              placeholderString = fields.map(f => "?").join(", "),
-              values = Object.keys(fragmentProps).map(f => fragmentProps[f]);
-
         if (!fragmentProps.text) {
             throw new Error("Cannot create a new fragment without text");
         }
+
+        if (!fragmentProps.participants) {
+            throw new Error("Cannot create a new fragment without participants");
+        }
+
+        const basicProps = {};
+        Object.keys(JSON_TO_DB).forEach(field => {
+            if (field in fragmentProps) {
+                basicProps[field] = fragmentProps[field];
+            }
+        });
+
+        const deferred = Q.defer();
+        const fields = Object.keys(basicProps).map(convertToDb),
+              fieldString = fields.join(", "),
+              placeholderString = fields.map(f => "?").join(", "),
+              values = Object.keys(basicProps).map(f => basicProps[f]);
 
         const self = this;
         this.db.run(
@@ -88,8 +134,16 @@ class NarrowsStore {
                     return;
                 }
 
-                self.getFragment(this.lastID).then(fragment => {
+                const newFragmentId = this.lastID;
+
+                this._insertParticipants(newFragmentId, fragmentProps.participants).then(() => {
+                    return self.getFragment(newFragmentId);
+                }).then(fragment => {
                     deferred.resolve(fragment);
+                }).catch(err => {
+                    return this.deleteFragment(newFragmentId).then(() => {
+                        deferred.reject(err);
+                    });
                 });
             }
         );
@@ -98,13 +152,13 @@ class NarrowsStore {
     }
 
     getFragmentParticipants(fragmentId) {
-        // TODO: This ALWAYS returns ALL characters, need to fix it to
-        // return the participants in this fragment! Most likely needs
-        // a "participants" table.
         return Q.ninvoke(
             this.db,
             "all",
-            "SELECT id, name, token FROM characters"
+            `SELECT C.id, C.name, C.token
+               FROM characters C JOIN reactions R ON C.id = R.character_id
+              WHERE fragment_id = ?`,
+            fragmentId
         );
     }
 

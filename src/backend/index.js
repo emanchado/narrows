@@ -27,10 +27,11 @@ app.get("/fragments/:fragmentId", function(req, res) {
 });
 
 app.get("/api/narrations/:narrId", endpoints.getNarration);
+app.get("/api/narrations/:narrId/fragments", endpoints.getNarrationFragments);
+app.post("/api/narrations/:narrId/fragments", endpoints.postNewFragment);
 
 app.get("/api/fragments/:fgmtId", endpoints.getFragment);
 app.put("/api/fragments/:fgmtId", endpoints.postFragment);
-app.post("/api/narrations/:narrId/fragments", endpoints.postNewFragment);
 
 app.get("/api/fragments/:fgmtId/:charToken", endpoints.getFragmentCharacter);
 app.post("/api/reactions/:fgmtId/:charToken", endpoints.postReaction);

@@ -12,6 +12,14 @@ module.exports = {
         });
     },
 
+    getNarrationFragments: (data, state, send, done) => {
+        const narrationFragmentUrl = "/api/narrations/" +
+                  data.narrationId + "/fragments";
+        http(narrationFragmentUrl, (err, res, body) => {
+            send("receiveNarrationFragmentsData", JSON.parse(body), done);
+        });
+    },
+
     getFragment: (data, state, send, done) => {
         const fragmentUrl = "/api/fragments/" + data.fragmentId;
 
