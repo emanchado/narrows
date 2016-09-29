@@ -62,9 +62,33 @@ class NarrowsStore {
         return Q.ninvoke(
             this.db,
             "all",
-            "SELECT * FROM fragments WHERE narration_id = ?",
+            "SELECT id, title FROM fragments WHERE narration_id = ?",
             id
-        );
+        ).then(fragments => {
+            let placeholders = [];
+            for (let i = 0; i < fragments.length; i++) {
+                placeholders.push("?");
+            }
+
+            return Q.ninvoke(
+                this.db,
+                "all",
+                `SELECT fragment_id, character_id, main_text FROM reactions
+                  WHERE fragment_id IN (${ placeholders.join(", ") })`,
+                fragments.map(f => f.id)
+            ).then(reactions => {
+                const fragmentMap = {};
+                fragments.forEach(fragment => {
+                    fragmentMap[fragment.id] = fragment;
+                });
+                reactions.forEach(reaction => {
+                    const fragment = fragmentMap[reaction.fragment_id];
+                    fragment.reactions = fragment.reactions || [];
+                    fragment.reactions.push(reaction);
+                });
+                return fragments;
+            });
+        });
     }
 
     _insertParticipants(id, participantIds) {

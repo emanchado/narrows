@@ -4,7 +4,7 @@ const fragmentView = (fragment, send) => html`
   <li>
     <a href="/fragments/${ fragment.id }">
       ${ fragment.title || ("Untitled #" + fragment.id) }
-    </a>
+    </a> - ${ fragment.reactions.length } reactions
   </li>
 `;
 
