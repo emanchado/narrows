@@ -33,8 +33,8 @@ const MIGRATIONS = [
                                       name string,
                                       token string)`,
             `CREATE TABLE reactions (id integer primary key,
-                                     fragment_id integer,
-                                     character_id integer,
+                                     fragment_id integer references fragments(id) ON DELETE CASCADE,
+                                     character_id integer references characters(id) ON DELETE CASCADE,
                                      main_text text)`
         ]);
     }

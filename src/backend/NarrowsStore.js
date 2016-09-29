@@ -161,8 +161,12 @@ class NarrowsStore {
     }
 
     getCharacterId(characterToken) {
-        // TODO: Look up the real character id
-        return Q(1);
+        return Q.ninvoke(
+            this.db,
+            "get",
+            "SELECT id FROM characters WHERE token = ?",
+            characterToken
+        ).then(characterRow => characterRow.id);
     }
 }
 

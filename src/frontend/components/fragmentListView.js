@@ -1,18 +1,17 @@
 const html = require("choo/html");
 
 const fragmentView = (fragment, send) => html`
-  <li><a href="/fragments/${ fragment.id }">${ fragment.id } -
-  ${ fragment.title }</a>
+  <li>
+    <a href="/fragments/${ fragment.id }">
+      ${ fragment.title || ("Untitled #" + fragment.id) }
+    </a>
+  </li>
 `;
 
 const fragmentListView = (narration, send) => html`
-  <div class="fragment-list">
-    <ul>
-      ${ narration.fragments.map(f => fragmentView(f, send)) }
-    </ul>
-
-    <a href="/narrations/${ narration.id }/new">Create new narration fragment</a>
-  </div>
+  <ul class="fragment-list">
+    ${ narration.fragments.map(f => fragmentView(f, send)) }
+  </ul>
 `;
 
 module.exports = fragmentListView;
