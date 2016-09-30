@@ -30,6 +30,27 @@ export function getFragment(req, res) {
     });
 }
 
+export function getFragmentCharacter(req, res) {
+    const fragmentId = parseInt(req.params.fgmtId, 10);
+    const characterToken = req.params.charToken;
+
+    store.getCharacterId(characterToken).then(characterId => {
+        return store.getFragment(fragmentId).then(fragmentData => {
+            const participantIds = fragmentData.participants.map(p => p.id);
+            if (participantIds.indexOf(characterId) === -1) {
+                throw new Error("Character does not participate in fragment");
+            }
+            res.json(fragmentData);
+        });
+    }).catch(err => {
+        res.statusCode = 404;
+        res.json({
+            errorMessage: `Cannot find fragment ${ fragmentId }` +
+                ` with character ${ characterToken }`
+        });
+    });
+}
+
 export function getNarrationFragments(req, res) {
     const narrationId = parseInt(req.params.narrId, 10);
 
@@ -41,10 +62,6 @@ export function getNarrationFragments(req, res) {
             errorMessage: `Cannot find fragments for narration ${ narrationId }: ${ err }`
         });
     });
-}
-
-export function getFragmentCharacter(req, res) {
-    return getFragment(req, res);
 }
 
 export function postFragment(req, res) {
