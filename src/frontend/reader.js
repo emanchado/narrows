@@ -48,7 +48,10 @@ app.model({
         },
 
         markNarrationAsStarted: (data, state) => {
-            return extend(state, { started: true });
+            return extend(state, {
+                started: true,
+                musicPlaying: state.backgroundMusic
+            });
         },
 
         pageScrolled: (data, state) => {
@@ -64,6 +67,10 @@ app.model({
 
         toggleBackgroundMusic: (data, state) => {
             return extend(state, { backgroundMusic: !state.backgroundMusic });
+        },
+
+        toggleMusicPlaying: (data, state) => {
+            return extend(state, { musicPlaying: !state.musicPlaying });
         },
 
         reactionSendingProblem: (data, state) => {
@@ -125,7 +132,7 @@ app.model({
             } else {
                 audioEl.pause();
             }
-            done();
+            send("toggleMusicPlaying", {}, done);
         },
 
         sendReaction: (data, state, send, done) => {
@@ -204,13 +211,13 @@ const fragmentView = (state, prev, send) => html`
         ${ state.fragment ? state.fragment.title : 'Untitled' }
       </div>
       <img id="play-icon"
-           src="/img/play-small.png"
-           alt="Stop music"
+           src="/img/${ state.musicPlaying ? "pause" : "play" }-small.png"
+           alt="${ state.musicPlaying ? "Stop" : "Start" } music"
            onclick=${() => { send("playPauseMusic"); }} />
       <audio id="background-music"
-             src="${state.fragment ? ("/static/narrations/3/" + state.fragment.audio) : ''}"
+             src="${ state.fragment ? ("/static/narrations/3/" + state.fragment.audio) : '' }"
              loop="true"
-             preload="auto"></audio>
+             preload="${ state.backgroundMusic ? "auto" : "none" }"></audio>
 
       <div class="fragment">
         ${ state.fragment ? state.fragment.text.content.toDOM() : "" }
