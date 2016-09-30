@@ -47,6 +47,10 @@ app.model({
             return extend(state, { fragment: fragmentData });
         },
 
+        fragmentDataFailure: (info, state) => {
+            return extend(state, { error: `Failed fetching fragment, status code: ${ info.statusCode }` });
+        },
+
         markNarrationAsStarted: (data, state) => {
             return extend(state, {
                 started: true,
@@ -94,6 +98,13 @@ app.model({
     effects: {
         getFragment: (data, state, send, done) => {
             http("/api/fragments/" + state.fragmentId + "/" + state.characterToken, (err, res, body) => {
+                if (res.statusCode >= 400) {
+                    send("fragmentDataFailure",
+                         { statusCode: res.statusCode },
+                         done);
+                    return;
+                }
+
                 const response = JSON.parse(body);
 
                 send("receiveFragmentData",
@@ -169,23 +180,33 @@ app.model({
     ]
 });
 
+const loadingView = () => html`
+  <div id="spinner">Loading…</div>
+`;
+
+const loadedView = (state, send) => html`
+  <div id="start-ui">
+    <button onclick=${ () => send("startNarration") }>Start</button>
+
+    <br />
+    <input id="music"
+           type="checkbox"
+           checked="${ state.backgroundMusic ? "checked" : "false" }"
+           onclick=${ () => send("toggleBackgroundMusic") } />
+    <label for="music">Background music</label>
+  </div>
+`;
+
 const loaderView = (state, prev, send) => html`
     <div id="loader">
-      <div id="spinner">
-        ${state.fragment ? "" : "Loading…"}
-      </div>
-
-      <div id="start-ui">
-        <button onclick=${() => send("startNarration")}>Start</button>
-
-        <br />
-        <input id="music"
-               type="checkbox"
-               checked="${ state.backgroundMusic ? "checked" : "false" }"
-               onclick=${ () => send("toggleBackgroundMusic") } />
-        <label for="music">Background music</label>
-      </div>
+      ${ state.fragment ? loadedView(state, send) : loadingView() }
     </div>
+`;
+
+const errorView = (error, send) => html`
+  <div class="banner banner-error">
+    ${ error }
+  </div>
 `;
 
 function backgroundImageStyle(state) {
@@ -238,7 +259,8 @@ const fragmentView = (state, prev, send) => html`
 
 const mainView = (state, prev, send) => html`
   <main onload=${() => send("getFragment")}>
-    ${ state.started ? "" : loaderView(state, prev, send) }
+    ${ (!state.started && !state.error) ? loaderView(state, prev, send) : "" }
+    ${ state.error ? errorView(state.error, send) : "" }
 
     ${ fragmentView(state, prev, send) }
   </main>
