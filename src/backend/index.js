@@ -12,13 +12,15 @@ const STATIC_HTML_FILES = path.join(__dirname, "..", "html");
 
 const app = express();
 const SQLiteStore = connectSqlite3(expressSession);
+const dbDirname = path.dirname(config.db.path),
+      dbBasename = path.basename(config.db.path);
 
 app.use(express.static('public'));
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 app.use(expressSession({
-    store: new SQLiteStore({ db: config.db.path.replace(".db", ""),
-                             dir: "." }),
+    store: new SQLiteStore({ db: dbBasename.replace(".db", ""),
+                             dir: dbDirname }),
     resave: false,
     saveUninitialized: false,
     secret: "b7404074-874d-11e6-855e-031b367b72bb",
