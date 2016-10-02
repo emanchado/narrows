@@ -54,15 +54,32 @@ class NarrowsStore {
         return Q.ninvoke(
             this.db,
             "get",
-            "SELECT * FROM narrations"
-        );
+            "SELECT * FROM narrations WHERE id = ?",
+            id
+        ).then(narrationInfo => {
+            if (!narrationInfo) {
+                throw new Error("Cannot find narration " + id);
+            }
+
+            return Q.ninvoke(
+                this.db,
+                "all",
+                `SELECT id, name, token
+                   FROM characters
+                  WHERE narration_id = ?`,
+                id
+            ).then(characters => {
+                narrationInfo.characters = characters;
+                return narrationInfo;
+            });
+        });
     }
 
     getNarrationFragments(id) {
         return Q.ninvoke(
             this.db,
             "all",
-            "SELECT id, title FROM fragments WHERE narration_id = ?",
+            "SELECT id, title, published FROM fragments WHERE narration_id = ?",
             id
         ).then(fragments => {
             let placeholders = [];
@@ -73,8 +90,11 @@ class NarrowsStore {
             return Q.ninvoke(
                 this.db,
                 "all",
-                `SELECT fragment_id, character_id, main_text FROM reactions
-                  WHERE fragment_id IN (${ placeholders.join(", ") })`,
+                `SELECT fragment_id AS fragmentId,
+                        character_id AS characterId,
+                        main_text AS text
+                   FROM reactions
+                  WHERE fragmentId IN (${ placeholders.join(", ") })`,
                 fragments.map(f => f.id)
             ).then(reactions => {
                 const fragmentMap = {};
@@ -82,7 +102,7 @@ class NarrowsStore {
                     fragmentMap[fragment.id] = fragment;
                 });
                 reactions.forEach(reaction => {
-                    const fragment = fragmentMap[reaction.fragment_id];
+                    const fragment = fragmentMap[reaction.fragmentId];
                     fragment.reactions = fragment.reactions || [];
                     fragment.reactions.push(reaction);
                 });
@@ -160,7 +180,7 @@ class NarrowsStore {
 
                 const newFragmentId = this.lastID;
 
-                this._insertParticipants(newFragmentId, fragmentProps.participants).then(() => {
+                self._insertParticipants(newFragmentId, fragmentProps.participants).then(() => {
                     return self.getFragment(newFragmentId);
                 }).then(fragment => {
                     deferred.resolve(fragment);
@@ -209,6 +229,17 @@ class NarrowsStore {
         });
     }
 
+    getFragmentReaction(id, characterId) {
+        return Q.ninvoke(
+            this.db,
+            "get",
+            "SELECT main_text AS text FROM reactions WHERE character_id = ?",
+            characterId
+        ).then(
+            row => row ? row.text : null
+        );
+    }
+
     updateFragment(id, props) {
         const propNames = Object.keys(props).map(convertToDb),
               propNameString = propNames.map(p => `${p} = ?`).join(", ");
@@ -219,22 +250,18 @@ class NarrowsStore {
             "run",
             `UPDATE fragments SET ${ propNameString } WHERE id = ?`,
             propValues.concat(id)
-        ).then(() => {
-            return this.getFragment(id);
-        });
+        ).then(
+            () => this.getFragment(id)
+        );
     }
 
-    getReactions(fragmentId) {
-        return Q.ninvoke(this.db, "all", "SELECT * FROM reactions");
-    }
-
-    saveReaction(fragmentId, characterId, reactionText) {
+    updateReaction(fragmentId, characterId, reactionText) {
         return Q.ninvoke(
             this.db,
             "run",
-            `INSERT INTO reactions (fragment_id, character_id, main_text)
-                VALUES (?, ?, ?)`,
-            [fragmentId, characterId, reactionText]
+            `UPDATE reactions SET main_text = ?
+              WHERE fragment_id = ? AND character_id = ?`,
+            [reactionText, fragmentId, characterId]
         );
     }
 
@@ -244,7 +271,9 @@ class NarrowsStore {
             "get",
             "SELECT id FROM characters WHERE token = ?",
             characterToken
-        ).then(characterRow => characterRow.id);
+        ).then(
+            characterRow => characterRow.id
+        );
     }
 }
 

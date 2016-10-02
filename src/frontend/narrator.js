@@ -12,6 +12,9 @@ const app = choo();
 app.model({
     state: {
         editor: null, // ProseMirror instance
+
+        narrator: null,
+
         fragmentId: null,
         fragment: {
             id: null,

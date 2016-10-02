@@ -3,7 +3,9 @@ const editor = require("./editor");
 
 module.exports = {
     receiveNarrationData: (narrationData, state) => {
-        return extend(state, { narration: narrationData });
+        return extend(state, {
+            narration: extend(state.narration, narrationData)
+        });
     },
 
     receiveNarrationFragmentsData: (narrationFragmentsData, state) => {

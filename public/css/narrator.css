@@ -19,6 +19,8 @@ nav {
 }
 
 label {
+    display: block;
+    margin-top: 10px;
     font-weight: bold;
 }
 

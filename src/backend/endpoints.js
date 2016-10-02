@@ -40,7 +40,11 @@ export function getFragmentCharacter(req, res) {
             if (participantIds.indexOf(characterId) === -1) {
                 throw new Error("Character does not participate in fragment");
             }
-            res.json(fragmentData);
+
+            store.getFragmentReaction(fragmentId, characterId).then(reaction => {
+                fragmentData.reaction = reaction;
+                res.json(fragmentData);
+            });
         });
     }).catch(err => {
         res.statusCode = 404;
@@ -91,16 +95,17 @@ export function getStaticFile(req, res) {
                  { root: config.files.path });
 }
 
-export function postReaction(req, res) {
+export function putReaction(req, res) {
     const fragmentId = req.params.fgmtId,
           characterToken = req.params.charToken,
           reactionText = req.body.text;
 
     store.getCharacterId(characterToken).then(characterId => {
-        store.saveReaction(fragmentId, characterId, reactionText).then(() => {
+        return store.updateReaction(fragmentId, characterId, reactionText).then(() => {
             res.json({ fragmentId, characterId, reactionText });
         });
     }).catch(err => {
+        res.statusCode = 500;
         res.json({ errorMessage: "Could not save reaction: " + err});
     });
 }

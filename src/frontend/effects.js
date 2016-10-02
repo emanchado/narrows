@@ -69,8 +69,10 @@ module.exports = {
             send("location:setLocation", {location: "/fragments/" + response.id}, done);
         });
         const jsonDoc = state.editorNew.doc.toJSON();
+        const characterIds = state.narration.characters.map(c => c.id);
         xhr.send(JSON.stringify({ title: state.fragment.title,
-                                  text: jsonDoc }));
+                                  text: jsonDoc,
+                                  participants: characterIds }));
     },
 
     addImage: (data, state, send, done) => {

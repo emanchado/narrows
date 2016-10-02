@@ -66,7 +66,9 @@ app.model({
         },
 
         updateReactionText: (data, state) => {
-            return extend(state, { reaction: data.value });
+            return extend(state, {
+                fragment: extend(state.fragment, { reaction: data.value })
+            });
         },
 
         toggleBackgroundMusic: (data, state) => {
@@ -106,13 +108,9 @@ app.model({
                 }
 
                 const response = JSON.parse(body);
+                response.text = editor.importText(response.text);
 
-                send("receiveFragmentData",
-                     {title: response.title,
-                      text: editor.importText(response.text),
-                      audio: response.audio,
-                      backgroundImage: response.backgroundImage},
-                     done);
+                send("receiveFragmentData", response, done);
             });
         },
 
@@ -150,13 +148,13 @@ app.model({
             const url = "/api/reactions/" + state.fragmentId + "/" +
                       state.characterToken;
 
-            if (!state.reaction) {
+            if (!state.fragment || !state.fragment.reaction) {
                 done();
                 return;
             }
 
             const xhr = new XMLHttpRequest();
-            xhr.open("POST", url);
+            xhr.open("PUT", url);
             xhr.setRequestHeader("Content-Type", "application/json");
             xhr.addEventListener("load", function() {
                 const response = JSON.parse(this.responseText);
@@ -167,7 +165,7 @@ app.model({
 
                 send("reactionSendingSuccess", {}, done);
             });
-            xhr.send(JSON.stringify({ text: state.reaction }));
+            xhr.send(JSON.stringify({ text: state.fragment.reaction }));
         }
     },
 
@@ -251,7 +249,8 @@ const fragmentView = (state, prev, send) => html`
            placeholder="How do you react? Try to consider several possibilities…"
            cols="80"
            rows="10"
-           oninput=${ e => { send("updateReactionText", { value: e.target.value }); } }>${ state.reaction }</textarea>
+           value=${ state.fragment && state.fragment.reaction }
+           oninput=${ e => { send("updateReactionText", { value: e.target.value }); } }>${ state.fragment && state.fragment.reaction }</textarea>
         <button onclick=${ () => send("sendReaction") }>Send</button>
       </div>
     </div>
