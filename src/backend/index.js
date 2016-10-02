@@ -53,6 +53,6 @@ app.put("/api/reactions/:fgmtId/:charToken", endpoints.putReaction);
 
 app.get("/static/narrations/:narrId/:filename", endpoints.getStaticFile);
 
-app.listen(3000, function () {
-  console.log('Example app listening on port 3000!');
+app.listen(config.port, function () {
+  console.log(`Example app listening on port ${ config.port }!`);
 });
