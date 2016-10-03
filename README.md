@@ -20,6 +20,7 @@ The initial user/narrator is "narrator", and the password is "changeme!".
 
 Credits
 -------
-Play icon from
-http://www.flaticon.com/free-icon/play-button_149668#term=play&page=1&position=34
-Pause icon from http://www.flaticon.com/free-icon/pause-parallel-lines_12389#term=pause&page=2&position=21
+Speaker/mute icons made by
+[Madebyoliver](http://www.flaticon.com/authors/madebyoliver), from
+[Flaticon](http://www.flaticon.com). They are licensed under Creative
+Commons BY 3.0.

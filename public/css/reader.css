@@ -41,8 +41,8 @@ body {
 
 #play-icon {
     position: fixed;
-    bottom: 20px;
-    right: 20px;
+    bottom: 10px;
+    right: 10px;
     z-index: 10;
 }
 
@@ -87,11 +87,13 @@ body {
 
 .fragment {
     margin-top: 500px;
+    margin-left: 10px;
+    margin-right: 10px;
     color: black;
 }
 
 .fragment > p, .fragment > blockquote {
-    width: 50em;
+    max-width: 50em;
     font-size: 16px;
     line-height: 18px;
     text-align: justify;
@@ -114,7 +116,7 @@ body {
 }
 
 .fragment ul, .fragment ol {
-    width: 50em;
+    max-width: 50em;
     margin: 0 auto;
     padding: 10px 20px;
     background-color: #e5e5e5;
@@ -140,23 +142,20 @@ body {
 }
 
 .player-reply {
-    width: 800px;
-    margin-top: 20px;
-    margin-left: auto;
-    margin-right: auto;
+    max-width: 56em;
+    margin: 20px auto 50px auto;
+    padding: 10px;
+    text-align: right;
 }
 
 .player-reply textarea {
-    width: 800px;
+    width: 100%;
     margin-bottom: 10px;
-}
-
-.player-reply button {
-    float: right;
+    padding: 5px;
 }
 
 .banner {
-    width: 50em;
+    max-width: 50em;
 
     margin: 20px auto;
     padding: 10px 20px;
@@ -168,4 +167,15 @@ body {
 
 .banner-error {
     background-color: #511;
+}
+
+.btn-default {
+    border: 0;
+    padding: 5px 10px;
+    border: 1px solid #ddd;
+
+    background-color: #113;
+    color: #eee;
+
+    font-size: 18px;
 }

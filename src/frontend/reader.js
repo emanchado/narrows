@@ -117,9 +117,11 @@ app.model({
         startNarration: (data, state, send, done) => {
             if (state.backgroundMusic) {
                 const audioEl = document.getElementById("background-music");
-                audioEl.volume = 0;
-                audioEl.play();
-                bumpVolume(audioEl);
+                setTimeout(() => {
+                    audioEl.volume = 0.1;
+                    audioEl.play();
+                    bumpVolume(audioEl);
+                }, 1000);
             }
 
             // First we need to make it appear on screen at all
@@ -230,7 +232,7 @@ const fragmentView = (state, prev, send) => html`
         ${ state.fragment ? state.fragment.title : 'Untitled' }
       </div>
       <img id="play-icon"
-           src="/img/${ state.musicPlaying ? "pause" : "play" }-small.png"
+           src="/img/${ state.musicPlaying ? "play" : "mute" }-small.png"
            alt="${ state.musicPlaying ? "Stop" : "Start" } music"
            onclick=${() => { send("playPauseMusic"); }} />
       <audio id="background-music"
@@ -251,7 +253,7 @@ const fragmentView = (state, prev, send) => html`
            rows="10"
            value=${ state.fragment && state.fragment.reaction }
            oninput=${ e => { send("updateReactionText", { value: e.target.value }); } }>${ state.fragment && state.fragment.reaction }</textarea>
-        <button onclick=${ () => send("sendReaction") }>Send</button>
+        <button class="btn-default" onclick=${ () => send("sendReaction") }>Send</button>
       </div>
     </div>
 `;
