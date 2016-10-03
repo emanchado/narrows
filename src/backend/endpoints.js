@@ -36,6 +36,10 @@ export function getFragmentCharacter(req, res) {
 
     store.getCharacterId(characterToken).then(characterId => {
         return store.getFragment(fragmentId).then(fragmentData => {
+            if (!fragmentData.published) {
+                throw new Error("Unpublished fragment");
+            }
+
             const participantIds = fragmentData.participants.map(p => p.id);
             if (participantIds.indexOf(characterId) === -1) {
                 throw new Error("Character does not participate in fragment");

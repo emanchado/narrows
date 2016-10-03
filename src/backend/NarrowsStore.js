@@ -212,7 +212,7 @@ class NarrowsStore {
             "get",
             "SELECT id, title, audio, narration_id as narrationId, " +
                 "background_image AS backgroundImage, " +
-                "main_text AS text FROM fragments WHERE id = ?",
+                "main_text AS text, published FROM fragments WHERE id = ?",
             id
         ).then(fragmentData => {
             if (!fragmentData) {
