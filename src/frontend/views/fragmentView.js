@@ -20,6 +20,13 @@ const participantListView = (fragmentId, participants) => html`
   </aside>
 `;
 
+const markForCharacter = (state, send) => html`
+  <div>
+    Mark text for Mildred:
+    <button onclick=${ () => send("markTextForCharacter", { characters: [{id: 1, name: "Mildred Mayfield"}] }) }>Mark</button>
+  </div>
+`;
+
 const loadedFragmentView = (state, send) => html`
   <div>
     <h1>Fragment</h1>

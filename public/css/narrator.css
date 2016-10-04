@@ -81,3 +81,36 @@ aside.participants ul {
 
     font-size: 14px;
 }
+
+
+/* Mentions */
+.mention-1 { background: linear-gradient(to top, #eaa, rgba(0, 0, 0, 0)); }
+.mention-2 { background: linear-gradient(to top, #aae, rgba(0, 0, 0, 0)); }
+.mention-3 { background: linear-gradient(to top, #aea, rgba(0, 0, 0, 0)); }
+.mention-4 { background: linear-gradient(to top, #eae, rgba(0, 0, 0, 0)); }
+.mention-5 { background: linear-gradient(to top, #eea, rgba(0, 0, 0, 0)); }
+.mention-1.mention-2 { background: linear-gradient(to top, #eaa, #aae); }
+.mention-1.mention-3 { background: linear-gradient(to top, #eaa, #aea); }
+.mention-1.mention-4 { background: linear-gradient(to top, #eaa, #eae); }
+.mention-1.mention-5 { background: linear-gradient(to top, #eaa, #eea); }
+.mention-2.mention-3 { background: linear-gradient(to top, #aae, #aea); }
+.mention-2.mention-4 { background: linear-gradient(to top, #aae, #eae); }
+.mention-2.mention-5 { background: linear-gradient(to top, #aae, #eea); }
+.mention-3.mention-4 { background: linear-gradient(to top, #aea, #eae); }
+.mention-3.mention-5 { background: linear-gradient(to top, #aea, #eea); }
+.mention-4.mention-5 { background: linear-gradient(to top, #eae, #eea); }
+.mention-1.mention-2.mention-3 { background: linear-gradient(to top, #eaa, #aae, #aea); }
+.mention-1.mention-2.mention-4 { background: linear-gradient(to top, #eaa, #aae, #eae); }
+.mention-1.mention-2.mention-5 { background: linear-gradient(to top, #eaa, #aae, #eea); }
+.mention-1.mention-3.mention-4 { background: linear-gradient(to top, #eaa, #aea, #eae); }
+.mention-1.mention-3.mention-5 { background: linear-gradient(to top, #eaa, #aea, #eea); }
+.mention-1.mention-4.mention-5 { background: linear-gradient(to top, #eaa, #eae, #eea); }
+.mention-2.mention-3.mention-4 { background: linear-gradient(to top, #aae, #aea, #eae); }
+.mention-2.mention-3.mention-5 { background: linear-gradient(to top, #aae, #aea, #eea); }
+.mention-2.mention-4.mention-5 { background: linear-gradient(to top, #aae, #eae, #eea); }
+.mention-3.mention-4.mention-5 { background: linear-gradient(to top, #aea, #eae, #eea); }
+.mention-1.mention-2.mention-3.mention-4 { background: linear-gradient(to top, #eaa, #aae, #aea, #eae); }
+.mention-1.mention-2.mention-3.mention-5 { background: linear-gradient(to top, #eaa, #aae, #aea, #eea); }
+.mention-1.mention-2.mention-4.mention-5 { background: linear-gradient(to top, #eaa, #aae, #eae, #eea); }
+.mention-1.mention-3.mention-4.mention-5 { background: linear-gradient(to top, #eaa, #aea, #eae, #eea); }
+.mention-2.mention-3.mention-4.mention-5 { background: linear-gradient(to top, #aae, #aea, #eae, #eea); }

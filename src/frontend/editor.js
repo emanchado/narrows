@@ -38,6 +38,18 @@ function importText(text) {
     return Node.fromJSON(narrowsSchema, text);
 }
 
+function markTextForCharacter(editor, characters) {
+    const {from, to} = editor.selection;
+
+    var type = new MentionMark("mention", 0, narrowsSchema);
+    editor.tr.addMark(
+        from,
+        to,
+        type.create({ mentionTargets: characters })
+    ).applyAndScroll();
+}
+
 module.exports.schema = narrowsSchema;
 module.exports.create = create;
 module.exports.importText = importText;
+module.exports.markTextForCharacter = markTextForCharacter;

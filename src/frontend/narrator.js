@@ -39,9 +39,3 @@ app.router((route) => [
 
 const tree = app.start();
 document.body.appendChild(tree);
-
-// var type = new MentionMark("mention", 0, narrowsSchema);
-
-// document.getElementById("btn-mark").addEventListener("click", function() {
-//     editor.tr.addMark(10, 35, type.create({mentionTarget: "Atana"})).applyAndScroll();
-// }, false);

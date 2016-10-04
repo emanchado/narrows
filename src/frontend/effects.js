@@ -101,5 +101,10 @@ module.exports = {
 
         state.editor.tr.replaceSelection(imageNodeType.create(attrs)).apply();
         done();
+    },
+
+    markTextForCharacter: (data, state, send, done) => {
+        editor.markTextForCharacter(state.editor, data.characters);
+        done();
     }
 };

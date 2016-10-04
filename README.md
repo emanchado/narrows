@@ -1,6 +1,7 @@
 TODO
 ====
 
+* Add some shitty buttons for now for the mentions
 * Really wait until everything is loaded before showing the "Start" button
 
 Later
@@ -9,7 +10,6 @@ Later
 * Allow narrators to change password, and create more narrators
 * Maybe add an "admin" role to that not all narrators can create users?
 * Show background information or whatever to players
-* Add some shitty buttons for now for the mentions
 * Add some place for players to write notes
 
 Initial narrator

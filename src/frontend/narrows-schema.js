@@ -9,17 +9,25 @@ const model = require("prosemirror/dist/model"),
 class MentionMark extends MarkType {
     get attrs() {
         return {
-            mentionTarget: new Attribute()
+            mentionTargets: new Attribute()
         };
     }
     get matchDOMTag() {
-        return {"div[data-mention]": dom => ({
-            mentionTarget: dom.getAttribute("data-mention")
+        return {"div[data-mentions]": dom => ({
+            mentionTargets: JSON.parse(dom.getAttribute("data-mentions"))
         })};
     }
-    toDOM(node) { return ["span", {"data-mention": node.attrs.mentionTarget,
-                                   "class": "mention",
-                                   "title": node.attrs.mentionTarget}]; }
+    toDOM(node) {
+        const targets = node.attrs.mentionTargets;
+
+        return [
+            "span",
+            {"data-mentions": JSON.stringify(targets),
+             "class": "mention" + targets.map(t => ` mention-${t.id % 5 + 1}`).join(""),
+             "title": "Only for " + targets.map(t => t.name).join(", ")
+            }
+        ];
+    }
 }
 
 const narrowsSchema = new Schema({
