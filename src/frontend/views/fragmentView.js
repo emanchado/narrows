@@ -31,12 +31,12 @@ const loadedFragmentView = (state, send) => html`
 
     <main class="page-aside">
       <section>
-        <label>Title:</label>
-        <br />
         <input class="fragment-title"
                type="text"
+               placeholder="Title"
                oninput=${ e => { send("updateFragmentTitle", { value: e.target.value }); } }
                value=${ state.fragment.title || "" } />
+
         <div class="editor-container">
           ${ state.editor.wrapper }
         </div>

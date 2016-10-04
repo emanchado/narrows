@@ -30,8 +30,12 @@ input, .ProseMirror-content {
 
 .editor-container .ProseMirror-content {
     padding: 0px 10px;
-
+    min-height: 200px;
     outline: -webkit-focus-ring-color auto 5px;
+}
+
+.editor-container .ProseMirror-content img {
+    max-width: 100%;
 }
 
 .btn-default {
