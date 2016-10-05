@@ -2,6 +2,7 @@ import path from "path";
 import config from "config";
 
 import NarrowsStore from "./NarrowsStore";
+import mentionFilter from "./mention-filter";
 
 const store = new NarrowsStore(config.db.path, config.files.path);
 store.connect();
@@ -44,6 +45,9 @@ export function getFragmentCharacter(req, res) {
             if (participantIds.indexOf(characterId) === -1) {
                 throw new Error("Character does not participate in fragment");
             }
+
+            fragmentData.text =
+                mentionFilter.filter(fragmentData.text, characterId);
 
             store.getFragmentReaction(fragmentId, characterId).then(reaction => {
                 fragmentData.reaction = reaction;

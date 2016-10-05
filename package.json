@@ -24,10 +24,18 @@
     "buildbe": "babel --modules common -d build/ src/backend",
     "watchbe": "babel -w --modules common -d build/ src/backend",
     "buildfe": "webpack",
-    "watchfe": "webpack --watch"
+    "watchfe": "webpack --watch",
+    "test": "ava",
+    "watchtest": "ava --watch"
   },
   "devDependencies": {
+    "ava": "^0.16.0",
     "nodemon": "^1.10.2",
     "webpack": "^1.13.2"
+  },
+  "ava": {
+    "require": [
+      "babel-register"
+    ]
   }
 }
