@@ -52,6 +52,26 @@ module.exports = {
                                   text: jsonDoc }));
     },
 
+    publishFragment: (data, state, send, done) => {
+        const url = "/api/fragments/" + data.fragmentId;
+
+        const xhr = new XMLHttpRequest();
+        xhr.open("PUT", url);
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.addEventListener("load", function() {
+            const response = JSON.parse(this.responseText);
+
+            if (this.status >= 400) {
+                alert("Could not publish fragment text: " + response.errorMessage);
+                return;
+            }
+        });
+        const jsonDoc = state.editor.doc.toJSON();
+        xhr.send(JSON.stringify({ title: state.fragment.title,
+                                  text: jsonDoc,
+                                  published: true }));
+    },
+
     saveNewFragment: (data, state, send, done) => {
         const url = "/api/narrations/" + data.narrationId + "/fragments";
 

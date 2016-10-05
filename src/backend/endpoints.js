@@ -76,6 +76,10 @@ export function postFragment(req, res) {
     const fragmentId = parseInt(req.params.fgmtId, 10);
 
     req.body.text = JSON.stringify(req.body.text);
+    if ("published" in req.body) {
+        req.body.published = req.body.published ?
+            (new Date().toISOString()) : null;
+    }
     store.updateFragment(fragmentId, req.body).then(fragment => {
         res.send(fragment);
     }).catch(err => {

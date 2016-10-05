@@ -38,15 +38,20 @@ input, .ProseMirror-content {
     max-width: 100%;
 }
 
-.btn-default {
-    float: right;
+.btn-row {
+    text-align: right;
+}
+
+.btn {
     border: 0;
     padding: 5px 10px;
 
+    font-size: 18px;
+}
+
+.btn-default {
     background-color: blue;
     color: #eee;
-
-    font-size: 18px;
 }
 
 main.page-aside {

@@ -9,7 +9,8 @@ const JSON_TO_DB = {
     title: "title",
     audio: "audio",
     backgroundImage: "background_image",
-    text: "main_text"
+    text: "main_text",
+    published: "published"
 };
 
 function convertToDb(fieldName) {

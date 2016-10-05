@@ -43,7 +43,12 @@ const loadedFragmentView = (state, send) => html`
 
         ${ addImageView(state, send) }
 
-        <button class="btn-default" onclick=${ () => { send("saveFragment", { fragmentId: state.params.fragmentId }); }}>Save</button>
+        ${ markForCharacter(state, send) }
+
+        <div class="btn-row">
+          <button class="btn" onclick=${ () => { send("saveFragment", { fragmentId: state.params.fragmentId }); }}>Save</button>
+          <button class="btn btn-default" onclick=${ () => { send("publishFragment", { fragmentId: state.params.fragmentId }); }}>Publish</button>
+        </div>
       </section>
 
       ${ participantListView(state.fragment.id, state.fragment.participants) }
