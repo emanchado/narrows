@@ -104,7 +104,11 @@ module.exports = {
     },
 
     markTextForCharacter: (data, state, send, done) => {
-        editor.markTextForCharacter(state.editor, data.characters);
+        const characters = state.fragment.participants.filter(p => (
+            state.mentionCharacters.includes(p.id)
+        ));
+
+        editor.markTextForCharacter(state.editor, characters);
         done();
     },
 

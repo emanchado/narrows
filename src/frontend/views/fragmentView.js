@@ -2,6 +2,9 @@ const html = require("choo/html");
 
 const extend = require("../extend");
 
+const characterSelector = require("../components/characterSelector");
+const participantListView = require("../components/participantListView");
+
 const addImageView = (state, send) => html`
   <div class="add-image">
     <input type="text"
@@ -11,38 +14,9 @@ const addImageView = (state, send) => html`
   </div>
 `;
 
-const nonParticipantList = (participants, characters, send) => {
-    const nonParticipants =
-              characters.filter(ch => participants.every(p => p.id !== ch.id));
-
-    return html`
-  <ul>
-    ${ nonParticipants.map(np => html`
-        <li>${ np.name }
-          <img src="/img/add.png" onclick=${ () => send("addParticipant", { character: np }) } /></li>
-      `) }
-  </ul>
-`;
-};
-
-const participantListView = (fragment, characters, send) => html`
-  <aside class="participants">
-    <h2>Participants</h2>
-    <ul>
-      ${ fragment.participants.map(p => html`
-          <li><a href="/read/${ fragment.id }/${ p.token }">${ p.name }</a>
-          <img onclick=${ () => send("removeParticipant", { characterId: p.id }) } src="/img/delete.png" /></li>
-        `) }
-    </ul>
-
-    <h2>Other characters</h2>
-    ${ (fragment.participants.length < characters.length) ? nonParticipantList(fragment.participants, characters, send) : "All participating" }
-  </aside>
-`;
-
-const markForCharacter = (state, send) => html`
+const markForCharacter = (participants, state, send) => html`
   <div>
-    Mark text for Mildred:
+    Mark text for ${ characterSelector("mentionCharacters", participants, state, send) }
     <button onclick=${ () => send("markTextForCharacter", { characters: [{id: 1, name: "Mildred Mayfield"}] }) }>Mark</button>
   </div>
 `;
@@ -70,7 +44,7 @@ const loadedFragmentView = (state, send) => html`
 
         ${ addImageView(state, send) }
 
-        ${ markForCharacter(state, send) }
+        ${ markForCharacter(state.fragment.participants, state, send) }
 
         <div class="btn-row">
           <button class="btn" onclick=${ () => { send("saveFragment", { fragmentId: state.params.fragmentId }); }}>Save</button>

@@ -42,9 +42,15 @@ module.exports = {
         });
     },
 
-    updateMentionCharacter: (data, state) => {
+    toggleMentionCharacter: (data, state) => {
+        const mentionCharacters = state[data.path] || [];
+        const newMentionCharacterList =
+                  mentionCharacters.includes(data.value) ?
+                      mentionCharacters.filter(mc => mc !== data.value) :
+                      mentionCharacters.concat(data.value);
+
         return extend(state, {
-            [data.path]: data.value
+            [data.path]: newMentionCharacterList
         });
     },
 
