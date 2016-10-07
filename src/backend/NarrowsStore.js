@@ -276,6 +276,36 @@ class NarrowsStore {
             characterRow => characterRow.id
         );
     }
+
+    addParticipant(fragmentId, characterId) {
+        return this.getFragment(fragmentId).then(() => (
+            this.getFragmentParticipants(fragmentId)
+        )).then(participants => {
+            if (participants.some(p => p.id === characterId)) {
+                return participants;
+            }
+
+            return Q.ninvoke(
+                this.db,
+                "run",
+                `INSERT INTO reactions (fragment_id, character_id)
+                    VALUES (?, ?)`,
+                [fragmentId, characterId]
+            );
+        });
+    }
+
+    removeParticipant(fragmentId, characterId) {
+        return Q.ninvoke(
+            this.db,
+            "run",
+            `DELETE FROM reactions
+                  WHERE fragment_id = ? AND character_id = ?`,
+            [fragmentId, characterId]
+        ).then(() => (
+            this.getFragmentParticipants(fragmentId)
+        ));
+    }
 }
 
 export default NarrowsStore;

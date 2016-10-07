@@ -49,6 +49,8 @@ app.post("/api/narrations/:narrId/fragments", middlewares.apiAuth, endpoints.pos
 
 app.get("/api/fragments/:fgmtId", middlewares.apiAuth, endpoints.getFragment);
 app.put("/api/fragments/:fgmtId", middlewares.apiAuth, endpoints.postFragment);
+app.post("/api/fragments/:fgmtId/participants", middlewares.apiAuth, endpoints.postFragmentParticipants);
+app.delete("/api/fragments/:fgmtId/participants/:charId", middlewares.apiAuth, endpoints.deleteFragmentParticipant);
 
 app.get("/api/fragments/:fgmtId/:charToken", endpoints.getFragmentCharacter);
 app.put("/api/reactions/:fgmtId/:charToken", endpoints.putReaction);

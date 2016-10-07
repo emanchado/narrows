@@ -106,5 +106,46 @@ module.exports = {
     markTextForCharacter: (data, state, send, done) => {
         editor.markTextForCharacter(state.editor, data.characters);
         done();
+    },
+
+    addParticipant: (data, state, send, done) => {
+        const url = "/api/fragments/" + state.fragment.id + "/participants";
+
+        const xhr = new XMLHttpRequest();
+        xhr.open("POST", url);
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.addEventListener("load", function() {
+            const response = JSON.parse(this.responseText);
+
+            if (this.status >= 400) {
+                alert("Could not add participant: " + response.errorMessage);
+                done();
+                return;
+            }
+
+            send("addParticipantSuccess", data, done);
+        });
+        xhr.send(JSON.stringify(data.character));
+    },
+
+    removeParticipant: (data, state, send, done) => {
+        const url = "/api/fragments/" + state.fragment.id +
+                  "/participants/" + data.characterId;
+
+        const xhr = new XMLHttpRequest();
+        xhr.open("DELETE", url);
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.addEventListener("load", function() {
+            const response = JSON.parse(this.responseText);
+
+            if (this.status >= 400) {
+                alert("Could not remove participant: " + response.errorMessage);
+                done();
+                return;
+            }
+
+            send("removeParticipantSuccess", data, done);
+        });
+        xhr.send();
     }
 };

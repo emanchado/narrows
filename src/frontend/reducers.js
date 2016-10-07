@@ -40,5 +40,34 @@ module.exports = {
             editorNew: editor.create(editor.importText("")),
             fragment: { title: "" }
         });
+    },
+
+    updateMentionCharacter: (data, state) => {
+        return extend(state, {
+            [data.path]: data.value
+        });
+    },
+
+    addParticipantSuccess: (data, state) => {
+        const oldParticipants = state.fragment.participants;
+        const newParticipants = oldParticipants.concat(data.character);
+
+        return extend(state, {
+            fragment: extend(state.fragment, {
+                participants: newParticipants
+            })
+        });
+    },
+
+    removeParticipantSuccess: (data, state) => {
+        const oldParticipants = state.fragment.participants;
+        const newParticipants =
+                  oldParticipants.filter(p => p.id !== data.characterId);
+
+        return extend(state, {
+            fragment: extend(state.fragment, {
+                participants: newParticipants
+            })
+        });
     }
 };

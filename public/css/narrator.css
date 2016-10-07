@@ -67,12 +67,15 @@ main.page-aside section {
     font-size: 20px;
 }
 
-aside h2 {
+aside h2:first-child {
     margin-top: 0;
+}
+aside h2 {
+    margin-bottom: 1ex;
 }
 
 aside.participants {
-    width: 150px;
+    width: 180px;
     flex-shrink: 0;
 }
 aside.participants ul {

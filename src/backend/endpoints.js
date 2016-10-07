@@ -121,3 +121,39 @@ export function putReaction(req, res) {
         res.json({ errorMessage: "Could not save reaction: " + err});
     });
 }
+
+export function postFragmentParticipants(req, res) {
+    const fragmentId = req.params.fgmtId,
+          newParticipant = req.body;
+
+    store.addParticipant(fragmentId, newParticipant.id).then(participants => {
+        res.json({ participants });
+    }).catch(err => {
+        res.statusCode = 500;
+        res.json({ errorMessage: "Could not add participant: " + err});
+    });
+}
+
+export function postFragmentParticipants(req, res) {
+    const fragmentId = req.params.fgmtId,
+          newParticipant = req.body;
+
+    store.addParticipant(fragmentId, newParticipant.id).then(participants => {
+        res.json({ participants });
+    }).catch(err => {
+        res.statusCode = 500;
+        res.json({ errorMessage: "Could not add participant: " + err});
+    });
+}
+
+export function deleteFragmentParticipant(req, res) {
+    const fragmentId = req.params.fgmtId,
+          characterId = req.params.charId;
+
+    store.removeParticipant(fragmentId, characterId).then(participants => {
+        res.json({ participants });
+    }).catch(err => {
+        res.statusCode = 500;
+        res.json({ errorMessage: "Could not remove participant: " + err});
+    });
+}

@@ -11,12 +11,32 @@ const addImageView = (state, send) => html`
   </div>
 `;
 
-const participantListView = (fragmentId, participants) => html`
+const nonParticipantList = (participants, characters, send) => {
+    const nonParticipants =
+              characters.filter(ch => participants.every(p => p.id !== ch.id));
+
+    return html`
+  <ul>
+    ${ nonParticipants.map(np => html`
+        <li>${ np.name }
+          <img src="/img/add.png" onclick=${ () => send("addParticipant", { character: np }) } /></li>
+      `) }
+  </ul>
+`;
+};
+
+const participantListView = (fragment, characters, send) => html`
   <aside class="participants">
     <h2>Participants</h2>
     <ul>
-      ${ participants.map(p => html`<li><a href="/read/${ fragmentId }/${ p.token }">${ p.name }</a></li>`) }
+      ${ fragment.participants.map(p => html`
+          <li><a href="/read/${ fragment.id }/${ p.token }">${ p.name }</a>
+          <img onclick=${ () => send("removeParticipant", { characterId: p.id }) } src="/img/delete.png" /></li>
+        `) }
     </ul>
+
+    <h2>Other characters</h2>
+    ${ (fragment.participants.length < characters.length) ? nonParticipantList(fragment.participants, characters, send) : "All participating" }
   </aside>
 `;
 
@@ -58,7 +78,7 @@ const loadedFragmentView = (state, send) => html`
         </div>
       </section>
 
-      ${ participantListView(state.fragment.id, state.fragment.participants) }
+      ${ participantListView(state.fragment, state.narration.characters, send) }
     </main>
   </div>
 `;
@@ -76,6 +96,12 @@ const fragmentView = (state, prev, send) => {
         send("getFragment", { fragmentId: state.params.fragmentId });
         return loadingFragmentView(state, send);
     }
+
+    if (state.narration.id !== state.fragment.narrationId) {
+        send("getNarration", { narrationId: state.fragment.narrationId });
+        return loadingFragmentView(state, send);
+    }
+
     return loadedFragmentView(state, send);
 };
 

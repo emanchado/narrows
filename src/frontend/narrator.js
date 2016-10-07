@@ -15,7 +15,10 @@ app.model({
 
         narrator: null,
 
-        fragmentId: null,
+        narration: {
+            id: null,
+            characters: []
+        },
         fragment: {
             id: null,
             narrationId: null,
