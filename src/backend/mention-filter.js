@@ -1,5 +1,17 @@
 import util from "util";
 
+function merge(dst) {
+    const origins = Array.prototype.slice.call(arguments, 1);
+
+    origins.forEach(obj => {
+        Object.keys(obj).forEach(key => {
+            dst[key] = obj[key];
+        });
+    });
+
+    return dst;
+}
+
 function skipContentNotFor(paragraphContent, characterId) {
     if (!util.isArray(paragraphContent)) {
         return paragraphContent;
@@ -19,7 +31,7 @@ function skipContentNotFor(paragraphContent, characterId) {
 
 export function filter(documentObject, characterId) {
     const filteredContent = documentObject.content.map(para => {
-        return Object.assign(
+        return merge(
             {},
             para,
             { content: skipContentNotFor(para.content, characterId) }
@@ -32,7 +44,7 @@ export function filter(documentObject, characterId) {
         return para.content.length > 0;
     });
 
-    return Object.assign({}, documentObject, { content: filteredContent });
+    return merge({}, documentObject, { content: filteredContent });
 }
 
 export default { filter };

@@ -58,7 +58,7 @@ export function getFragmentCharacter(req, res) {
         res.statusCode = 404;
         res.json({
             errorMessage: `Cannot find fragment ${ fragmentId }` +
-                ` with character ${ characterToken }`
+                ` with character ${ characterToken }: ${ err }`
         });
     });
 }
