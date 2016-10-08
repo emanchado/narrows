@@ -234,8 +234,9 @@ class NarrowsStore {
         return Q.ninvoke(
             this.db,
             "get",
-            "SELECT main_text AS text FROM reactions WHERE character_id = ?",
-            characterId
+            `SELECT main_text AS text FROM reactions
+              WHERE fragment_id = ? AND character_id = ?`,
+            [id, characterId]
         ).then(
             row => row ? row.text : null
         );
