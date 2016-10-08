@@ -13,7 +13,7 @@ const narrationDetailView = (narration, send) => html`
 
 const narrationView = (state, prev, send) => html`
   <main onload=${ () => send("getNarration", { narrationId: state.params.narrationId }) }>
-    ${ state.narration ? narrationDetailView(state.narration, send) : 'Loading...' }
+    ${ state.narration && state.narration.id ? narrationDetailView(state.narration, send) : 'Loading...' }
   </main>
 `;
 
