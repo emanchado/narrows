@@ -6,6 +6,7 @@ module.exports = {
     },
 
     files: {
-        path: 'files/'
+        path: 'files/',
+        tmpPath: '/tmp/'
     }
 };

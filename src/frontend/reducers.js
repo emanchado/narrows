@@ -75,5 +75,39 @@ module.exports = {
                 participants: newParticipants
             })
         });
+    },
+
+    updateSelectedAudio: (data, state) => {
+        return extend(state, {
+            fragment: extend(state.fragment, {
+                audio: data.value
+            })
+        });
+    },
+
+    updateSelectedBackgroundImage: (data, state) => {
+        return extend(state, {
+            fragment: extend(state.fragment, {
+                backgroundImage: data.value
+            })
+        });
+    },
+
+    receiveMediaFileResponse: (data, state) => {
+        const type = data.type;
+        const fragmentProperty = type === "images" ?
+                  "backgroundImage" : "audio";
+
+        return extend(state, {
+            narration: extend(state.narration, {
+                files: extend(state.narration.files, {
+                    [type]: state.narration.files[type].concat(data.name)
+                })
+            }),
+
+            fragment: extend(state.fragment, {
+                [fragmentProperty]: data.name
+            })
+        });
     }
 };

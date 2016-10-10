@@ -1,12 +1,15 @@
 TODO
 ====
 
-* Add some shitty buttons for now for the mentions
+* Make some way to preview fragments for different characters
 * Really wait until everything is loaded before showing the "Start" button
 
 Later
 -----
 
+* Why does Opera for Android not start the music when it's on, and
+  effectively inverts the audio toggle functionality??
+* Refactor the reader app, maybe integrate it with the rest somehow?
 * Allow narrators to change password, and create more narrators
 * Maybe add an "admin" role to that not all narrators can create users?
 * Show background information or whatever to players

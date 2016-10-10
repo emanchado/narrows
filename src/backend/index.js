@@ -46,9 +46,10 @@ app.all("/fragments/:fragmentId", middlewares.auth, function(req, res) {
 app.get("/api/narrations/:narrId", middlewares.apiAuth, endpoints.getNarration);
 app.get("/api/narrations/:narrId/fragments", middlewares.apiAuth, endpoints.getNarrationFragments);
 app.post("/api/narrations/:narrId/fragments", middlewares.apiAuth, endpoints.postNewFragment);
+app.post("/api/narrations/:narrId/files", middlewares.apiAuth, endpoints.postNarrationFiles);
 
 app.get("/api/fragments/:fgmtId", middlewares.apiAuth, endpoints.getFragment);
-app.put("/api/fragments/:fgmtId", middlewares.apiAuth, endpoints.postFragment);
+app.put("/api/fragments/:fgmtId", middlewares.apiAuth, endpoints.putFragment);
 app.post("/api/fragments/:fgmtId/participants", middlewares.apiAuth, endpoints.postFragmentParticipants);
 app.delete("/api/fragments/:fgmtId/participants/:charId", middlewares.apiAuth, endpoints.deleteFragmentParticipant);
 

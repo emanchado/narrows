@@ -54,6 +54,10 @@ input, .ProseMirror-content {
     color: #eee;
 }
 
+.btn-small {
+    font-size: 12px;
+}
+
 main.page-aside {
     display: flex;
 }
@@ -74,11 +78,11 @@ aside h2 {
     margin-bottom: 1ex;
 }
 
-aside.participants {
+aside {
     width: 180px;
     flex-shrink: 0;
 }
-aside.participants ul {
+aside ul {
     margin: 0;
     padding-left: 20px;
 
@@ -117,3 +121,22 @@ aside.participants ul {
 .mention-1.mention-2.mention-4.mention-5 { background: linear-gradient(to top, #eaa, #aae, #eae, #eea); }
 .mention-1.mention-3.mention-4.mention-5 { background: linear-gradient(to top, #eaa, #aea, #eae, #eea); }
 .mention-2.mention-3.mention-4.mention-5 { background: linear-gradient(to top, #aae, #aea, #eae, #eea); }
+
+.audio-selector select {
+    display: block;
+    margin-bottom: 0.5ex;
+}
+
+.bigger {
+    font-size: 150%;
+}
+
+.image-selector select {
+    display: block;
+    margin-bottom: 0.5ex;
+}
+
+.tiny-image-preview {
+    max-width: 100px;
+    max-height: 100px;
+}

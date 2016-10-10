@@ -15,7 +15,7 @@ const nonParticipantList = (participants, characters, send) => {
 };
 
 module.exports = (fragment, characters, send) => html`
-  <aside class="participants">
+  <div class="participants">
     <h2>Participants</h2>
     <ul>
       ${ fragment.participants.map(p => html`
@@ -25,6 +25,6 @@ module.exports = (fragment, characters, send) => html`
     </ul>
 
     <h2>Other characters</h2>
-    ${ (fragment.participants.length < characters.length) ? nonParticipantList(fragment.participants, characters, send) : "All participating" }
-  </aside>
+    ${ (fragment.participants.length < characters.length) ? nonParticipantList(fragment.participants, characters, send) : html`<em>No other characters.</em>` }
+  </div>
 `;

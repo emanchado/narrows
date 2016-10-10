@@ -1,5 +1,7 @@
 import path from "path";
 import config from "config";
+import Q from "q";
+import formidable from "formidable";
 
 import NarrowsStore from "./NarrowsStore";
 import mentionFilter from "./mention-filter";
@@ -76,7 +78,7 @@ export function getNarrationFragments(req, res) {
     });
 }
 
-export function postFragment(req, res) {
+export function putFragment(req, res) {
     const fragmentId = parseInt(req.params.fgmtId, 10);
 
     req.body.text = JSON.stringify(req.body.text);
@@ -85,9 +87,12 @@ export function postFragment(req, res) {
             (new Date().toISOString()) : null;
     }
     store.updateFragment(fragmentId, req.body).then(fragment => {
-        res.send(fragment);
+        res.json(fragment);
     }).catch(err => {
-        res.send("There was a problem updating: " + err);
+        res.statusCode = 500;
+        res.json({
+            errorMessage: `There was a problem updating: ${ err }`
+        });
     });
 }
 
@@ -98,7 +103,32 @@ export function postNewFragment(req, res) {
     store.createFragment(narrationId, req.body).then(fragmentData => {
         res.json(fragmentData);
     }).catch(err => {
-        res.send("There was a problem: " + err);
+        res.statusCode = 500;
+        res.json({
+            errorMessage: `There was a problem: ${ err }`
+        });
+    });
+}
+
+export function postNarrationFiles(req, res) {
+    const narrationId = parseInt(req.params.narrId, 10);
+
+    const form = new formidable.IncomingForm();
+    form.uploadDir = config.files.tmpPath;
+
+    Q.ninvoke(form, "parse", req).spread(function(fields, files) {
+        var uploadedFileInfo = files.file,
+            filename = path.basename(uploadedFileInfo.name),
+            tmpPath = uploadedFileInfo.path;
+
+        return store.addMediaFile(narrationId, filename, tmpPath);
+    }).then(fileInfo => {
+        res.json(fileInfo);
+    }).catch(err => {
+        res.statusCode = 500;
+        res.json({
+            errorMessage: `Cannot add new media file: ${ err }`
+        });
     });
 }
 

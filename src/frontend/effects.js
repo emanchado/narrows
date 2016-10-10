@@ -4,6 +4,33 @@ const editor = require("./editor");
 const extend = require("./extend");
 const narrowsSchema = require("./narrows-schema");
 
+function updateFragment(fragment, editor, done, extra) {
+    extra = extra || {};
+
+    const url = "/api/fragments/" + fragment.id;
+    const xhr = new XMLHttpRequest();
+    xhr.open("PUT", url);
+    xhr.setRequestHeader("Content-Type", "application/json");
+    xhr.addEventListener("load", function() {
+        const response = JSON.parse(this.responseText);
+
+        if (this.status >= 400) {
+            alert("Could not publish fragment text: " + response.errorMessage);
+        }
+
+        done();
+    });
+    const jsonDoc = editor.doc.toJSON();
+
+    const update = {
+        title: fragment.title,
+        text: jsonDoc,
+        audio: fragment.audio,
+        backgroundImage: fragment.backgroundImage
+    };
+    xhr.send(JSON.stringify(extend(update, extra)));
+}
+
 module.exports = {
     getNarration: (data, state, send, done) => {
         const narrationUrl = "/api/narrations/" + data.narrationId;
@@ -34,42 +61,16 @@ module.exports = {
     },
 
     saveFragment: (data, state, send, done) => {
-        const url = "/api/fragments/" + data.fragmentId;
-
-        const xhr = new XMLHttpRequest();
-        xhr.open("PUT", url);
-        xhr.setRequestHeader("Content-Type", "application/json");
-        xhr.addEventListener("load", function() {
-            const response = JSON.parse(this.responseText);
-
-            if (this.status >= 400) {
-                alert("Could not save fragment text: " + response.errorMessage);
-                return;
-            }
-        });
-        const jsonDoc = state.editor.doc.toJSON();
-        xhr.send(JSON.stringify({ title: state.fragment.title,
-                                  text: jsonDoc }));
+        updateFragment(state.fragment,
+                       state.editor,
+                       done);
     },
 
     publishFragment: (data, state, send, done) => {
-        const url = "/api/fragments/" + data.fragmentId;
-
-        const xhr = new XMLHttpRequest();
-        xhr.open("PUT", url);
-        xhr.setRequestHeader("Content-Type", "application/json");
-        xhr.addEventListener("load", function() {
-            const response = JSON.parse(this.responseText);
-
-            if (this.status >= 400) {
-                alert("Could not publish fragment text: " + response.errorMessage);
-                return;
-            }
-        });
-        const jsonDoc = state.editor.doc.toJSON();
-        xhr.send(JSON.stringify({ title: state.fragment.title,
-                                  text: jsonDoc,
-                                  published: true }));
+        updateFragment(state.fragment,
+                       state.editor,
+                       done,
+                       { published: true });
     },
 
     saveNewFragment: (data, state, send, done) => {
@@ -151,5 +152,47 @@ module.exports = {
             send("removeParticipantSuccess", data, done);
         });
         xhr.send();
+    },
+
+    playPausePreview: (data, state, send, done) => {
+        const audioEl = document.getElementById(data.id);
+
+        if (audioEl.paused) {
+            audioEl.play();
+        } else {
+            audioEl.pause();
+        }
+
+        done();
+    },
+
+    chooseMediaFile: (data, state, send, done) => {
+        const fileInput = document.getElementById("new-media-file");
+
+        fileInput.click();
+    },
+
+    addMediaFile: (data, state, send, done) => {
+        const fileInput = document.getElementById("new-media-file");
+        const url = "/api/narrations/" + state.fragment.narrationId + "/files";
+
+        const xhr = new XMLHttpRequest();
+        xhr.open("POST", url);
+        // xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.addEventListener("load", function() {
+            const response = JSON.parse(this.responseText);
+
+            if (this.status >= 400) {
+                alert("Could not add media file: " + response.errorMessage);
+                done();
+                return;
+            }
+
+            send("receiveMediaFileResponse", response, done);
+        });
+
+        const formData = new FormData();
+        formData.append("file", fileInput.files[0]);
+        xhr.send(formData);
     }
 };

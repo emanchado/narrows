@@ -1,3 +1,7 @@
+import fs from "fs";
+import path from "path";
+
+import config from "config";
 import sqlite3 from "sqlite3";
 import Q from "q";
 
@@ -12,6 +16,8 @@ const JSON_TO_DB = {
     text: "main_text",
     published: "published"
 };
+
+const AUDIO_REGEXP = new RegExp("\.mp3$", "i");
 
 function convertToDb(fieldName) {
     if (!(fieldName in JSON_TO_DB)) {
@@ -51,6 +57,21 @@ class NarrowsStore {
         return upgradeDb(this.db, migrations);
     }
 
+    _getNarrationFiles(narrationId) {
+        const filesDir = path.join(config.files.path, narrationId.toString());
+
+        return Q.nfcall(fs.readdir, filesDir).then(files => {
+            const types = {images: [], audio: []};
+
+            files.forEach(file => {
+                const type = AUDIO_REGEXP.test(file) ? "audio" : "images";
+                types[type].push(file);
+            });
+
+            return types;
+        });
+    }
+
     getNarration(id) {
         return Q.ninvoke(
             this.db,
@@ -62,15 +83,19 @@ class NarrowsStore {
                 throw new Error("Cannot find narration " + id);
             }
 
-            return Q.ninvoke(
-                this.db,
-                "all",
-                `SELECT id, name, token
-                   FROM characters
-                  WHERE narration_id = ?`,
-                id
-            ).then(characters => {
+            return Q.all([
+                Q.ninvoke(
+                    this.db,
+                    "all",
+                    `SELECT id, name, token
+                       FROM characters
+                      WHERE narration_id = ?`,
+                    id
+                ),
+                this._getNarrationFiles(id)
+            ]).spread((characters, files) => {
                 narrationInfo.characters = characters;
+                narrationInfo.files = files;
                 return narrationInfo;
             });
         });
@@ -306,6 +331,21 @@ class NarrowsStore {
         ).then(() => (
             this.getFragmentParticipants(fragmentId)
         ));
+    }
+
+    /**
+     * Adds a media file to the given narration, specifying its
+     * filename and a temporary path where the file lives.
+     */
+    addMediaFile(narrationId, filename, tmpPath) {
+        const filesDir = path.join(config.files.path, narrationId.toString());
+        const finalPath = path.join(filesDir, filename);
+
+        return Q.nfcall(fs.rename, tmpPath, finalPath).then(() => {
+            const type = AUDIO_REGEXP.test(filename) ? "audio" : "images";
+
+            return { name: filename, type: type };
+        });
     }
 }
 

@@ -4,6 +4,8 @@ const extend = require("../extend");
 
 const characterSelector = require("../components/characterSelector");
 const participantListView = require("../components/participantListView");
+const backgroundImageSelector = require("../components/backgroundImageSelector");
+const audioSelector = require("../components/audioSelector");
 
 const addImageView = (state, send) => html`
   <div class="add-image">
@@ -52,7 +54,22 @@ const loadedFragmentView = (state, send) => html`
         </div>
       </section>
 
-      ${ participantListView(state.fragment, state.narration.characters, send) }
+      <aside>
+        ${ participantListView(state.fragment, state.narration.characters, send) }
+
+        <h2>Media</h2>
+        ${ backgroundImageSelector(state.fragment, state.narration.files.images, send) }
+
+        ${ audioSelector(state.fragment, state.narration.files.audio, send) }
+
+        <button class="btn btn-small btn-default"
+                onclick=${ () => send("chooseMediaFile") }>Add files</button>
+        <input type="file"
+               style="display: none"
+               id="new-media-file"
+               name="file"
+               onchange=${ () => send("addMediaFile") } />
+      </aside>
     </main>
   </div>
 `;

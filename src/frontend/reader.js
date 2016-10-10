@@ -211,7 +211,7 @@ const errorView = (error, send) => html`
 
 function backgroundImageStyle(state) {
     const imageUrl = state.fragment ?
-              ("/static/narrations/3/" + state.fragment.backgroundImage) : '';
+              ("/static/narrations/" + state.fragment.narrationId + "/" + state.fragment.backgroundImage) : '';
     const filter = `blur(${ state.backgroundBlurriness || 0 }px)`;
 
     return `background-image: url(${ imageUrl }); ` +
@@ -236,7 +236,7 @@ const fragmentView = (state, prev, send) => html`
            alt="${ state.musicPlaying ? "Stop" : "Start" } music"
            onclick=${() => { send("playPauseMusic"); }} />
       <audio id="background-music"
-             src="${ state.fragment ? ("/static/narrations/3/" + state.fragment.audio) : '' }"
+             src="${ state.fragment ? ("/static/narrations/" + state.fragment.narrationId + "/" + state.fragment.audio) : '' }"
              loop="true"
              preload="${ state.backgroundMusic ? "auto" : "none" }"></audio>
 
@@ -249,7 +249,6 @@ const fragmentView = (state, prev, send) => html`
       <div class="player-reply ${ state.reactionSent ? "invisible" : "" }">
         <textarea
            placeholder="How do you react? Try to consider several possibilities…"
-           cols="80"
            rows="10"
            value=${ state.fragment && state.fragment.reaction }
            oninput=${ e => { send("updateReactionText", { value: e.target.value }); } }>${ state.fragment && state.fragment.reaction }</textarea>
