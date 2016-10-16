@@ -1,16 +1,5 @@
 import util from "util";
-
-function merge(dst) {
-    const origins = Array.prototype.slice.call(arguments, 1);
-
-    origins.forEach(obj => {
-        Object.keys(obj).forEach(key => {
-            dst[key] = obj[key];
-        });
-    });
-
-    return dst;
-}
+import merge from "./merge";
 
 function skipContentNotFor(paragraphContent, characterId) {
     if (!util.isArray(paragraphContent)) {

@@ -11,7 +11,7 @@ module.exports = function backgroundImageSelector(fragment, images, send) {
     </select>
 
     <em>Preview</em>:<br>
-    <img class="tiny-image-preview" src="/static/narrations/${ fragment.narrationId }/${ fragment.backgroundImage }" />
+    <img class="tiny-image-preview" src="/static/narrations/${ fragment.narrationId }/background-images/${ fragment.backgroundImage }" />
   </div>
 `;
 };

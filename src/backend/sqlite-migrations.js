@@ -23,10 +23,10 @@ function markMigrationApplied(db, migrationName) {
 }
 
 function upgradeDb(db, migrations) {
-    const migrationPromise = Q(true);
+    let migrationPromise = Q(true);
 
     migrations.forEach(migration => {
-        migrationPromise.then(() => {
+        migrationPromise = migrationPromise.then(() => {
             return migrationApplied(db, migration.name).then(result => {
                 if (!result) {
                     return migration(db).then(() =>

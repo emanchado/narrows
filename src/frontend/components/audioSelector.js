@@ -12,7 +12,7 @@ module.exports = function audioSelector(fragment, audioFiles, send) {
 
     <button class="btn btn-small"
             onclick=${ () => send("playPausePreview", { id: "audio-preview" }) }>Preview <span class="bigger">♫</span></button>
-    <audio id="audio-preview" src="/static/narrations/${ fragment.narrationId }/${ fragment.audio }"></audio>
+    <audio id="audio-preview" src="/static/narrations/${ fragment.narrationId }/audio/${ fragment.audio }"></audio>
   </div>
 `;
 };

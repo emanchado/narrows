@@ -56,18 +56,6 @@ const MIGRATIONS = [
                VALUES ('narrator',
                        '$2a$04$NrMPbG7wG26EwqJOun.SLOELYGOmbFs5aECGxhl8suPfVY049NZdG')`
         ]);
-    },
-
-    function addFragmentDateFields(db) {
-        return statementListPromise(db, [
-            `ALTER TABLE fragments
-               ADD COLUMN created timestamp NOT NULL DEFAULT current_timestamp`,
-            `ALTER TABLE fragments ADD COLUMN updated integer`,
-            `ALTER TABLE fragments ADD COLUMN published integer`,
-            `UPDATE fragments SET created = strftime("%s", "now"),
-                                  updated = strftime("%s", "now"),
-                                  published = strftime("%s", "now")`
-        ]);
     }
 ];
 

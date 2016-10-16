@@ -58,7 +58,7 @@ const loadedFragmentView = (state, send) => html`
         ${ participantListView(state.fragment, state.narration.characters, send) }
 
         <h2>Media</h2>
-        ${ backgroundImageSelector(state.fragment, state.narration.files.images, send) }
+        ${ backgroundImageSelector(state.fragment, state.narration.files.backgroundImages, send) }
 
         ${ audioSelector(state.fragment, state.narration.files.audio, send) }
 

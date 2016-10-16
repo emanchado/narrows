@@ -99,7 +99,6 @@ export function putFragment(req, res) {
 export function postNewFragment(req, res) {
     const narrationId = parseInt(req.params.narrId, 10);
 
-    req.body.text = JSON.stringify(req.body.text);
     store.createFragment(narrationId, req.body).then(fragmentData => {
         res.json(fragmentData);
     }).catch(err => {

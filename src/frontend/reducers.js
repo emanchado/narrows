@@ -95,7 +95,7 @@ module.exports = {
 
     receiveMediaFileResponse: (data, state) => {
         const type = data.type;
-        const fragmentProperty = type === "images" ?
+        const fragmentProperty = type === "backgroundImages" ?
                   "backgroundImage" : "audio";
 
         return extend(state, {

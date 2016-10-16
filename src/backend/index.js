@@ -56,7 +56,7 @@ app.delete("/api/fragments/:fgmtId/participants/:charId", middlewares.apiAuth, e
 app.get("/api/fragments/:fgmtId/:charToken", endpoints.getFragmentCharacter);
 app.put("/api/reactions/:fgmtId/:charToken", endpoints.putReaction);
 
-app.get("/static/narrations/:narrId/:filename", endpoints.getStaticFile);
+app.use("/static/narrations", express.static(config.files.path));
 
 app.listen(config.port, function () {
   console.log(`Example app listening on port ${ config.port }!`);

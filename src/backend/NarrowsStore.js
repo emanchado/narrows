@@ -1,4 +1,4 @@
-import fs from "fs";
+import fs from "fs-extra";
 import path from "path";
 
 import config from "config";
@@ -7,6 +7,7 @@ import Q from "q";
 
 import upgradeDb from "./sqlite-migrations";
 import migrations from "./migrations";
+import merge from "./merge";
 
 const JSON_TO_DB = {
     id: "id",
@@ -14,7 +15,9 @@ const JSON_TO_DB = {
     audio: "audio",
     backgroundImage: "background_image",
     text: "main_text",
-    published: "published"
+    published: "published",
+    defaultBackgroundImage: "default_background_image",
+    defaultAudio: "default_audio"
 };
 
 const AUDIO_REGEXP = new RegExp("\.mp3$", "i");
@@ -38,12 +41,20 @@ function promoteBlockImages(block) {
 }
 
 function fixBlockImages(jsonDoc) {
-    if (!jsonDoc) {
+    if (!jsonDoc || !jsonDoc.content) {
         return jsonDoc;
     }
 
     jsonDoc.content = jsonDoc.content.map(promoteBlockImages);
     return jsonDoc;
+}
+
+/**
+ * Return a promise that returns the files in a directory. If the
+ * directory doesn't exist, simply return an empty array.
+ */
+function filesInDir(dir) {
+    return Q.nfcall(fs.readdir, dir).catch(() => []);
 }
 
 class NarrowsStore {
@@ -57,18 +68,39 @@ class NarrowsStore {
         return upgradeDb(this.db, migrations);
     }
 
+    createNarration(props) {
+        const deferred = Q.defer();
+
+        const fields = Object.keys(props).map(convertToDb);
+
+        this.db.run(
+            `INSERT INTO narrations (${ fields.join(", ") })
+                VALUES (${ fields.map(() => "?").join(", ") })`,
+            Object.keys(props).map(f => props[f]),
+            function(err) {
+                if (err) {
+                    deferred.reject(err);
+                    return;
+                }
+
+                const finalNarration = merge({ id: this.lastID },
+                                             props);
+                deferred.resolve(finalNarration);
+            }
+        );
+
+        return deferred.promise;
+    }
+
     _getNarrationFiles(narrationId) {
         const filesDir = path.join(config.files.path, narrationId.toString());
 
-        return Q.nfcall(fs.readdir, filesDir).then(files => {
-            const types = {images: [], audio: []};
-
-            files.forEach(file => {
-                const type = AUDIO_REGEXP.test(file) ? "audio" : "images";
-                types[type].push(file);
-            });
-
-            return types;
+        return Q.all([
+            filesInDir(path.join(filesDir, "background-images")),
+            filesInDir(path.join(filesDir, "audio")),
+            filesInDir(path.join(filesDir, "images"))
+        ]).spread((backgroundImages, audio, images) => {
+            return { backgroundImages, audio, images };
         });
     }
 
@@ -76,7 +108,9 @@ class NarrowsStore {
         return Q.ninvoke(
             this.db,
             "get",
-            "SELECT * FROM narrations WHERE id = ?",
+            `SELECT id, title, default_audio AS defaultAudio,
+                    default_background_image AS defaultBackgroundImage
+               FROM narrations WHERE id = ?`,
             id
         ).then(narrationInfo => {
             if (!narrationInfo) {
@@ -138,10 +172,10 @@ class NarrowsStore {
     }
 
     _insertParticipants(id, participantIds) {
-        const promise = Q(true);
+        let promise = Q(true);
 
         participantIds.forEach(pId => {
-            promise.then(() => {
+            promise = promise.then(() => {
                 return Q.ninvoke(
                     this.db,
                     "run",
@@ -161,7 +195,7 @@ class NarrowsStore {
             "run",
             "DELETE FROM fragments WHERE id = ?",
             id
-        );
+        ).catch(err => true);
     }
 
     /**
@@ -179,13 +213,25 @@ class NarrowsStore {
             throw new Error("Cannot create a new fragment without participants");
         }
 
-        const basicProps = {};
-        Object.keys(JSON_TO_DB).forEach(field => {
-            if (field in fragmentProps) {
-                basicProps[field] = fragmentProps[field];
-            }
-        });
+        return this.getNarration(narrationId).then(narration => {
+            const basicProps = {
+                backgroundImage: narration.defaultBackgroundImage,
+                audio: narration.defaultAudio
+            };
+            Object.keys(JSON_TO_DB).forEach(field => {
+                if (field in fragmentProps) {
+                    basicProps[field] = fragmentProps[field];
+                }
+            });
+            basicProps.text = JSON.stringify(basicProps.text);
 
+            return this._insertFragment(narrationId,
+                                        basicProps,
+                                        fragmentProps.participants);
+        });
+    }
+
+    _insertFragment(narrationId, basicProps, participants) {
         const deferred = Q.defer();
         const fields = Object.keys(basicProps).map(convertToDb),
               fieldString = fields.join(", "),
@@ -206,12 +252,12 @@ class NarrowsStore {
 
                 const newFragmentId = this.lastID;
 
-                self._insertParticipants(newFragmentId, fragmentProps.participants).then(() => {
+                self._insertParticipants(newFragmentId, participants).then(() => {
                     return self.getFragment(newFragmentId);
                 }).then(fragment => {
                     deferred.resolve(fragment);
                 }).catch(err => {
-                    return this.deleteFragment(newFragmentId).then(() => {
+                    return self.deleteFragment(newFragmentId).then(() => {
                         deferred.reject(err);
                     });
                 });
@@ -339,10 +385,11 @@ class NarrowsStore {
      */
     addMediaFile(narrationId, filename, tmpPath) {
         const filesDir = path.join(config.files.path, narrationId.toString());
-        const finalPath = path.join(filesDir, filename);
+        const type = AUDIO_REGEXP.test(filename) ? "audio" : "backgroundImages";
+        const typeDir = type === "audio" ? "audio" : "background-images";
+        const finalPath = path.join(filesDir, typeDir, filename);
 
-        return Q.nfcall(fs.rename, tmpPath, finalPath).then(() => {
-            const type = AUDIO_REGEXP.test(filename) ? "audio" : "images";
+        return Q.nfcall(fs.move, tmpPath, finalPath).then(() => {
 
             return { name: filename, type: type };
         });
