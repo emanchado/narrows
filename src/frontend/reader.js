@@ -211,7 +211,7 @@ const errorView = (error, send) => html`
 
 function backgroundImageStyle(state) {
     const imageUrl = state.fragment ?
-              ("/static/narrations/" + state.fragment.narrationId + "/" + state.fragment.backgroundImage) : '';
+              ("/static/narrations/" + state.fragment.narrationId + "/background-images/" + state.fragment.backgroundImage) : '';
     const filter = `blur(${ state.backgroundBlurriness || 0 }px)`;
 
     return `background-image: url(${ imageUrl }); ` +
@@ -236,7 +236,7 @@ const fragmentView = (state, prev, send) => html`
            alt="${ state.musicPlaying ? "Stop" : "Start" } music"
            onclick=${() => { send("playPauseMusic"); }} />
       <audio id="background-music"
-             src="${ state.fragment ? ("/static/narrations/" + state.fragment.narrationId + "/" + state.fragment.audio) : '' }"
+             src="${ state.fragment ? ("/static/narrations/" + state.fragment.narrationId + "/audio/" + state.fragment.audio) : '' }"
              loop="true"
              preload="${ state.backgroundMusic ? "auto" : "none" }"></audio>
 
