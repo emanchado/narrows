@@ -54,10 +54,12 @@ app.post("/api/chapters/:chptId/participants", middlewares.apiAuth, endpoints.po
 app.delete("/api/chapters/:chptId/participants/:charId", middlewares.apiAuth, endpoints.deleteChapterParticipant);
 
 app.get("/api/chapters/:chptId/:charToken", endpoints.getChapterCharacter);
-app.put("/api/reactions/:chptId/:charToken", endpoints.putReaction);
+app.put("/api/reactions/:chptId/:charToken", endpoints.putReactionCharacter);
+app.get("/api/messages/:chptId/:charToken", endpoints.getMessagesCharacter);
+app.post("/api/messages/:chptId/:charToken", endpoints.postMessageCharacter);
 
 app.use("/static/narrations", express.static(config.files.path));
 
 app.listen(config.port, function () {
-  console.log(`Example app listening on port ${ config.port }!`);
+  console.log(`Narrows app listening on port ${ config.port }!`);
 });

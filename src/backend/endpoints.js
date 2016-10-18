@@ -5,6 +5,7 @@ import formidable from "formidable";
 
 import NarrowsStore from "./NarrowsStore";
 import mentionFilter from "./mention-filter";
+import messageUtils from "./message-utils";
 
 const store = new NarrowsStore(config.db.path, config.files.path);
 store.connect();
@@ -15,8 +16,9 @@ export function getNarration(req, res) {
     store.getNarration(narrationId).then(narrationData => {
         res.json(narrationData);
     }).catch(err => {
-        res.statusCode = 404;
-        res.json({ errorMessage: "Cannot find narration " + narrationId });
+        res.status(404).json({
+            errorMessage: `Cannot find narration ${ narrationId }`
+        });
     });
 }
 
@@ -26,8 +28,7 @@ export function getChapter(req, res) {
     store.getChapter(chapterId).then(chapterData => {
         res.json(chapterData);
     }).catch(err => {
-        res.statusCode = 404;
-        res.json({
+        res.status(404).json({
             errorMessage: `Cannot find chapter ${ chapterId }: ${ err }`
         });
     });
@@ -57,8 +58,7 @@ export function getChapterCharacter(req, res) {
             });
         });
     }).catch(err => {
-        res.statusCode = 404;
-        res.json({
+        res.status(404).json({
             errorMessage: `Cannot find chapter ${ chapterId }` +
                 ` with character ${ characterToken }: ${ err }`
         });
@@ -71,8 +71,7 @@ export function getNarrationChapters(req, res) {
     store.getNarrationChapters(narrationId).then(chapterListData => {
         res.json({ chapters: chapterListData });
     }).catch(err => {
-        res.statusCode = 404;
-        res.json({
+        res.status(404).json({
             errorMessage: `Cannot find chapters for narration ${ narrationId }: ${ err }`
         });
     });
@@ -89,8 +88,7 @@ export function putChapter(req, res) {
     store.updateChapter(chapterId, req.body).then(chapter => {
         res.json(chapter);
     }).catch(err => {
-        res.statusCode = 500;
-        res.json({
+        res.status(500).json({
             errorMessage: `There was a problem updating: ${ err }`
         });
     });
@@ -102,8 +100,7 @@ export function postNewChapter(req, res) {
     store.createChapter(narrationId, req.body).then(chapterData => {
         res.json(chapterData);
     }).catch(err => {
-        res.statusCode = 500;
-        res.json({
+        res.status(500).json({
             errorMessage: `There was a problem: ${ err }`
         });
     });
@@ -124,8 +121,7 @@ export function postNarrationFiles(req, res) {
     }).then(fileInfo => {
         res.json(fileInfo);
     }).catch(err => {
-        res.statusCode = 500;
-        res.json({
+        res.status(500).json({
             errorMessage: `Cannot add new media file: ${ err }`
         });
     });
@@ -136,7 +132,7 @@ export function getStaticFile(req, res) {
                  { root: config.files.path });
 }
 
-export function putReaction(req, res) {
+export function putReactionCharacter(req, res) {
     const chapterId = req.params.chptId,
           characterToken = req.params.charToken,
           reactionText = req.body.text;
@@ -146,8 +142,56 @@ export function putReaction(req, res) {
             res.json({ chapterId, characterId, reactionText });
         });
     }).catch(err => {
-        res.statusCode = 500;
-        res.json({ errorMessage: "Could not save reaction: " + err});
+        res.status(500).json({
+            errorMessage: `Could not save reaction: ${ err }`
+        });
+    });
+}
+
+export function getMessagesCharacter(req, res) {
+    const chapterId = req.params.chptId,
+          characterToken = req.params.charToken;
+
+    store.getCharacterId(characterToken).then(characterId => {
+        return store.getChapterMessages(chapterId, characterId).then(messages => {
+            res.json({
+                messageThreads: messageUtils.threadMessages(messages),
+                characterId: characterId
+            });
+        });
+    }).catch(err => {
+        res.status(500).json({
+            errorMessage: `Could not get messages: ${ err }`
+        });
+    });
+}
+
+export function postMessageCharacter(req, res) {
+    const chapterId = req.params.chptId,
+          characterToken = req.params.charToken,
+          messageText = req.body.text,
+          messageRecipients = req.body.recipients || [];
+
+    // TODO: Check that the character really belongs to this narration
+
+    store.getCharacterId(characterToken).then(characterId => {
+        return store.addMessage(
+            chapterId,
+            characterId,
+            messageText,
+            messageRecipients
+        ).then(() => {
+            return store.getChapterMessages(chapterId, characterId);
+        }).then(messages => {
+            res.json({
+                messageThreads: messageUtils.threadMessages(messages),
+                characterId: characterId
+            });
+        });
+    }).catch(err => {
+        res.status(500).json({
+            errorMessage: `Could not post message: ${ err }`
+        });
     });
 }
 
@@ -158,8 +202,9 @@ export function postChapterParticipants(req, res) {
     store.addParticipant(chapterId, newParticipant.id).then(participants => {
         res.json({ participants });
     }).catch(err => {
-        res.statusCode = 500;
-        res.json({ errorMessage: "Could not add participant: " + err});
+        res.status(500).json({
+            errorMessage: `Could not add participant: ${ err }`
+        });
     });
 }
 
@@ -170,7 +215,8 @@ export function deleteChapterParticipant(req, res) {
     store.removeParticipant(chapterId, characterId).then(participants => {
         res.json({ participants });
     }).catch(err => {
-        res.statusCode = 500;
-        res.json({ errorMessage: "Could not remove participant: " + err});
+        res.status(500).json({
+            errorMessage: `Could not remove participant: ${ err }`
+        });
     });
 }

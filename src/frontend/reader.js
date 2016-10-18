@@ -43,11 +43,11 @@ app.model({
         banner: null
     },
     reducers: {
-        receiveChapterData: (chapterData, state) => {
+        receiveChapter: (chapterData, state) => {
             return extend(state, { chapter: chapterData });
         },
 
-        chapterDataFailure: (info, state) => {
+        getChapterFailure: (info, state) => {
             return extend(state, { error: `Failed fetching chapter, status code: ${ info.statusCode }` });
         },
 
@@ -79,7 +79,7 @@ app.model({
             return extend(state, { musicPlaying: !state.musicPlaying });
         },
 
-        reactionSendingProblem: (data, state) => {
+        reactionSendingFailure: (data, state) => {
             return extend(
                 state,
                 { banner: {
@@ -90,18 +90,60 @@ app.model({
             );
         },
 
-        reactionSendingSuccess: (data, state) => {
+        receiveReactionResult: (data, state) => {
             return extend(state, { banner: { type: "success",
                                              text: "Reaction registered"},
                                    reaction: "",
                                    reactionSent: true });
+        },
+
+        getMessagesSuccess: (data, state) => {
+            return extend(state, {
+                characterId: data.characterId,
+                chapter: extend(state.chapter, {
+                    messageThreads: data.messageThreads
+                })
+            });
+        },
+
+        updateNewMessageText: (data, state) => {
+            return extend(state, {
+                newMessage: extend(state.newMessage || { text: "", recipients: [] }, {
+                    text: data.value
+                })
+            });
+        },
+
+        updateNewMessageRecipient: (data, state) => {
+            let newRecipientList =
+                    (state.newMessage && state.newMessage.recipients || []).filter(r => (
+                        r !== data.id
+                    ));
+            if (data.value) {
+                newRecipientList = newRecipientList.concat(data.id);
+            }
+
+            return extend(state, {
+                newMessage: extend((state.newMessage || { text: "", recipients: [] }), {
+                    recipients: newRecipientList
+                })
+            });
+        },
+
+        sendMessageSuccess: (data, state) => {
+            return extend(state, {
+                newMessage: { text: "", recipients: [] },
+                chapter: extend(state.chapter, {
+                    messageThreads: data.messageThreads
+                })
+            });
         }
     },
     effects: {
         getChapter: (data, state, send, done) => {
             http("/api/chapters/" + state.chapterId + "/" + state.characterToken, (err, res, body) => {
                 if (res.statusCode >= 400) {
-                    send("chapterDataFailure",
+                    send("getChapterFailure",
                          { statusCode: res.statusCode },
                          done);
                     return;
@@ -110,7 +152,7 @@ app.model({
                 const response = JSON.parse(body);
                 response.text = editor.importText(response.text);
 
-                send("receiveChapterData", response, done);
+                send("receiveChapter", response, done);
             });
         },
 
@@ -161,13 +203,50 @@ app.model({
             xhr.addEventListener("load", function() {
                 const response = JSON.parse(this.responseText);
                 if (this.status >= 400) {
-                    send("reactionSendingProblem", {response: this}, done);
+                    send("reactionSendingFailure", {response: this}, done);
                     return;
                 }
 
-                send("reactionSendingSuccess", {}, done);
+                send("receiveReactionResult", {}, done);
             });
             xhr.send(JSON.stringify({ text: state.chapter.reaction }));
+        },
+
+        getMessages: (data, state, send, done) => {
+            const url = "/api/messages/" + state.chapterId + "/" +
+                      state.characterToken;
+
+            const xhr = new XMLHttpRequest();
+            xhr.open("GET", url);
+            xhr.addEventListener("load", function() {
+                const response = JSON.parse(this.responseText);
+                if (this.status >= 400) {
+                    send("getMessagesFailure", {response: this}, done);
+                    return;
+                }
+
+                send("getMessagesSuccess", response, done);
+            });
+            xhr.send(JSON.stringify({ text: state.chapter.reaction }));
+        },
+
+        sendMessage: (data, state, send, done) => {
+            const url = "/api/messages/" + state.chapterId + "/" +
+                      state.characterToken;
+
+            const xhr = new XMLHttpRequest();
+            xhr.open("POST", url);
+            xhr.setRequestHeader("Content-Type", "application/json");
+            xhr.addEventListener("load", function() {
+                const response = JSON.parse(this.responseText);
+                if (this.status >= 400) {
+                    send("sendMessageFailure", {response: this}, done);
+                    return;
+                }
+
+                send("sendMessageSuccess", response, done);
+            });
+            xhr.send(JSON.stringify(state.newMessage));
         }
     },
 
@@ -226,6 +305,111 @@ const bannerView = (banner) => html`
   </div>
 `;
 
+const messageView = (message) => html`
+  <div class="message">
+    <strong>${ message.sender ? message.sender.name : "Narrator" }</strong>:
+    <span class=${ message.sender ? "" : "narrator" }>
+      ${ message.body }
+    </span>
+  </div>
+`;
+
+const messageThreadView = (messageThread, characterId) => {
+    const participants = messageThread.participants.
+              filter(p => p.id !== characterId).
+              map(char => char.name);
+    const participantEnd = participants.length > 0 ?
+              ", the narrator, and you" : "the narrator and you";
+
+    return html`
+  <li>
+    <div class="thread-participants">
+      Between ${ participants.join(", ") + participantEnd }
+    </div>
+    ${ messageThread.messages.map(messageView) }
+  </li>
+`;
+};
+
+const messageRecipientView = (character, recipients, send) => html`
+  <label>
+    <input type="checkbox"
+           value=${ character.id }
+           checked=${ recipients.indexOf(character.id) !== -1 }
+           onchange=${ e => send("updateNewMessageRecipient",
+                                 { id: character.id,
+                                   value: e.target.checked }) } />
+    ${ character.name }
+  </label>
+`;
+
+const messageRecipientListView = (characters, recipients, send) => html`
+  <div class="recipients">
+    <label>Recipients:</label>
+    <input type="checkbox" checked disabled /> Narrator
+    ${ characters.map(c => messageRecipientView(c, recipients, send)) }
+  </div>
+`;
+
+const messageListView = (chapter, characterId, newMessage, send) => {
+    const otherParticipants =
+              chapter.participants.filter(c => c.id !== characterId);
+
+    return html`
+  <div>
+    <ul class="message-list">
+      ${ chapter.messageThreads.map(t => messageThreadView(t, characterId)) }
+    </ul>
+
+    <div class="new-message">
+      <textarea rows="2"
+                oninput=${ e => send("updateNewMessageText",
+                                     { value: e.target.value }) }
+                value=${ newMessage.text }>${ newMessage.text }</textarea>
+      ${ messageRecipientListView(otherParticipants,
+                                  newMessage.recipients,
+                                  send) }
+      <button class="btn"
+              onclick=${ () => send("sendMessage") }>Send</button>
+    </div>
+  </div>
+`;
+};
+
+const reactionView = (state, prev, send) => {
+    if (!state.chapter.messageThreads) {
+        send("getMessages", { chapterId: state.chapter.id,
+                              characterToken: state.characterToken });
+        return html`Loading messages…`;
+    }
+
+    return html`
+  <div>
+    <div class="messages">
+      <h2>Discussion</h2>
+
+      ${ messageListView(state.chapter,
+                         state.characterId,
+                         state.newMessage || { text: "", recipients: [] },
+                         send) }
+    </div>
+
+    <h2>Action</h2>
+
+    ${ state.banner ? bannerView(state.banner) : "" }
+
+    <div class="player-reply ${ state.reactionSent ? "invisible" : "" }">
+      <textarea
+         placeholder="What do you do? Try to consider several possibilities…"
+         rows="10"
+         value=${ state.chapter && state.chapter.reaction }
+         oninput=${ e => { send("updateReactionText", { value: e.target.value }); } }>${ state.chapter.reaction }</textarea>
+      <button class="btn btn-default" onclick=${ () => send("sendReaction") }>Send</button>
+    </div>
+  </div>
+`;
+};
+
 const chapterView = (state, prev, send) => html`
     <div id="chapter-container" class=${ state.started ? "" : "invisible transparent" }>
       <div id="top-image" style=${ backgroundImageStyle(state) }>
@@ -243,22 +427,14 @@ const chapterView = (state, prev, send) => html`
       <div class="chapter">
         ${ state.chapter ? state.chapter.text.content.toDOM() : "" }
       </div>
-
-      ${ state.banner ? bannerView(state.banner) : "" }
-
-      <div class="player-reply ${ state.reactionSent ? "invisible" : "" }">
-        <textarea
-           placeholder="How do you react? Try to consider several possibilities…"
-           rows="10"
-           value=${ state.chapter && state.chapter.reaction }
-           oninput=${ e => { send("updateReactionText", { value: e.target.value }); } }>${ state.chapter && state.chapter.reaction }</textarea>
-        <button class="btn-default" onclick=${ () => send("sendReaction") }>Send</button>
+      <div class="reaction">
+        ${ state.chapter ? reactionView(state, prev, send) : "" }
       </div>
     </div>
 `;
 
 const mainView = (state, prev, send) => html`
-  <main onload=${() => send("getChapter")}>
+  <main onload=${ () => send("getChapter") }>
     <div>
       ${ (!state.started && !state.error) ? loaderView(state, prev, send) : "" }
     </div>

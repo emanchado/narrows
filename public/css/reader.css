@@ -143,8 +143,8 @@ body {
 
 .player-reply {
     max-width: 56em;
-    margin: 20px auto 50px auto;
-    padding: 10px;
+    margin: 20px auto 0 auto;
+    padding: 0 10px;
     text-align: right;
 }
 
@@ -169,13 +169,62 @@ body {
     background-color: #511;
 }
 
-.btn-default {
+.btn {
     border: 0;
     padding: 5px 10px;
     border: 1px solid #ddd;
 
+    font-size: 18px;
+}
+
+.btn-default {
     background-color: #113;
     color: #eee;
+}
 
-    font-size: 18px;
+.reaction {
+    max-width: 50em;
+    margin: 20px auto;
+    padding: 10px;
+    background-color: #222;
+}
+
+h2 {
+    margin: 10px;
+    margin-bottom: 0;
+}
+
+ul.message-list {
+    display: block;
+    margin: 10px auto 20px auto;
+    max-width: 45em;
+    padding-left: 0;
+}
+ul.message-list li {
+    display: block;
+    margin-bottom: 15px;
+}
+ul.message-list li span.narrator {
+    font-style: italic;
+}
+ul.message-list .message {
+    background-color: black;
+    padding: 5px;
+}
+
+.thread-participants {
+    font-weight: bold;
+}
+
+.new-message {
+    display: block;
+    max-width: 45em;
+
+    margin: 10px auto 20px auto;
+}
+.new-message textarea {
+    width: 100%;
+}
+.new-message .btn {
+    float: right;
 }

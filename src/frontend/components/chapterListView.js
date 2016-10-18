@@ -7,6 +7,7 @@ const chapterView = (chapter, send) => html`
     -
     ${ chapter.reactions.filter(r => r.text).length } /
       ${ chapter.reactions.length } reactions
+    (${ chapter.numberMessages } messages)
   </li>
 `;
 

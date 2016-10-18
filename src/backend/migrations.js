@@ -56,6 +56,32 @@ const MIGRATIONS = [
                VALUES ('narrator',
                        '$2a$04$NrMPbG7wG26EwqJOun.SLOELYGOmbFs5aECGxhl8suPfVY049NZdG')`
         ]);
+    },
+
+    function addUserRoles(db) {
+        return statementListPromise(db, [
+            `ALTER TABLE users ADD role string`,
+            `ALTER TABLE characters ADD player_id integer REFERENCES users(id)`,
+            `UPDATE users SET role = 'admin'`
+        ]);
+    },
+
+    function createMessagesTables(db) {
+        return statementListPromise(db, [
+            `CREATE TABLE messages (id integer primary key,
+                                    chapter_id integer REFERENCES chapters(id),
+                                    sender_id integer REFERENCES characters(id),
+                                    body text,
+                                    sent timestamp NOT NULL DEFAULT current_timestamp)`,
+            `CREATE TABLE message_deliveries (message_id integer REFERENCES messages(id),
+                                              recipient_id integer REFERENCES characters(id))`
+        ]);
+    },
+
+    function addNarrationNarrator(db) {
+        return statementListPromise(db, [
+            `ALTER TABLE narrations ADD narrator_id integer REFERENCES users(id)`
+        ]);
     }
 ];
 

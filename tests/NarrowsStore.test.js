@@ -7,6 +7,14 @@ const TEST_MIGRATED_DB = "test-migrated.db";
 const TEST_FILES = "testfiles";
 const DEFAULT_AUDIO = "creepy.mp3";
 const DEFAULT_BACKGROUND = "house.jpg";
+const CHAR1_NAME = "Frodo";
+const CHAR1_TOKEN = "979021c8-97b4-11e6-a708-ff4e2821162e";
+const CHAR2_NAME = "Sam";
+const CHAR2_TOKEN = "bb0a38b4-97b4-11e6-906f-bfca08f8b9ae";
+
+function createCharacter(store, characterName, characterToken) {
+    return store.addCharacter(characterName, characterToken);
+}
 
 /**
  * Because running the migrations is ridiculously slow, we only do it
@@ -17,7 +25,6 @@ test.before(t => {
     const f = fs.openSync(TEST_MIGRATED_DB, "w+");
     fs.closeSync(f);
 
-    console.log("Now connecting to cached");
     const store = new NarrowsStore(TEST_MIGRATED_DB, TEST_FILES);
     return store.connect();
 });
@@ -30,6 +37,7 @@ test.beforeEach(t => {
     const store = new NarrowsStore(TEST_DB, TEST_FILES);
     return store.connect().then(() => {
         return store.createNarration({
+            narratorId: 1,
             title: "Basic Test Narration",
             defaultAudio: DEFAULT_AUDIO,
             defaultBackgroundImage: DEFAULT_BACKGROUND
@@ -37,6 +45,14 @@ test.beforeEach(t => {
     }).then(narration => {
         t.context.store = store;
         t.context.testNarration = narration;
+
+        return createCharacter(t.context.store, CHAR1_NAME, CHAR1_TOKEN);
+    }).then(characterId => {
+        t.context.characterId1 = characterId;
+
+        return createCharacter(t.context.store, CHAR2_NAME, CHAR2_TOKEN);
+    }).then(characterId => {
+        t.context.characterId2 = characterId;
     });
 });
 
@@ -109,6 +125,62 @@ test.serial("can set a specific background image for the chapter", t => {
     return t.context.store.createChapter(narrationId, props).then(chapter => {
         t.is(chapter.audio, DEFAULT_AUDIO);
         t.is(chapter.backgroundImage, "hostel.jpg");
+
+        return t.context.store.getChapter(chapter.id);
+    }).then(chapter => {
+        t.is(chapter.audio, DEFAULT_AUDIO);
+        t.is(chapter.backgroundImage, "hostel.jpg");
+    });
+});
+
+test.serial("can get the messages for a chapter", t => {
+    const narrationId = t.context.testNarration.id;
+    const props = { title: "Intro",
+                    text: [],
+                    participants: [1],
+                    backgroundImage: "hostel.jpg" };
+    let chapterId;
+
+    return t.context.store.createChapter(narrationId, props).then(chapter => {
+        chapterId = chapter.id;
+
+        return t.context.store.addMessage(chapterId,
+                                          t.context.characterId1,
+                                          "Message from 1 to 2...",
+                                          [t.context.characterId2]);
+    }).then(() => {
+        return t.context.store.addMessage(chapterId,
+                                          t.context.characterId2,
+                                          "Reply from 2 to 1...",
+                                          [t.context.characterId1]);
+    }).then(() => {
+        return t.context.store.getChapterMessages(chapterId,
+                                                  t.context.characterId1);
+    }).then(messages => {
+        t.is(messages.length, 2);
+    });
+});
+
+test.serial("can get the messages to the narrator (no recipients)", t => {
+    const narrationId = t.context.testNarration.id;
+    const props = { title: "Intro",
+                    text: [],
+                    participants: [1],
+                    backgroundImage: "hostel.jpg" };
+    let chapterId;
+
+    return t.context.store.createChapter(narrationId, props).then(chapter => {
+        chapterId = chapter.id;
+
+        return t.context.store.addMessage(chapterId,
+                                          t.context.characterId1,
+                                          "Message from 1 to narrator...",
+                                          []);
+    }).then(() => {
+        return t.context.store.getChapterMessages(chapterId,
+                                                  t.context.characterId1);
+    }).then(messages => {
+        t.is(messages.length, 1);
     });
 });
 
