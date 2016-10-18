@@ -1,13 +1,13 @@
 const html = require("choo/html");
-const fragmentListView = require("../components/fragmentListView");
+const chapterListView = require("../components/chapterListView");
 
 const narrationDetailView = (narration, send) => html`
-  <div class="narration" onload=${ () => send("getNarrationFragments", { narrationId: narration.id }) }>
+  <div class="narration" onload=${ () => send("getNarrationChapters", { narrationId: narration.id }) }>
     <h1>Narration ${ narration.title }</h1>
 
-    ${ narration.fragments ? fragmentListView(narration.fragments, send) : "Loading..." }
+    ${ narration.chapters ? chapterListView(narration.chapters, send) : "Loading..." }
 
-    <a href="/narrations/${ narration.id }/new">Create new narration fragment</a>
+    <a href="/narrations/${ narration.id }/new">Create new narration chapter</a>
   </div>
 `;
 

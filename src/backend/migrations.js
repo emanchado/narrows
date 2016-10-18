@@ -22,15 +22,15 @@ const MIGRATIONS = [
                                       title string,
                                       default_audio string,
                                       default_background_image string)`,
-            `CREATE TABLE fragments (id integer primary key,
-                                     narration_id integer REFERENCES narrations(id),
-                                     title string,
-                                     audio string,
-                                     background_image string,
-                                     main_text text,
-                                     created timestamp NOT NULL DEFAULT current_timestamp,
-                                     updated timestamp NOT NULL DEFAULT current_timestamp,
-                                     published timestamp)`
+            `CREATE TABLE chapters (id integer primary key,
+                                    narration_id integer REFERENCES narrations(id),
+                                    title string,
+                                    audio string,
+                                    background_image string,
+                                    main_text text,
+                                    created timestamp NOT NULL DEFAULT current_timestamp,
+                                    updated timestamp NOT NULL DEFAULT current_timestamp,
+                                    published timestamp)`
         ]);
     },
 
@@ -41,7 +41,7 @@ const MIGRATIONS = [
                                       name string,
                                       token string)`,
             `CREATE TABLE reactions (id integer primary key,
-                                     fragment_id integer references fragments(id) ON DELETE CASCADE,
+                                     chapter_id integer references chapters(id) ON DELETE CASCADE,
                                      character_id integer references characters(id) ON DELETE CASCADE,
                                      main_text text)`
         ]);

@@ -56,7 +56,7 @@ test.serial("can create a simple narration", t => {
     });
 });
 
-test.serial("can create a simple fragment", t => {
+test.serial("can create a simple chapter", t => {
     const narrationId = t.context.testNarration.id;
     const props = {
         title: "Intro",
@@ -64,11 +64,11 @@ test.serial("can create a simple fragment", t => {
         participants: [1]
     };
 
-    return t.context.store.createFragment(narrationId, props).then(fragment => {
-        t.true(fragment.id > 0);
-        t.is(fragment.narrationId, narrationId);
-        t.is(fragment.title, "Intro");
-        t.deepEqual(fragment.text, []);
+    return t.context.store.createChapter(narrationId, props).then(chapter => {
+        t.true(chapter.id > 0);
+        t.is(chapter.narrationId, narrationId);
+        t.is(chapter.title, "Intro");
+        t.deepEqual(chapter.text, []);
     });
 });
 
@@ -76,13 +76,13 @@ test.serial("uses background/audio from narration as defaults", t => {
     const narrationId = t.context.testNarration.id;
     const props = { title: "Intro", text: [], participants: [1] };
 
-    return t.context.store.createFragment(narrationId, props).then(fragment => {
-        t.is(fragment.audio, DEFAULT_AUDIO);
-        t.is(fragment.backgroundImage, DEFAULT_BACKGROUND);
+    return t.context.store.createChapter(narrationId, props).then(chapter => {
+        t.is(chapter.audio, DEFAULT_AUDIO);
+        t.is(chapter.backgroundImage, DEFAULT_BACKGROUND);
     });
 });
 
-test.serial("can set a specific audio for the fragment", t => {
+test.serial("can set a specific audio for the chapter", t => {
     const narrationId = t.context.testNarration.id;
     const props = {
         title: "Intro",
@@ -91,13 +91,13 @@ test.serial("can set a specific audio for the fragment", t => {
         audio: "action.mp3"
     };
 
-    return t.context.store.createFragment(narrationId, props).then(fragment => {
-        t.is(fragment.audio, "action.mp3");
-        t.is(fragment.backgroundImage, DEFAULT_BACKGROUND);
+    return t.context.store.createChapter(narrationId, props).then(chapter => {
+        t.is(chapter.audio, "action.mp3");
+        t.is(chapter.backgroundImage, DEFAULT_BACKGROUND);
     });
 });
 
-test.serial("can set a specific background image for the fragment", t => {
+test.serial("can set a specific background image for the chapter", t => {
     const narrationId = t.context.testNarration.id;
     const props = {
         title: "Intro",
@@ -106,9 +106,9 @@ test.serial("can set a specific background image for the fragment", t => {
         backgroundImage: "hostel.jpg"
     };
 
-    return t.context.store.createFragment(narrationId, props).then(fragment => {
-        t.is(fragment.audio, DEFAULT_AUDIO);
-        t.is(fragment.backgroundImage, "hostel.jpg");
+    return t.context.store.createChapter(narrationId, props).then(chapter => {
+        t.is(chapter.audio, DEFAULT_AUDIO);
+        t.is(chapter.backgroundImage, "hostel.jpg");
     });
 });
 

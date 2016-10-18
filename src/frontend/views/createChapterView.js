@@ -1,6 +1,6 @@
 const html = require("choo/html");
 
-const createFragmentView = (state, prev, send) => {
+const createChapterView = (state, prev, send) => {
     const narrationId = state.params.narrationId;
 
     if (!state.narration) {
@@ -10,10 +10,10 @@ const createFragmentView = (state, prev, send) => {
     return html`
   <main onload=${ () => { send("createEmptyEditor"); } }>
     <label>Title</label>
-    <input class="fragment-title"
+    <input class="chapter-title"
            type="text"
-           oninput=${ e => { send("updateFragmentTitle", { value: e.target.value }); } }
-           value=${ state.fragment.title || "" } />
+           oninput=${ e => { send("updateChapterTitle", { value: e.target.value }); } }
+           value=${ state.chapter.title || "" } />
 
     <label>Participants</label>
     All
@@ -23,9 +23,9 @@ const createFragmentView = (state, prev, send) => {
       ${ state.editorNew ? state.editorNew.wrapper : "" }
     </div>
 
-    <button onclick=${ () => { send("saveNewFragment", { narrationId: narrationId }); }}>Save</button>
+    <button onclick=${ () => { send("saveNewChapter", { narrationId: narrationId }); }}>Save</button>
   </main>
 `;
 };
 
-module.exports = createFragmentView;
+module.exports = createChapterView;

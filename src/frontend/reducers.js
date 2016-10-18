@@ -8,24 +8,24 @@ module.exports = {
         });
     },
 
-    receiveNarrationFragmentsData: (narrationFragmentsData, state) => {
+    receiveNarrationChaptersData: (narrationChaptersData, state) => {
         return extend(state, {
             narration: extend(state.narration, {
-                fragments: narrationFragmentsData
+                chapters: narrationChaptersData
             })
         });
     },
 
-    receiveFragmentData: (fragmentData, state) => {
+    receiveChapterData: (chapterData, state) => {
         return extend(state, {
-            fragment: fragmentData,
-            editor: editor.create(fragmentData.text)
+            chapter: chapterData,
+            editor: editor.create(chapterData.text)
         });
     },
 
-    updateFragmentTitle: (data, state) => {
+    updateChapterTitle: (data, state) => {
         return extend(state, {
-            fragment: extend(state.fragment, {
+            chapter: extend(state.chapter, {
                 title: data.value
             })
         });
@@ -38,7 +38,7 @@ module.exports = {
     createEmptyEditor: (_, state) => {
         return extend(state, {
             editorNew: editor.create(editor.importText("")),
-            fragment: { title: "" }
+            chapter: { title: "" }
         });
     },
 
@@ -55,23 +55,23 @@ module.exports = {
     },
 
     addParticipantSuccess: (data, state) => {
-        const oldParticipants = state.fragment.participants;
+        const oldParticipants = state.chapter.participants;
         const newParticipants = oldParticipants.concat(data.character);
 
         return extend(state, {
-            fragment: extend(state.fragment, {
+            chapter: extend(state.chapter, {
                 participants: newParticipants
             })
         });
     },
 
     removeParticipantSuccess: (data, state) => {
-        const oldParticipants = state.fragment.participants;
+        const oldParticipants = state.chapter.participants;
         const newParticipants =
                   oldParticipants.filter(p => p.id !== data.characterId);
 
         return extend(state, {
-            fragment: extend(state.fragment, {
+            chapter: extend(state.chapter, {
                 participants: newParticipants
             })
         });
@@ -79,7 +79,7 @@ module.exports = {
 
     updateSelectedAudio: (data, state) => {
         return extend(state, {
-            fragment: extend(state.fragment, {
+            chapter: extend(state.chapter, {
                 audio: data.value
             })
         });
@@ -87,7 +87,7 @@ module.exports = {
 
     updateSelectedBackgroundImage: (data, state) => {
         return extend(state, {
-            fragment: extend(state.fragment, {
+            chapter: extend(state.chapter, {
                 backgroundImage: data.value
             })
         });
@@ -95,7 +95,7 @@ module.exports = {
 
     receiveMediaFileResponse: (data, state) => {
         const type = data.type;
-        const fragmentProperty = type === "backgroundImages" ?
+        const chapterProperty = type === "backgroundImages" ?
                   "backgroundImage" : "audio";
 
         return extend(state, {
@@ -105,8 +105,8 @@ module.exports = {
                 })
             }),
 
-            fragment: extend(state.fragment, {
-                [fragmentProperty]: data.name
+            chapter: extend(state.chapter, {
+                [chapterProperty]: data.name
             })
         });
     }

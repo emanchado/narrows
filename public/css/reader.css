@@ -73,7 +73,7 @@ body {
     font-size: 14px;
 }
 
-#fragment-container {
+#chapter-container {
     transition: opacity 7s;
 }
 
@@ -85,14 +85,14 @@ body {
     opacity: 0;
 }
 
-.fragment {
+.chapter {
     margin-top: 500px;
     margin-left: 10px;
     margin-right: 10px;
     color: black;
 }
 
-.fragment > p, .fragment > blockquote {
+.chapter > p, .chapter > blockquote {
     max-width: 50em;
     font-size: 16px;
     line-height: 18px;
@@ -103,11 +103,11 @@ body {
     background-color: #e5e5e5;
 }
 
-.fragment > p:first-child {
+.chapter > p:first-child {
     padding-top: 20px;
 }
 
-.fragment > p:first-child::first-letter {
+.chapter > p:first-child::first-letter {
     float: left;
     
     font-size: 60px;
@@ -115,27 +115,27 @@ body {
     margin-right: 3px;
 }
 
-.fragment ul, .fragment ol {
+.chapter ul, .chapter ol {
     max-width: 50em;
     margin: 0 auto;
     padding: 10px 20px;
     background-color: #e5e5e5;
 }
 
-.fragment li {
+.chapter li {
     margin-left: 40px;
     margin-right: 40px;
 }
 
-.fragment li p {
+.chapter li p {
     margin: 0;
 }
 
-.fragment > img {
+.chapter > img {
     width: 100%;
 }
 
-.fragment > blockquote > p {
+.chapter > blockquote > p {
     margin: 0;
     padding: 10px 20px;
     font-style: italic;

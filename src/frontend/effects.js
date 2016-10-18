@@ -4,10 +4,10 @@ const editor = require("./editor");
 const extend = require("./extend");
 const narrowsSchema = require("./narrows-schema");
 
-function updateFragment(fragment, editor, done, extra) {
+function updateChapter(chapter, editor, done, extra) {
     extra = extra || {};
 
-    const url = "/api/fragments/" + fragment.id;
+    const url = "/api/chapters/" + chapter.id;
     const xhr = new XMLHttpRequest();
     xhr.open("PUT", url);
     xhr.setRequestHeader("Content-Type", "application/json");
@@ -15,7 +15,7 @@ function updateFragment(fragment, editor, done, extra) {
         const response = JSON.parse(this.responseText);
 
         if (this.status >= 400) {
-            alert("Could not publish fragment text: " + response.errorMessage);
+            alert("Could not publish chapter text: " + response.errorMessage);
         }
 
         done();
@@ -23,10 +23,10 @@ function updateFragment(fragment, editor, done, extra) {
     const jsonDoc = editor.doc.toJSON();
 
     const update = {
-        title: fragment.title,
+        title: chapter.title,
         text: jsonDoc,
-        audio: fragment.audio,
-        backgroundImage: fragment.backgroundImage
+        audio: chapter.audio,
+        backgroundImage: chapter.backgroundImage
     };
     xhr.send(JSON.stringify(extend(update, extra)));
 }
@@ -39,42 +39,42 @@ module.exports = {
         });
     },
 
-    getNarrationFragments: (data, state, send, done) => {
-        const narrationFragmentUrl = "/api/narrations/" +
-                  data.narrationId + "/fragments";
-        http(narrationFragmentUrl, (err, res, body) => {
-            send("receiveNarrationFragmentsData", JSON.parse(body), done);
+    getNarrationChapters: (data, state, send, done) => {
+        const narrationChapterUrl = "/api/narrations/" +
+                  data.narrationId + "/chapters";
+        http(narrationChapterUrl, (err, res, body) => {
+            send("receiveNarrationChaptersData", JSON.parse(body), done);
         });
     },
 
-    getFragment: (data, state, send, done) => {
-        const fragmentUrl = "/api/fragments/" + data.fragmentId;
+    getChapter: (data, state, send, done) => {
+        const chapterUrl = "/api/chapters/" + data.chapterId;
 
-        http(fragmentUrl, (err, res, body) => {
+        http(chapterUrl, (err, res, body) => {
             const response = JSON.parse(body);
             const node = editor.importText(response.text);
 
-            send("receiveFragmentData",
+            send("receiveChapterData",
                  extend(response, { text: node }),
                  done);
         });
     },
 
-    saveFragment: (data, state, send, done) => {
-        updateFragment(state.fragment,
+    saveChapter: (data, state, send, done) => {
+        updateChapter(state.chapter,
                        state.editor,
                        done);
     },
 
-    publishFragment: (data, state, send, done) => {
-        updateFragment(state.fragment,
+    publishChapter: (data, state, send, done) => {
+        updateChapter(state.chapter,
                        state.editor,
                        done,
                        { published: true });
     },
 
-    saveNewFragment: (data, state, send, done) => {
-        const url = "/api/narrations/" + data.narrationId + "/fragments";
+    saveNewChapter: (data, state, send, done) => {
+        const url = "/api/narrations/" + data.narrationId + "/chapters";
 
         const xhr = new XMLHttpRequest();
         xhr.open("POST", url);
@@ -83,15 +83,15 @@ module.exports = {
             const response = JSON.parse(this.responseText);
 
             if (this.status >= 400) {
-                alert("Could not save fragment text: " + response.errorMessage);
+                alert("Could not save chapter text: " + response.errorMessage);
                 return;
             }
 
-            send("location:setLocation", {location: "/fragments/" + response.id}, done);
+            send("location:setLocation", {location: "/chapters/" + response.id}, done);
         });
         const jsonDoc = state.editorNew.doc.toJSON();
         const characterIds = state.narration.characters.map(c => c.id);
-        xhr.send(JSON.stringify({ title: state.fragment.title,
+        xhr.send(JSON.stringify({ title: state.chapter.title,
                                   text: jsonDoc,
                                   participants: characterIds }));
     },
@@ -105,7 +105,7 @@ module.exports = {
     },
 
     markTextForCharacter: (data, state, send, done) => {
-        const characters = state.fragment.participants.filter(p => (
+        const characters = state.chapter.participants.filter(p => (
             state.mentionCharacters.includes(p.id)
         ));
 
@@ -114,7 +114,7 @@ module.exports = {
     },
 
     addParticipant: (data, state, send, done) => {
-        const url = "/api/fragments/" + state.fragment.id + "/participants";
+        const url = "/api/chapters/" + state.chapter.id + "/participants";
 
         const xhr = new XMLHttpRequest();
         xhr.open("POST", url);
@@ -134,7 +134,7 @@ module.exports = {
     },
 
     removeParticipant: (data, state, send, done) => {
-        const url = "/api/fragments/" + state.fragment.id +
+        const url = "/api/chapters/" + state.chapter.id +
                   "/participants/" + data.characterId;
 
         const xhr = new XMLHttpRequest();
@@ -174,7 +174,7 @@ module.exports = {
 
     addMediaFile: (data, state, send, done) => {
         const fileInput = document.getElementById("new-media-file");
-        const url = "/api/narrations/" + state.fragment.narrationId + "/files";
+        const url = "/api/narrations/" + state.chapter.narrationId + "/files";
 
         const xhr = new XMLHttpRequest();
         xhr.open("POST", url);

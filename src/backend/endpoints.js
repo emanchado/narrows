@@ -20,74 +20,74 @@ export function getNarration(req, res) {
     });
 }
 
-export function getFragment(req, res) {
-    const fragmentId = parseInt(req.params.fgmtId, 10);
+export function getChapter(req, res) {
+    const chapterId = parseInt(req.params.chptId, 10);
 
-    store.getFragment(fragmentId).then(fragmentData => {
-        res.json(fragmentData);
+    store.getChapter(chapterId).then(chapterData => {
+        res.json(chapterData);
     }).catch(err => {
         res.statusCode = 404;
         res.json({
-            errorMessage: `Cannot find fragment ${ fragmentId }: ${ err }`
+            errorMessage: `Cannot find chapter ${ chapterId }: ${ err }`
         });
     });
 }
 
-export function getFragmentCharacter(req, res) {
-    const fragmentId = parseInt(req.params.fgmtId, 10);
+export function getChapterCharacter(req, res) {
+    const chapterId = parseInt(req.params.chptId, 10);
     const characterToken = req.params.charToken;
 
     store.getCharacterId(characterToken).then(characterId => {
-        return store.getFragment(fragmentId).then(fragmentData => {
-            if (!fragmentData.published) {
-                throw new Error("Unpublished fragment");
+        return store.getChapter(chapterId).then(chapterData => {
+            if (!chapterData.published) {
+                throw new Error("Unpublished chapter");
             }
 
-            const participantIds = fragmentData.participants.map(p => p.id);
+            const participantIds = chapterData.participants.map(p => p.id);
             if (participantIds.indexOf(characterId) === -1) {
-                throw new Error("Character does not participate in fragment");
+                throw new Error("Character does not participate in chapter");
             }
 
-            fragmentData.text =
-                mentionFilter.filter(fragmentData.text, characterId);
+            chapterData.text =
+                mentionFilter.filter(chapterData.text, characterId);
 
-            store.getFragmentReaction(fragmentId, characterId).then(reaction => {
-                fragmentData.reaction = reaction;
-                res.json(fragmentData);
+            store.getChapterReaction(chapterId, characterId).then(reaction => {
+                chapterData.reaction = reaction;
+                res.json(chapterData);
             });
         });
     }).catch(err => {
         res.statusCode = 404;
         res.json({
-            errorMessage: `Cannot find fragment ${ fragmentId }` +
+            errorMessage: `Cannot find chapter ${ chapterId }` +
                 ` with character ${ characterToken }: ${ err }`
         });
     });
 }
 
-export function getNarrationFragments(req, res) {
+export function getNarrationChapters(req, res) {
     const narrationId = parseInt(req.params.narrId, 10);
 
-    store.getNarrationFragments(narrationId).then(fragmentListData => {
-        res.json({ fragments: fragmentListData });
+    store.getNarrationChapters(narrationId).then(chapterListData => {
+        res.json({ chapters: chapterListData });
     }).catch(err => {
         res.statusCode = 404;
         res.json({
-            errorMessage: `Cannot find fragments for narration ${ narrationId }: ${ err }`
+            errorMessage: `Cannot find chapters for narration ${ narrationId }: ${ err }`
         });
     });
 }
 
-export function putFragment(req, res) {
-    const fragmentId = parseInt(req.params.fgmtId, 10);
+export function putChapter(req, res) {
+    const chapterId = parseInt(req.params.chptId, 10);
 
     req.body.text = JSON.stringify(req.body.text);
     if ("published" in req.body) {
         req.body.published = req.body.published ?
             (new Date().toISOString()) : null;
     }
-    store.updateFragment(fragmentId, req.body).then(fragment => {
-        res.json(fragment);
+    store.updateChapter(chapterId, req.body).then(chapter => {
+        res.json(chapter);
     }).catch(err => {
         res.statusCode = 500;
         res.json({
@@ -96,11 +96,11 @@ export function putFragment(req, res) {
     });
 }
 
-export function postNewFragment(req, res) {
+export function postNewChapter(req, res) {
     const narrationId = parseInt(req.params.narrId, 10);
 
-    store.createFragment(narrationId, req.body).then(fragmentData => {
-        res.json(fragmentData);
+    store.createChapter(narrationId, req.body).then(chapterData => {
+        res.json(chapterData);
     }).catch(err => {
         res.statusCode = 500;
         res.json({
@@ -137,13 +137,13 @@ export function getStaticFile(req, res) {
 }
 
 export function putReaction(req, res) {
-    const fragmentId = req.params.fgmtId,
+    const chapterId = req.params.chptId,
           characterToken = req.params.charToken,
           reactionText = req.body.text;
 
     store.getCharacterId(characterToken).then(characterId => {
-        return store.updateReaction(fragmentId, characterId, reactionText).then(() => {
-            res.json({ fragmentId, characterId, reactionText });
+        return store.updateReaction(chapterId, characterId, reactionText).then(() => {
+            res.json({ chapterId, characterId, reactionText });
         });
     }).catch(err => {
         res.statusCode = 500;
@@ -151,11 +151,11 @@ export function putReaction(req, res) {
     });
 }
 
-export function postFragmentParticipants(req, res) {
-    const fragmentId = req.params.fgmtId,
+export function postChapterParticipants(req, res) {
+    const chapterId = req.params.chptId,
           newParticipant = req.body;
 
-    store.addParticipant(fragmentId, newParticipant.id).then(participants => {
+    store.addParticipant(chapterId, newParticipant.id).then(participants => {
         res.json({ participants });
     }).catch(err => {
         res.statusCode = 500;
@@ -163,11 +163,11 @@ export function postFragmentParticipants(req, res) {
     });
 }
 
-export function deleteFragmentParticipant(req, res) {
-    const fragmentId = req.params.fgmtId,
+export function deleteChapterParticipant(req, res) {
+    const chapterId = req.params.chptId,
           characterId = req.params.charId;
 
-    store.removeParticipant(fragmentId, characterId).then(participants => {
+    store.removeParticipant(chapterId, characterId).then(participants => {
         res.json({ participants });
     }).catch(err => {
         res.statusCode = 500;

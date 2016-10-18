@@ -12,7 +12,7 @@ const MAX_BLURRINESS = 10;
 
 const app = choo();
 
-function getFragmentIdFromUrl(urlPath) {
+function getChapterIdFromUrl(urlPath) {
     return urlPath.
         replace("/read/", "").
         replace(new RegExp("/.*"), "");
@@ -35,20 +35,20 @@ function bumpVolume(audioEl) {
 
 app.model({
     state: {
-        fragmentId: getFragmentIdFromUrl(location.pathname),
-        fragment: null,
+        chapterId: getChapterIdFromUrl(location.pathname),
+        chapter: null,
         characterToken: getCharacterTokenFromUrl(location.pathname),
         backgroundMusic: true,
 
         banner: null
     },
     reducers: {
-        receiveFragmentData: (fragmentData, state) => {
-            return extend(state, { fragment: fragmentData });
+        receiveChapterData: (chapterData, state) => {
+            return extend(state, { chapter: chapterData });
         },
 
-        fragmentDataFailure: (info, state) => {
-            return extend(state, { error: `Failed fetching fragment, status code: ${ info.statusCode }` });
+        chapterDataFailure: (info, state) => {
+            return extend(state, { error: `Failed fetching chapter, status code: ${ info.statusCode }` });
         },
 
         markNarrationAsStarted: (data, state) => {
@@ -67,7 +67,7 @@ app.model({
 
         updateReactionText: (data, state) => {
             return extend(state, {
-                fragment: extend(state.fragment, { reaction: data.value })
+                chapter: extend(state.chapter, { reaction: data.value })
             });
         },
 
@@ -98,10 +98,10 @@ app.model({
         }
     },
     effects: {
-        getFragment: (data, state, send, done) => {
-            http("/api/fragments/" + state.fragmentId + "/" + state.characterToken, (err, res, body) => {
+        getChapter: (data, state, send, done) => {
+            http("/api/chapters/" + state.chapterId + "/" + state.characterToken, (err, res, body) => {
                 if (res.statusCode >= 400) {
-                    send("fragmentDataFailure",
+                    send("chapterDataFailure",
                          { statusCode: res.statusCode },
                          done);
                     return;
@@ -110,7 +110,7 @@ app.model({
                 const response = JSON.parse(body);
                 response.text = editor.importText(response.text);
 
-                send("receiveFragmentData", response, done);
+                send("receiveChapterData", response, done);
             });
         },
 
@@ -130,8 +130,8 @@ app.model({
             // classname, which sets "opacity: 0". If we remove both
             // CSS properties at the same time, the opacity is not
             // animated.
-            const fragmentContainer = document.getElementById("fragment-container");
-            fragmentContainer.className = "transparent";
+            const chapterContainer = document.getElementById("chapter-container");
+            chapterContainer.className = "transparent";
 
             send("markNarrationAsStarted", {}, done);
         },
@@ -147,10 +147,10 @@ app.model({
         },
 
         sendReaction: (data, state, send, done) => {
-            const url = "/api/reactions/" + state.fragmentId + "/" +
+            const url = "/api/reactions/" + state.chapterId + "/" +
                       state.characterToken;
 
-            if (!state.fragment || !state.fragment.reaction) {
+            if (!state.chapter || !state.chapter.reaction) {
                 done();
                 return;
             }
@@ -167,7 +167,7 @@ app.model({
 
                 send("reactionSendingSuccess", {}, done);
             });
-            xhr.send(JSON.stringify({ text: state.fragment.reaction }));
+            xhr.send(JSON.stringify({ text: state.chapter.reaction }));
         }
     },
 
@@ -199,7 +199,7 @@ const loadedView = (state, send) => html`
 
 const loaderView = (state, prev, send) => html`
     <div id="loader">
-      ${ state.fragment ? loadedView(state, send) : loadingView() }
+      ${ state.chapter ? loadedView(state, send) : loadingView() }
     </div>
 `;
 
@@ -210,8 +210,8 @@ const errorView = (error, send) => html`
 `;
 
 function backgroundImageStyle(state) {
-    const imageUrl = state.fragment ?
-              ("/static/narrations/" + state.fragment.narrationId + "/background-images/" + state.fragment.backgroundImage) : '';
+    const imageUrl = state.chapter ?
+              ("/static/narrations/" + state.chapter.narrationId + "/background-images/" + state.chapter.backgroundImage) : '';
     const filter = `blur(${ state.backgroundBlurriness || 0 }px)`;
 
     return `background-image: url(${ imageUrl }); ` +
@@ -226,22 +226,22 @@ const bannerView = (banner) => html`
   </div>
 `;
 
-const fragmentView = (state, prev, send) => html`
-    <div id="fragment-container" class=${ state.started ? "" : "invisible transparent" }>
+const chapterView = (state, prev, send) => html`
+    <div id="chapter-container" class=${ state.started ? "" : "invisible transparent" }>
       <div id="top-image" style=${ backgroundImageStyle(state) }>
-        ${ state.fragment ? state.fragment.title : 'Untitled' }
+        ${ state.chapter ? state.chapter.title : 'Untitled' }
       </div>
       <img id="play-icon"
            src="/img/${ state.musicPlaying ? "play" : "mute" }-small.png"
            alt="${ state.musicPlaying ? "Stop" : "Start" } music"
            onclick=${() => { send("playPauseMusic"); }} />
       <audio id="background-music"
-             src="${ state.fragment ? ("/static/narrations/" + state.fragment.narrationId + "/audio/" + state.fragment.audio) : '' }"
+             src="${ state.chapter ? ("/static/narrations/" + state.chapter.narrationId + "/audio/" + state.chapter.audio) : '' }"
              loop="true"
              preload="${ state.backgroundMusic ? "auto" : "none" }"></audio>
 
-      <div class="fragment">
-        ${ state.fragment ? state.fragment.text.content.toDOM() : "" }
+      <div class="chapter">
+        ${ state.chapter ? state.chapter.text.content.toDOM() : "" }
       </div>
 
       ${ state.banner ? bannerView(state.banner) : "" }
@@ -250,19 +250,19 @@ const fragmentView = (state, prev, send) => html`
         <textarea
            placeholder="How do you react? Try to consider several possibilities…"
            rows="10"
-           value=${ state.fragment && state.fragment.reaction }
-           oninput=${ e => { send("updateReactionText", { value: e.target.value }); } }>${ state.fragment && state.fragment.reaction }</textarea>
+           value=${ state.chapter && state.chapter.reaction }
+           oninput=${ e => { send("updateReactionText", { value: e.target.value }); } }>${ state.chapter && state.chapter.reaction }</textarea>
         <button class="btn-default" onclick=${ () => send("sendReaction") }>Send</button>
       </div>
     </div>
 `;
 
 const mainView = (state, prev, send) => html`
-  <main onload=${() => send("getFragment")}>
+  <main onload=${() => send("getChapter")}>
     ${ (!state.started && !state.error) ? loaderView(state, prev, send) : "" }
     ${ state.error ? errorView(state.error, send) : "" }
 
-    ${ fragmentView(state, prev, send) }
+    ${ chapterView(state, prev, send) }
   </main>
 `;
 

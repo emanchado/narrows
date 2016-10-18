@@ -4,8 +4,8 @@ const editor = require("./editor");
 const reducers = require("./reducers");
 const effects = require("./effects");
 const narrationView = require("./views/narrationView"),
-      createFragmentView = require("./views/createFragmentView"),
-      fragmentView = require("./views/fragmentView");
+      createChapterView = require("./views/createChapterView"),
+      chapterView = require("./views/chapterView");
 
 const app = choo();
 
@@ -19,7 +19,7 @@ app.model({
             id: null,
             characters: []
         },
-        fragment: {
+        chapter: {
             id: null,
             narrationId: null,
             title: null,
@@ -36,8 +36,8 @@ app.model({
 
 app.router((route) => [
     route('/narrations/:narrationId', narrationView),
-    route('/narrations/:narrationId/new', createFragmentView),
-    route('/fragments/:fragmentId', fragmentView)
+    route('/narrations/:narrationId/new', createChapterView),
+    route('/chapters/:chapterId', chapterView)
 ]);
 
 const tree = app.start();

@@ -23,22 +23,22 @@ const markForCharacter = (participants, state, send) => html`
   </div>
 `;
 
-const loadedFragmentView = (state, send) => html`
+const loadedChapterView = (state, send) => html`
   <div>
-    <h1>Fragment</h1>
+    <h1>Chapter</h1>
 
     <nav>
-      <a href="/narrations/${ state.fragment.narrationId }">Narration</a> ⇢
-        Fragment ${ state.fragment.id }
+      <a href="/narrations/${ state.chapter.narrationId }">Narration</a> ⇢
+        Chapter ${ state.chapter.id }
     </nav>
 
     <main class="page-aside">
       <section>
-        <input class="fragment-title"
+        <input class="chapter-title"
                type="text"
                placeholder="Title"
-               oninput=${ e => { send("updateFragmentTitle", { value: e.target.value }); } }
-               value=${ state.fragment.title || "" } />
+               oninput=${ e => { send("updateChapterTitle", { value: e.target.value }); } }
+               value=${ state.chapter.title || "" } />
 
         <div class="editor-container">
           ${ state.editor.wrapper }
@@ -46,21 +46,21 @@ const loadedFragmentView = (state, send) => html`
 
         ${ addImageView(state, send) }
 
-        ${ markForCharacter(state.fragment.participants, state, send) }
+        ${ markForCharacter(state.chapter.participants, state, send) }
 
         <div class="btn-row">
-          <button class="btn" onclick=${ () => { send("saveFragment", { fragmentId: state.params.fragmentId }); }}>Save</button>
-          <button class="btn btn-default" onclick=${ () => { send("publishFragment", { fragmentId: state.params.fragmentId }); }}>Publish</button>
+          <button class="btn" onclick=${ () => { send("saveChapter", { chapterId: state.params.chapterId }); }}>Save</button>
+          <button class="btn btn-default" onclick=${ () => { send("publishChapter", { chapterId: state.params.chapterId }); }}>Publish</button>
         </div>
       </section>
 
       <aside>
-        ${ participantListView(state.fragment, state.narration.characters, send) }
+        ${ participantListView(state.chapter, state.narration.characters, send) }
 
         <h2>Media</h2>
-        ${ backgroundImageSelector(state.fragment, state.narration.files.backgroundImages, send) }
+        ${ backgroundImageSelector(state.chapter, state.narration.files.backgroundImages, send) }
 
-        ${ audioSelector(state.fragment, state.narration.files.audio, send) }
+        ${ audioSelector(state.chapter, state.narration.files.audio, send) }
 
         <button class="btn btn-small btn-default"
                 onclick=${ () => send("chooseMediaFile") }>Add files</button>
@@ -74,26 +74,26 @@ const loadedFragmentView = (state, send) => html`
   </div>
 `;
 
-const loadingFragmentView = () => html `
+const loadingChapterView = () => html `
   <div>
     Loading…
   </div>
 `;
 
-const fragmentView = (state, prev, send) => {
-    const fragmentId = parseInt(state.params.fragmentId, 10);
+const chapterView = (state, prev, send) => {
+    const chapterId = parseInt(state.params.chapterId, 10);
 
-    if (state.fragment.id !== fragmentId) {
-        send("getFragment", { fragmentId: state.params.fragmentId });
-        return loadingFragmentView(state, send);
+    if (state.chapter.id !== chapterId) {
+        send("getChapter", { chapterId: state.params.chapterId });
+        return loadingChapterView(state, send);
     }
 
-    if (state.narration.id !== state.fragment.narrationId) {
-        send("getNarration", { narrationId: state.fragment.narrationId });
-        return loadingFragmentView(state, send);
+    if (state.narration.id !== state.chapter.narrationId) {
+        send("getNarration", { narrationId: state.chapter.narrationId });
+        return loadingChapterView(state, send);
     }
 
-    return loadedFragmentView(state, send);
+    return loadedChapterView(state, send);
 };
 
-module.exports = fragmentView;
+module.exports = chapterView;

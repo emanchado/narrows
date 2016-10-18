@@ -135,38 +135,38 @@ class NarrowsStore {
         });
     }
 
-    getNarrationFragments(id) {
+    getNarrationChapters(id) {
         return Q.ninvoke(
             this.db,
             "all",
-            "SELECT id, title, published FROM fragments WHERE narration_id = ?",
+            "SELECT id, title, published FROM chapters WHERE narration_id = ?",
             id
-        ).then(fragments => {
+        ).then(chapters => {
             let placeholders = [];
-            for (let i = 0; i < fragments.length; i++) {
+            for (let i = 0; i < chapters.length; i++) {
                 placeholders.push("?");
             }
 
             return Q.ninvoke(
                 this.db,
                 "all",
-                `SELECT fragment_id AS fragmentId,
+                `SELECT chapter_id AS chapterId,
                         character_id AS characterId,
                         main_text AS text
                    FROM reactions
-                  WHERE fragmentId IN (${ placeholders.join(", ") })`,
-                fragments.map(f => f.id)
+                  WHERE chapterId IN (${ placeholders.join(", ") })`,
+                chapters.map(f => f.id)
             ).then(reactions => {
-                const fragmentMap = {};
-                fragments.forEach(fragment => {
-                    fragmentMap[fragment.id] = fragment;
+                const chapterMap = {};
+                chapters.forEach(chapter => {
+                    chapterMap[chapter.id] = chapter;
                 });
                 reactions.forEach(reaction => {
-                    const fragment = fragmentMap[reaction.fragmentId];
-                    fragment.reactions = fragment.reactions || [];
-                    fragment.reactions.push(reaction);
+                    const chapter = chapterMap[reaction.chapterId];
+                    chapter.reactions = chapter.reactions || [];
+                    chapter.reactions.push(reaction);
                 });
-                return fragments;
+                return chapters;
             });
         });
     }
@@ -179,7 +179,7 @@ class NarrowsStore {
                 return Q.ninvoke(
                     this.db,
                     "run",
-                    `INSERT INTO reactions (fragment_id, character_id)
+                    `INSERT INTO reactions (chapter_id, character_id)
                             VALUES (?, ?)`,
                     [id, pId]
                 );
@@ -189,28 +189,28 @@ class NarrowsStore {
         return promise;
     }
 
-    deleteFragment(id) {
+    deleteChapter(id) {
         return Q.ninvoke(
             this.db,
             "run",
-            "DELETE FROM fragments WHERE id = ?",
+            "DELETE FROM chapters WHERE id = ?",
             id
         ).catch(err => true);
     }
 
     /**
-     * Creates a new fragment for the given narration, with the given
+     * Creates a new chapter for the given narration, with the given
      * properties. Properties have to include at least "text" (JSON in
      * ProseMirror format) and "participants" (an array of ids for the
-     * characters in the fragment).
+     * characters in the chapter).
      */
-    createFragment(narrationId, fragmentProps) {
-        if (!fragmentProps.text) {
-            throw new Error("Cannot create a new fragment without text");
+    createChapter(narrationId, chapterProps) {
+        if (!chapterProps.text) {
+            throw new Error("Cannot create a new chapter without text");
         }
 
-        if (!fragmentProps.participants) {
-            throw new Error("Cannot create a new fragment without participants");
+        if (!chapterProps.participants) {
+            throw new Error("Cannot create a new chapter without participants");
         }
 
         return this.getNarration(narrationId).then(narration => {
@@ -219,19 +219,19 @@ class NarrowsStore {
                 audio: narration.defaultAudio
             };
             Object.keys(JSON_TO_DB).forEach(field => {
-                if (field in fragmentProps) {
-                    basicProps[field] = fragmentProps[field];
+                if (field in chapterProps) {
+                    basicProps[field] = chapterProps[field];
                 }
             });
             basicProps.text = JSON.stringify(basicProps.text);
 
-            return this._insertFragment(narrationId,
-                                        basicProps,
-                                        fragmentProps.participants);
+            return this._insertChapter(narrationId,
+                                       basicProps,
+                                       chapterProps.participants);
         });
     }
 
-    _insertFragment(narrationId, basicProps, participants) {
+    _insertChapter(narrationId, basicProps, participants) {
         const deferred = Q.defer();
         const fields = Object.keys(basicProps).map(convertToDb),
               fieldString = fields.join(", "),
@@ -240,7 +240,7 @@ class NarrowsStore {
 
         const self = this;
         this.db.run(
-            `INSERT INTO fragments
+            `INSERT INTO chapters
                 (${ fieldString }, narration_id)
                 VALUES (${ placeholderString }, ?)`,
             values.concat(narrationId),
@@ -250,14 +250,14 @@ class NarrowsStore {
                     return;
                 }
 
-                const newFragmentId = this.lastID;
+                const newChapterId = this.lastID;
 
-                self._insertParticipants(newFragmentId, participants).then(() => {
-                    return self.getFragment(newFragmentId);
-                }).then(fragment => {
-                    deferred.resolve(fragment);
+                self._insertParticipants(newChapterId, participants).then(() => {
+                    return self.getChapter(newChapterId);
+                }).then(chapter => {
+                    deferred.resolve(chapter);
                 }).catch(err => {
-                    return self.deleteFragment(newFragmentId).then(() => {
+                    return self.deleteChapter(newChapterId).then(() => {
                         deferred.reject(err);
                     });
                 });
@@ -267,53 +267,53 @@ class NarrowsStore {
         return deferred.promise;
     }
 
-    getFragmentParticipants(fragmentId) {
+    getChapterParticipants(chapterId) {
         return Q.ninvoke(
             this.db,
             "all",
             `SELECT C.id, C.name, C.token
                FROM characters C JOIN reactions R ON C.id = R.character_id
-              WHERE fragment_id = ?`,
-            fragmentId
+              WHERE chapter_id = ?`,
+            chapterId
         );
     }
 
-    getFragment(id) {
+    getChapter(id) {
         return Q.ninvoke(
             this.db,
             "get",
             "SELECT id, title, audio, narration_id as narrationId, " +
                 "background_image AS backgroundImage, " +
-                "main_text AS text, published FROM fragments WHERE id = ?",
+                "main_text AS text, published FROM chapters WHERE id = ?",
             id
-        ).then(fragmentData => {
-            if (!fragmentData) {
-                throw new Error("Cannot find fragment " + id);
+        ).then(chapterData => {
+            if (!chapterData) {
+                throw new Error("Cannot find chapter " + id);
             }
 
-            fragmentData.text = JSON.parse(fragmentData.text);
-            fragmentData.text = fixBlockImages(fragmentData.text);
+            chapterData.text = JSON.parse(chapterData.text);
+            chapterData.text = fixBlockImages(chapterData.text);
 
-            return this.getFragmentParticipants(id).then(participants => {
-                fragmentData.participants = participants;
-                return fragmentData;
+            return this.getChapterParticipants(id).then(participants => {
+                chapterData.participants = participants;
+                return chapterData;
             });
         });
     }
 
-    getFragmentReaction(id, characterId) {
+    getChapterReaction(id, characterId) {
         return Q.ninvoke(
             this.db,
             "get",
             `SELECT main_text AS text FROM reactions
-              WHERE fragment_id = ? AND character_id = ?`,
+              WHERE chapter_id = ? AND character_id = ?`,
             [id, characterId]
         ).then(
             row => row ? row.text : null
         );
     }
 
-    updateFragment(id, props) {
+    updateChapter(id, props) {
         const propNames = Object.keys(props).map(convertToDb),
               propNameString = propNames.map(p => `${p} = ?`).join(", ");
         const propValues = Object.keys(props).map(n => props[n]);
@@ -321,20 +321,20 @@ class NarrowsStore {
         return Q.ninvoke(
             this.db,
             "run",
-            `UPDATE fragments SET ${ propNameString } WHERE id = ?`,
+            `UPDATE chapters SET ${ propNameString } WHERE id = ?`,
             propValues.concat(id)
         ).then(
-            () => this.getFragment(id)
+            () => this.getChapter(id)
         );
     }
 
-    updateReaction(fragmentId, characterId, reactionText) {
+    updateReaction(chapterId, characterId, reactionText) {
         return Q.ninvoke(
             this.db,
             "run",
             `UPDATE reactions SET main_text = ?
-              WHERE fragment_id = ? AND character_id = ?`,
-            [reactionText, fragmentId, characterId]
+              WHERE chapter_id = ? AND character_id = ?`,
+            [reactionText, chapterId, characterId]
         );
     }
 
@@ -349,9 +349,9 @@ class NarrowsStore {
         );
     }
 
-    addParticipant(fragmentId, characterId) {
-        return this.getFragment(fragmentId).then(() => (
-            this.getFragmentParticipants(fragmentId)
+    addParticipant(chapterId, characterId) {
+        return this.getChapter(chapterId).then(() => (
+            this.getChapterParticipants(chapterId)
         )).then(participants => {
             if (participants.some(p => p.id === characterId)) {
                 return participants;
@@ -360,22 +360,22 @@ class NarrowsStore {
             return Q.ninvoke(
                 this.db,
                 "run",
-                `INSERT INTO reactions (fragment_id, character_id)
+                `INSERT INTO reactions (chapter_id, character_id)
                     VALUES (?, ?)`,
-                [fragmentId, characterId]
+                [chapterId, characterId]
             );
         });
     }
 
-    removeParticipant(fragmentId, characterId) {
+    removeParticipant(chapterId, characterId) {
         return Q.ninvoke(
             this.db,
             "run",
             `DELETE FROM reactions
-                  WHERE fragment_id = ? AND character_id = ?`,
-            [fragmentId, characterId]
+                  WHERE chapter_id = ? AND character_id = ?`,
+            [chapterId, characterId]
         ).then(() => (
-            this.getFragmentParticipants(fragmentId)
+            this.getChapterParticipants(chapterId)
         ));
     }
 

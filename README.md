@@ -1,7 +1,7 @@
 TODO
 ====
 
-* Make some way to preview fragments for different characters
+* Make some way to preview chapters for different characters
 * Really wait until everything is loaded before showing the "Start" button
 
 Later
