@@ -132,8 +132,8 @@ app.model({
             // animated.
             const chapterContainer = document.getElementById("chapter-container");
             chapterContainer.className = "transparent";
-
-            send("markNarrationAsStarted", {}, done);
+            setTimeout(() => send("markNarrationAsStarted", {}, done),
+                       50);
         },
 
         playPauseMusic: (data, state, send, done) => {
@@ -259,7 +259,9 @@ const chapterView = (state, prev, send) => html`
 
 const mainView = (state, prev, send) => html`
   <main onload=${() => send("getChapter")}>
-    ${ (!state.started && !state.error) ? loaderView(state, prev, send) : "" }
+    <div>
+      ${ (!state.started && !state.error) ? loaderView(state, prev, send) : "" }
+    </div>
     ${ state.error ? errorView(state.error, send) : "" }
 
     ${ chapterView(state, prev, send) }
