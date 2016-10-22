@@ -386,7 +386,7 @@ const reactionView = (state, prev, send) => {
     return html`
   <div>
     <div class="messages">
-      <h2>Discussion</h2>
+      <h2>Discussion <a target="_blank" href="/feeds/${ state.characterToken }"><img src="/img/rss.png" /></a></h2>
 
       ${ messageListView(state.chapter,
                          state.characterId,

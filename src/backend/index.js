@@ -32,6 +32,7 @@ app.use(expressSession({
 app.all("/read/:chptId/:characterId", function(req, res) {
     res.sendFile(path.resolve(path.join(STATIC_HTML_FILES, "read.html")));
 });
+app.get("/feeds/:charToken", endpoints.getFeedsCharacter);
 
 app.all("/narrations/:narrationId", middlewares.auth, function(req, res) {
     res.sendFile(path.resolve(path.join(STATIC_HTML_FILES, "narrator.html")));

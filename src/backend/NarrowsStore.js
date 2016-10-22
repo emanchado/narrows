@@ -363,14 +363,12 @@ class NarrowsStore {
         );
     }
 
-    getCharacterId(characterToken) {
+    getCharacterInfo(characterToken) {
         return Q.ninvoke(
             this.db,
             "get",
-            "SELECT id FROM characters WHERE token = ?",
+            "SELECT id, name, token FROM characters WHERE token = ?",
             characterToken
-        ).then(
-            characterRow => characterRow.id
         );
     }
 
@@ -548,6 +546,23 @@ class NarrowsStore {
         );
 
         return deferred.promise;
+    }
+
+    getActiveChapter(characterId) {
+        return Q.ninvoke(
+            this.db,
+            "get",
+            `SELECT CHAP.id, CHAP.title, CHAP.published
+               FROM chapters CHAP
+               JOIN characters CHAR
+                 ON CHAP.narration_id = CHAR.narration_id
+               JOIN reactions REACT
+                 ON (REACT.chapter_id = CHAP.id AND
+                     REACT.character_id = CHAR.id)
+              WHERE CHAR.id = 1 AND published IS NOT NULL
+           ORDER BY published DESC
+              LIMIT 1 ;`
+        );
     }
 }
 

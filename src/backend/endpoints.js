@@ -6,6 +6,7 @@ import formidable from "formidable";
 import NarrowsStore from "./NarrowsStore";
 import mentionFilter from "./mention-filter";
 import messageUtils from "./message-utils";
+import feeds from "./feeds";
 
 const store = new NarrowsStore(config.db.path, config.files.path);
 store.connect();
@@ -38,21 +39,21 @@ export function getChapterCharacter(req, res) {
     const chapterId = parseInt(req.params.chptId, 10);
     const characterToken = req.params.charToken;
 
-    store.getCharacterId(characterToken).then(characterId => {
+    store.getCharacterInfo(characterToken).then(charInfo => {
         return store.getChapter(chapterId).then(chapterData => {
             if (!chapterData.published) {
                 throw new Error("Unpublished chapter");
             }
 
             const participantIds = chapterData.participants.map(p => p.id);
-            if (participantIds.indexOf(characterId) === -1) {
+            if (participantIds.indexOf(charInfo.id) === -1) {
                 throw new Error("Character does not participate in chapter");
             }
 
             chapterData.text =
-                mentionFilter.filter(chapterData.text, characterId);
+                mentionFilter.filter(chapterData.text, charInfo.id);
 
-            store.getChapterReaction(chapterId, characterId).then(reaction => {
+            store.getChapterReaction(chapterId, charInfo.id).then(reaction => {
                 chapterData.reaction = reaction;
                 res.json(chapterData);
             });
@@ -137,7 +138,7 @@ export function putReactionCharacter(req, res) {
           characterToken = req.params.charToken,
           reactionText = req.body.text;
 
-    store.getCharacterId(characterToken).then(characterId => {
+    store.getCharacterInfo(characterToken).then(({ id: characterId }) => {
         return store.updateReaction(chapterId, characterId, reactionText).then(() => {
             res.json({ chapterId, characterId, reactionText });
         });
@@ -152,11 +153,11 @@ export function getMessagesCharacter(req, res) {
     const chapterId = req.params.chptId,
           characterToken = req.params.charToken;
 
-    store.getCharacterId(characterToken).then(characterId => {
-        return store.getChapterMessages(chapterId, characterId).then(messages => {
+    store.getCharacterInfo(characterToken).then(characterInfo => {
+        return store.getChapterMessages(chapterId, characterInfo.id).then(messages => {
             res.json({
                 messageThreads: messageUtils.threadMessages(messages),
-                characterId: characterId
+                characterId: characterInfo.id
             });
         });
     }).catch(err => {
@@ -174,18 +175,18 @@ export function postMessageCharacter(req, res) {
 
     // TODO: Check that the character really belongs to this narration
 
-    store.getCharacterId(characterToken).then(characterId => {
+    store.getCharacterInfo(characterToken).then(characterInfo => {
         return store.addMessage(
             chapterId,
-            characterId,
+            characterInfo.id,
             messageText,
             messageRecipients
         ).then(() => {
-            return store.getChapterMessages(chapterId, characterId);
+            return store.getChapterMessages(chapterId, characterInfo.id);
         }).then(messages => {
             res.json({
                 messageThreads: messageUtils.threadMessages(messages),
-                characterId: characterId
+                characterId: characterInfo.id
             });
         });
     }).catch(err => {
@@ -217,6 +218,24 @@ export function deleteChapterParticipant(req, res) {
     }).catch(err => {
         res.status(500).json({
             errorMessage: `Could not remove participant: ${ err }`
+        });
+    });
+}
+
+export function getFeedsCharacter(req, res) {
+    const characterToken = req.params.charToken;
+
+    store.getCharacterInfo(characterToken).then(characterInfo => {
+        const { id: characterId, name: characterName } = characterInfo;
+        const baseUrl = req.protocol + "://" + req.get("host");
+
+        return feeds.makeCharacterFeed(baseUrl, characterInfo, store);
+    }).then(feedXml => {
+        res.set("Content-Type", "application/rss+xml");
+        res.send(feedXml);
+    }).catch(err => {
+        res.status(500).json({
+            errorMessage: `Could not create feed: ${ err }`
         });
     });
 }

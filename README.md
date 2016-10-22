@@ -24,12 +24,15 @@ Credits
 -------
 
 * Speaker/mute icons made by
-[Madebyoliver](http://www.flaticon.com/authors/madebyoliver), from
-[Flaticon](http://www.flaticon.com). They are licensed under Creative
-Commons BY 3.0.
+  [Madebyoliver](http://www.flaticon.com/authors/madebyoliver), from
+  [Flaticon](http://www.flaticon.com). They are licensed under
+  Creative Commons BY 3.0.
 * Delete icon by [Freepik](http://www.flaticon.com/authors/freepik),
-from [Flaticon](http://www.flaticon.com). Licensed under
-Creative Commons BY 3.0.
+  from [Flaticon](http://www.flaticon.com). Licensed under Creative
+  Commons BY 3.0.
 * Add/plus icon by [Lucy G](http://www.flaticon.com/authors/lucy-g),
-from [Flaticon](http://www.flaticon.com). Licensed under
-Creative Commons BY 3.0.
+  from [Flaticon](http://www.flaticon.com). Licensed under Creative
+  Commons BY 3.0.
+* RSS icon by Dave Gandy](http://www.flaticon.com/authors/dave-gandy)
+  from [Flaticon](http://www.flaticon.com). Licensed under Creative
+  Commons BY 3.0.
