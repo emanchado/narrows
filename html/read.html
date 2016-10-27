@@ -1,4 +1,4 @@
-<html lang="">
+<html lang="en">
   <head>
     <meta charset="utf-8" />
     <title>NARROWS</title>
@@ -7,6 +7,13 @@
   </head>
 
   <body>
-    <script src="/compiled/reader.bundle.js"></script>
+    <div id="main"></div>
+
+    <script src="/js/main.js"></script>
+    <script>
+      var node = document.getElementById("main");
+      var app = Elm.Main.embed(node);
+    </script>
+    <script src="/compiled/ports.bundle.js"></script>
   </body>
 </html>

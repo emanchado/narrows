@@ -3,3 +3,8 @@ node_modules/
 public/compiled/
 files/
 dev.db
+elm-stuff/packages/
+elm-stuff/build-artifacts/
+public/js/main.js
+public/app.js
+public/app.js.map

@@ -26,15 +26,17 @@
     "startdev": "nodemon build/index.js",
     "buildbe": "babel --modules common -d build/ src/backend",
     "watchbe": "babel -w --modules common -d build/ src/backend",
-    "buildfe": "webpack",
-    "watchfe": "webpack --watch",
+    "buildfe": "brunch build",
+    "watchfe": "brunch watch",
     "test": "ava",
     "watchtest": "ava --watch"
   },
   "devDependencies": {
     "ava": "^0.16.0",
     "nodemon": "^1.10.2",
-    "webpack": "^1.13.2"
+    "webpack": "^1.13.2",
+    "brunch": "^2.8.2",
+    "elm-brunch": "^0.5.0"
   },
   "ava": {
     "require": [

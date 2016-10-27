@@ -3,6 +3,7 @@ TODO
 
 * Make some way to preview chapters for different characters
 * Really wait until everything is loaded before showing the "Start" button
+* The RSS feed should include an item about the new chapter
 
 Later
 -----
