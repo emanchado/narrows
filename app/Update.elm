@@ -48,7 +48,9 @@ update msg model =
     NarrationStarted _ ->
       ({ model | state = Narrating }, Cmd.none)
     ChapterFetchError error ->
-      ({ model | errorMessage = (Just "Error fetching chapter") }, Cmd.none)
+      ({ model | banner = (Just { text = "Error fetching chapter"
+                                , type' = "error"
+                                }) }, Cmd.none)
     ChapterFetchSuccess chapterData ->
       let
         reactionText = case chapterData.reaction of
@@ -81,8 +83,23 @@ update msg model =
         Just chapter ->
           (model, Api.sendReaction chapter.id model.characterToken model.reaction)
         Nothing ->
-          ({ model | errorMessage = (Just "No chapter to send reaction to") }, Cmd.none)
+          ({ model | banner = (Just { text = "No chapter to send reaction to"
+                                    , type' = "error"
+                                    }) }
+          , Cmd.none)
     SendReactionError error ->
-      ({ model | errorMessage = (Just "Error sending reaction") }, Cmd.none)
+      ({ model | banner = Just { text = "Error sending reaction"
+                               , type' = "error"
+                               } }
+      , Cmd.none)
     SendReactionSuccess resp ->
-      ({ model | reactionSent = True }, Cmd.none)
+      let
+        updatedModel = { model | reactionSent = True }
+        newBanner = if (resp.status >= 200) && (resp.status < 300) then
+                      Just { text = "Action registered", type' = "success" }
+                    else
+                      Just { text = "Error registering action"
+                           , type' = "error"
+                           }
+      in
+        ({ model | reactionSent = True, banner = newBanner }, Cmd.none)

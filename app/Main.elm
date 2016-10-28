@@ -14,13 +14,13 @@ initialState result =
       { route = Routing.NotFoundRoute
       , state = Loader
       , chapter = Nothing
-      , errorMessage = Nothing
       , backgroundMusic = True
       , musicPlaying = True
       , backgroundBlurriness = 0
       , characterToken = ""
       , reactionSent = False
       , reaction = ""
+      , banner = Nothing
       }
   in
     Update.urlUpdate result model

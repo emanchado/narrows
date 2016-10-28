@@ -29,15 +29,20 @@ type alias Chapter =
   , reaction : Maybe String
   }
 
+type alias Banner =
+  { type' : String
+  , text : String
+  }
+
 type alias Model =
   { route : Routing.Route
   , state : PageState
   , chapter : Maybe Chapter
-  , errorMessage : Maybe String
   , backgroundMusic : Bool
   , musicPlaying : Bool
   , backgroundBlurriness : Int
   , characterToken : String
   , reactionSent : Bool
   , reaction : String
+  , banner : Maybe Banner
   }
