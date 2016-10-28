@@ -37,4 +37,6 @@ main =
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-  Ports.pageScrollListener PageScroll
+  Sub.batch [ Ports.pageScrollListener PageScroll
+            , Ports.markNarrationAsStarted NarrationStarted
+            ]

@@ -1,14 +1,10 @@
 module Update exposing (..)
 
-import Process
-import Task
-import Time
-
 import Routing
 import Api
 import Messages exposing (..)
 import Models exposing (..)
-import Ports exposing (renderChapter)
+import Ports exposing (renderChapter, startNarration, playPauseNarrationMusic)
 
 
 maxBlurriness : Int
@@ -33,20 +29,23 @@ update msg model =
   case msg of
     StartNarration ->
       let
+        audioElemId = if model.backgroundMusic then
+                        "background-music"
+                      else
+                        ""
         command = case model.chapter of
                     Just chapterData ->
                       Cmd.batch
                         [ renderChapter { elemId = "chapter-text"
                                         , text = chapterData.text
                                         }
-                        , Process.sleep (100 * Time.millisecond)
-                          |> Task.perform (\_ -> PlayPauseMusic) (\_ -> MarkNarrationStarted)
+                        , startNarration { audioElemId = audioElemId }
                         ]
                     Nothing ->
                       Cmd.none
       in
         ({ model | state = StartingNarration }, command)
-    MarkNarrationStarted ->
+    NarrationStarted _ ->
       ({ model | state = Narrating }, Cmd.none)
     ChapterFetchError error ->
       ({ model | errorMessage = (Just "Error fetching chapter") }, Cmd.none)
@@ -61,14 +60,18 @@ update msg model =
         ({ model | chapter = Just chapterData, reaction = reactionText }
         , Cmd.none)
     ToggleBackgroundMusic ->
-      ({ model | backgroundMusic = not model.backgroundMusic }, Cmd.none)
+      let
+        musicOn = not model.backgroundMusic
+      in
+        ({ model | backgroundMusic = musicOn, musicPlaying = musicOn }
+        , Cmd.none)
     PlayPauseMusic ->
-      ({ model | musicPlaying = not model.musicPlaying }, Cmd.none)
+      ({ model | musicPlaying = not model.musicPlaying }
+      , playPauseNarrationMusic { audioElemId = "background-music" })
     PageScroll scrollAmount ->
       let
-        blurriness = Debug.log "Blurriness:" (min
-                                                (round ((toFloat scrollAmount) / 40))
-                                                maxBlurriness)
+        blurriness =
+          min maxBlurriness (round ((toFloat scrollAmount) / 40))
       in
         ({ model | backgroundBlurriness = blurriness }, Cmd.none)
     UpdateReactionText newText ->

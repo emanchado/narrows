@@ -2,7 +2,17 @@
 
 const editor = require("./editor");
 
-app.ports.renderChapter.subscribe(function(evt) {
+function bumpVolume(audioEl) {
+    audioEl.volume = Math.min(1, audioEl.volume + 0.02);
+
+    if (audioEl.volume < 1) {
+        setTimeout(function() {
+            bumpVolume(audioEl);
+        }, 100);
+    }
+}
+
+app.ports.renderChapter.subscribe(evt => {
     const elem = document.getElementById(evt.elemId);
     if (!elem) {
         return;
@@ -12,7 +22,34 @@ app.ports.renderChapter.subscribe(function(evt) {
     elem.appendChild(importedText.content.toDOM());
 });
 
+app.ports.startNarration.subscribe(evt => {
+    const breathHoldingTime = 500;
+
+    // Make chapter fade-in after half a second (breathHoldingTime
+    // above)
+    setTimeout(() => {
+        app.ports.markNarrationAsStarted.send(breathHoldingTime);
+
+        // Fade audio in, too
+        const audioEl = document.getElementById(evt.audioElemId);
+        if (!audioEl) {
+            return;
+        }
+        audioEl.volume = 0.1;
+        audioEl.play();
+        bumpVolume(audioEl);
+    }, breathHoldingTime);
+});
+
+app.ports.playPauseNarrationMusic.subscribe(evt => {
+    const audioEl = document.getElementById(evt.audioElemId);
+    if (audioEl.paused) {
+        audioEl.play();
+    } else {
+        audioEl.pause();
+    }
+});
+
 document.addEventListener("scroll", function(evt) {
-    console.log("Sending", window.scrollY, "to the app");
     app.ports.pageScrollListener.send(window.scrollY);
 }, false);
