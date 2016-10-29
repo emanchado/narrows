@@ -23,9 +23,9 @@ app.ports.renderChapter.subscribe(evt => {
 });
 
 app.ports.startNarration.subscribe(evt => {
-    const breathHoldingTime = 500;
+    const breathHoldingTime = 700;
 
-    // Make chapter fade-in after half a second (breathHoldingTime
+    // Make chapter fade-in after a short pause (breathHoldingTime
     // above)
     setTimeout(() => {
         app.ports.markNarrationAsStarted.send(breathHoldingTime);
