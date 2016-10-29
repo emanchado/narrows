@@ -14,6 +14,7 @@ initialState result =
       { route = Routing.NotFoundRoute
       , state = Loader
       , chapter = Nothing
+      , messageThreads = Nothing
       , backgroundMusic = True
       , musicPlaying = True
       , backgroundBlurriness = 0

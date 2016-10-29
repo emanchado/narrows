@@ -7,6 +7,7 @@ import Html.Events exposing (onClick, onInput)
 
 import Models exposing (Model, Chapter, Banner)
 import Messages exposing (..)
+import Views.Banner
 
 chapterContainerClass : Model -> String
 chapterContainerClass model =
@@ -29,11 +30,6 @@ backgroundImageStyle chapter backgroundBlurriness =
     , ("filter", filter)
     ]
 
-bannerView : Banner -> Html Msg
-bannerView banner =
-  div [ class ("banner banner-" ++ banner.type') ]
-    [ text banner.text ]
-
 reactionView : Model -> Html Msg
 reactionView model =
   div [ class "reaction" ]
@@ -49,7 +45,7 @@ reactionView model =
         ]
     , h2 [] [ text "Action" ]
     , case model.banner of
-        Just banner -> bannerView banner
+        Just banner -> Views.Banner.view banner
         Nothing -> text ""
     , div [ class ("player-reply" ++ (if model.reactionSent then
                                         " invisible"

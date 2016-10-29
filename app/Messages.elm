@@ -10,6 +10,8 @@ type Msg
   | NarrationStarted Int
   | ChapterFetchError Http.Error
   | ChapterFetchSuccess Chapter
+  | ChapterMessagesFetchError Http.Error
+  | ChapterMessagesFetchSuccess ChapterMessages
   | ToggleBackgroundMusic
   | PlayPauseMusic
   | PageScroll Int

@@ -5,9 +5,10 @@ import Html.Attributes exposing (id, class, for, src, href, type', checked)
 import Html.Events exposing (onClick)
 
 import Routing
-import Models exposing (Model)
+import Models exposing (Model, Banner)
 import Messages exposing (..)
 import NarrationView
+import Views.Banner
 
 notFoundView : Html Msg
 notFoundView =
@@ -15,10 +16,16 @@ notFoundView =
     [ div [] [ text "404 Not Found" ]
     ]
 
-loadingView : Html Msg
-loadingView =
+loadingView : Maybe Banner -> Html Msg
+loadingView maybeBanner =
   div [ id "loader" ]
-    [ div [ id "spinner" ] [ text "Loading…" ] ]
+    [ div [ id "spinner" ] [ text "Loading…" ]
+    , case maybeBanner of
+        Just banner ->
+          Views.Banner.view banner
+        Nothing ->
+          text ""
+    ]
 
 loadedView : Model -> Html Msg
 loadedView model =
@@ -47,7 +54,7 @@ validView model =
             Just data ->
               loadedView model
             Nothing ->
-              loadingView
+              loadingView model.banner
         _ ->
           text ""
     , NarrationView.view model

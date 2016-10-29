@@ -6,11 +6,25 @@ import Task
 import Http
 
 import Messages exposing (Msg, Msg(..))
-import Models exposing (Chapter, Participant)
+import Models exposing (Chapter, Character, ChapterMessages, MessageThread, Message)
 
-parseParticipant : Json.Decoder Participant
-parseParticipant =
-  Json.object2 Participant ("id" := int) ("name" := string)
+parseCharacter : Json.Decoder Character
+parseCharacter =
+  Json.object2 Character ("id" := int) ("name" := string)
+
+parseMessage : Json.Decoder Message
+parseMessage =
+  Json.object4 Message
+    ("id" := int)
+    ("body" := string)
+    ("sentAt" := string)
+    ("sender" := parseCharacter)
+
+parseMessageThread : Json.Decoder MessageThread
+parseMessageThread =
+  Json.object2 MessageThread
+    ("participants" := list parseCharacter)
+    ("messages" := list parseMessage)
 
 parseChapter : Json.Decoder Chapter
 parseChapter =
@@ -21,8 +35,13 @@ parseChapter =
     ("audio" := string)
     ("backgroundImage" := string)
     ("text" := Json.value)
-    ("participants" := list parseParticipant)
+    ("participants" := list parseCharacter)
     (maybe ("reaction" := string))
+
+parseChapterMessages : Json.Decoder ChapterMessages
+parseChapterMessages =
+  Json.object1 ChapterMessages
+    ("messages" := list parseMessageThread)
 
 fetchChapterInfo : Int -> String -> Cmd Msg
 fetchChapterInfo chapterId characterToken =
@@ -30,7 +49,17 @@ fetchChapterInfo chapterId characterToken =
     chapterApiUrl = "/api/chapters/" ++ (toString chapterId) ++
                     "/" ++ characterToken
   in
-    Task.perform ChapterFetchError ChapterFetchSuccess (Http.get parseChapter chapterApiUrl)
+    Task.perform ChapterFetchError ChapterFetchSuccess
+      (Http.get parseChapter chapterApiUrl)
+
+fetchChapterMessages : Int -> String -> Cmd Msg
+fetchChapterMessages chapterId characterToken =
+  let
+    chapterMessagesApiUrl = "/api/messages/" ++ (toString chapterId) ++
+                         "/" ++ characterToken
+  in
+    Task.perform ChapterMessagesFetchError ChapterMessagesFetchSuccess
+      (Http.get parseChapterMessages chapterMessagesApiUrl)
 
 sendReaction : Int -> String -> String -> Cmd Msg
 sendReaction chapterId characterToken reactionText =

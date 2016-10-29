@@ -20,7 +20,8 @@ urlUpdate result model =
     case currentRoute of
       Routing.ChapterPage chapterId characterToken ->
         ( { updatedModel | characterToken = characterToken }
-        , Api.fetchChapterInfo chapterId characterToken )
+        , Api.fetchChapterInfo chapterId characterToken
+        )
       _ ->
         (updatedModel, Cmd.none)
 
@@ -50,7 +51,8 @@ update msg model =
     ChapterFetchError error ->
       ({ model | banner = (Just { text = "Error fetching chapter"
                                 , type' = "error"
-                                }) }, Cmd.none)
+                                }) }
+      , Cmd.none)
     ChapterFetchSuccess chapterData ->
       let
         reactionText = case chapterData.reaction of
@@ -60,7 +62,17 @@ update msg model =
                            ""
       in
         ({ model | chapter = Just chapterData, reaction = reactionText }
-        , Cmd.none)
+        , Api.fetchChapterMessages chapterData.id model.characterToken
+        )
+    ChapterMessagesFetchError error ->
+      ({ model | banner = (Just { text = "Error fetching chapter messages"
+                                , type' = "error"
+                                }) }
+      , Cmd.none)
+    ChapterMessagesFetchSuccess chapterMessageData ->
+      ({ model | messageThreads = (Just chapterMessageData.messages) }
+      , Cmd.none
+      )
     ToggleBackgroundMusic ->
       let
         musicOn = not model.backgroundMusic
