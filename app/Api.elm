@@ -10,7 +10,7 @@ import Models exposing (Chapter, Participant)
 
 parseParticipant : Json.Decoder Participant
 parseParticipant =
-  Json.object3 Participant ("id" := int) ("name" := string) ("token" := string)
+  Json.object2 Participant ("id" := int) ("name" := string)
 
 parseChapter : Json.Decoder Chapter
 parseChapter =

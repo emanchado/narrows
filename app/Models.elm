@@ -15,7 +15,6 @@ type alias CharacterToken = String
 type alias Participant =
   { id : Int
   , name : String
-  , token : String
   }
 
 type alias Chapter =

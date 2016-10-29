@@ -278,7 +278,7 @@ class NarrowsStore {
                 const newChapterId = this.lastID;
 
                 self._insertParticipants(newChapterId, participants).then(() => {
-                    return self.getChapter(newChapterId);
+                    return self.getChapter(newChapterId, { includeCharacterTokens: true });
                 }).then(chapter => {
                     deferred.resolve(chapter);
                 }).catch(err => {
@@ -292,18 +292,21 @@ class NarrowsStore {
         return deferred.promise;
     }
 
-    getChapterParticipants(chapterId) {
+    getChapterParticipants(chapterId, userOpts) {
+        const opts = userOpts || {};
+        const extraFields = opts.includeCharacterTokens ? ", C.token" : "";
+
         return Q.ninvoke(
             this.db,
             "all",
-            `SELECT C.id, C.name, C.token
+            `SELECT C.id, C.name ${ extraFields }
                FROM characters C JOIN reactions R ON C.id = R.character_id
               WHERE chapter_id = ?`,
             chapterId
         );
     }
 
-    getChapter(id) {
+    getChapter(id, opts) {
         return Q.ninvoke(
             this.db,
             "get",
@@ -319,7 +322,7 @@ class NarrowsStore {
             chapterData.text = JSON.parse(chapterData.text);
             chapterData.text = fixBlockImages(chapterData.text);
 
-            return this.getChapterParticipants(id).then(participants => {
+            return this.getChapterParticipants(id, opts).then(participants => {
                 chapterData.participants = participants;
                 return chapterData;
             });
@@ -393,7 +396,8 @@ class NarrowsStore {
 
     addParticipant(chapterId, characterId) {
         return this.getChapter(chapterId).then(() => (
-            this.getChapterParticipants(chapterId)
+            this.getChapterParticipants(chapterId,
+                                        { includeCharacterTokens: true })
         )).then(participants => {
             if (participants.some(p => p.id === characterId)) {
                 return participants;
@@ -417,7 +421,8 @@ class NarrowsStore {
                   WHERE chapter_id = ? AND character_id = ?`,
             [chapterId, characterId]
         ).then(() => (
-            this.getChapterParticipants(chapterId)
+            this.getChapterParticipants(chapterId,
+                                        { includeCharacterTokens: true })
         ));
     }
 
