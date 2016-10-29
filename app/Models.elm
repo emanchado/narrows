@@ -30,7 +30,9 @@ type alias MessageThread =
 
 -- Only used for JSON response decoding
 type alias ChapterMessages =
-  { messages : List MessageThread }
+  { messages : List MessageThread
+  , characterId : Maybe Int
+  }
 
 type alias Chapter =
   { id : Int
@@ -56,7 +58,10 @@ type alias Model =
   , backgroundMusic : Bool
   , musicPlaying : Bool
   , backgroundBlurriness : Int
+  , characterId : Maybe Int
   , characterToken : String
+  , newMessageText : String
+  , newMessageRecipients : List Int
   , reactionSent : Bool
   , reaction : String
   , banner : Maybe Banner

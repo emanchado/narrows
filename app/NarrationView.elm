@@ -8,6 +8,7 @@ import Html.Events exposing (onClick, onInput)
 import Models exposing (Model, Chapter, Banner)
 import Messages exposing (..)
 import Views.Banner
+import Views.MessageThreads
 
 chapterContainerClass : Model -> String
 chapterContainerClass model =
@@ -41,7 +42,7 @@ reactionView model =
                 ]
                 [ img [ src "/img/rss.png" ] [] ]
             ]
-        -- , messageListView model
+        , Views.MessageThreads.listView model
         ]
     , h2 [] [ text "Action" ]
     , case model.banner of

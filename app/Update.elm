@@ -70,7 +70,8 @@ update msg model =
                                 }) }
       , Cmd.none)
     ChapterMessagesFetchSuccess chapterMessageData ->
-      ({ model | messageThreads = (Just chapterMessageData.messages) }
+      ({ model | messageThreads = Just chapterMessageData.messages
+               , characterId = chapterMessageData.characterId }
       , Cmd.none
       )
     ToggleBackgroundMusic ->
@@ -88,6 +89,10 @@ update msg model =
           min maxBlurriness (round ((toFloat scrollAmount) / 40))
       in
         ({ model | backgroundBlurriness = blurriness }, Cmd.none)
+    UpdateNewMessageText newText ->
+      ({ model | newMessageText = newText }, Cmd.none)
+    SendMessage ->
+      (model, Cmd.none)
     UpdateReactionText newText ->
       ({ model | reaction = newText }, Cmd.none)
     SendReaction ->

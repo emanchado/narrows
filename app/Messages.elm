@@ -16,6 +16,8 @@ type Msg
   | PlayPauseMusic
   | PageScroll Int
   | UpdateReactionText String
+  | SendMessage
+  | UpdateNewMessageText String
   | SendReaction
   | SendReactionError Http.RawError
   | SendReactionSuccess Http.Response
