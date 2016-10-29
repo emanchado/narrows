@@ -33,10 +33,11 @@
   },
   "devDependencies": {
     "ava": "^0.16.0",
-    "nodemon": "^1.10.2",
-    "webpack": "^1.13.2",
     "brunch": "^2.8.2",
-    "elm-brunch": "^0.5.0"
+    "elm-brunch": "^0.5.0",
+    "elm-test": "^0.17.3",
+    "nodemon": "^1.10.2",
+    "webpack": "^1.13.2"
   },
   "ava": {
     "require": [

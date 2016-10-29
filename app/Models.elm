@@ -19,7 +19,8 @@ type alias Message =
   { id : Int
   , body : String
   , sentAt : String
-  , sender : Character
+  , sender : Maybe Character
+  , recipients : Maybe (List Character)
   }
 
 type alias MessageThread =

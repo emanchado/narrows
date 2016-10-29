@@ -14,11 +14,12 @@ parseCharacter =
 
 parseMessage : Json.Decoder Message
 parseMessage =
-  Json.object4 Message
+  Json.object5 Message
     ("id" := int)
     ("body" := string)
     ("sentAt" := string)
-    ("sender" := parseCharacter)
+    (maybe ("sender" := parseCharacter))
+    (maybe ("recipients" := (list parseCharacter)))
 
 parseMessageThread : Json.Decoder MessageThread
 parseMessageThread =
@@ -41,7 +42,7 @@ parseChapter =
 parseChapterMessages : Json.Decoder ChapterMessages
 parseChapterMessages =
   Json.object1 ChapterMessages
-    ("messages" := list parseMessageThread)
+    ("messageThreads" := list parseMessageThread)
 
 fetchChapterInfo : Int -> String -> Cmd Msg
 fetchChapterInfo chapterId characterToken =
