@@ -3,7 +3,7 @@ module Views.MessageThreads exposing (..)
 import String
 import Html exposing (Html, div, text, textarea, input, button, ul, li, strong, span, label)
 import Html.Attributes exposing (id, class, value, rows, type', checked, disabled)
-import Html.Events exposing (onClick, onInput)
+import Html.Events exposing (onClick, onInput, onCheck)
 
 import Models exposing (Model, MessageThread, Message, Character)
 import Messages exposing (..)
@@ -49,6 +49,7 @@ recipientView currentRecipients character =
     [ input [ type' "checkbox"
             , value (toString character.id)
             , checked (List.any (\r -> r == character.id) currentRecipients)
+            , onCheck (UpdateNewMessageRecipient character.id)
             ]
         []
     , text character.name

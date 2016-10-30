@@ -63,19 +63,45 @@ fetchChapterMessages chapterId characterToken =
     Task.perform ChapterMessagesFetchError ChapterMessagesFetchSuccess
       (Http.get parseChapterMessages chapterMessagesApiUrl)
 
+sendMessage : Int -> String -> String -> List Int -> Cmd Msg
+sendMessage chapterId characterToken messageText messageRecipients =
+  let
+    sendMessageApiUrl =
+      "/api/messages/" ++ (toString chapterId) ++ "/" ++ characterToken
+    jsonEncodedBody =
+      (Json.Encode.encode
+         0
+         (Json.Encode.object [ ("text", Json.Encode.string messageText)
+                             , ("recipients", Json.Encode.list (List.map Json.Encode.int messageRecipients))]))
+  in
+    Task.perform
+      SendMessageError
+      SendMessageSuccess
+      (Http.send
+         Http.defaultSettings
+         { verb = "POST"
+         , url = sendMessageApiUrl
+         , headers = [("Content-Type", "application/json")]
+         , body = Http.string jsonEncodedBody
+         })
+
 sendReaction : Int -> String -> String -> Cmd Msg
 sendReaction chapterId characterToken reactionText =
   let
     sendReactionApiUrl =
       "/api/reactions/" ++ (toString chapterId) ++ "/" ++ characterToken
+    jsonEncodedBody =
+      (Json.Encode.encode
+         0
+         (Json.Encode.object [ ("text", Json.Encode.string reactionText) ]))
   in
     Task.perform
       SendReactionError
-      SendReactionSuccess
+        SendReactionSuccess
       (Http.send
          Http.defaultSettings
          { verb = "PUT"
          , url = sendReactionApiUrl
          , headers = [("Content-Type", "application/json")]
-         , body = Http.string (Json.Encode.encode 0 (Json.Encode.object [ ("text", Json.Encode.string reactionText) ]))
+         , body = Http.string jsonEncodedBody
          })

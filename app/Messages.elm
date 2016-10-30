@@ -17,7 +17,10 @@ type Msg
   | PageScroll Int
   | UpdateReactionText String
   | SendMessage
+  | SendMessageError Http.RawError
+  | SendMessageSuccess Http.Response
   | UpdateNewMessageText String
+  | UpdateNewMessageRecipient Int Bool
   | SendReaction
   | SendReactionError Http.RawError
   | SendReactionSuccess Http.Response

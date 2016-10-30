@@ -1,5 +1,8 @@
 module Update exposing (..)
 
+import Http
+import Json.Decode
+
 import Routing
 import Api
 import Messages exposing (..)
@@ -28,26 +31,6 @@ urlUpdate result model =
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
   case msg of
-    StartNarration ->
-      let
-        audioElemId = if model.backgroundMusic then
-                        "background-music"
-                      else
-                        ""
-        command = case model.chapter of
-                    Just chapterData ->
-                      Cmd.batch
-                        [ renderChapter { elemId = "chapter-text"
-                                        , text = chapterData.text
-                                        }
-                        , startNarration { audioElemId = audioElemId }
-                        ]
-                    Nothing ->
-                      Cmd.none
-      in
-        ({ model | state = StartingNarration }, command)
-    NarrationStarted _ ->
-      ({ model | state = Narrating }, Cmd.none)
     ChapterFetchError error ->
       ({ model | banner = (Just { text = "Error fetching chapter"
                                 , type' = "error"
@@ -70,10 +53,49 @@ update msg model =
                                 }) }
       , Cmd.none)
     ChapterMessagesFetchSuccess chapterMessageData ->
-      ({ model | messageThreads = Just chapterMessageData.messages
-               , characterId = chapterMessageData.characterId }
-      , Cmd.none
-      )
+      let
+        allRecipients =
+          case model.chapter of
+            Just chapter ->
+              case chapterMessageData.characterId of
+                Just characterId ->
+                  let
+                    allParticipantIds =
+                      List.map (\p -> p.id) chapter.participants
+                  in
+                    List.filter (\p -> p /= characterId) allParticipantIds
+                Nothing ->
+                  []
+            Nothing ->
+              []
+      in
+        ({ model | messageThreads = Just chapterMessageData.messages
+                 , characterId = chapterMessageData.characterId
+                 , newMessageRecipients = allRecipients
+                 }
+        , Cmd.none
+        )
+
+    StartNarration ->
+      let
+        audioElemId = if model.backgroundMusic then
+                        "background-music"
+                      else
+                        ""
+        command = case model.chapter of
+                    Just chapterData ->
+                      Cmd.batch
+                        [ renderChapter { elemId = "chapter-text"
+                                        , text = chapterData.text
+                                        }
+                        , startNarration { audioElemId = audioElemId }
+                        ]
+                    Nothing ->
+                      Cmd.none
+      in
+        ({ model | state = StartingNarration }, command)
+    NarrationStarted _ ->
+      ({ model | state = Narrating }, Cmd.none)
     ToggleBackgroundMusic ->
       let
         musicOn = not model.backgroundMusic
@@ -83,16 +105,65 @@ update msg model =
     PlayPauseMusic ->
       ({ model | musicPlaying = not model.musicPlaying }
       , playPauseNarrationMusic { audioElemId = "background-music" })
+
     PageScroll scrollAmount ->
       let
         blurriness =
           min maxBlurriness (round ((toFloat scrollAmount) / 40))
       in
         ({ model | backgroundBlurriness = blurriness }, Cmd.none)
+
     UpdateNewMessageText newText ->
       ({ model | newMessageText = newText }, Cmd.none)
+    UpdateNewMessageRecipient characterId on ->
+      let
+        newRecipientsWithoutCharacter =
+          List.filter
+            (\r -> r /= characterId)
+            model.newMessageRecipients
+        newRecipients =
+          if on then
+            characterId :: newRecipientsWithoutCharacter
+          else
+            newRecipientsWithoutCharacter
+      in
+        ({ model | newMessageRecipients = newRecipients }, Cmd.none)
     SendMessage ->
-      (model, Cmd.none)
+      case model.chapter of
+        Just chapter ->
+          ( model
+          , Api.sendMessage chapter.id model.characterToken model.newMessageText model.newMessageRecipients
+          )
+        Nothing ->
+          (model, Cmd.none)
+    SendMessageError error ->
+      ({ model | banner = Just { text = "Error sending reaction"
+                               , type' = "error"
+                               } }
+      , Cmd.none)
+    SendMessageSuccess resp ->
+      case resp.value of
+        Http.Text text ->
+          let
+            decodedResponse =
+              Json.Decode.decodeString Api.parseChapterMessages text
+          in
+            case decodedResponse of
+              Ok result ->
+                ( { model | messageThreads = Just result.messages
+                          , newMessageText = "" }
+                , Cmd.none)
+              _ ->
+                ({ model | banner = Just { text = "Error parsing response while sending message"
+                                   , type' = "error"
+                                   } }
+                , Cmd.none)
+        _ ->
+          ({ model | banner = Just { text = "Error sending message"
+                                   , type' = "error"
+                                   } }
+          , Cmd.none)
+
     UpdateReactionText newText ->
       ({ model | reaction = newText }, Cmd.none)
     SendReaction ->
