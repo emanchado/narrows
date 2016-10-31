@@ -66,30 +66,24 @@ recipientListView possibleRecipients currentRecipients =
 listView : Model -> Html Msg
 listView model =
   let
-    otherParticipants =
-      case model.chapter of
-        Just chapter ->
-          case model.characterId of
-            Just characterId ->
-              List.filter
-                (\p -> p.id /= characterId)
-                chapter.participants
-            Nothing ->
-              []
-        Nothing ->
-          []
+    character = case model.chapter of
+                  Just chapter -> chapter.character
+                  Nothing -> { id = 0, name = "", token = "" }
+    otherParticipants = case model.chapter of
+                          Just chapter ->
+                            List.filter
+                              (\p -> p.id /= character.id)
+                              chapter.participants
+                          Nothing ->
+                            []
   in
     div []
       [ ul [ class "message-list" ]
           (case model.messageThreads of
              Just threads ->
-               (case model.characterId of
-                  Just characterId ->
-                    (List.map
-                       (\mt -> threadView mt characterId)
-                       threads)
-                  Nothing ->
-                    [])
+               List.map
+                 (\mt -> threadView mt character.id)
+                 threads
              Nothing ->
                [])
       , div [ class "new-message" ]

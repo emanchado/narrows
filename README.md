@@ -1,9 +1,13 @@
 TODO
 ====
 
+* Make Brunch compile the JavaScript ports code and drop webpack
+* Look into Elm design patterns for sub-applications. Maybe have a
+  type with the places the application can go to, and one of the
+  sub-application actions could be GoTo <that-type>, and that would
+  be handled by the parent and would trigger whatever necessary?
 * Make some way to preview chapters for different characters
 * Really wait until everything is loaded before showing the "Start" button
-* The RSS feed should include an item about the new chapter
 
 Later
 -----

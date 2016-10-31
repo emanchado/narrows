@@ -50,6 +50,7 @@ export function getChapterCharacter(req, res) {
                 throw new Error("Character does not participate in chapter");
             }
 
+            chapterData.character = charInfo;
             chapterData.text =
                 mentionFilter.filter(chapterData.text, charInfo.id);
 

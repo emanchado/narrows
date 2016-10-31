@@ -6,11 +6,15 @@ import Task
 import Http
 
 import Messages exposing (Msg, Msg(..))
-import Models exposing (Chapter, Character, ChapterMessages, MessageThread, Message)
+import Models exposing (Chapter, Character, OwnCharacter, ChapterMessages, MessageThread, Message)
 
 parseCharacter : Json.Decoder Character
 parseCharacter =
   Json.object2 Character ("id" := int) ("name" := string)
+
+parseOwnCharacter : Json.Decoder OwnCharacter
+parseOwnCharacter =
+  Json.object3 OwnCharacter ("id" := int) ("name" := string) ("token" := string)
 
 parseMessage : Json.Decoder Message
 parseMessage =
@@ -38,6 +42,11 @@ parseChapter =
     ("text" := Json.value)
     ("participants" := list parseCharacter)
     (maybe ("reaction" := string))
+    `andThen`
+      (\f ->
+         Json.object2 f
+           ("character" := parseOwnCharacter)
+           ("notes" := string))
 
 parseChapterMessages : Json.Decoder ChapterMessages
 parseChapterMessages =

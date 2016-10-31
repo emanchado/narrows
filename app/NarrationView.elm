@@ -33,37 +33,44 @@ backgroundImageStyle chapter backgroundBlurriness =
 
 reactionView : Model -> Html Msg
 reactionView model =
-  div [ class "reaction" ]
-    [ div [ class "messages" ]
-        [ h2 []
-            [ text "Discussion "
-            , a [ target "_blank"
-                , href ("/feed/" ++ model.characterToken)
-                ]
-                [ img [ src "/img/rss.png" ] [] ]
-            ]
-        , Views.MessageThreads.listView model
-        ]
-    , h2 [] [ text "Action" ]
-    , case model.banner of
-        Just banner -> Views.Banner.view banner
-        Nothing -> text ""
-    , div [ class ("player-reply" ++ (if model.reactionSent then
-                                        " invisible"
-                                      else
-                                        "")) ]
-      [ textarea [ placeholder "What do you do? Try to consider several possibilities…"
-                 , rows 10
-                 , value model.reaction
-                 , onInput UpdateReactionText
+  let
+    character = case model.chapter of
+                  Just chapter -> chapter.character
+                  Nothing -> { id = 0, name = "", token = "" }
+  in
+    div [ class "reaction" ]
+      [ h2 []
+          [ text ("Story notes for " ++ character.name) ]
+      , div [ class "messages" ]
+          [ h2 []
+              [ text "Discussion "
+              , a [ target "_blank"
+                  , href ("/feed/" ++ character.token)
+                  ]
+                  [ img [ src "/img/rss.png" ] [] ]
+              ]
+          , Views.MessageThreads.listView model
+          ]
+      , h2 [] [ text "Action" ]
+      , case model.banner of
+          Just banner -> Views.Banner.view banner
+          Nothing -> text ""
+      , div [ class ("player-reply" ++ (if model.reactionSent then
+                                          " invisible"
+                                        else
+                                          "")) ]
+        [ textarea [ placeholder "What do you do? Try to consider several possibilities…"
+                   , rows 10
+                   , value model.reaction
+                   , onInput UpdateReactionText
+                   ]
+            []
+        , button [ class "btn btn-default"
+                 , onClick SendReaction
                  ]
-          []
-      , button [ class "btn btn-default"
-               , onClick SendReaction
-               ]
-          [ text "Send" ]
+            [ text "Send" ]
+        ]
       ]
-    ]
 
 view : Model -> Html Msg
 view model =

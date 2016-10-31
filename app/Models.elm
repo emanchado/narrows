@@ -15,6 +15,12 @@ type alias Character =
   , name : String
   }
 
+type alias OwnCharacter =
+  { id : Int
+  , name : String
+  , token : String
+  }
+
 type alias Message =
   { id : Int
   , body : String
@@ -43,6 +49,8 @@ type alias Chapter =
   , text : Json.Decode.Value
   , participants : List Character
   , reaction : Maybe String
+  , character : OwnCharacter
+  , notes : String
   }
 
 type alias Banner =
@@ -54,12 +62,11 @@ type alias Model =
   { route : Routing.Route
   , state : PageState
   , chapter : Maybe Chapter
+  , character : Maybe OwnCharacter
   , messageThreads : Maybe (List MessageThread)
   , backgroundMusic : Bool
   , musicPlaying : Bool
   , backgroundBlurriness : Int
-  , characterId : Maybe Int
-  , characterToken : String
   , newMessageText : String
   , newMessageRecipients : List Int
   , reactionSent : Bool
