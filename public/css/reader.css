@@ -141,19 +141,6 @@ body {
     font-style: italic;
 }
 
-.player-reply {
-    max-width: 56em;
-    margin: 20px auto 0 auto;
-    padding: 0 10px;
-    text-align: right;
-}
-
-.player-reply textarea {
-    width: 100%;
-    margin-bottom: 10px;
-    padding: 5px;
-}
-
 .banner {
     max-width: 50em;
 
@@ -169,6 +156,10 @@ body {
     background-color: #511;
 }
 
+.btn-bar {
+    text-align: right;
+}
+
 .btn {
     border: 0;
     padding: 5px 10px;
@@ -182,23 +173,27 @@ body {
     color: #eee;
 }
 
-.reaction {
+.interaction {
     max-width: 50em;
-    margin: 20px auto;
-    padding: 10px;
+    margin: 40px auto 0 auto;
+    padding: 20px;
     background-color: #222;
 }
 
+.interaction textarea {
+    width: 100%;
+    margin-bottom: 10px;
+    padding: 5px;
+}
+
 h2 {
-    margin: 10px;
-    margin-bottom: 0;
+    margin: 0;
 }
 
 ul.message-list {
     display: block;
-    margin: 10px auto 20px auto;
-    max-width: 45em;
     padding-left: 0;
+    margin-top: 0;
 }
 ul.message-list li {
     display: block;
@@ -218,13 +213,5 @@ ul.message-list .message {
 
 .new-message {
     display: block;
-    max-width: 45em;
-
     margin: 10px auto 20px auto;
-}
-.new-message textarea {
-    width: 100%;
-}
-.new-message .btn {
-    float: right;
 }

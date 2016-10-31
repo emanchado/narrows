@@ -93,9 +93,11 @@ listView model =
                    ]
             [ text model.newMessageText ]
         , recipientListView otherParticipants model.newMessageRecipients
-        , button [ class "btn"
-                 , onClick SendMessage
-                 ]
-            [ text "Send" ]
+        , div [ class "btn-bar" ]
+            [ button [ class "btn"
+                    , onClick SendMessage
+                    ]
+                [ text "Send" ]
+            ]
         ]
       ]

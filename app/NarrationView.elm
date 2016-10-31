@@ -38,18 +38,24 @@ reactionView model =
                   Just chapter -> chapter.character
                   Nothing -> { id = 0, name = "", token = "" }
   in
-    div [ class "reaction" ]
+    div [ class "interaction" ]
       [ h2 []
           [ text ("Story notes for " ++ character.name) ]
-      , div [ class "messages" ]
-          [ h2 []
-              [ text "Discussion "
-              , a [ target "_blank"
-                  , href ("/feed/" ++ character.token)
-                  ]
-                  [ img [ src "/img/rss.png" ] [] ]
+      , div [ class "" ]
+          [ textarea [ placeholder "You can write some notes here…"
+                     , rows 10
+                     ]
+              []
+          ]
+      , h2 []
+          [ text "Discussion "
+          , a [ target "_blank"
+              , href ("/feed/" ++ character.token)
               ]
-          , Views.MessageThreads.listView model
+              [ img [ src "/img/rss.png" ] [] ]
+          ]
+      , div [ class "messages" ]
+          [ Views.MessageThreads.listView model
           ]
       , h2 [] [ text "Action" ]
       , case model.banner of
@@ -65,10 +71,12 @@ reactionView model =
                    , onInput UpdateReactionText
                    ]
             []
-        , button [ class "btn btn-default"
-                 , onClick SendReaction
-                 ]
-            [ text "Send" ]
+        , div [ class "btn-bar" ]
+            [ button [ class "btn btn-default"
+                     , onClick SendReaction
+                     ]
+                [ text "Send" ]
+            ]
         ]
       ]
 

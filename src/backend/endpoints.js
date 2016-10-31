@@ -51,6 +51,7 @@ export function getChapterCharacter(req, res) {
             }
 
             chapterData.character = charInfo;
+            chapterData.notes = "";
             chapterData.text =
                 mentionFilter.filter(chapterData.text, charInfo.id);
 
