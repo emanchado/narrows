@@ -7,7 +7,7 @@ import Routing
 import Api
 import Messages exposing (..)
 import Models exposing (..)
-import Ports exposing (renderChapter, startNarration, playPauseNarrationMusic)
+import Ports exposing (renderChapter, startNarration, playPauseNarrationMusic, flashElement)
 
 
 maxBlurriness : Int
@@ -22,7 +22,7 @@ urlUpdate result model =
   in
     case currentRoute of
       Routing.ChapterPage chapterId characterToken ->
-        ( { updatedModel | characterToken = characterToken }
+        ( updatedModel
         , Api.fetchChapterInfo chapterId characterToken
         )
       _ ->
@@ -32,10 +32,19 @@ update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
   case msg of
     ChapterFetchError error ->
-      ({ model | banner = (Just { text = "Error fetching chapter"
-                                , type' = "error"
-                                }) }
-      , Cmd.none)
+      let
+        errorString = case error of
+                        Http.UnexpectedPayload payload ->
+                          "Bad payload: " ++ payload
+                        Http.BadResponse status body ->
+                          "Got status " ++ (toString status) ++ " with body " ++ body
+                        _ ->
+                          "Network stuff"
+      in
+        ({ model | banner = (Just { text = "Error fetching chapter: " ++ errorString
+                                  , type' = "error"
+                                  }) }
+        , Cmd.none)
     ChapterFetchSuccess chapterData ->
       let
         reactionText = case chapterData.reaction of
@@ -45,7 +54,7 @@ update msg model =
                            ""
       in
         ({ model | chapter = Just chapterData, reaction = reactionText }
-        , Api.fetchChapterMessages chapterData.id model.characterToken
+        , Api.fetchChapterMessages chapterData.id chapterData.character.token
         )
     ChapterMessagesFetchError error ->
       ({ model | banner = (Just { text = "Error fetching chapter messages"
@@ -57,20 +66,15 @@ update msg model =
         allRecipients =
           case model.chapter of
             Just chapter ->
-              case chapterMessageData.characterId of
-                Just characterId ->
-                  let
-                    allParticipantIds =
-                      List.map (\p -> p.id) chapter.participants
-                  in
-                    List.filter (\p -> p /= characterId) allParticipantIds
-                Nothing ->
-                  []
+              let
+                allParticipantIds =
+                  List.map (\p -> p.id) chapter.participants
+              in
+                List.filter (\p -> p /= chapter.character.id) allParticipantIds
             Nothing ->
               []
       in
         ({ model | messageThreads = Just chapterMessageData.messages
-                 , characterId = chapterMessageData.characterId
                  , newMessageRecipients = allRecipients
                  }
         , Cmd.none
@@ -113,6 +117,41 @@ update msg model =
       in
         ({ model | backgroundBlurriness = blurriness }, Cmd.none)
 
+    UpdateNotesText newText ->
+      case model.chapter of
+        Just chapter ->
+          let
+            ownCharacter = chapter.character
+            updatedOwnCharacter = { ownCharacter | notes = newText }
+            updatedChapter = { chapter | character = updatedOwnCharacter }
+          in
+            ({ model | chapter = Just updatedChapter }, Cmd.none)
+        Nothing ->
+          (model, Cmd.none)
+    SendNotes ->
+      case model.chapter of
+        Just chapter ->
+          ( model
+          , Api.sendNotes chapter.character.token chapter.character.notes
+          )
+        Nothing ->
+          (model, Cmd.none)
+    SendNotesError error ->
+      ({ model | banner = Just { text = "Error sending notes"
+                               , type' = "error"
+                               } }
+      , Cmd.none)
+    SendNotesSuccess resp ->
+      let
+        newBanner = if (resp.status >= 200) && (resp.status < 300) then
+                      Nothing
+                    else
+                      Just { text = "Error sending notes"
+                           , type' = "error"
+                           }
+      in
+        ({ model | banner = newBanner }, flashElement "save-notes-message")
+
     UpdateNewMessageText newText ->
       ({ model | newMessageText = newText }, Cmd.none)
     UpdateNewMessageRecipient characterId on ->
@@ -132,7 +171,7 @@ update msg model =
       case model.chapter of
         Just chapter ->
           ( model
-          , Api.sendMessage chapter.id model.characterToken model.newMessageText model.newMessageRecipients
+          , Api.sendMessage chapter.id chapter.character.token model.newMessageText model.newMessageRecipients
           )
         Nothing ->
           (model, Cmd.none)
@@ -169,7 +208,7 @@ update msg model =
     SendReaction ->
       case model.chapter of
         Just chapter ->
-          (model, Api.sendReaction chapter.id model.characterToken model.reaction)
+          (model, Api.sendReaction chapter.id chapter.character.token model.reaction)
         Nothing ->
           ({ model | banner = (Just { text = "No chapter to send reaction to"
                                     , type' = "error"
@@ -182,7 +221,6 @@ update msg model =
       , Cmd.none)
     SendReactionSuccess resp ->
       let
-        updatedModel = { model | reactionSent = True }
         newBanner = if (resp.status >= 200) && (resp.status < 300) then
                       Just { text = "Action registered", type' = "success" }
                     else

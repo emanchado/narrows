@@ -51,7 +51,6 @@ export function getChapterCharacter(req, res) {
             }
 
             chapterData.character = charInfo;
-            chapterData.notes = "";
             chapterData.text =
                 mentionFilter.filter(chapterData.text, charInfo.id);
 
@@ -238,6 +237,27 @@ export function getFeedsCharacter(req, res) {
     }).catch(err => {
         res.status(500).json({
             errorMessage: `Could not create feed: ${ err }`
+        });
+    });
+}
+
+export function putNotesCharacter(req, res) {
+    const characterToken = req.params.charToken;
+    const newNotes = req.body.notes;
+
+    store.getCharacterInfo(characterToken).then(character => {
+        store.saveCharacterNotes(character.id, newNotes).then(() => {
+            character.notes = newNotes;
+            res.json(character);
+        }).catch(err => {
+            res.status(500).json({
+                errorMessage: `Could not save notes: ${ err }`
+            });
+        });
+    }).catch(err => {
+        res.status(500).json({
+            errorMessage: `Could not save notes for non-existent ` +
+                `character ${ characterToken }`
         });
     });
 }

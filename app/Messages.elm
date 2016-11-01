@@ -15,12 +15,16 @@ type Msg
   | ToggleBackgroundMusic
   | PlayPauseMusic
   | PageScroll Int
-  | UpdateReactionText String
+  | UpdateNotesText String
+  | SendNotes
+  | SendNotesError Http.RawError
+  | SendNotesSuccess Http.Response
+  | UpdateNewMessageText String
+  | UpdateNewMessageRecipient Int Bool
   | SendMessage
   | SendMessageError Http.RawError
   | SendMessageSuccess Http.Response
-  | UpdateNewMessageText String
-  | UpdateNewMessageRecipient Int Bool
+  | UpdateReactionText String
   | SendReaction
   | SendReactionError Http.RawError
   | SendReactionSuccess Http.Response

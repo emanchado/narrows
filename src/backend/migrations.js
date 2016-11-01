@@ -82,6 +82,12 @@ const MIGRATIONS = [
         return statementListPromise(db, [
             `ALTER TABLE narrations ADD narrator_id integer REFERENCES users(id)`
         ]);
+    },
+
+    function addNotes(db) {
+        return statementListPromise(db, [
+            "ALTER TABLE characters ADD notes text"
+        ]);
     }
 ];
 

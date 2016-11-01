@@ -36,16 +36,28 @@ reactionView model =
   let
     character = case model.chapter of
                   Just chapter -> chapter.character
-                  Nothing -> { id = 0, name = "", token = "" }
+                  Nothing -> { id = 0, name = "", token = "", notes = "" }
   in
     div [ class "interaction" ]
       [ h2 []
           [ text ("Story notes for " ++ character.name) ]
-      , div [ class "" ]
-          [ textarea [ placeholder "You can write some notes here…"
+      , div []
+          [ textarea [ placeholder "You can write some notes here. These are remembered between chapters!"
                      , rows 10
+                     , onInput UpdateNotesText
+                     , value character.notes
                      ]
               []
+          ]
+      , div [ class "btn-bar" ]
+          [ span [ id "save-notes-message"
+                , style [ ("display", "none") ]
+                ]
+              [ text "Notes saved" ]
+          , button [ class "btn"
+                   , onClick SendNotes
+                   ]
+              [ text "Save " ]
           ]
       , h2 []
           [ text "Discussion "

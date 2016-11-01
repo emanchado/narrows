@@ -50,6 +50,17 @@ app.ports.playPauseNarrationMusic.subscribe(evt => {
     }
 });
 
+app.ports.flashElement.subscribe(elemId => {
+    const el = document.getElementById(elemId);
+    if (!el) {
+        return;
+    }
+    el.style.display = "";
+    setTimeout(() => {
+        el.style.display = "none";
+    }, 3000);
+});
+
 document.addEventListener("scroll", function(evt) {
     app.ports.pageScrollListener.send(window.scrollY);
 }, false);

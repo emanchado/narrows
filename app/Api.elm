@@ -14,7 +14,7 @@ parseCharacter =
 
 parseOwnCharacter : Json.Decoder OwnCharacter
 parseOwnCharacter =
-  Json.object3 OwnCharacter ("id" := int) ("name" := string) ("token" := string)
+  Json.object4 OwnCharacter ("id" := int) ("name" := string) ("token" := string) ("notes" := string)
 
 parseMessage : Json.Decoder Message
 parseMessage =
@@ -44,9 +44,8 @@ parseChapter =
     (maybe ("reaction" := string))
     `andThen`
       (\f ->
-         Json.object2 f
-           ("character" := parseOwnCharacter)
-           ("notes" := string))
+         Json.object1 f
+           ("character" := parseOwnCharacter))
 
 parseChapterMessages : Json.Decoder ChapterMessages
 parseChapterMessages =
@@ -111,6 +110,26 @@ sendReaction chapterId characterToken reactionText =
          Http.defaultSettings
          { verb = "PUT"
          , url = sendReactionApiUrl
+         , headers = [("Content-Type", "application/json")]
+         , body = Http.string jsonEncodedBody
+         })
+
+sendNotes : String -> String -> Cmd Msg
+sendNotes characterToken updatedNotes =
+  let
+    sendNotesApiUrl = "/api/notes/" ++ characterToken
+    jsonEncodedBody =
+      (Json.Encode.encode
+         0
+         (Json.Encode.object [ ("notes", Json.Encode.string updatedNotes) ]))
+  in
+    Task.perform
+      SendNotesError
+      SendNotesSuccess
+      (Http.send
+         Http.defaultSettings
+         { verb = "PUT"
+         , url = sendNotesApiUrl
          , headers = [("Content-Type", "application/json")]
          , body = Http.string jsonEncodedBody
          })

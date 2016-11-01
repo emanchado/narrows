@@ -19,6 +19,7 @@ type alias OwnCharacter =
   { id : Int
   , name : String
   , token : String
+  , notes : String
   }
 
 type alias Message =
@@ -50,7 +51,6 @@ type alias Chapter =
   , participants : List Character
   , reaction : Maybe String
   , character : OwnCharacter
-  , notes : String
   }
 
 type alias Banner =
@@ -62,7 +62,6 @@ type alias Model =
   { route : Routing.Route
   , state : PageState
   , chapter : Maybe Chapter
-  , character : Maybe OwnCharacter
   , messageThreads : Maybe (List MessageThread)
   , backgroundMusic : Bool
   , musicPlaying : Bool

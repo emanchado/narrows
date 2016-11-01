@@ -278,7 +278,7 @@ class NarrowsStore {
                 const newChapterId = this.lastID;
 
                 self._insertParticipants(newChapterId, participants).then(() => {
-                    return self.getChapter(newChapterId, { includeCharacterTokens: true });
+                    return self.getChapter(newChapterId, { includePrivateFields: true });
                 }).then(chapter => {
                     deferred.resolve(chapter);
                 }).catch(err => {
@@ -294,7 +294,8 @@ class NarrowsStore {
 
     getChapterParticipants(chapterId, userOpts) {
         const opts = userOpts || {};
-        const extraFields = opts.includeCharacterTokens ? ", C.token" : "";
+        const extraFields = opts.includePrivateFields ?
+                  ", C.token, C.notes" : "";
 
         return Q.ninvoke(
             this.db,
@@ -370,7 +371,7 @@ class NarrowsStore {
         return Q.ninvoke(
             this.db,
             "get",
-            "SELECT id, name, token FROM characters WHERE token = ?",
+            "SELECT id, name, token, notes FROM characters WHERE token = ?",
             characterToken
         );
     }
@@ -397,7 +398,7 @@ class NarrowsStore {
     addParticipant(chapterId, characterId) {
         return this.getChapter(chapterId).then(() => (
             this.getChapterParticipants(chapterId,
-                                        { includeCharacterTokens: true })
+                                        { includePrivateFields: true })
         )).then(participants => {
             if (participants.some(p => p.id === characterId)) {
                 return participants;
@@ -422,7 +423,7 @@ class NarrowsStore {
             [chapterId, characterId]
         ).then(() => (
             this.getChapterParticipants(chapterId,
-                                        { includeCharacterTokens: true })
+                                        { includePrivateFields: true })
         ));
     }
 
@@ -567,6 +568,15 @@ class NarrowsStore {
               WHERE CHAR.id = 1 AND published IS NOT NULL
            ORDER BY published DESC
               LIMIT 1 ;`
+        );
+    }
+
+    saveCharacterNotes(characterId, newNotes) {
+        return Q.ninvoke(
+            this.db,
+            "run",
+            `UPDATE characters SET notes = ? WHERE id = ?`,
+            [newNotes, characterId]
         );
     }
 }
