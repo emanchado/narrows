@@ -1,10 +1,10 @@
-module Views.Banner exposing (view)
+module ReaderApp.Views.Banner exposing (view)
 
 import Html exposing (Html, div, text)
 import Html.Attributes exposing (class)
 
-import Messages exposing (..)
-import Models exposing (Banner)
+import ReaderApp.Messages exposing (..)
+import ReaderApp.Models exposing (Banner)
 
 view : Banner -> Html Msg
 view banner =

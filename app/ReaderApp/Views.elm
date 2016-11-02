@@ -1,14 +1,14 @@
-module Views exposing (mainApplicationView)
+module ReaderApp.Views exposing (mainApplicationView)
 
 import Html exposing (Html, div, span, a, input, text, img, label, button, br)
 import Html.Attributes exposing (id, class, for, src, href, type', checked)
 import Html.Events exposing (onClick)
 
 import Routing
-import Models exposing (Model, Banner)
-import Messages exposing (..)
-import NarrationView
-import Views.Banner
+import ReaderApp.Models exposing (Model, Banner)
+import ReaderApp.Messages exposing (..)
+import ReaderApp.NarrationView
+import ReaderApp.Views.Banner
 
 notFoundView : Html Msg
 notFoundView =
@@ -22,7 +22,7 @@ loadingView maybeBanner =
     [ div [ id "spinner" ] [ text "Loading…" ]
     , case maybeBanner of
         Just banner ->
-          Views.Banner.view banner
+          ReaderApp.Views.Banner.view banner
         Nothing ->
           text ""
     ]
@@ -49,7 +49,7 @@ validView : Model -> Html Msg
 validView model =
   div []
     [ case model.state of
-        Models.Loader ->
+        ReaderApp.Models.Loader ->
           case model.chapter of
             Just data ->
               loadedView model
@@ -57,7 +57,7 @@ validView model =
               loadingView model.banner
         _ ->
           text ""
-    , NarrationView.view model
+    , ReaderApp.NarrationView.view model
     ]
 
 mainApplicationView : Model -> Html Msg

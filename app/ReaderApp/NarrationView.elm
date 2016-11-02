@@ -1,20 +1,20 @@
-module NarrationView exposing (view)
+module ReaderApp.NarrationView exposing (view)
 
 import String
 import Html exposing (Html, h2, div, span, a, input, textarea, text, img, label, button, br, audio)
 import Html.Attributes exposing (id, class, style, for, src, href, target, type', checked, preload, loop, alt, value, rows, placeholder)
 import Html.Events exposing (onClick, onInput)
 
-import Models exposing (Model, Chapter, Banner)
-import Messages exposing (..)
-import Views.Banner
-import Views.MessageThreads
+import ReaderApp.Models exposing (Model, Chapter, Banner)
+import ReaderApp.Messages exposing (..)
+import ReaderApp.Views.Banner
+import ReaderApp.Views.MessageThreads
 
 chapterContainerClass : Model -> String
 chapterContainerClass model =
   case model.state of
-    Models.Narrating -> ""
-    Models.StartingNarration -> "transparent"
+    ReaderApp.Models.Narrating -> ""
+    ReaderApp.Models.StartingNarration -> "transparent"
     _ -> "invisible transparent"
 
 backgroundImageStyle : Chapter -> Int -> List (String, String)
@@ -67,11 +67,11 @@ reactionView model =
               [ img [ src "/img/rss.png" ] [] ]
           ]
       , div [ class "messages" ]
-          [ Views.MessageThreads.listView model
+          [ ReaderApp.Views.MessageThreads.listView model
           ]
       , h2 [] [ text "Action" ]
       , case model.banner of
-          Just banner -> Views.Banner.view banner
+          Just banner -> ReaderApp.Views.Banner.view banner
           Nothing -> text ""
       , div [ class ("player-reply" ++ (if model.reactionSent then
                                           " invisible"

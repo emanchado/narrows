@@ -1,12 +1,12 @@
-module Api exposing (..)
+module ReaderApp.Api exposing (..)
 
 import Json.Decode as Json exposing (..)
 import Json.Encode
 import Task
 import Http
 
-import Messages exposing (Msg, Msg(..))
-import Models exposing (Chapter, Character, OwnCharacter, ChapterMessages, MessageThread, Message)
+import ReaderApp.Messages exposing (Msg, Msg(..))
+import ReaderApp.Models exposing (Chapter, Character, OwnCharacter, ChapterMessages, MessageThread, Message)
 
 parseCharacter : Json.Decoder Character
 parseCharacter =

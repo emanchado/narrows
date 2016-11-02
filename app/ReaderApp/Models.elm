@@ -1,4 +1,4 @@
-module Models exposing (..)
+module ReaderApp.Models exposing (..)
 
 import Json.Decode
 

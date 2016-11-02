@@ -1,12 +1,12 @@
-module Views.MessageThreads exposing (..)
+module ReaderApp.Views.MessageThreads exposing (..)
 
 import String
 import Html exposing (Html, div, text, textarea, input, button, ul, li, strong, span, label)
 import Html.Attributes exposing (id, class, value, rows, type', checked, disabled)
 import Html.Events exposing (onClick, onInput, onCheck)
 
-import Models exposing (Model, MessageThread, Message, Character)
-import Messages exposing (..)
+import ReaderApp.Models exposing (Model, MessageThread, Message, Character)
+import ReaderApp.Messages exposing (..)
 
 messageView : Message -> Html Msg
 messageView message =

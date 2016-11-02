@@ -1,13 +1,13 @@
-module Update exposing (..)
+module ReaderApp.Update exposing (..)
 
 import Http
 import Json.Decode
 
 import Routing
-import Api
-import Messages exposing (..)
-import Models exposing (..)
-import Ports exposing (renderChapter, startNarration, playPauseNarrationMusic, flashElement)
+import ReaderApp.Api
+import ReaderApp.Messages exposing (..)
+import ReaderApp.Models exposing (..)
+import ReaderApp.Ports exposing (renderChapter, startNarration, playPauseNarrationMusic, flashElement)
 
 
 maxBlurriness : Int
@@ -23,7 +23,7 @@ urlUpdate result model =
     case currentRoute of
       Routing.ChapterPage chapterId characterToken ->
         ( updatedModel
-        , Api.fetchChapterInfo chapterId characterToken
+        , ReaderApp.Api.fetchChapterInfo chapterId characterToken
         )
       _ ->
         (updatedModel, Cmd.none)
@@ -54,7 +54,7 @@ update msg model =
                            ""
       in
         ({ model | chapter = Just chapterData, reaction = reactionText }
-        , Api.fetchChapterMessages chapterData.id chapterData.character.token
+        , ReaderApp.Api.fetchChapterMessages chapterData.id chapterData.character.token
         )
     ChapterMessagesFetchError error ->
       ({ model | banner = (Just { text = "Error fetching chapter messages"
@@ -132,7 +132,7 @@ update msg model =
       case model.chapter of
         Just chapter ->
           ( model
-          , Api.sendNotes chapter.character.token chapter.character.notes
+          , ReaderApp.Api.sendNotes chapter.character.token chapter.character.notes
           )
         Nothing ->
           (model, Cmd.none)
@@ -171,7 +171,7 @@ update msg model =
       case model.chapter of
         Just chapter ->
           ( model
-          , Api.sendMessage chapter.id chapter.character.token model.newMessageText model.newMessageRecipients
+          , ReaderApp.Api.sendMessage chapter.id chapter.character.token model.newMessageText model.newMessageRecipients
           )
         Nothing ->
           (model, Cmd.none)
@@ -185,7 +185,7 @@ update msg model =
         Http.Text text ->
           let
             decodedResponse =
-              Json.Decode.decodeString Api.parseChapterMessages text
+              Json.Decode.decodeString ReaderApp.Api.parseChapterMessages text
           in
             case decodedResponse of
               Ok result ->
@@ -208,7 +208,7 @@ update msg model =
     SendReaction ->
       case model.chapter of
         Just chapter ->
-          (model, Api.sendReaction chapter.id chapter.character.token model.reaction)
+          (model, ReaderApp.Api.sendReaction chapter.id chapter.character.token model.reaction)
         Nothing ->
           ({ model | banner = (Just { text = "No chapter to send reaction to"
                                     , type' = "error"

@@ -1,4 +1,4 @@
-port module Ports exposing (..)
+port module ReaderApp.Ports exposing (..)
 
 import Json.Decode
 

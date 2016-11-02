@@ -1,8 +1,8 @@
-module Messages exposing (..)
+module ReaderApp.Messages exposing (..)
 
 import Http
 
-import Models exposing (..)
+import ReaderApp.Models exposing (..)
 
 type Msg
   = StartNarration
