@@ -1,20 +1,13 @@
-module ReaderApp.Views exposing (mainApplicationView)
+module ReaderApp.Views exposing (mainView)
 
 import Html exposing (Html, div, span, a, input, text, img, label, button, br)
 import Html.Attributes exposing (id, class, for, src, href, type', checked)
 import Html.Events exposing (onClick)
 
-import Routing
 import ReaderApp.Models exposing (Model, Banner)
 import ReaderApp.Messages exposing (..)
 import ReaderApp.NarrationView
 import ReaderApp.Views.Banner
-
-notFoundView : Html Msg
-notFoundView =
-  div []
-    [ div [] [ text "404 Not Found" ]
-    ]
 
 loadingView : Maybe Banner -> Html Msg
 loadingView maybeBanner =
@@ -45,8 +38,8 @@ loadedView model =
         ]
     ]
 
-validView : Model -> Html Msg
-validView model =
+mainView : Model -> Html Msg
+mainView model =
   div []
     [ case model.state of
         ReaderApp.Models.Loader ->
@@ -59,11 +52,3 @@ validView model =
           text ""
     , ReaderApp.NarrationView.view model
     ]
-
-mainApplicationView : Model -> Html Msg
-mainApplicationView model =
-  case model.route of
-    Routing.ChapterPage chapterId characterToken ->
-      validView model
-    Routing.NotFoundRoute ->
-      notFoundView

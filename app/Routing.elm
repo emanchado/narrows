@@ -5,13 +5,14 @@ import Navigation
 import UrlParser exposing (..)
 
 type Route
-  = ChapterPage Int String
+  = ChapterReaderPage Int String
+  | ChapterNarratorPage Int
   | NotFoundRoute
 
 matchers : Parser (Route -> a) a
 matchers =
   oneOf
-    [ format ChapterPage (s "read" </> int </> string)
+    [ format ChapterReaderPage (s "read" </> int </> string)
     ]
 
 urlPathParser : Navigation.Location -> Result String Route

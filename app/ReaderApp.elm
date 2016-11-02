@@ -35,4 +35,7 @@ subscriptions model =
 
 update = ReaderApp.Update.update
 urlUpdate = ReaderApp.Update.urlUpdate
-view = ReaderApp.Views.mainApplicationView
+view = ReaderApp.Views.mainView
+
+type alias Model = ReaderApp.Models.Model
+type alias Msg = ReaderApp.Messages.Msg

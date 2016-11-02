@@ -21,7 +21,7 @@ urlUpdate result model =
     updatedModel = { model | route = currentRoute }
   in
     case currentRoute of
-      Routing.ChapterPage chapterId characterToken ->
+      Routing.ChapterReaderPage chapterId characterToken ->
         ( updatedModel
         , ReaderApp.Api.fetchChapterInfo chapterId characterToken
         )
