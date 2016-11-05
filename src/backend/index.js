@@ -41,7 +41,7 @@ app.all("/narrations/:narrationId/new", middlewares.auth, function(req, res) {
     res.sendFile(path.resolve(path.join(STATIC_HTML_FILES, "narrator.html")));
 });
 app.all("/chapters/:chapterId", middlewares.auth, function(req, res) {
-    res.sendFile(path.resolve(path.join(STATIC_HTML_FILES, "narrator.html")));
+    res.sendFile(path.resolve(path.join(STATIC_HTML_FILES, "read.html")));
 });
 
 app.get("/api/narrations/:narrId", middlewares.apiAuth, endpoints.getNarration);

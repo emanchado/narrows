@@ -18,6 +18,48 @@ type Msg
   | ReaderMsg ReaderApp.Msg
   | NarratorMsg NarratorApp.Msg
 
+
+initialState : Result String Routing.Route -> (Model, Cmd Msg)
+initialState result =
+  combinedUrlUpdate result { route = Routing.NotFoundRoute
+                           , readerApp = ReaderApp.initialState
+                           , narratorApp = NarratorApp.initialState
+                           }
+
+combinedUrlUpdate : Result String Routing.Route -> Model -> (Model, Cmd Msg)
+combinedUrlUpdate result model =
+  let
+    currentRoute = Routing.routeFromResult result
+    (updatedReaderModel, readerCmd) = ReaderApp.urlUpdate currentRoute model.readerApp
+    (updatedNarratorModel, narratorCmd) = NarratorApp.urlUpdate currentRoute model.narratorApp
+  in
+    ( { model | route = currentRoute
+              , readerApp = updatedReaderModel
+              , narratorApp = updatedNarratorModel }
+    , Cmd.batch [ Cmd.map ReaderMsg readerCmd
+                , Cmd.map NarratorMsg narratorCmd ] )
+
+combinedUpdate : Msg -> Model -> (Model, Cmd Msg)
+combinedUpdate msg model =
+  case msg of
+    ReaderMsg readerMsg ->
+      let
+        (newReaderModel, cmd) = ReaderApp.update readerMsg model.readerApp
+      in
+        ({ model | readerApp = newReaderModel }, Cmd.map ReaderMsg cmd)
+    NarratorMsg narratorMsg ->
+      let
+        (newNarratorModel, cmd) = NarratorApp.update narratorMsg model.narratorApp
+      in
+        ({ model | narratorApp = newNarratorModel }, Cmd.map NarratorMsg cmd)
+    _ ->
+      (model, Cmd.none)
+
+subscriptions : Model -> Sub Msg
+subscriptions model =
+  Sub.batch [ Sub.map ReaderMsg (ReaderApp.subscriptions model.readerApp)
+            ]
+
 notFoundView : Html Msg
 notFoundView =
   div []
@@ -37,9 +79,9 @@ mainApplicationView model =
 main : Program Never
 main =
   Navigation.program Routing.parser
-    { init = ReaderApp.initialState
-    , view = ReaderApp.view
-    , update = ReaderApp.update
-    , urlUpdate = ReaderApp.urlUpdate
-    , subscriptions = ReaderApp.subscriptions
+    { init = initialState
+    , update = combinedUpdate
+    , urlUpdate = combinedUrlUpdate
+    , subscriptions = subscriptions
+    , view = mainApplicationView
     }

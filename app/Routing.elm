@@ -13,6 +13,7 @@ matchers : Parser (Route -> a) a
 matchers =
   oneOf
     [ format ChapterReaderPage (s "read" </> int </> string)
+    , format ChapterNarratorPage (s "chapters" </> int)
     ]
 
 urlPathParser : Navigation.Location -> Result String Route

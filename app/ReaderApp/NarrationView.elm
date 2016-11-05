@@ -13,9 +13,9 @@ import ReaderApp.Views.MessageThreads
 chapterContainerClass : Model -> String
 chapterContainerClass model =
   case model.state of
-    ReaderApp.Models.Narrating -> ""
+    ReaderApp.Models.Loader -> "invisible transparent"
     ReaderApp.Models.StartingNarration -> "transparent"
-    _ -> "invisible transparent"
+    ReaderApp.Models.Narrating -> ""
 
 backgroundImageStyle : Chapter -> Int -> List (String, String)
 backgroundImageStyle chapter backgroundBlurriness =

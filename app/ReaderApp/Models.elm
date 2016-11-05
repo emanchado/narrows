@@ -8,7 +8,6 @@ type PageState
   = Loader
   | StartingNarration
   | Narrating
-  | ActionSubmitted
 
 type alias Character =
   { id : Int
@@ -59,8 +58,7 @@ type alias Banner =
   }
 
 type alias Model =
-  { route : Routing.Route
-  , state : PageState
+  { state : PageState
   , chapter : Maybe Chapter
   , messageThreads : Maybe (List MessageThread)
   , backgroundMusic : Bool

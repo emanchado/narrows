@@ -13,20 +13,15 @@ import ReaderApp.Ports exposing (renderChapter, startNarration, playPauseNarrati
 maxBlurriness : Int
 maxBlurriness = 10
 
-urlUpdate : Result String Routing.Route -> Model -> (Model, Cmd Msg)
-urlUpdate result model =
-  let
-    currentRoute =
-      Routing.routeFromResult result
-    updatedModel = { model | route = currentRoute }
-  in
-    case currentRoute of
-      Routing.ChapterReaderPage chapterId characterToken ->
-        ( updatedModel
-        , ReaderApp.Api.fetchChapterInfo chapterId characterToken
-        )
-      _ ->
-        (updatedModel, Cmd.none)
+urlUpdate : Routing.Route -> Model -> (Model, Cmd Msg)
+urlUpdate route model =
+  case route of
+    Routing.ChapterReaderPage chapterId characterToken ->
+      ( model
+      , ReaderApp.Api.fetchChapterInfo chapterId characterToken
+      )
+    _ ->
+      (model, Cmd.none)
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
