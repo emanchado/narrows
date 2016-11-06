@@ -12,10 +12,36 @@ function skipContentNotFor(paragraphContent, characterId) {
         }
 
         const mentions = bit.marks.filter(m => m._ === "mention");
-        return mentions.some(m => {
+        return mentions.length === 0 || mentions.some(m => {
             return m.mentionTargets.some(t => t.id === characterId);
         });
     });
+}
+
+function removeMentions(paragraphContent) {
+    if (!util.isArray(paragraphContent)) {
+        return paragraphContent;
+    }
+
+    return paragraphContent.map(removeMentionsFromBit);
+}
+
+function removeMentionsFromBit(bit) {
+    if (!util.isObject(bit)) {
+        return bit;
+    }
+
+    const marks = bit.marks;
+    if (!util.isArray(marks)) {
+        return bit;
+    }
+
+    const newMarks = marks.filter(m => m._ !== "mention");
+    const paragraphContentCopy = merge({}, bit);
+
+    delete paragraphContentCopy.marks;
+    return merge(paragraphContentCopy,
+                 newMarks.length ? { marks: newMarks } : {});
 }
 
 export function filter(documentObject, characterId) {
@@ -23,7 +49,7 @@ export function filter(documentObject, characterId) {
         return merge(
             {},
             para,
-            { content: skipContentNotFor(para.content, characterId) }
+            { content: removeMentions(skipContentNotFor(para.content, characterId)) }
         );
     }).filter(para => {
         if (para.type !== "paragraph") {

@@ -17,7 +17,7 @@ view model =
                            Just chapter -> chapter.narrationId
                            Nothing -> 0
   in
-    div []
+    div [ id "narrator-app" ]
       [ text "Narrator's app main view"
       , nav []
           [ a [ href ("/narrations/" ++ (toString chapterNarrationId)) ]
@@ -40,7 +40,7 @@ view model =
               , div [ id "editor-container" ] []
               -- , addImageView
               -- , markForCharacter
-              , div [ class "btn-row" ]
+              , div [ class "btn-bar" ]
                   [ button [ class "btn"
                            -- , onClick SaveChapter
                            ]

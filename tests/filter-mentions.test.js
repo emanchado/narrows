@@ -51,24 +51,26 @@ test("doesn't modify the given parameter", t => {
     t.notDeepEqual(filtered, orig);
 });
 
-test("leaves alone simple mentions", t => {
+test("leaves alone simple mention text", t => {
     const orig = doc([
         para(["This is ",
               mentioned("INDEED ", [CHARACTER1]),
              "for me"])
     ]);
+    const expected = doc([ para(["This is ", "INDEED ", "for me"]) ]);
 
-    t.deepEqual(mentionFilter.filter(orig, CHARACTER1.id), orig);
+    t.deepEqual(mentionFilter.filter(orig, CHARACTER1.id), expected);
 });
 
-test("leaves alone mentions even when they include other characters", t => {
+test("leaves alone mention text even when they include other characters", t => {
     const orig = doc([
         para(["This is ",
               mentioned("INDEED ", [CHARACTER1, CHARACTER2]),
              "for me"])
     ]);
+    const expected = doc([ para(["This is ", "INDEED ", "for me"]) ]);
 
-    t.deepEqual(mentionFilter.filter(orig, CHARACTER1.id), orig);
+    t.deepEqual(mentionFilter.filter(orig, CHARACTER1.id), expected);
 });
 
 test("removes empty paragraphs", t => {
@@ -81,4 +83,57 @@ test("removes empty paragraphs", t => {
     ]);
 
     t.deepEqual(mentionFilter.filter(orig, CHARACTER2.id), expected);
+});
+
+test("leaves out the mention marks themselves", t => {
+    const orig = doc([
+        para([mentioned("Whole paragraph for Character 1", [CHARACTER1])]),
+        para(["Another paragraph for everyone"])
+    ]);
+    const expected = doc([
+        para(["Whole paragraph for Character 1"]),
+        para(["Another paragraph for everyone"])
+    ]);
+
+    t.deepEqual(mentionFilter.filter(orig, CHARACTER1.id), expected);
+});
+
+test("leave alone other marks when removing mentions", t => {
+    const text = "Blah blah";
+    const text2 = "Blah blah blah";
+    const orig = doc([
+        para([{
+            type: "text",
+            text: text,
+            marks: [ { _: "mention", mentionTargets: [{id: 1, name: "C1"}] },
+                     { _: "unrelated-mark", level: "high" } ]
+        }]),
+
+        para([{
+            type: "text",
+            text: text2,
+            marks: [ { _: "another", someExtraValue: "extra-good" } ]
+        }])
+    ]);
+    const expected = doc([
+        para([{
+            type: "text",
+            text: text,
+            marks: [ { _: "unrelated-mark", level: "high" } ]
+        }]),
+
+        para([{
+            type: "text",
+            text: text2,
+            marks: [ { _: "another", someExtraValue: "extra-good" } ]
+        }])
+    ]);
+
+    t.deepEqual(mentionFilter.filter(orig, CHARACTER1.id), expected);
+});
+
+test("doesn't freak out with non-array block content", t => {
+    const orig = doc([ {type: "image", content: "/images/logo.png"} ]);
+
+    t.deepEqual(mentionFilter.filter(orig, CHARACTER1.id), orig);
 });

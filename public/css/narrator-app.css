@@ -3,25 +3,8 @@
   src: url("../fonts/OldstyHPLHS.otf");
 }
 
-body {
-    background-color: #eee;
-    /* font-family: StoryFont; */
-    margin: 30px;
-}
-
-h1 {
-    margin-bottom: 10px;
-}
-
-nav {
-    margin-top: 10px;
-    margin-bottom: 10px;
-}
-
-label {
-    display: block;
-    margin-top: 10px;
-    font-weight: bold;
+#narrator-app {
+    padding: 30px;
 }
 
 input, .ProseMirror-content {
@@ -36,26 +19,6 @@ input, .ProseMirror-content {
 
 .editor-container .ProseMirror-content img {
     max-width: 100%;
-}
-
-.btn-row {
-    text-align: right;
-}
-
-.btn {
-    border: 0;
-    padding: 5px 10px;
-
-    font-size: 18px;
-}
-
-.btn-default {
-    background-color: blue;
-    color: #eee;
-}
-
-.btn-small {
-    font-size: 12px;
 }
 
 main.page-aside {
