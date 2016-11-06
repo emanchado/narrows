@@ -8,3 +8,7 @@ type Msg
   = NoOp
   | ChapterFetchError Http.Error
   | ChapterFetchSuccess Chapter
+  | UpdateChapterTitle String
+  | SaveChapter
+  | SaveChapterError Http.RawError
+  | SaveChapterSuccess Http.Response

@@ -2,7 +2,7 @@ module NarratorApp.Views.ChapterEdit exposing (..)
 
 import Html exposing (Html, div, main', nav, section, a, input, button, text)
 import Html.Attributes exposing (id, class, href, type', value, placeholder, checked, disabled)
--- import Html.Events exposing (onClick)
+import Html.Events exposing (onClick, onInput)
 
 import NarratorApp.Models exposing (Model, Chapter)
 import NarratorApp.Messages exposing (..)
@@ -18,8 +18,7 @@ view model =
                            Nothing -> 0
   in
     div [ id "narrator-app" ]
-      [ text "Narrator's app main view"
-      , nav []
+      [ nav []
           [ a [ href ("/narrations/" ++ (toString chapterNarrationId)) ]
               [ text "Narration" ]
           , text " ⇢ "
@@ -34,7 +33,7 @@ view model =
                       , disabled (case model.chapter of
                                     Nothing -> True
                                     _ -> False)
-                      -- , onInput UpdateChapterTitle
+                      , onInput UpdateChapterTitle
                       ]
                   []
               , div [ id "editor-container" ] []
@@ -42,7 +41,7 @@ view model =
               -- , markForCharacter
               , div [ class "btn-bar" ]
                   [ button [ class "btn"
-                           -- , onClick SaveChapter
+                           , onClick SaveChapter
                            ]
                       [ text "Save" ]
                   , button [ class "btn btn-default"

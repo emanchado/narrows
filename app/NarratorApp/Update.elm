@@ -42,3 +42,33 @@ update msg model =
                    , text = chapter.text
                    }
       )
+    UpdateChapterTitle newTitle ->
+      case model.chapter of
+        Just chapter ->
+          let
+            newChapter = { chapter | title = newTitle }
+          in
+            ({ model | chapter = Just newChapter }, Cmd.none)
+        Nothing ->
+          (model, Cmd.none)
+    SaveChapter ->
+      case model.chapter of
+        Just chapter ->
+          (model, NarratorApp.Api.saveChapter chapter)
+        Nothing ->
+          (model, Cmd.none)
+    SaveChapterError error ->
+      ({ model | banner = Just { text = "Error saving chapter"
+                               , type' = "error"
+                               } }
+      , Cmd.none)
+    SaveChapterSuccess resp ->
+      let
+        newBanner = if (resp.status >= 200) && (resp.status < 300) then
+                      Just { text = "Chapter saved", type' = "success" }
+                    else
+                      Just { text = "Error saving chapter"
+                           , type' = "error"
+                           }
+      in
+        ({ model | banner = newBanner }, Cmd.none)

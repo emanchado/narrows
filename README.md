@@ -1,14 +1,7 @@
 TODO
 ====
 
-Fix the background image so that it doesn't disappear after finishing
-the transition.
-
 * Make Brunch compile the JavaScript ports code and drop webpack
-* Look into Elm design patterns for sub-applications. Maybe have a
-  type with the places the application can go to, and one of the
-  sub-application actions could be GoTo <that-type>, and that would
-  be handled by the parent and would trigger whatever necessary?
 * Make some way to preview chapters for different characters
 * Really wait until everything is loaded before showing the "Start" button
 
