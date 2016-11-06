@@ -23,11 +23,13 @@ const proseMirrorPlugins = [
     })
 ];
 
-function create(initialContent) {
+function create(initialContent, place) {
+    console.log("place =", place);
     return new prosemirror.ProseMirror({
         schema: narrowsSchema,
         plugins: proseMirrorPlugins,
-        doc: initialContent
+        doc: initialContent,
+        place: place
     });
 }
 

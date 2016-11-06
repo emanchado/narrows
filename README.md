@@ -1,6 +1,9 @@
 TODO
 ====
 
+Fix the background image so that it doesn't disappear after finishing
+the transition.
+
 * Make Brunch compile the JavaScript ports code and drop webpack
 * Look into Elm design patterns for sub-applications. Maybe have a
   type with the places the application can go to, and one of the

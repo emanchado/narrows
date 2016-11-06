@@ -6,6 +6,7 @@ import Routing
 import NarratorApp.Api
 import NarratorApp.Messages exposing (..)
 import NarratorApp.Models exposing (..)
+import NarratorApp.Ports exposing (initEditor)
 
 
 urlUpdate : Routing.Route -> Model -> (Model, Cmd Msg)
@@ -33,7 +34,11 @@ update msg model =
                         _ ->
                           "Network stuff"
       in
-        ( { model | banner = Just { type' = "error", text = errorString } }
+        ( { model | banner = Just { type' = "error", text = Debug.log "ERROR" errorString } }
         , Cmd.none)
     ChapterFetchSuccess chapter ->
-      ({ model | chapter = Just chapter }, Cmd.none)
+      ( { model | chapter = Just chapter }
+      , initEditor { elemId = "editor-container"
+                   , text = chapter.text
+                   }
+      )

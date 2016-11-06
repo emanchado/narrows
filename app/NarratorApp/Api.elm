@@ -22,7 +22,7 @@ parseChapter =
     ("backgroundImage" := string)
     ("text" := Json.value)
     ("participants" := list parseCharacter)
-    ("published" := string)
+    (maybe ("published" := string))
 
 fetchChapterInfo : Int -> Cmd Msg
 fetchChapterInfo chapterId =

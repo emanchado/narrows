@@ -11,7 +11,7 @@ import ReaderApp.Views.Banner
 
 loadingView : Maybe Banner -> Html Msg
 loadingView maybeBanner =
-  div [ id "loader" ]
+  div [ id "loader-contents" ]
     [ div [ id "spinner" ] [ text "Loading…" ]
     , case maybeBanner of
         Just banner ->
@@ -22,7 +22,7 @@ loadingView maybeBanner =
 
 loadedView : Model -> Html Msg
 loadedView model =
-  div [ id "loader" ]
+  div [ id "loader-contents" ]
     [ div [ id "start-ui" ]
         [ button [ onClick StartNarration ]
             [ text "Start" ]
@@ -40,14 +40,16 @@ loadedView model =
 
 mainView : Model -> Html Msg
 mainView model =
-  div []
+  div [ id "reader-app" ]
     [ case model.state of
         ReaderApp.Models.Loader ->
-          case model.chapter of
-            Just data ->
-              loadedView model
-            Nothing ->
-              loadingView model.banner
+          div [ id "loader" ]
+            [ case model.chapter of
+                Just data ->
+                  loadedView model
+                Nothing ->
+                  loadingView model.banner
+            ]
         _ ->
           text ""
     , ReaderApp.NarrationView.view model

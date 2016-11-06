@@ -6,13 +6,8 @@ import Html exposing (Html, div, span, a, input, text, img, label, button, br)
 
 import NarratorApp.Models exposing (Model)
 import NarratorApp.Messages exposing (..)
+import NarratorApp.Views.ChapterEdit
 
 mainView : Model -> Html Msg
 mainView model =
-  div []
-    [ text (case model.chapter of
-              Just chapter ->
-                "Narrator's app main view"
-              Nothing ->
-                "Loading")
-    ]
+  NarratorApp.Views.ChapterEdit.view model

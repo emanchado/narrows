@@ -2,6 +2,10 @@
 
 const editor = require("./editor");
 
+/*
+ * Ports for the reader app
+ */
+
 function bumpVolume(audioEl) {
     audioEl.volume = Math.min(1, audioEl.volume + 0.02);
 
@@ -64,3 +68,11 @@ app.ports.flashElement.subscribe(elemId => {
 document.addEventListener("scroll", function(evt) {
     app.ports.pageScrollListener.send(window.scrollY);
 }, false);
+
+/*
+ * Ports for the narrator app
+ */
+app.ports.initEditor.subscribe(evt => {
+    const container = document.getElementById(evt.elemId);
+    editor.create(editor.importText(evt.text), container);
+});

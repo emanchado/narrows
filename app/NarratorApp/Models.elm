@@ -17,7 +17,7 @@ type alias Chapter =
   , backgroundImage : String
   , text : Json.Decode.Value
   , participants : List Character
-  , published : String
+  , published : Maybe String
   }
 
 type alias Banner =

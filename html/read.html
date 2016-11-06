@@ -7,12 +7,9 @@
   </head>
 
   <body>
-    <div id="main"></div>
-
     <script src="/js/main.js"></script>
     <script>
-      var node = document.getElementById("main");
-      var app = Elm.Main.embed(node);
+      var app = Elm.Main.fullscreen();
     </script>
     <script src="/compiled/ports.bundle.js"></script>
   </body>
