@@ -7,6 +7,22 @@ import Routing
 type alias Character =
   { id : Int
   , name : String
+  , token : String
+  }
+
+type alias FileSet =
+  { audio : List String
+  , backgroundImages : List String
+  , images : List String
+  }
+
+type alias Narration =
+  { id : Int
+  , title : String
+  , characters : List Character
+  , defaultAudio : Maybe String
+  , defaultBackgroundImage : Maybe String
+  , files : FileSet
   }
 
 type alias Chapter =
@@ -27,5 +43,6 @@ type alias Banner =
 
 type alias Model =
   { chapter : Maybe Chapter
+  , narration : Maybe Narration
   , banner : Maybe Banner
   }

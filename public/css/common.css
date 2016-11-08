@@ -76,9 +76,9 @@ label {
 }
 
 .btn {
-    border: 0;
-    padding: 5px 10px;
     border: 1px solid #ddd;
+    margin: 0 3px;
+    padding: 5px 10px;
 
     font-size: 18px;
 }

@@ -11,13 +11,25 @@ input, .ProseMirror-content {
     font-family: StoryFont;
 }
 
-.editor-container .ProseMirror-content {
-    padding: 0px 10px;
+#editor-container {
+    width: 100%;
+    margin: 15px 0;
+}
+
+#editor-container .ProseMirror-content {
+    padding: 5px;
     min-height: 200px;
     outline: -webkit-focus-ring-color auto 5px;
 }
 
-.editor-container .ProseMirror-content img {
+#editor-container .ProseMirror-content p:first-child {
+    margin-top: 0;
+}
+#editor-container .ProseMirror-content p:last-child {
+    margin-bottom: 0;
+}
+
+#editor-container .ProseMirror-content img {
     max-width: 100%;
 }
 

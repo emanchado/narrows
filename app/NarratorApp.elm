@@ -14,6 +14,7 @@ type alias Msg = NarratorApp.Messages.Msg
 initialState : Model
 initialState =
   { chapter = Nothing
+  , narration = Nothing
   , banner = Nothing
   }
 

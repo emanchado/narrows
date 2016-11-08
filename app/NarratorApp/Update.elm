@@ -38,9 +38,27 @@ update msg model =
         , Cmd.none)
     ChapterFetchSuccess chapter ->
       ( { model | chapter = Just chapter }
-      , initEditor { elemId = "editor-container"
-                   , text = chapter.text
-                   }
+      , Cmd.batch [ initEditor { elemId = "editor-container"
+                               , text = chapter.text
+                               }
+                  , NarratorApp.Api.fetchNarrationInfo chapter.narrationId
+                  ]
+      )
+    NarrationFetchError error ->
+      let
+        errorString = case error of
+                        Http.UnexpectedPayload payload ->
+                          "Bad payload: " ++ payload
+                        Http.BadResponse status body ->
+                          "Got status " ++ (toString status) ++ " with body " ++ body
+                        _ ->
+                          "Network stuff"
+      in
+        ( { model | banner = Just { type' = "error", text = Debug.log "ERROR" errorString } }
+        , Cmd.none)
+    NarrationFetchSuccess narration ->
+      ( { model | narration = Just narration }
+      , Cmd.none
       )
     UpdateChapterTitle newTitle ->
       case model.chapter of
@@ -51,6 +69,63 @@ update msg model =
             ({ model | chapter = Just newChapter }, Cmd.none)
         Nothing ->
           (model, Cmd.none)
+    AddParticipant character ->
+      case model.chapter of
+        Just chapter ->
+          let
+            participantsWithoutCharacter =
+              List.filter (\p -> p /= character) chapter.participants
+            participantsWithCharacter =
+              character :: participantsWithoutCharacter
+            chapterWithCharacter =
+              { chapter | participants = participantsWithCharacter }
+          in
+            ( { model | chapter = Just chapterWithCharacter }
+            , NarratorApp.Api.addParticipant chapter character
+            )
+        Nothing ->
+          (model, Cmd.none)
+    AddParticipantError error ->
+      ({ model | banner = Just { text = "Error adding participant"
+                               , type' = "error"
+                               } }
+      , Cmd.none)
+    AddParticipantSuccess resp ->
+      if (resp.status >= 200) && (resp.status < 300) then
+        (model, Cmd.none)
+      else
+        ({ model | banner = Just { text = "Error adding participant"
+                                 , type' = "error"
+                                 } }
+        , Cmd.none)
+    RemoveParticipant character ->
+      case model.chapter of
+        Just chapter ->
+          let
+            participantsWithoutCharacter =
+              List.filter (\p -> p /= character) chapter.participants
+            chapterWithoutCharacter =
+              { chapter | participants = participantsWithoutCharacter }
+          in
+            ( { model | chapter = Just chapterWithoutCharacter }
+            , NarratorApp.Api.removeParticipant chapter character
+            )
+        Nothing ->
+          (model, Cmd.none)
+    RemoveParticipantError error ->
+      ({ model | banner = Just { text = "Error removing participant"
+                               , type' = "error"
+                               } }
+      , Cmd.none)
+    RemoveParticipantSuccess resp ->
+      if (resp.status >= 200) && (resp.status < 300) then
+        (model, Cmd.none)
+      else
+        ({ model | banner = Just { text = "Error removing participant"
+                                 , type' = "error"
+                                 } }
+        , Cmd.none)
+
     SaveChapter ->
       case model.chapter of
         Just chapter ->

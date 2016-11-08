@@ -10,11 +10,9 @@ Later
 
 * Why does Opera for Android not start the music when it's on, and
   effectively inverts the audio toggle functionality??
-* Refactor the reader app, maybe integrate it with the rest somehow?
 * Allow narrators to change password, and create more narrators
-* Maybe add an "admin" role to that not all narrators can create users?
+* Maybe add an "admin" role so that not all narrators can create users?
 * Show background information or whatever to players
-* Add some place for players to write notes
 
 Initial narrator
 ----------------

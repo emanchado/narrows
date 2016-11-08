@@ -26,7 +26,7 @@ export function getNarration(req, res) {
 export function getChapter(req, res) {
     const chapterId = parseInt(req.params.chptId, 10);
 
-    store.getChapter(chapterId, { includeCharacterTokens: true }).then(chapterData => {
+    store.getChapter(chapterId, { includePrivateFields: true }).then(chapterData => {
         res.json(chapterData);
     }).catch(err => {
         res.status(404).json({

@@ -1,28 +1,11 @@
 module NarratorApp.Api exposing (..)
 
-import Json.Decode as Json exposing (..)
-import Json.Encode
 import Task
 import Http
 
 import NarratorApp.Messages exposing (Msg, Msg(..))
 import NarratorApp.Models exposing (Chapter, Character)
-
-parseCharacter : Json.Decoder Character
-parseCharacter =
-  Json.object2 Character ("id" := int) ("name" := string)
-
-parseChapter : Json.Decoder Chapter
-parseChapter =
-  Json.object8 Chapter
-    ("id" := int)
-    ("narrationId" := int)
-    ("title" := string)
-    ("audio" := string)
-    ("backgroundImage" := string)
-    ("text" := Json.value)
-    ("participants" := list parseCharacter)
-    (maybe ("published" := string))
+import NarratorApp.Api.Json exposing (parseChapter, parseNarration, encodeChapter, encodeCharacter)
 
 fetchChapterInfo : Int -> Cmd Msg
 fetchChapterInfo chapterId =
@@ -32,21 +15,18 @@ fetchChapterInfo chapterId =
     Task.perform ChapterFetchError ChapterFetchSuccess
       (Http.get parseChapter chapterApiUrl)
 
+fetchNarrationInfo : Int -> Cmd Msg
+fetchNarrationInfo narrationId =
+  let
+    narrationApiUrl = "/api/narrations/" ++ (toString narrationId)
+  in
+    Task.perform NarrationFetchError NarrationFetchSuccess
+      (Http.get parseNarration narrationApiUrl)
+
 saveChapter : Chapter -> Cmd Msg
 saveChapter chapter =
   let
     saveChapterApiUrl = "/api/chapters/" ++ (toString chapter.id)
-    jsonEncodedBody =
-      (Json.Encode.encode
-         0
-         (Json.Encode.object [ ("title", Json.Encode.string chapter.title)
-                             -- TODO: text cannot be taken from
-                             -- chapter.text, that's the initial
-                             -- one. So either apply the changes there
-                             -- somehow (ideal), or fetch the current
-                             -- value before saving (sucks, but hey)
-                             , ("text", chapter.text)
-                             ]))
   in
     Task.perform
       SaveChapterError
@@ -56,5 +36,39 @@ saveChapter chapter =
          { verb = "PUT"
          , url = saveChapterApiUrl
          , headers = [("Content-Type", "application/json")]
-         , body = Http.string jsonEncodedBody
+         , body = Http.string <| encodeChapter chapter
+         })
+
+addParticipant : Chapter -> Character -> Cmd Msg
+addParticipant chapter character =
+  let
+    addParticipantApiUrl = "/api/chapters/" ++ (toString chapter.id) ++ "/participants"
+  in
+    Task.perform
+      AddParticipantError
+      AddParticipantSuccess
+      (Http.send
+         Http.defaultSettings
+         { verb = "POST"
+         , url = addParticipantApiUrl
+         , headers = [("Content-Type", "application/json")]
+         , body = Http.string <| encodeCharacter character
+         })
+
+removeParticipant : Chapter -> Character -> Cmd Msg
+removeParticipant chapter character =
+  let
+    removeParticipantApiUrl =
+      "/api/chapters/" ++ (toString chapter.id) ++
+        "/participants/" ++ (toString character.id)
+  in
+    Task.perform
+      AddParticipantError
+      AddParticipantSuccess
+      (Http.send
+         Http.defaultSettings
+         { verb = "DELETE"
+         , url = removeParticipantApiUrl
+         , headers = [("Content-Type", "application/json")]
+         , body = Http.string <| encodeCharacter character
          })
