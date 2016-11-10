@@ -17,6 +17,8 @@ type Msg
   | RemoveParticipant Character
   | RemoveParticipantError Http.RawError
   | RemoveParticipantSuccess Http.Response
+  | UpdateSelectedBackgroundImage String
+  | UpdateSelectedAudio String
   | SaveChapter
   | SaveChapterError Http.RawError
   | SaveChapterSuccess Http.Response

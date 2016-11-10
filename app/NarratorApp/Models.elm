@@ -29,8 +29,8 @@ type alias Chapter =
   { id : Int
   , narrationId : Int
   , title : String
-  , audio : String
-  , backgroundImage : String
+  , audio : Maybe String
+  , backgroundImage : Maybe String
   , text : Json.Decode.Value
   , participants : List Character
   , published : Maybe String

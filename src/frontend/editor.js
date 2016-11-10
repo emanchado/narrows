@@ -24,7 +24,6 @@ const proseMirrorPlugins = [
 ];
 
 function create(initialContent, place) {
-    console.log("place =", place);
     return new prosemirror.ProseMirror({
         schema: narrowsSchema,
         plugins: proseMirrorPlugins,

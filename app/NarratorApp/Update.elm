@@ -126,6 +126,33 @@ update msg model =
                                  } }
         , Cmd.none)
 
+    UpdateSelectedBackgroundImage imageUrl ->
+      case model.chapter of
+        Just chapter ->
+          let
+            newBgImage = if imageUrl == "" then
+                           Nothing
+                         else
+                           Just imageUrl
+            updatedChapter = { chapter | backgroundImage = newBgImage }
+          in
+            ({ model | chapter = Just updatedChapter }, Cmd.none)
+        Nothing ->
+            (model, Cmd.none)
+    UpdateSelectedAudio audioUrl ->
+      case model.chapter of
+        Just chapter ->
+          let
+            newAudio = if audioUrl == "" then
+                         Nothing
+                       else
+                         Just audioUrl
+            updatedChapter = { chapter | audio = newAudio }
+          in
+            ({ model | chapter = Just updatedChapter }, Cmd.none)
+        Nothing ->
+            (model, Cmd.none)
+
     SaveChapter ->
       case model.chapter of
         Just chapter ->

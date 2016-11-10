@@ -15,8 +15,8 @@ parseChapter =
     ("id" := int)
     ("narrationId" := int)
     ("title" := string)
-    ("audio" := string)
-    ("backgroundImage" := string)
+    (maybe ("audio" := string))
+    (maybe ("backgroundImage" := string))
     ("text" := Json.value)
     ("participants" := list parseCharacter)
     (maybe ("published" := string))
@@ -58,4 +58,14 @@ encodeChapter chapter =
                          -- somehow (ideal), or fetch the current
                          -- value before saving (sucks, but hey)
                          , ("text", chapter.text)
+                         , ("audio", case chapter.audio of
+                                       Just audio ->
+                                         Json.Encode.string audio
+                                       Nothing ->
+                                         Json.Encode.null)
+                         , ("backgroundImage", case chapter.backgroundImage of
+                                                 Just bgImage ->
+                                                   Json.Encode.string bgImage
+                                                 Nothing ->
+                                                   Json.Encode.null)
                          ]))

@@ -1,20 +1,22 @@
 module NarratorApp.Views.ChapterEdit exposing (..)
 
-import Html exposing (Html, h2, div, main', nav, section, aside, ul, li, img, a, input, button, text)
+import Json.Encode
+
+import Html exposing (Html, h2, div, main', nav, section, aside, ul, li, img, a, input, select, option, button, br, em, text)
 import Html.Attributes exposing (id, class, href, src, target, type', value, placeholder, checked, disabled)
 import Html.Events exposing (onClick, onInput)
-import Json.Encode
 
 import NarratorApp.Models exposing (Model, Chapter, Character, Narration)
 import NarratorApp.Messages exposing (..)
+import NarratorApp.Views.FileSelector exposing (fileSelector)
 
 fakeChapter : Chapter
 fakeChapter =
   { id = 0
   , narrationId = 0
   , title = ""
-  , audio = ""
-  , backgroundImage = ""
+  , audio = Nothing
+  , backgroundImage = Nothing
   , text = Json.Encode.list []
   , participants = []
   , published = Nothing
@@ -40,6 +42,7 @@ participantView character =
         , target "_blank"
         ]
         [ text character.name ]
+    , text " "
     , img [ src "/img/delete.png"
           , onClick (RemoveParticipant character)
           ]
@@ -50,6 +53,7 @@ nonParticipantView : Character -> Html Msg
 nonParticipantView character =
   li []
     [ text character.name
+    , text " "
     , img [ src "/img/add.png"
           , onClick (AddParticipant character)
           ]
@@ -68,14 +72,6 @@ participantListView allCharacters currentParticipants =
   in
     ul []
       (List.append participantItems nonParticipantItems)
-
---   <ul>
---     ${ chapter.participants.map(p => html`
---         <li><a href="/read/${ chapter.id }/${ p.token }">${ p.name }</a>
---         <img onclick=${ () => send("removeParticipant", { characterId: p.id }) } src="/img/delete.png" /></li>
---       `) }
---   </ul>
-
 
 chapterView : Chapter -> Narration -> Html Msg
 chapterView chapter narration =
@@ -113,6 +109,41 @@ chapterView chapter narration =
             [ div [ class "participants" ]
                 [ h2 [] [ text "Participants" ]
                 , participantListView narration.characters chapter.participants
+                , h2 [] [ text "Media" ]
+                , div [ class "image-selector" ]
+                    [ fileSelector
+                        UpdateSelectedBackgroundImage
+                        (case chapter.backgroundImage of
+                           Just image -> image
+                           Nothing -> "")
+                        (List.map
+                           (\file -> (file, file))
+                           narration.files.backgroundImages)
+                    ]
+                , em [] [ text "Preview" ]
+                , text ":"
+                , br [] []
+                , img [ class "tiny-image-preview"
+                      , src (case chapter.backgroundImage of
+                               Just image ->
+                                 "/static/narrations/" ++
+                                   (toString chapter.narrationId) ++
+                                   "/background-images/" ++
+                                   image
+                               Nothing ->
+                                 "no-preview.png")
+                      ]
+                    []
+                , div [ class "audio-selector" ]
+                    [ fileSelector
+                        UpdateSelectedAudio
+                        (case chapter.audio of
+                           Just audio -> audio
+                           Nothing -> "")
+                        (List.map
+                           (\file -> (file, file))
+                           narration.files.audio)
+                    ]
                 ]
             ]
         ]
