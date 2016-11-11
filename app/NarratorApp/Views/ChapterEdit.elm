@@ -2,7 +2,7 @@ module NarratorApp.Views.ChapterEdit exposing (..)
 
 import Json.Encode
 
-import Html exposing (Html, h2, div, main', nav, section, aside, ul, li, img, a, input, button, br, label, em, text)
+import Html exposing (Html, h2, div, main', nav, section, aside, ul, li, img, a, input, button, audio, br, span, label, em, text)
 import Html.Attributes exposing (id, class, href, src, target, type', value, placeholder, checked, disabled)
 import Html.Events exposing (onClick, onInput)
 
@@ -147,6 +147,22 @@ chapterView chapter narration editorToolState =
                         (List.map
                            (\file -> (file, file))
                            narration.files.audio)
+                    , button [ class "btn btn-small"
+                             , onClick PlayPauseAudioPreview
+                             ]
+                        [ text "Preview"
+                        , span [ id "bigger" ] [ text "♫" ]
+                        ]
+                    , case chapter.audio of
+                        Just chapterAudio ->
+                          audio [ id "audio-preview"
+                                , src ("/static/narrations/" ++
+                                         (toString chapter.narrationId) ++
+                                         "/audio/" ++ chapterAudio)
+                                ]
+                            []
+                        Nothing ->
+                          text ""
                     ]
                 ]
             ]

@@ -26,6 +26,7 @@ type Msg
   | RemoveParticipantSuccess Http.Response
   | UpdateSelectedBackgroundImage String
   | UpdateSelectedAudio String
+  | PlayPauseAudioPreview
   | SaveChapter
   | SaveChapterError Http.RawError
   | SaveChapterSuccess Http.Response

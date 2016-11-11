@@ -96,3 +96,15 @@ app.ports.addMention.subscribe(evt => {
 
     editor.addMention(editorInstance, evt.targets);
 });
+app.ports.playPauseAudioPreview.subscribe(audioElemId => {
+    const audioEl = document.getElementById(audioElemId);
+    if (!audioEl) {
+        return;
+    }
+
+    if (audioEl.paused) {
+        audioEl.play();
+    } else {
+        audioEl.pause();
+    }
+});

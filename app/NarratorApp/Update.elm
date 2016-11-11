@@ -6,7 +6,7 @@ import Routing
 import NarratorApp.Api
 import NarratorApp.Messages exposing (..)
 import NarratorApp.Models exposing (..)
-import NarratorApp.Ports exposing (initEditor, addImage, addMention)
+import NarratorApp.Ports exposing (initEditor, addImage, addMention, playPauseAudioPreview)
 
 
 urlUpdate : Routing.Route -> Model -> (Model, Cmd Msg)
@@ -197,6 +197,8 @@ update msg model =
             ({ model | chapter = Just updatedChapter }, Cmd.none)
         Nothing ->
             (model, Cmd.none)
+    PlayPauseAudioPreview ->
+      (model, playPauseAudioPreview "audio-preview")
 
     SaveChapter ->
       case model.chapter of

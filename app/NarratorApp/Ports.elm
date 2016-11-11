@@ -23,4 +23,5 @@ type alias AddMentionInfo =
 port initEditor : InitEditorInfo -> Cmd msg
 port addImage : AddImageInfo -> Cmd msg
 port addMention : AddMentionInfo -> Cmd msg
+port playPauseAudioPreview : String -> Cmd msg
 port editorContentChanged : (Json.Encode.Value -> msg) -> Sub msg
