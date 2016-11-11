@@ -116,6 +116,10 @@
     background-color: #222;
 }
 
+.interaction h2 {
+    margin: 0;
+}
+
 .interaction textarea {
     width: 100%;
     margin-bottom: 10px;

@@ -6,7 +6,7 @@ import Routing
 import NarratorApp.Api
 import NarratorApp.Messages exposing (..)
 import NarratorApp.Models exposing (..)
-import NarratorApp.Ports exposing (initEditor, addImage)
+import NarratorApp.Ports exposing (initEditor, addImage, addMention)
 
 
 urlUpdate : Routing.Route -> Model -> (Model, Cmd Msg)
@@ -34,7 +34,7 @@ update msg model =
                         _ ->
                           "Network stuff"
       in
-        ( { model | banner = Just { type' = "error", text = Debug.log "ERROR" errorString } }
+        ( { model | banner = Just { type' = "error", text = errorString } }
         , Cmd.none)
     ChapterFetchSuccess chapter ->
       ( { model | chapter = Just chapter }
@@ -54,7 +54,7 @@ update msg model =
                         _ ->
                           "Network stuff"
       in
-        ( { model | banner = Just { type' = "error", text = Debug.log "ERROR" errorString } }
+        ( { model | banner = Just { type' = "error", text = errorString } }
         , Cmd.none)
     NarrationFetchSuccess narration ->
       ( { model | narration = Just narration }
@@ -73,17 +73,47 @@ update msg model =
       case model.chapter of
         Just chapter ->
           let
-            updatedChapter = { chapter | text = Debug.log "Updated text" newText }
+            updatedChapter = { chapter | text = newText }
           in
             ({ model | chapter = Just updatedChapter }, Cmd.none)
         Nothing ->
           (model, Cmd.none)
+
     UpdateNewImageUrl newUrl ->
-      ({ model | newImageUrl = newUrl }, Cmd.none)
+      let
+        oldEditorToolState = model.editorToolState
+        newEditorToolState = { oldEditorToolState | newImageUrl = newUrl }
+      in
+        ({ model | editorToolState = newEditorToolState }, Cmd.none)
     AddImage ->
       (model, addImage { editor = "editor-container"
-                       , imageUrl = model.newImageUrl
+                       , imageUrl = model.editorToolState.newImageUrl
                        })
+
+    AddNewMentionCharacter character ->
+      let
+        oldEditorToolState = model.editorToolState
+        newMentionList = character :: oldEditorToolState.newMentionTargets
+        newEditorToolState =
+          { oldEditorToolState | newMentionTargets = newMentionList }
+      in
+        ({ model | editorToolState = newEditorToolState }, Cmd.none)
+    RemoveNewMentionCharacter character ->
+      let
+        oldEditorToolState = model.editorToolState
+        newMentionList =
+          List.filter
+            (\t -> t /= character)
+            oldEditorToolState.newMentionTargets
+        newEditorToolState =
+          { oldEditorToolState | newMentionTargets = newMentionList }
+      in
+        ({ model | editorToolState = newEditorToolState }, Cmd.none)
+    AddMention ->
+      (model, addMention { editor = "editor-container"
+                         , targets = model.editorToolState.newMentionTargets
+                         })
+
     AddParticipant character ->
       case model.chapter of
         Just chapter ->

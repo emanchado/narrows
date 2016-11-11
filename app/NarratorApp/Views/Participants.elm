@@ -7,10 +7,10 @@ import Html.Events exposing (onClick)
 import NarratorApp.Models exposing (Character)
 import NarratorApp.Messages exposing (..)
 
-participantView : Character -> Html Msg
-participantView character =
+participantView : Int -> Character -> Html Msg
+participantView chapterId character =
   li []
-    [ a [ href ("/read/" ++ "1" ++ character.token)
+    [ a [ href ("/read/" ++ (toString chapterId) ++ "/" ++ character.token)
         , target "_blank"
         ]
         [ text character.name ]
@@ -32,13 +32,13 @@ nonParticipantView character =
         []
     ]
 
-participantListView : List Character -> List Character -> Html Msg
-participantListView allCharacters currentParticipants =
+participantListView : Int -> List Character -> List Character -> Html Msg
+participantListView chapterId allCharacters currentParticipants =
   let
     nonParticipants =
       List.filter (\c -> not (List.member c currentParticipants)) allCharacters
 
-    participantItems = List.map participantView currentParticipants
+    participantItems = List.map (participantView chapterId) currentParticipants
 
     nonParticipantItems = List.map nonParticipantView nonParticipants
   in

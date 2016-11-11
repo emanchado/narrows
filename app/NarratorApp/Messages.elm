@@ -15,6 +15,9 @@ type Msg
   | UpdateEditorContent Json.Encode.Value
   | UpdateNewImageUrl String
   | AddImage
+  | AddNewMentionCharacter Character
+  | RemoveNewMentionCharacter Character
+  | AddMention
   | AddParticipant Character
   | AddParticipantError Http.RawError
   | AddParticipantSuccess Http.Response

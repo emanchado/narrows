@@ -54,7 +54,7 @@ function addImage(editor, imageUrl) {
     editor.tr.replaceSelection(imageNodeType.create(attrs)).apply();
 }
 
-function markTextForCharacter(editor, characters) {
+function addMention(editor, characters) {
     const {from, to} = editor.selection;
 
     var type = new MentionMark("mention", 0, narrowsSchema);
@@ -70,4 +70,4 @@ module.exports.create = create;
 module.exports.importText = importText;
 module.exports.exportText = exportText;
 module.exports.addImage = addImage;
-module.exports.markTextForCharacter = markTextForCharacter;
+module.exports.addMention = addMention;

@@ -17,7 +17,9 @@ initialState =
   { chapter = Nothing
   , narration = Nothing
   , banner = Nothing
-  , newImageUrl = ""
+  , editorToolState = { newImageUrl = ""
+                      , newMentionTargets = []
+                      }
   }
 
 update : Msg -> Model -> (Model, Cmd Msg)

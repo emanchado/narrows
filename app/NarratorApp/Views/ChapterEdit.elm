@@ -2,11 +2,11 @@ module NarratorApp.Views.ChapterEdit exposing (..)
 
 import Json.Encode
 
-import Html exposing (Html, h2, div, main', nav, section, aside, ul, li, img, a, input, select, option, button, br, em, text)
+import Html exposing (Html, h2, div, main', nav, section, aside, ul, li, img, a, input, button, br, label, em, text)
 import Html.Attributes exposing (id, class, href, src, target, type', value, placeholder, checked, disabled)
 import Html.Events exposing (onClick, onInput)
 
-import NarratorApp.Models exposing (Model, Chapter, Character, Narration)
+import NarratorApp.Models exposing (Model, Chapter, Character, Narration, EditorToolState)
 import NarratorApp.Messages exposing (..)
 import NarratorApp.Views.FileSelector exposing (fileSelector)
 import NarratorApp.Views.Participants exposing (participantListView)
@@ -48,8 +48,37 @@ addImageView newImageUrl =
         [ text "Add Image" ]
     ]
 
-chapterView : Chapter -> Narration -> String -> Html Msg
-chapterView chapter narration newImageUrl =
+characterForMention : Character -> Bool -> Html Msg
+characterForMention character isSelected =
+  let
+    message = if isSelected then
+                (RemoveNewMentionCharacter character)
+              else
+                (AddNewMentionCharacter character)
+  in
+    label []
+      [ input [ type' "checkbox"
+              , checked isSelected
+              , onClick message
+              ]
+          [ ]
+      , text character.name
+      ]
+
+markForCharacter : List Character -> List Character -> Html Msg
+markForCharacter allCharacters newMentionTargets =
+  div []
+    [ text "Mark text for "
+    , div []
+        (List.map
+           (\c -> characterForMention c <| List.member c newMentionTargets)
+           allCharacters)
+    , button [ onClick AddMention ]
+        [ text "Mark" ]
+    ]
+
+chapterView : Chapter -> Narration -> EditorToolState -> Html Msg
+chapterView chapter narration editorToolState =
   div [ id "narrator-app" ]
     [ nav []
         [ a [ href ("/narrations/" ++ (toString chapter.narrationId)) ]
@@ -67,12 +96,8 @@ chapterView chapter narration newImageUrl =
                     ]
                 []
             , div [ id "editor-container" ] []
-            , addImageView newImageUrl
-            -- , markForCharacter
-  -- <div>
-  --   Mark text for ${ characterSelector("mentionCharacters", participants, state, send) }
-  --   <button onclick=${ () => send("markTextForCharacter", { characters: [{id: 1, name: "Mildred Mayfield"}] }) }>Mark</button>
-  -- </div>
+            , addImageView editorToolState.newImageUrl
+            , markForCharacter chapter.participants editorToolState.newMentionTargets
             , div [ class "btn-bar" ]
                 [ button [ class "btn"
                          , onClick SaveChapter
@@ -87,7 +112,7 @@ chapterView chapter narration newImageUrl =
         , aside []
             [ div [ class "participants" ]
                 [ h2 [] [ text "Participants" ]
-                , participantListView narration.characters chapter.participants
+                , participantListView chapter.id narration.characters chapter.participants
                 , h2 [] [ text "Media" ]
                 , div [ class "image-selector" ]
                     [ fileSelector
@@ -139,4 +164,4 @@ view model =
                   Just narration -> narration
                   Nothing -> fakeNarration
   in
-    chapterView chapter narration model.newImageUrl
+    chapterView chapter narration model.editorToolState

@@ -88,3 +88,11 @@ app.ports.addImage.subscribe(evt => {
 
     editor.addImage(editorInstance, evt.imageUrl);
 });
+app.ports.addMention.subscribe(evt => {
+    const editorInstance = editors[evt.editor];
+    if (!editorInstance) {
+        return;
+    }
+
+    editor.addMention(editorInstance, evt.targets);
+});

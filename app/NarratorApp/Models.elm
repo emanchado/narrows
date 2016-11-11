@@ -41,9 +41,14 @@ type alias Banner =
   , text : String
   }
 
+type alias EditorToolState =
+  { newImageUrl : String
+  , newMentionTargets : List Character
+  }
+
 type alias Model =
   { chapter : Maybe Chapter
   , narration : Maybe Narration
   , banner : Maybe Banner
-  , newImageUrl : String
+  , editorToolState : EditorToolState
   }
