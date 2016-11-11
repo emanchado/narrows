@@ -39,6 +39,13 @@ function importText(text) {
     return Node.fromJSON(narrowsSchema, text);
 }
 
+function addImage(editor, imageUrl) {
+    const imageNodeType = narrowsSchema.nodes.image,
+          attrs = { src: imageUrl };
+
+    editor.tr.replaceSelection(imageNodeType.create(attrs)).apply();
+}
+
 function markTextForCharacter(editor, characters) {
     const {from, to} = editor.selection;
 
@@ -53,4 +60,5 @@ function markTextForCharacter(editor, characters) {
 module.exports.schema = narrowsSchema;
 module.exports.create = create;
 module.exports.importText = importText;
+module.exports.addImage = addImage;
 module.exports.markTextForCharacter = markTextForCharacter;

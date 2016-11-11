@@ -16,6 +16,7 @@ initialState =
   { chapter = Nothing
   , narration = Nothing
   , banner = Nothing
+  , newImageUrl = ""
   }
 
 update : Msg -> Model -> (Model, Cmd Msg)

@@ -45,4 +45,5 @@ type alias Model =
   { chapter : Maybe Chapter
   , narration : Maybe Narration
   , banner : Maybe Banner
+  , newImageUrl : String
   }

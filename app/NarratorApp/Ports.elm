@@ -7,4 +7,10 @@ type alias InitEditorInfo =
   , text : Json.Decode.Value
   }
 
+type alias AddImageInfo =
+  { editor : String
+  , imageUrl : String
+  }
+
 port initEditor : InitEditorInfo -> Cmd msg
+port addImage : AddImageInfo -> Cmd msg

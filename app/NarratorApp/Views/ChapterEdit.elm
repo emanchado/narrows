@@ -9,6 +9,7 @@ import Html.Events exposing (onClick, onInput)
 import NarratorApp.Models exposing (Model, Chapter, Character, Narration)
 import NarratorApp.Messages exposing (..)
 import NarratorApp.Views.FileSelector exposing (fileSelector)
+import NarratorApp.Views.Participants exposing (participantListView)
 
 fakeChapter : Chapter
 fakeChapter =
@@ -35,46 +36,20 @@ fakeNarration =
             }
   }
 
-participantView : Character -> Html Msg
-participantView character =
-  li []
-    [ a [ href ("/read/" ++ "1" ++ character.token)
-        , target "_blank"
-        ]
-        [ text character.name ]
-    , text " "
-    , img [ src "/img/delete.png"
-          , onClick (RemoveParticipant character)
-          ]
+addImageView : String -> Html Msg
+addImageView newImageUrl =
+  div [ class "add-image" ]
+    [ input [ type' "text"
+            , onInput UpdateNewImageUrl
+            , value newImageUrl
+            ]
         []
+    , button [ onClick AddImage ]
+        [ text "Add Image" ]
     ]
 
-nonParticipantView : Character -> Html Msg
-nonParticipantView character =
-  li []
-    [ text character.name
-    , text " "
-    , img [ src "/img/add.png"
-          , onClick (AddParticipant character)
-          ]
-        []
-    ]
-
-participantListView : List Character -> List Character -> Html Msg
-participantListView allCharacters currentParticipants =
-  let
-    nonParticipants =
-      List.filter (\c -> not (List.member c currentParticipants)) allCharacters
-
-    participantItems = List.map participantView currentParticipants
-
-    nonParticipantItems = List.map nonParticipantView nonParticipants
-  in
-    ul []
-      (List.append participantItems nonParticipantItems)
-
-chapterView : Chapter -> Narration -> Html Msg
-chapterView chapter narration =
+chapterView : Chapter -> Narration -> String -> Html Msg
+chapterView chapter narration newImageUrl =
   div [ id "narrator-app" ]
     [ nav []
         [ a [ href ("/narrations/" ++ (toString chapter.narrationId)) ]
@@ -92,8 +67,12 @@ chapterView chapter narration =
                     ]
                 []
             , div [ id "editor-container" ] []
-            -- , addImageView
+            , addImageView newImageUrl
             -- , markForCharacter
+  -- <div>
+  --   Mark text for ${ characterSelector("mentionCharacters", participants, state, send) }
+  --   <button onclick=${ () => send("markTextForCharacter", { characters: [{id: 1, name: "Mildred Mayfield"}] }) }>Mark</button>
+  -- </div>
             , div [ class "btn-bar" ]
                 [ button [ class "btn"
                          , onClick SaveChapter
@@ -160,4 +139,4 @@ view model =
                   Just narration -> narration
                   Nothing -> fakeNarration
   in
-    chapterView chapter narration
+    chapterView chapter narration model.newImageUrl

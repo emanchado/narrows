@@ -11,6 +11,8 @@ type Msg
   | NarrationFetchError Http.Error
   | NarrationFetchSuccess Narration
   | UpdateChapterTitle String
+  | UpdateNewImageUrl String
+  | AddImage
   | AddParticipant Character
   | AddParticipantError Http.RawError
   | AddParticipantSuccess Http.Response

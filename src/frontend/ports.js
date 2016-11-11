@@ -72,7 +72,17 @@ document.addEventListener("scroll", function(evt) {
 /*
  * Ports for the narrator app
  */
+const editors = {};
 app.ports.initEditor.subscribe(evt => {
     const container = document.getElementById(evt.elemId);
-    editor.create(editor.importText(evt.text), container);
+    editors[evt.elemId] =
+        editor.create(editor.importText(evt.text), container);
+});
+app.ports.addImage.subscribe(evt => {
+    const editorInstance = editors[evt.editor];
+    if (!editorInstance) {
+        return;
+    }
+
+    editor.addImage(editorInstance, evt.imageUrl);
 });

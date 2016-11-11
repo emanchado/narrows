@@ -6,7 +6,7 @@ import Routing
 import NarratorApp.Api
 import NarratorApp.Messages exposing (..)
 import NarratorApp.Models exposing (..)
-import NarratorApp.Ports exposing (initEditor)
+import NarratorApp.Ports exposing (initEditor, addImage)
 
 
 urlUpdate : Routing.Route -> Model -> (Model, Cmd Msg)
@@ -69,6 +69,12 @@ update msg model =
             ({ model | chapter = Just newChapter }, Cmd.none)
         Nothing ->
           (model, Cmd.none)
+    UpdateNewImageUrl newUrl ->
+      ({ model | newImageUrl = newUrl }, Cmd.none)
+    AddImage ->
+      (model, addImage { editor = "editor-container"
+                       , imageUrl = model.newImageUrl
+                       })
     AddParticipant character ->
       case model.chapter of
         Just chapter ->
