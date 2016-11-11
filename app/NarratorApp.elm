@@ -7,6 +7,7 @@ import NarratorApp.Messages exposing (..)
 import NarratorApp.Models exposing (..)
 import NarratorApp.Update
 import NarratorApp.Views
+import NarratorApp.Ports
 
 type alias Model = NarratorApp.Models.Model
 type alias Msg = NarratorApp.Messages.Msg
@@ -30,4 +31,4 @@ view = NarratorApp.Views.mainView
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-  Sub.none
+  NarratorApp.Ports.editorContentChanged UpdateEditorContent

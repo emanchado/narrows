@@ -69,6 +69,15 @@ update msg model =
             ({ model | chapter = Just newChapter }, Cmd.none)
         Nothing ->
           (model, Cmd.none)
+    UpdateEditorContent newText ->
+      case model.chapter of
+        Just chapter ->
+          let
+            updatedChapter = { chapter | text = Debug.log "Updated text" newText }
+          in
+            ({ model | chapter = Just updatedChapter }, Cmd.none)
+        Nothing ->
+          (model, Cmd.none)
     UpdateNewImageUrl newUrl ->
       ({ model | newImageUrl = newUrl }, Cmd.none)
     AddImage ->

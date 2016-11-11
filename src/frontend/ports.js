@@ -76,7 +76,9 @@ const editors = {};
 app.ports.initEditor.subscribe(evt => {
     const container = document.getElementById(evt.elemId);
     editors[evt.elemId] =
-        editor.create(editor.importText(evt.text), container);
+        editor.create(editor.importText(evt.text), container, m => {
+            app.ports.editorContentChanged.send(editor.exportText(m));
+        });
 });
 app.ports.addImage.subscribe(evt => {
     const editorInstance = editors[evt.editor];

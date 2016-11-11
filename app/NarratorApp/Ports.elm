@@ -1,5 +1,6 @@
 port module NarratorApp.Ports exposing (..)
 
+import Json.Encode
 import Json.Decode
 
 type alias InitEditorInfo =
@@ -14,3 +15,4 @@ type alias AddImageInfo =
 
 port initEditor : InitEditorInfo -> Cmd msg
 port addImage : AddImageInfo -> Cmd msg
+port editorContentChanged : (Json.Encode.Value -> msg) -> Sub msg

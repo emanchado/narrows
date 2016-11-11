@@ -58,6 +58,7 @@ combinedUpdate msg model =
 subscriptions : Model -> Sub Msg
 subscriptions model =
   Sub.batch [ Sub.map ReaderMsg (ReaderApp.subscriptions model.readerApp)
+            , Sub.map NarratorMsg (NarratorApp.subscriptions model.narratorApp)
             ]
 
 notFoundView : Html Msg

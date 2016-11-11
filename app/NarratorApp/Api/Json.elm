@@ -52,11 +52,6 @@ encodeChapter chapter =
   (Json.Encode.encode
      0
      (Json.Encode.object [ ("title", Json.Encode.string chapter.title)
-                         -- TODO: text cannot be taken from
-                         -- chapter.text, that's the initial
-                         -- one. So either apply the changes there
-                         -- somehow (ideal), or fetch the current
-                         -- value before saving (sucks, but hey)
                          , ("text", chapter.text)
                          , ("audio", case chapter.audio of
                                        Just audio ->

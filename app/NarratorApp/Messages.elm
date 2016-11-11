@@ -1,6 +1,7 @@
 module NarratorApp.Messages exposing (..)
 
 import Http
+import Json.Encode
 
 import NarratorApp.Models exposing (..)
 
@@ -11,6 +12,7 @@ type Msg
   | NarrationFetchError Http.Error
   | NarrationFetchSuccess Narration
   | UpdateChapterTitle String
+  | UpdateEditorContent Json.Encode.Value
   | UpdateNewImageUrl String
   | AddImage
   | AddParticipant Character

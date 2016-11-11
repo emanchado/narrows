@@ -23,13 +23,17 @@ const proseMirrorPlugins = [
     })
 ];
 
-function create(initialContent, place) {
-    return new prosemirror.ProseMirror({
+function create(initialContent, place, onChangeHandler) {
+    const editor = new prosemirror.ProseMirror({
         schema: narrowsSchema,
         plugins: proseMirrorPlugins,
         doc: initialContent,
         place: place
     });
+
+    editor.on.transform.add(onChangeHandler);
+
+    return editor;
 }
 
 function importText(text) {
@@ -37,6 +41,10 @@ function importText(text) {
         return null;
     }
     return Node.fromJSON(narrowsSchema, text);
+}
+
+function exportText(editor) {
+    return editor.doc.toJSON();
 }
 
 function addImage(editor, imageUrl) {
@@ -60,5 +68,6 @@ function markTextForCharacter(editor, characters) {
 module.exports.schema = narrowsSchema;
 module.exports.create = create;
 module.exports.importText = importText;
+module.exports.exportText = exportText;
 module.exports.addImage = addImage;
 module.exports.markTextForCharacter = markTextForCharacter;
