@@ -6,7 +6,29 @@ import Routing
 import NarratorApp.Api
 import NarratorApp.Messages exposing (..)
 import NarratorApp.Models exposing (..)
-import NarratorApp.Ports exposing (initEditor, addImage, addMention, playPauseAudioPreview)
+import NarratorApp.Ports exposing (initEditor, addImage, addMention, playPauseAudioPreview, openFileInput, uploadFile)
+
+
+updateNarrationFiles : FileSet -> NarratorApp.Ports.FileUploadSuccess -> FileSet
+updateNarrationFiles fileSet uploadResponse =
+  case uploadResponse.type' of
+    "audio" ->
+      { fileSet | audio = uploadResponse.name :: fileSet.audio }
+    "backgroundImages" ->
+      { fileSet | backgroundImages = uploadResponse.name :: fileSet.backgroundImages }
+    _ ->
+      fileSet
+
+
+updateChapter : Chapter -> NarratorApp.Ports.FileUploadSuccess -> Chapter
+updateChapter chapter uploadResponse =
+  case uploadResponse.type' of
+    "audio" ->
+      { chapter | audio = Just uploadResponse.name }
+    "backgroundImages" ->
+      { chapter | backgroundImage = Just uploadResponse.name }
+    _ ->
+      chapter
 
 
 urlUpdate : Routing.Route -> Model -> (Model, Cmd Msg)
@@ -133,7 +155,8 @@ update msg model =
     AddParticipantError error ->
       ({ model | banner = Just { text = "Error adding participant"
                                , type' = "error"
-                               } }
+                               }
+       }
       , Cmd.none)
     AddParticipantSuccess resp ->
       if (resp.status >= 200) && (resp.status < 300) then
@@ -141,7 +164,8 @@ update msg model =
       else
         ({ model | banner = Just { text = "Error adding participant"
                                  , type' = "error"
-                                 } }
+                                 }
+         }
         , Cmd.none)
     RemoveParticipant character ->
       case model.chapter of
@@ -160,7 +184,8 @@ update msg model =
     RemoveParticipantError error ->
       ({ model | banner = Just { text = "Error removing participant"
                                , type' = "error"
-                               } }
+                               }
+       }
       , Cmd.none)
     RemoveParticipantSuccess resp ->
       if (resp.status >= 200) && (resp.status < 300) then
@@ -168,7 +193,8 @@ update msg model =
       else
         ({ model | banner = Just { text = "Error removing participant"
                                  , type' = "error"
-                                 } }
+                                 }
+         }
         , Cmd.none)
 
     UpdateSelectedBackgroundImage imageUrl ->
@@ -199,6 +225,40 @@ update msg model =
             (model, Cmd.none)
     PlayPauseAudioPreview ->
       (model, playPauseAudioPreview "audio-preview")
+    OpenMediaFileSelector fileInputId ->
+      (model, openFileInput fileInputId)
+    AddMediaFile fileInputId ->
+      case model.chapter of
+        Just chapter ->
+          (model, uploadFile { fileInputId = fileInputId
+                             , narrationId = chapter.narrationId
+                             })
+        Nothing ->
+          (model, Cmd.none)
+    AddMediaFileError error ->
+      ({ model | banner = Just { text = "Error upload media file: " ++ error.message
+                               , type' = "error"
+                               }
+       }
+      , Cmd.none)
+    AddMediaFileSuccess resp ->
+      case model.narration of
+        Just narration ->
+          case model.chapter of
+            Just chapter ->
+              let
+                updatedFiles = updateNarrationFiles narration.files resp
+                updatedNarration = { narration | files = updatedFiles }
+                updatedChapter = updateChapter chapter resp
+              in
+                ( { model | narration = Just updatedNarration
+                          , chapter = Just updatedChapter
+                  }
+                , Cmd.none)
+            Nothing ->
+              (model, Cmd.none)
+        Nothing ->
+          (model, Cmd.none)
 
     SaveChapter ->
       case model.chapter of
@@ -209,7 +269,8 @@ update msg model =
     SaveChapterError error ->
       ({ model | banner = Just { text = "Error saving chapter"
                                , type' = "error"
-                               } }
+                               }
+       }
       , Cmd.none)
     SaveChapterSuccess resp ->
       let

@@ -33,4 +33,7 @@ view = NarratorApp.Views.mainView
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-  NarratorApp.Ports.editorContentChanged UpdateEditorContent
+  Sub.batch [ NarratorApp.Ports.editorContentChanged UpdateEditorContent
+            , NarratorApp.Ports.uploadFileError AddMediaFileError
+            , NarratorApp.Ports.uploadFileSuccess AddMediaFileSuccess
+            ]

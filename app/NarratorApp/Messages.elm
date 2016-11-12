@@ -4,6 +4,7 @@ import Http
 import Json.Encode
 
 import NarratorApp.Models exposing (..)
+import NarratorApp.Ports
 
 type Msg
   = NoOp
@@ -26,6 +27,10 @@ type Msg
   | RemoveParticipantSuccess Http.Response
   | UpdateSelectedBackgroundImage String
   | UpdateSelectedAudio String
+  | OpenMediaFileSelector String
+  | AddMediaFile String
+  | AddMediaFileError NarratorApp.Ports.FileUploadError
+  | AddMediaFileSuccess NarratorApp.Ports.FileUploadSuccess
   | PlayPauseAudioPreview
   | SaveChapter
   | SaveChapterError Http.RawError

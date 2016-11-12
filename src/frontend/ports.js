@@ -108,3 +108,34 @@ app.ports.playPauseAudioPreview.subscribe(audioElemId => {
         audioEl.pause();
     }
 });
+app.ports.openFileInput.subscribe(fileInputId => {
+    const fileInput = document.getElementById(fileInputId);
+    if (!fileInput) {
+        return;
+    }
+
+    fileInput.click();
+});
+app.ports.uploadFile.subscribe(evt => {
+    const fileInput = document.getElementById(evt.fileInputId);
+    const url = "/api/narrations/" + evt.narrationId + "/files";
+
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", url);
+    xhr.addEventListener("load", function() {
+        const resp = JSON.parse(this.responseText);
+
+        if (this.status < 200 || this.status >= 400) {
+            app.ports.uploadFileError.send({ status: this.status,
+                                             message: resp.errorMessage });
+            return;
+        }
+
+        app.ports.uploadFileSuccess.send({ name: resp.name,
+                                           "type'": resp.type });
+    });
+
+    const formData = new FormData();
+    formData.append("file", fileInput.files[0]);
+    xhr.send(formData);
+});

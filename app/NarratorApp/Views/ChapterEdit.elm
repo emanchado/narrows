@@ -1,10 +1,11 @@
 module NarratorApp.Views.ChapterEdit exposing (..)
 
 import Json.Encode
+import Json.Decode
 
 import Html exposing (Html, h2, div, main', nav, section, aside, ul, li, img, a, input, button, audio, br, span, label, em, text)
-import Html.Attributes exposing (id, class, href, src, target, type', value, placeholder, checked, disabled)
-import Html.Events exposing (onClick, onInput)
+import Html.Attributes exposing (id, name, class, href, src, target, type', value, placeholder, checked, disabled)
+import Html.Events exposing (onClick, onInput, on)
 
 import NarratorApp.Models exposing (Model, Chapter, Character, Narration, EditorToolState)
 import NarratorApp.Messages exposing (..)
@@ -163,6 +164,16 @@ chapterView chapter narration editorToolState =
                             []
                         Nothing ->
                           text ""
+                    , button [ class "btn btn-small btn-default"
+                             , onClick (OpenMediaFileSelector "new-media-file")
+                             ]
+                        [ text "Add files" ]
+                    , input [ type' "file"
+                            , id "new-media-file"
+                            , name "file"
+                            , on "change" (Json.Decode.succeed <| AddMediaFile "new-media-file")
+                            ]
+                        []
                     ]
                 ]
             ]

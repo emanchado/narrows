@@ -20,8 +20,27 @@ type alias AddMentionInfo =
   , targets : List Character
   }
 
+type alias FileUploadInfo =
+  { fileInputId : String
+  , narrationId : Int
+  }
+
+type alias FileUploadError =
+  { status : Int
+  , message : String
+  }
+
+type alias FileUploadSuccess =
+  { name : String
+  , type' : String
+  }
+
 port initEditor : InitEditorInfo -> Cmd msg
 port addImage : AddImageInfo -> Cmd msg
 port addMention : AddMentionInfo -> Cmd msg
 port playPauseAudioPreview : String -> Cmd msg
+port openFileInput : String -> Cmd msg
+port uploadFile : FileUploadInfo -> Cmd msg
 port editorContentChanged : (Json.Encode.Value -> msg) -> Sub msg
+port uploadFileError : (FileUploadError -> msg) -> Sub msg
+port uploadFileSuccess : (FileUploadSuccess -> msg) -> Sub msg
