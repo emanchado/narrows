@@ -4,7 +4,8 @@ import Task
 import Http
 
 import NarratorApp.Messages exposing (Msg, Msg(..))
-import NarratorApp.Models exposing (Chapter, Character)
+import Common.Models exposing (Character)
+import NarratorApp.Models exposing (Chapter)
 import NarratorApp.Api.Json exposing (parseChapter, parseNarration, encodeChapter, encodeCharacter)
 
 fetchChapterInfo : Int -> Cmd Msg

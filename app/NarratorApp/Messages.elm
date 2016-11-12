@@ -3,6 +3,7 @@ module NarratorApp.Messages exposing (..)
 import Http
 import Json.Encode
 
+import Common.Models exposing (Character, Narration)
 import NarratorApp.Models exposing (..)
 import NarratorApp.Ports
 

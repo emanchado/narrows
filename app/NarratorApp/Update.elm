@@ -5,6 +5,7 @@ import Http
 import Routing
 import NarratorApp.Api
 import NarratorApp.Messages exposing (..)
+import Common.Models exposing (FileSet)
 import NarratorApp.Models exposing (..)
 import NarratorApp.Ports exposing (initEditor, addImage, addMention, playPauseAudioPreview, openFileInput, uploadFile)
 

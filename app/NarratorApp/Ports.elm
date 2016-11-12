@@ -3,7 +3,7 @@ port module NarratorApp.Ports exposing (..)
 import Json.Encode
 import Json.Decode
 
-import NarratorApp.Models exposing (Character)
+import Common.Models exposing (Character)
 
 type alias InitEditorInfo =
   { elemId : String

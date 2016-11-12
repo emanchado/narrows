@@ -3,7 +3,8 @@ module NarratorApp.Api.Json exposing (..)
 import Json.Decode as Json exposing (..)
 import Json.Encode
 
-import NarratorApp.Models exposing (Chapter, Character, Narration, FileSet)
+import NarratorApp.Models exposing (Chapter)
+import Common.Models exposing (Character, Narration, FileSet)
 
 parseCharacter : Json.Decoder Character
 parseCharacter =

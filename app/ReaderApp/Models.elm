@@ -2,7 +2,9 @@ module ReaderApp.Models exposing (..)
 
 import Json.Decode
 
-import Routing
+import Common.Models
+
+type alias Banner = Common.Models.Banner
 
 type PageState
   = Loader
@@ -50,11 +52,6 @@ type alias Chapter =
   , participants : List Character
   , reaction : Maybe String
   , character : OwnCharacter
-  }
-
-type alias Banner =
-  { type' : String
-  , text : String
   }
 
 type alias Model =
