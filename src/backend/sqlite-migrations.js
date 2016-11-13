@@ -25,6 +25,7 @@ function markMigrationApplied(db, migrationName) {
 function upgradeDb(db, migrations) {
     let migrationPromise = Q(true);
 
+    db.serialize();
     migrations.forEach(migration => {
         migrationPromise = migrationPromise.then(() => {
             return migrationApplied(db, migration.name).then(result => {
@@ -41,7 +42,9 @@ function upgradeDb(db, migrations) {
         });
     });
 
-    return migrationPromise;
+    return migrationPromise.then(() => {
+        db.parallelize();
+    });
 }
 
 export default upgradeDb;

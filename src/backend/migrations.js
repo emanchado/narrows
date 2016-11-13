@@ -3,7 +3,6 @@ import Q from "q";
 function statementListPromise(db, statements) {
     const promise = Q(true);
 
-    db.serialize();
     statements.forEach(stmt => {
         promise.then(() => {
             Q.ninvoke(db, "exec", stmt);
