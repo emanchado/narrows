@@ -32,7 +32,7 @@ function makeCharacterFeed(baseUrl, character, store) {
                 const senderName = message.sender ?
                           message.sender.name : "Narrator";
 
-                if (message.sender && message.sender.id !== character.id) {
+                if (!message.sender || message.sender.id !== character.id) {
                     const recipientList =
                               message.recipients.map(r => (
                                   r.id === character.id ?
