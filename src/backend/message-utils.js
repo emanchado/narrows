@@ -8,7 +8,7 @@ function threadIdFor(message) {
         join("-");
 }
 
-function threadMessages(messageList) {
+export function threadMessages(messageList) {
     const threads = {};
 
     messageList.forEach(message => {
