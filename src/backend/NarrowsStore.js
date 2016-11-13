@@ -565,9 +565,10 @@ class NarrowsStore {
                JOIN reactions REACT
                  ON (REACT.chapter_id = CHAP.id AND
                      REACT.character_id = CHAR.id)
-              WHERE CHAR.id = 1 AND published IS NOT NULL
+              WHERE CHAR.id = ? AND published IS NOT NULL
            ORDER BY published DESC
-              LIMIT 1 ;`
+              LIMIT 1 ;`,
+            characterId
         );
     }
 
