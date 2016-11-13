@@ -62,7 +62,7 @@ reactionView model =
       , h2 []
           [ text "Discussion "
           , a [ target "_blank"
-              , href ("/feed/" ++ character.token)
+              , href ("/feeds/" ++ character.token)
               ]
               [ img [ src "/img/rss.png" ] [] ]
           ]
