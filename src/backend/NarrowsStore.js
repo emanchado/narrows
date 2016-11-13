@@ -447,7 +447,7 @@ class NarrowsStore {
         return Q.ninvoke(
             this.db,
             "all",
-            `SELECT id, sender_id AS senderId, body, sent AS sentAt
+            `SELECT DISTINCT id, sender_id AS senderId, body, sent AS sentAt
                FROM messages M LEFT JOIN message_deliveries MD
                  ON M.id = MD.message_id
               WHERE M.chapter_id = ?

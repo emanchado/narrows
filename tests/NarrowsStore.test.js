@@ -11,6 +11,8 @@ const CHAR1_NAME = "Frodo";
 const CHAR1_TOKEN = "979021c8-97b4-11e6-a708-ff4e2821162e";
 const CHAR2_NAME = "Sam";
 const CHAR2_TOKEN = "bb0a38b4-97b4-11e6-906f-bfca08f8b9ae";
+const CHAR3_NAME = "Bilbo";
+const CHAR3_TOKEN = "62963d86-a9cf-11e6-8fbb-f717783bbfc5";
 
 function createCharacter(store, characterName, characterToken) {
     return store.addCharacter(characterName, characterToken);
@@ -53,6 +55,10 @@ test.beforeEach(t => {
         return createCharacter(t.context.store, CHAR2_NAME, CHAR2_TOKEN);
     }).then(characterId => {
         t.context.characterId2 = characterId;
+
+        return createCharacter(t.context.store, CHAR3_NAME, CHAR3_TOKEN);
+    }).then(characterId => {
+        t.context.characterId3 = characterId;
     });
 });
 
@@ -176,6 +182,30 @@ test.serial("can get the messages to the narrator (no recipients)", t => {
                                           t.context.characterId1,
                                           "Message from 1 to narrator...",
                                           []);
+    }).then(() => {
+        return t.context.store.getChapterMessages(chapterId,
+                                                  t.context.characterId1);
+    }).then(messages => {
+        t.is(messages.length, 1);
+    });
+});
+
+test.serial("messages are only added once", t => {
+    const narrationId = t.context.testNarration.id;
+    const props = { title: "Intro",
+                    text: [],
+                    participants: [1],
+                    backgroundImage: "hostel.jpg" };
+    let chapterId;
+
+    return t.context.store.createChapter(narrationId, props).then(chapter => {
+        chapterId = chapter.id;
+
+        return t.context.store.addMessage(chapterId,
+                                          t.context.characterId1,
+                                          "Message from 1 to 2...",
+                                          [t.context.characterId2,
+                                           t.context.characterId3]);
     }).then(() => {
         return t.context.store.getChapterMessages(chapterId,
                                                   t.context.characterId1);
