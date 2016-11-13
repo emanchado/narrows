@@ -30,9 +30,12 @@ function threadMessages(messageList) {
         map(messageGroup => {
             const randomMessage = messageGroup[0];
             const recipients = randomMessage.recipients || [];
+            if (randomMessage.sender) {
+                recipients.push(randomMessage.sender);
+            }
 
             return {
-                participants: recipients.concat(randomMessage.sender),
+                participants: recipients,
                 messages: messageGroup
             };
         });
