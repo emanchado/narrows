@@ -36,7 +36,7 @@ reactionView model =
   let
     character = case model.chapter of
                   Just chapter -> chapter.character
-                  Nothing -> { id = 0, name = "", token = "", notes = "" }
+                  Nothing -> { id = 0, name = "", token = "", notes = Nothing }
   in
     div [ class "interaction" ]
       [ h2 []
@@ -45,7 +45,9 @@ reactionView model =
           [ textarea [ placeholder "You can write some notes here. These are remembered between chapters!"
                      , rows 10
                      , onInput UpdateNotesText
-                     , value character.notes
+                     , value (case character.notes of
+                                Just notes -> notes
+                                Nothing -> "")
                      ]
               []
           ]

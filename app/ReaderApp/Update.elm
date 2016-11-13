@@ -117,7 +117,7 @@ update msg model =
         Just chapter ->
           let
             ownCharacter = chapter.character
-            updatedOwnCharacter = { ownCharacter | notes = newText }
+            updatedOwnCharacter = { ownCharacter | notes = Just newText }
             updatedChapter = { chapter | character = updatedOwnCharacter }
           in
             ({ model | chapter = Just updatedChapter }, Cmd.none)
@@ -126,9 +126,13 @@ update msg model =
     SendNotes ->
       case model.chapter of
         Just chapter ->
-          ( model
-          , ReaderApp.Api.sendNotes chapter.character.token chapter.character.notes
-          )
+          case chapter.character.notes of
+            Just notes ->
+              ( model
+              , ReaderApp.Api.sendNotes chapter.character.token notes
+              )
+            Nothing ->
+              (model, Cmd.none)
         Nothing ->
           (model, Cmd.none)
     SendNotesError error ->

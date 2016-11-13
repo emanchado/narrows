@@ -14,7 +14,11 @@ parseCharacter =
 
 parseOwnCharacter : Json.Decoder OwnCharacter
 parseOwnCharacter =
-  Json.object4 OwnCharacter ("id" := int) ("name" := string) ("token" := string) ("notes" := string)
+  Json.object4 OwnCharacter
+    ("id" := int)
+    ("name" := string)
+    ("token" := string)
+    (maybe ("notes" := string))
 
 parseMessage : Json.Decoder Message
 parseMessage =

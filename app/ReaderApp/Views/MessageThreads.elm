@@ -68,7 +68,7 @@ listView model =
   let
     character = case model.chapter of
                   Just chapter -> chapter.character
-                  Nothing -> { id = 0, name = "", token = "", notes = "" }
+                  Nothing -> { id = 0, name = "", token = "", notes = Nothing }
     otherParticipants = case model.chapter of
                           Just chapter ->
                             List.filter

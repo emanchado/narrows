@@ -20,7 +20,7 @@ type alias OwnCharacter =
   { id : Int
   , name : String
   , token : String
-  , notes : String
+  , notes : Maybe String
   }
 
 type alias Message =
