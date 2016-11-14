@@ -1,16 +1,21 @@
 module.exports = {
     paths: {
-        public: 'public/'
+        watched: ['app', 'src/frontend'],
+        public: 'public/compiled'
     },
 
     files: {
-        javascripts: {joinTo: 'app.js'}
+        javascripts: {joinTo: {
+            'js/ports.bundle.js': /^(src\/frontend|node_modules)/
+        }}
     },
 
     plugins: {
         elmBrunch: {
             mainModules: ['app/Main.elm'],
             makeParameters: ['--warn']
-        }
+        },
+
+        babel: {presets: ['es2015']}
     }
 };

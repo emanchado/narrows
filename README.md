@@ -1,7 +1,10 @@
 TODO
 ====
 
-* Make Brunch compile the JavaScript ports code and drop webpack
+* Create a page to create new chapters
+
+* Allow writing messages as narrator
+* Redesign chapter editing and/or make a chapter commandeering page
 * Make some way to preview chapters for different characters
 * Really wait until everything is loaded before showing the "Start" button
 
