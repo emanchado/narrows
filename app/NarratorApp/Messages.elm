@@ -21,11 +21,7 @@ type Msg
   | RemoveNewMentionCharacter Character
   | AddMention
   | AddParticipant Character
-  | AddParticipantError Http.RawError
-  | AddParticipantSuccess Http.Response
   | RemoveParticipant Character
-  | RemoveParticipantError Http.RawError
-  | RemoveParticipantSuccess Http.Response
   | UpdateSelectedBackgroundImage String
   | UpdateSelectedAudio String
   | OpenMediaFileSelector String
@@ -36,3 +32,6 @@ type Msg
   | SaveChapter
   | SaveChapterError Http.RawError
   | SaveChapterSuccess Http.Response
+  | SaveNewChapter
+  | SaveNewChapterError Http.RawError
+  | SaveNewChapterSuccess Http.Response

@@ -196,17 +196,17 @@ class NarrowsStore {
         });
     }
 
-    _insertParticipants(id, participantIds) {
+    _insertParticipants(id, participants) {
         let promise = Q(true);
 
-        participantIds.forEach(pId => {
+        participants.forEach(participant => {
             promise = promise.then(() => {
                 return Q.ninvoke(
                     this.db,
                     "run",
                     `INSERT INTO reactions (chapter_id, character_id)
                             VALUES (?, ?)`,
-                    [id, pId]
+                    [id, participant.id]
                 );
             });
         });
@@ -342,7 +342,34 @@ class NarrowsStore {
         );
     }
 
+    updateChapterParticipants(id, newParticipantList) {
+        return this.getChapterParticipants(id).then(currentParticipantList => {
+            const newHash = {}, currentHash = {};
+            newParticipantList.forEach(newParticipant => {
+                newHash[newParticipant.id] = true;
+            });
+            currentParticipantList.forEach(currentParticipant => {
+                currentHash[currentParticipant.id] = true;
+            });
+
+            newParticipantList.forEach(newParticipant => {
+                if (!currentHash.hasOwnProperty(newParticipant.id)) {
+                    this.addParticipant(id, newParticipant.id);
+                }
+            });
+
+            currentParticipantList.forEach(currentParticipant => {
+                if (!newHash.hasOwnProperty(currentParticipant.id)) {
+                    this.removeParticipant(id, currentParticipant.id);
+                }
+            });
+        });
+    }
+
     updateChapter(id, props) {
+        const participants = props.participants;
+        delete props.participants;
+
         const propNames = Object.keys(props).map(convertToDb),
               propNameString = propNames.map(p => `${p} = ?`).join(", ");
         const propValues = Object.keys(props).map(n => props[n]);
@@ -352,6 +379,8 @@ class NarrowsStore {
             "run",
             `UPDATE chapters SET ${ propNameString } WHERE id = ?`,
             propValues.concat(id)
+        ).then(
+            () => this.updateChapterParticipants(id, participants)
         ).then(
             () => this.getChapter(id)
         );

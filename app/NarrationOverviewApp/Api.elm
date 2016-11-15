@@ -4,8 +4,6 @@ import Task
 import Http
 
 import NarrationOverviewApp.Messages exposing (Msg, Msg(..))
-import Common.Models exposing (Narration, FileSet, Character)
-import NarrationOverviewApp.Models exposing (NarrationOverview, ChapterOverview, Reaction)
 import NarrationOverviewApp.Api.Json exposing (parseNarration, parseNarrationOverview)
 
 fetchNarrationInfo : Int -> Cmd Msg

@@ -4,7 +4,6 @@ import Task
 import Http
 
 import NarratorApp.Messages exposing (Msg, Msg(..))
-import Common.Models exposing (Character)
 import NarratorApp.Models exposing (Chapter)
 import NarratorApp.Api.Json exposing (parseChapter, parseNarration, encodeChapter, encodeCharacter)
 
@@ -26,50 +25,26 @@ fetchNarrationInfo narrationId =
 
 saveChapter : Chapter -> Cmd Msg
 saveChapter chapter =
-  let
-    saveChapterApiUrl = "/api/chapters/" ++ (toString chapter.id)
-  in
-    Task.perform
-      SaveChapterError
-      SaveChapterSuccess
-      (Http.send
-         Http.defaultSettings
-         { verb = "PUT"
-         , url = saveChapterApiUrl
-         , headers = [("Content-Type", "application/json")]
-         , body = Http.string <| encodeChapter chapter
-         })
+  Task.perform
+    SaveChapterError
+    SaveChapterSuccess
+    (Http.send
+       Http.defaultSettings
+       { verb = "PUT"
+       , url = "/api/chapters/" ++ (toString chapter.id)
+       , headers = [("Content-Type", "application/json")]
+       , body = Http.string <| encodeChapter chapter
+       })
 
-addParticipant : Chapter -> Character -> Cmd Msg
-addParticipant chapter character =
-  let
-    addParticipantApiUrl = "/api/chapters/" ++ (toString chapter.id) ++ "/participants"
-  in
-    Task.perform
-      AddParticipantError
-      AddParticipantSuccess
-      (Http.send
-         Http.defaultSettings
-         { verb = "POST"
-         , url = addParticipantApiUrl
-         , headers = [("Content-Type", "application/json")]
-         , body = Http.string <| encodeCharacter character
-         })
-
-removeParticipant : Chapter -> Character -> Cmd Msg
-removeParticipant chapter character =
-  let
-    removeParticipantApiUrl =
-      "/api/chapters/" ++ (toString chapter.id) ++
-        "/participants/" ++ (toString character.id)
-  in
-    Task.perform
-      AddParticipantError
-      AddParticipantSuccess
-      (Http.send
-         Http.defaultSettings
-         { verb = "DELETE"
-         , url = removeParticipantApiUrl
-         , headers = [("Content-Type", "application/json")]
-         , body = Http.string <| encodeCharacter character
-         })
+createChapter : Chapter -> Cmd Msg
+createChapter chapter =
+  Task.perform
+    SaveNewChapterError
+    SaveNewChapterSuccess
+    (Http.send
+       Http.defaultSettings
+       { verb = "POST"
+       , url = "/api/narrations/" ++ (toString chapter.narrationId) ++ "/chapters"
+       , headers = [("Content-Type", "application/json")]
+       , body = Http.string <| encodeChapter chapter
+       })

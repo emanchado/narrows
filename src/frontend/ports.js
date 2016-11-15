@@ -74,11 +74,15 @@ document.addEventListener("scroll", function(evt) {
  */
 const editors = {};
 app.ports.initEditor.subscribe(evt => {
-    const container = document.getElementById(evt.elemId);
-    editors[evt.elemId] =
-        editor.create(editor.importText(evt.text), container, m => {
-            app.ports.editorContentChanged.send(editor.exportText(m));
-        });
+    if (editors.hasOwnProperty(evt.elemId)) {
+        editors[evt.elemId].setDoc(editor.importText(evt.text));
+    } else {
+        const container = document.getElementById(evt.elemId);
+        editors[evt.elemId] =
+            editor.create(editor.importText(evt.text), container, m => {
+                app.ports.editorContentChanged.send(editor.exportText(m));
+            });
+    }
 });
 app.ports.addImage.subscribe(evt => {
     const editorInstance = editors[evt.editor];

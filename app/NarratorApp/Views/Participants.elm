@@ -4,7 +4,7 @@ import Html exposing (Html, ul, li, img, a, text)
 import Html.Attributes exposing (href, src, target)
 import Html.Events exposing (onClick)
 
-import NarratorApp.Models exposing (Character)
+import Common.Models exposing (Character)
 import NarratorApp.Messages exposing (..)
 
 participantView : Int -> Character -> Html Msg

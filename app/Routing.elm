@@ -7,6 +7,7 @@ import UrlParser exposing (..)
 type Route
   = ChapterReaderPage Int String
   | ChapterNarratorPage Int
+  | CreateChapterPage Int
   | NarrationPage Int
   | NotFoundRoute
 
@@ -15,6 +16,7 @@ matchers =
   oneOf
     [ format ChapterReaderPage (s "read" </> int </> string)
     , format ChapterNarratorPage (s "chapters" </> int)
+    , format CreateChapterPage (s "narrations" </> int </> s "new")
     , format NarrationPage (s "narrations" </> int)
     ]
 

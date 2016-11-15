@@ -34,6 +34,8 @@ overviewView narration overview =
         [ text <| "Narration " ++ narration.title ]
     , ul [ class "chapter-list" ]
       (List.map chapterOverviewView overview.chapters)
+    , a [ href <| "/narrations/" ++ (toString narration.id) ++ "/new" ]
+        [ text "Write new chapter" ]
     ]
 
 loadingView : Model -> Html Msg

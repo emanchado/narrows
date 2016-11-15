@@ -1,14 +1,24 @@
 module NarratorApp.Update exposing (..)
 
 import Http
+import Json.Decode
+import Json.Encode
+import Navigation
 
 import Routing
 import NarratorApp.Api
+import NarratorApp.Api.Json exposing (parseChapter)
 import NarratorApp.Messages exposing (..)
-import Common.Models exposing (FileSet)
+import Common.Models exposing (Banner, FileSet)
 import NarratorApp.Models exposing (..)
 import NarratorApp.Ports exposing (initEditor, addImage, addMention, playPauseAudioPreview, openFileInput, uploadFile)
 
+
+errorBanner : String -> Maybe Banner
+errorBanner errorMessage =
+  Just { text = errorMessage
+       , type' = "error"
+       }
 
 updateNarrationFiles : FileSet -> NarratorApp.Ports.FileUploadSuccess -> FileSet
 updateNarrationFiles fileSet uploadResponse =
@@ -39,6 +49,18 @@ urlUpdate route model =
         ( model
         , NarratorApp.Api.fetchChapterInfo chapterId
         )
+      Routing.CreateChapterPage narrationId ->
+        let
+          action = case model.narration of
+                     Just narration ->
+                       if narration.id == narrationId then
+                         Cmd.none
+                       else
+                         NarratorApp.Api.fetchNarrationInfo narrationId
+                     Nothing ->
+                       NarratorApp.Api.fetchNarrationInfo narrationId
+        in
+          ({ model | chapter = Nothing }, action)
       _ ->
         (model, Cmd.none)
 
@@ -57,8 +79,7 @@ update msg model =
                         _ ->
                           "Network stuff"
       in
-        ( { model | banner = Just { type' = "error", text = errorString } }
-        , Cmd.none)
+        ({ model | banner = errorBanner errorString }, Cmd.none)
     ChapterFetchSuccess chapter ->
       ( { model | chapter = Just chapter }
       , Cmd.batch [ initEditor { elemId = "editor-container"
@@ -77,12 +98,21 @@ update msg model =
                         _ ->
                           "Network stuff"
       in
-        ( { model | banner = Just { type' = "error", text = errorString } }
-        , Cmd.none)
+        ({ model | banner = errorBanner errorString }, Cmd.none)
     NarrationFetchSuccess narration ->
-      ( { model | narration = Just narration }
-      , Cmd.none
-      )
+      let
+        (updatedChapter, action) =
+          case model.chapter of
+            Nothing -> ( Just (newEmptyChapter narration)
+                       , initEditor { elemId = "editor-container"
+                                    , text = Json.Encode.null
+                                    }
+                       )
+            _ -> (model.chapter, Cmd.none)
+      in
+        ( { model | narration = Just narration, chapter = updatedChapter }
+        , action
+        )
     UpdateChapterTitle newTitle ->
       case model.chapter of
         Just chapter ->
@@ -148,26 +178,9 @@ update msg model =
             chapterWithCharacter =
               { chapter | participants = participantsWithCharacter }
           in
-            ( { model | chapter = Just chapterWithCharacter }
-            , NarratorApp.Api.addParticipant chapter character
-            )
+            ({ model | chapter = Just chapterWithCharacter }, Cmd.none)
         Nothing ->
           (model, Cmd.none)
-    AddParticipantError error ->
-      ({ model | banner = Just { text = "Error adding participant"
-                               , type' = "error"
-                               }
-       }
-      , Cmd.none)
-    AddParticipantSuccess resp ->
-      if (resp.status >= 200) && (resp.status < 300) then
-        (model, Cmd.none)
-      else
-        ({ model | banner = Just { text = "Error adding participant"
-                                 , type' = "error"
-                                 }
-         }
-        , Cmd.none)
     RemoveParticipant character ->
       case model.chapter of
         Just chapter ->
@@ -177,26 +190,9 @@ update msg model =
             chapterWithoutCharacter =
               { chapter | participants = participantsWithoutCharacter }
           in
-            ( { model | chapter = Just chapterWithoutCharacter }
-            , NarratorApp.Api.removeParticipant chapter character
-            )
+            ({ model | chapter = Just chapterWithoutCharacter }, Cmd.none)
         Nothing ->
           (model, Cmd.none)
-    RemoveParticipantError error ->
-      ({ model | banner = Just { text = "Error removing participant"
-                               , type' = "error"
-                               }
-       }
-      , Cmd.none)
-    RemoveParticipantSuccess resp ->
-      if (resp.status >= 200) && (resp.status < 300) then
-        (model, Cmd.none)
-      else
-        ({ model | banner = Just { text = "Error removing participant"
-                                 , type' = "error"
-                                 }
-         }
-        , Cmd.none)
 
     UpdateSelectedBackgroundImage imageUrl ->
       case model.chapter of
@@ -237,10 +233,7 @@ update msg model =
         Nothing ->
           (model, Cmd.none)
     AddMediaFileError error ->
-      ({ model | banner = Just { text = "Error upload media file: " ++ error.message
-                               , type' = "error"
-                               }
-       }
+      ({ model | banner = errorBanner <| "Error upload media file: " ++ error.message }
       , Cmd.none)
     AddMediaFileSuccess resp ->
       case model.narration of
@@ -268,18 +261,47 @@ update msg model =
         Nothing ->
           (model, Cmd.none)
     SaveChapterError error ->
-      ({ model | banner = Just { text = "Error saving chapter"
-                               , type' = "error"
-                               }
-       }
+      ({ model | banner = errorBanner "Error saving chapter" }
       , Cmd.none)
     SaveChapterSuccess resp ->
-      let
-        newBanner = if (resp.status >= 200) && (resp.status < 300) then
-                      Just { text = "Chapter saved", type' = "success" }
-                    else
-                      Just { text = "Error saving chapter"
-                           , type' = "error"
-                           }
-      in
-        ({ model | banner = newBanner }, Cmd.none)
+      if (resp.status >= 200) && (resp.status < 300) then
+        (model, Cmd.none)
+      else
+        ( { model | banner = errorBanner <| "Error saving chapter, status code " ++ (toString resp.status) }
+        , Cmd.none
+        )
+
+    SaveNewChapter ->
+      case model.chapter of
+        Just chapter ->
+          (model, NarratorApp.Api.createChapter chapter)
+        Nothing ->
+          (model, Cmd.none)
+    SaveNewChapterError error ->
+      ({ model | banner = errorBanner "Error saving chapter" }, Cmd.none)
+    SaveNewChapterSuccess resp ->
+      if (resp.status >= 200) && (resp.status < 300) then
+        case resp.value of
+          Http.Text text ->
+            let
+              chapterDecoding =
+                Json.Decode.decodeString NarratorApp.Api.Json.parseChapter text
+            in
+              case chapterDecoding of
+                Ok chapter ->
+                  ( { model | banner = Nothing
+                    }
+                  , Navigation.newUrl <| "/chapters/" ++ (toString chapter.id)
+                  )
+                _ ->
+                  ( { model | banner = errorBanner "Error parsing chapter saving result" }
+                  , Cmd.none
+                  )
+          _ ->
+            ( { model | banner = errorBanner "Error saving chapter" }
+            , Cmd.none
+        )
+      else
+        ( { model | banner = errorBanner <| "Error saving chapter, status code " ++ (toString resp.status) }
+        , Cmd.none
+        )

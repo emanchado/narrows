@@ -197,32 +197,6 @@ export function postMessageCharacter(req, res) {
     });
 }
 
-export function postChapterParticipants(req, res) {
-    const chapterId = req.params.chptId,
-          newParticipant = req.body;
-
-    store.addParticipant(chapterId, newParticipant.id).then(participants => {
-        res.json({ participants });
-    }).catch(err => {
-        res.status(500).json({
-            errorMessage: `Could not add participant: ${ err }`
-        });
-    });
-}
-
-export function deleteChapterParticipant(req, res) {
-    const chapterId = req.params.chptId,
-          characterId = req.params.charId;
-
-    store.removeParticipant(chapterId, characterId).then(participants => {
-        res.json({ participants });
-    }).catch(err => {
-        res.status(500).json({
-            errorMessage: `Could not remove participant: ${ err }`
-        });
-    });
-}
-
 export function getFeedsCharacter(req, res) {
     const characterToken = req.params.charToken;
 

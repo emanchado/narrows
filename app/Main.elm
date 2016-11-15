@@ -89,6 +89,8 @@ mainApplicationView model =
       App.map ReaderMsg (ReaderApp.view model.readerApp)
     Routing.ChapterNarratorPage chapterId ->
       App.map NarratorMsg (NarratorApp.view model.narratorApp)
+    Routing.CreateChapterPage narrationId ->
+      App.map NarratorMsg (NarratorApp.view model.narratorApp)
     Routing.NarrationPage narrationId ->
       App.map NarrationOverviewMsg (NarrationOverviewApp.view model.narrationOverviewApp)
     Routing.NotFoundRoute ->

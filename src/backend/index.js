@@ -34,16 +34,6 @@ app.all("/read/:chptId/:characterId", function(req, res) {
 });
 app.get("/feeds/:charToken", endpoints.getFeedsCharacter);
 
-app.all("/narrations/:narrationId", middlewares.auth, function(req, res) {
-    res.sendFile(path.resolve(path.join(STATIC_HTML_FILES, "read.html")));
-});
-app.all("/narrations/:narrationId/new", middlewares.auth, function(req, res) {
-    res.sendFile(path.resolve(path.join(STATIC_HTML_FILES, "narrator.html")));
-});
-app.all("/chapters/:chapterId", middlewares.auth, function(req, res) {
-    res.sendFile(path.resolve(path.join(STATIC_HTML_FILES, "read.html")));
-});
-
 app.get("/api/narrations/:narrId", middlewares.apiAuth, endpoints.getNarration);
 app.get("/api/narrations/:narrId/chapters", middlewares.apiAuth, endpoints.getNarrationChapters);
 app.post("/api/narrations/:narrId/chapters", middlewares.apiAuth, endpoints.postNewChapter);
@@ -51,8 +41,6 @@ app.post("/api/narrations/:narrId/files", middlewares.apiAuth, endpoints.postNar
 
 app.get("/api/chapters/:chptId", middlewares.apiAuth, endpoints.getChapter);
 app.put("/api/chapters/:chptId", middlewares.apiAuth, endpoints.putChapter);
-app.post("/api/chapters/:chptId/participants", middlewares.apiAuth, endpoints.postChapterParticipants);
-app.delete("/api/chapters/:chptId/participants/:charId", middlewares.apiAuth, endpoints.deleteChapterParticipant);
 
 app.get("/api/chapters/:chptId/:charToken", endpoints.getChapterCharacter);
 app.put("/api/reactions/:chptId/:charToken", endpoints.putReactionCharacter);
@@ -61,6 +49,10 @@ app.post("/api/messages/:chptId/:charToken", endpoints.postMessageCharacter);
 app.put("/api/notes/:charToken", endpoints.putNotesCharacter);
 
 app.use("/static/narrations", express.static(config.files.path));
+
+app.use(middlewares.auth, function(req, res) {
+    res.sendFile(path.resolve(path.join(STATIC_HTML_FILES, "read.html")));
+});
 
 app.listen(config.port, function () {
   console.log(`Narrows app listening on port ${ config.port }!`);

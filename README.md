@@ -1,12 +1,12 @@
 TODO
 ====
 
-* Create a page to create new chapters
-
 * Allow writing messages as narrator
 * Redesign chapter editing and/or make a chapter commandeering page
 * Make some way to preview chapters for different characters
 * Really wait until everything is loaded before showing the "Start" button
+* Character reference (with short description) inside chapters?
+* Add fields for description (public) and backstory (private)
 
 Later
 -----

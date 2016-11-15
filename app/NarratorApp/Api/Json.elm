@@ -39,14 +39,12 @@ parseNarration =
     (maybe ("defaultBackgroundImage" := string))
     ("files" := parseFileSet)
 
-encodeCharacter : Character -> String
+encodeCharacter : Character -> Json.Encode.Value
 encodeCharacter character =
-  (Json.Encode.encode
-     0
-     (Json.Encode.object [ ("id", Json.Encode.int character.id)
-                         , ("name", Json.Encode.string character.name)
-                         , ("token", Json.Encode.string character.token)
-                         ]))
+  (Json.Encode.object [ ("id", Json.Encode.int character.id)
+                      , ("name", Json.Encode.string character.name)
+                      , ("token", Json.Encode.string character.token)
+                      ])
 
 encodeChapter : Chapter -> String
 encodeChapter chapter =
@@ -64,4 +62,5 @@ encodeChapter chapter =
                                                    Json.Encode.string bgImage
                                                  Nothing ->
                                                    Json.Encode.null)
+                         , ("participants", Json.Encode.list <| List.map encodeCharacter chapter.participants)
                          ]))
