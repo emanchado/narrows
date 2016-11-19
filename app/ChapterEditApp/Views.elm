@@ -57,10 +57,10 @@ markForCharacter allCharacters newMentionTargets =
 chapterView : Chapter -> Narration -> EditorToolState -> Html Msg
 chapterView chapter narration editorToolState =
   let
-    saveAction = if chapter.id == 0 then
-                   SaveNewChapter
-                 else
-                   SaveChapter
+    (saveAction, publishAction) = if chapter.id == 0 then
+                                    (SaveNewChapter, PublishNewChapter)
+                                  else
+                                    (SaveChapter, PublishChapter)
   in
     div [ id "narrator-app" ]
       [ nav []
@@ -90,7 +90,7 @@ chapterView chapter narration editorToolState =
                            ]
                       [ text "Save" ]
                   , button [ class "btn btn-default"
-                           -- , onClick PublishChapter
+                           , onClick publishAction
                            ]
                       [ text "Publish" ]
                   ]

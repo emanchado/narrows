@@ -4,6 +4,9 @@ import Http
 import Json.Decode
 import Json.Encode
 import Navigation
+import Task
+import Time exposing (Time)
+import Time.DateTime as DateTime exposing (DateTime, fromTimestamp)
 
 import Routing
 import ChapterEditApp.Api
@@ -260,6 +263,19 @@ update msg model =
           (model, ChapterEditApp.Api.saveChapter chapter)
         Nothing ->
           (model, Cmd.none)
+    PublishChapter ->
+      (model, Task.perform (\x -> NoOp) PublishChapterWithTime Time.now)
+    PublishChapterWithTime time ->
+      case model.chapter of
+        Just chapter ->
+          let
+            updatedChapter = { chapter | published = Just <| DateTime.toISO8601 (fromTimestamp time) }
+          in
+            ( { model | chapter = Just updatedChapter }
+            , ChapterEditApp.Api.saveChapter updatedChapter
+            )
+        Nothing ->
+          (model, Cmd.none)
     SaveChapterError error ->
       ({ model | banner = errorBanner "Error saving chapter" }
       , Cmd.none)
@@ -275,6 +291,19 @@ update msg model =
       case model.chapter of
         Just chapter ->
           (model, ChapterEditApp.Api.createChapter chapter)
+        Nothing ->
+          (model, Cmd.none)
+    PublishNewChapter ->
+      (model, Task.perform (\x -> NoOp) PublishNewChapterWithTime Time.now)
+    PublishNewChapterWithTime time ->
+      case model.chapter of
+        Just chapter ->
+          let
+            updatedChapter = { chapter | published = Just <| DateTime.toISO8601 (fromTimestamp time) }
+          in
+            ( { model | chapter = Just updatedChapter }
+            , ChapterEditApp.Api.createChapter updatedChapter
+            )
         Nothing ->
           (model, Cmd.none)
     SaveNewChapterError error ->

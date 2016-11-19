@@ -2,6 +2,7 @@ module ChapterEditApp.Messages exposing (..)
 
 import Http
 import Json.Encode
+import Time exposing (Time)
 
 import Common.Models exposing (Character, Narration)
 import ChapterEditApp.Models exposing (..)
@@ -35,3 +36,7 @@ type Msg
   | SaveNewChapter
   | SaveNewChapterError Http.RawError
   | SaveNewChapterSuccess Http.Response
+  | PublishChapter
+  | PublishChapterWithTime Time
+  | PublishNewChapter
+  | PublishNewChapterWithTime Time
