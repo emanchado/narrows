@@ -1,4 +1,4 @@
-module NarratorApp.Views.ChapterEdit exposing (..)
+module ChapterEditApp.Views.ChapterEdit exposing (..)
 
 import String
 import Json.Decode
@@ -8,10 +8,10 @@ import Html.Attributes exposing (id, name, class, href, src, target, type', valu
 import Html.Events exposing (onClick, onInput, on)
 
 import Common.Models exposing (Character, Narration)
-import NarratorApp.Models exposing (Model, Chapter, EditorToolState)
-import NarratorApp.Messages exposing (..)
-import NarratorApp.Views.FileSelector exposing (fileSelector)
-import NarratorApp.Views.Participants exposing (participantListView)
+import ChapterEditApp.Models exposing (Model, Chapter, EditorToolState)
+import ChapterEditApp.Messages exposing (..)
+import ChapterEditApp.Views.FileSelector exposing (fileSelector)
+import ChapterEditApp.Views.Participants exposing (participantListView)
 
 addImageView : String -> Html Msg
 addImageView newImageUrl =
@@ -170,9 +170,9 @@ view model =
   let
     chapter = case model.chapter of
                 Just chapter -> chapter
-                Nothing -> NarratorApp.Models.loadingPlaceholderChapter
+                Nothing -> ChapterEditApp.Models.loadingPlaceholderChapter
     narration = case model.narration of
                   Just narration -> narration
-                  Nothing -> NarratorApp.Models.loadingPlaceholderNarration
+                  Nothing -> ChapterEditApp.Models.loadingPlaceholderNarration
   in
     chapterView chapter narration model.editorToolState

@@ -1,11 +1,11 @@
-module NarratorApp.Views.Participants exposing (participantListView)
+module ChapterEditApp.Views.Participants exposing (participantListView)
 
 import Html exposing (Html, ul, li, img, a, text)
 import Html.Attributes exposing (href, src, target)
 import Html.Events exposing (onClick)
 
 import Common.Models exposing (Character)
-import NarratorApp.Messages exposing (..)
+import ChapterEditApp.Messages exposing (..)
 
 participantView : Int -> Character -> Html Msg
 participantView chapterId character =

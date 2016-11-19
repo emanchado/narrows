@@ -1,4 +1,4 @@
-module NarratorApp.Views.FileSelector exposing (..)
+module ChapterEditApp.Views.FileSelector exposing (..)
 
 import String
 import Json.Decode
@@ -7,7 +7,7 @@ import Html exposing (Html, select, option, text)
 import Html.Attributes exposing (selected, value)
 import Html.Events exposing (on)
 
-import NarratorApp.Messages exposing (Msg)
+import ChapterEditApp.Messages exposing (Msg)
 
 
 targetSelectedValue : Json.Decode.Decoder String

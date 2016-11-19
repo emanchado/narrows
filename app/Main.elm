@@ -5,20 +5,20 @@ import Html exposing (Html, div, span, a, input, text, img, label, button, br)
 
 import Routing
 import ReaderApp
-import NarratorApp
+import ChapterEditApp
 import NarrationOverviewApp
 
 type alias Model =
   { route : Routing.Route
   , readerApp : ReaderApp.Model
-  , narratorApp : NarratorApp.Model
+  , chapterEditApp : ChapterEditApp.Model
   , narrationOverviewApp : NarrationOverviewApp.Model
   }
 
 type Msg
   = NoOp
   | ReaderMsg ReaderApp.Msg
-  | NarratorMsg NarratorApp.Msg
+  | ChapterEditMsg ChapterEditApp.Msg
   | NarrationOverviewMsg NarrationOverviewApp.Msg
 
 
@@ -26,7 +26,7 @@ initialState : Result String Routing.Route -> (Model, Cmd Msg)
 initialState result =
   combinedUrlUpdate result { route = Routing.NotFoundRoute
                            , readerApp = ReaderApp.initialState
-                           , narratorApp = NarratorApp.initialState
+                           , chapterEditApp = ChapterEditApp.initialState
                            , narrationOverviewApp = NarrationOverviewApp.initialState
                            }
 
@@ -35,15 +35,15 @@ combinedUrlUpdate result model =
   let
     currentRoute = Routing.routeFromResult result
     (updatedReaderModel, readerCmd) = ReaderApp.urlUpdate currentRoute model.readerApp
-    (updatedNarratorModel, narratorCmd) = NarratorApp.urlUpdate currentRoute model.narratorApp
+    (updatedNarratorModel, narratorCmd) = ChapterEditApp.urlUpdate currentRoute model.chapterEditApp
     (updatedNarrationOverviewModel, narrationOverviewCmd) = NarrationOverviewApp.urlUpdate currentRoute model.narrationOverviewApp
   in
     ( { model | route = currentRoute
               , readerApp = updatedReaderModel
-              , narratorApp = updatedNarratorModel
+              , chapterEditApp = updatedNarratorModel
               , narrationOverviewApp = updatedNarrationOverviewModel }
     , Cmd.batch [ Cmd.map ReaderMsg readerCmd
-                , Cmd.map NarratorMsg narratorCmd
+                , Cmd.map ChapterEditMsg narratorCmd
                 , Cmd.map NarrationOverviewMsg narrationOverviewCmd
                 ]
     )
@@ -56,11 +56,11 @@ combinedUpdate msg model =
         (newReaderModel, cmd) = ReaderApp.update readerMsg model.readerApp
       in
         ({ model | readerApp = newReaderModel }, Cmd.map ReaderMsg cmd)
-    NarratorMsg narratorMsg ->
+    ChapterEditMsg chapterEditMsg ->
       let
-        (newNarratorModel, cmd) = NarratorApp.update narratorMsg model.narratorApp
+        (newNarratorModel, cmd) = ChapterEditApp.update chapterEditMsg model.chapterEditApp
       in
-        ({ model | narratorApp = newNarratorModel }, Cmd.map NarratorMsg cmd)
+        ({ model | chapterEditApp = newNarratorModel }, Cmd.map ChapterEditMsg cmd)
     NarrationOverviewMsg narrationOverviewMsg ->
       let
         (newNarrationOverviewModel, cmd) = NarrationOverviewApp.update narrationOverviewMsg model.narrationOverviewApp
@@ -72,7 +72,7 @@ combinedUpdate msg model =
 subscriptions : Model -> Sub Msg
 subscriptions model =
   Sub.batch [ Sub.map ReaderMsg (ReaderApp.subscriptions model.readerApp)
-            , Sub.map NarratorMsg (NarratorApp.subscriptions model.narratorApp)
+            , Sub.map ChapterEditMsg (ChapterEditApp.subscriptions model.chapterEditApp)
             , Sub.map NarrationOverviewMsg (NarrationOverviewApp.subscriptions model.narrationOverviewApp)
             ]
 
@@ -88,9 +88,9 @@ mainApplicationView model =
     Routing.ChapterReaderPage chapterId characterToken ->
       App.map ReaderMsg (ReaderApp.view model.readerApp)
     Routing.ChapterNarratorPage chapterId ->
-      App.map NarratorMsg (NarratorApp.view model.narratorApp)
+      App.map ChapterEditMsg (ChapterEditApp.view model.chapterEditApp)
     Routing.CreateChapterPage narrationId ->
-      App.map NarratorMsg (NarratorApp.view model.narratorApp)
+      App.map ChapterEditMsg (ChapterEditApp.view model.chapterEditApp)
     Routing.NarrationPage narrationId ->
       App.map NarrationOverviewMsg (NarrationOverviewApp.view model.narrationOverviewApp)
     Routing.NotFoundRoute ->

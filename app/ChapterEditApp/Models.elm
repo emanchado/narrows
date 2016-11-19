@@ -1,4 +1,4 @@
-module NarratorApp.Models exposing (..)
+module ChapterEditApp.Models exposing (..)
 
 import Json.Decode
 import Json.Encode

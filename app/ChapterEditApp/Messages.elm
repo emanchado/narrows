@@ -1,11 +1,11 @@
-module NarratorApp.Messages exposing (..)
+module ChapterEditApp.Messages exposing (..)
 
 import Http
 import Json.Encode
 
 import Common.Models exposing (Character, Narration)
-import NarratorApp.Models exposing (..)
-import NarratorApp.Ports
+import ChapterEditApp.Models exposing (..)
+import ChapterEditApp.Ports
 
 type Msg
   = NoOp
@@ -26,8 +26,8 @@ type Msg
   | UpdateSelectedAudio String
   | OpenMediaFileSelector String
   | AddMediaFile String
-  | AddMediaFileError NarratorApp.Ports.FileUploadError
-  | AddMediaFileSuccess NarratorApp.Ports.FileUploadSuccess
+  | AddMediaFileError ChapterEditApp.Ports.FileUploadError
+  | AddMediaFileSuccess ChapterEditApp.Ports.FileUploadSuccess
   | PlayPauseAudioPreview
   | SaveChapter
   | SaveChapterError Http.RawError

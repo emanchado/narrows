@@ -1,4 +1,4 @@
-port module NarratorApp.Ports exposing (..)
+port module ChapterEditApp.Ports exposing (..)
 
 import Json.Encode
 import Json.Decode

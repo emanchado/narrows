@@ -1,4 +1,4 @@
-module NarratorApp.Update exposing (..)
+module ChapterEditApp.Update exposing (..)
 
 import Http
 import Json.Decode
@@ -6,12 +6,12 @@ import Json.Encode
 import Navigation
 
 import Routing
-import NarratorApp.Api
-import NarratorApp.Api.Json exposing (parseChapter)
-import NarratorApp.Messages exposing (..)
+import ChapterEditApp.Api
+import ChapterEditApp.Api.Json exposing (parseChapter)
+import ChapterEditApp.Messages exposing (..)
 import Common.Models exposing (Banner, FileSet)
-import NarratorApp.Models exposing (..)
-import NarratorApp.Ports exposing (initEditor, addImage, addMention, playPauseAudioPreview, openFileInput, uploadFile)
+import ChapterEditApp.Models exposing (..)
+import ChapterEditApp.Ports exposing (initEditor, addImage, addMention, playPauseAudioPreview, openFileInput, uploadFile)
 
 
 errorBanner : String -> Maybe Banner
@@ -20,7 +20,7 @@ errorBanner errorMessage =
        , type' = "error"
        }
 
-updateNarrationFiles : FileSet -> NarratorApp.Ports.FileUploadSuccess -> FileSet
+updateNarrationFiles : FileSet -> ChapterEditApp.Ports.FileUploadSuccess -> FileSet
 updateNarrationFiles fileSet uploadResponse =
   case uploadResponse.type' of
     "audio" ->
@@ -31,7 +31,7 @@ updateNarrationFiles fileSet uploadResponse =
       fileSet
 
 
-updateChapter : Chapter -> NarratorApp.Ports.FileUploadSuccess -> Chapter
+updateChapter : Chapter -> ChapterEditApp.Ports.FileUploadSuccess -> Chapter
 updateChapter chapter uploadResponse =
   case uploadResponse.type' of
     "audio" ->
@@ -47,7 +47,7 @@ urlUpdate route model =
     case route of
       Routing.ChapterNarratorPage chapterId ->
         ( model
-        , NarratorApp.Api.fetchChapterInfo chapterId
+        , ChapterEditApp.Api.fetchChapterInfo chapterId
         )
       Routing.CreateChapterPage narrationId ->
         let
@@ -56,9 +56,9 @@ urlUpdate route model =
                        if narration.id == narrationId then
                          Cmd.none
                        else
-                         NarratorApp.Api.fetchNarrationInfo narrationId
+                         ChapterEditApp.Api.fetchNarrationInfo narrationId
                      Nothing ->
-                       NarratorApp.Api.fetchNarrationInfo narrationId
+                       ChapterEditApp.Api.fetchNarrationInfo narrationId
         in
           ({ model | chapter = Nothing }, action)
       _ ->
@@ -85,7 +85,7 @@ update msg model =
       , Cmd.batch [ initEditor { elemId = "editor-container"
                                , text = chapter.text
                                }
-                  , NarratorApp.Api.fetchNarrationInfo chapter.narrationId
+                  , ChapterEditApp.Api.fetchNarrationInfo chapter.narrationId
                   ]
       )
     NarrationFetchError error ->
@@ -257,7 +257,7 @@ update msg model =
     SaveChapter ->
       case model.chapter of
         Just chapter ->
-          (model, NarratorApp.Api.saveChapter chapter)
+          (model, ChapterEditApp.Api.saveChapter chapter)
         Nothing ->
           (model, Cmd.none)
     SaveChapterError error ->
@@ -274,7 +274,7 @@ update msg model =
     SaveNewChapter ->
       case model.chapter of
         Just chapter ->
-          (model, NarratorApp.Api.createChapter chapter)
+          (model, ChapterEditApp.Api.createChapter chapter)
         Nothing ->
           (model, Cmd.none)
     SaveNewChapterError error ->
@@ -285,7 +285,7 @@ update msg model =
           Http.Text text ->
             let
               chapterDecoding =
-                Json.Decode.decodeString NarratorApp.Api.Json.parseChapter text
+                Json.Decode.decodeString ChapterEditApp.Api.Json.parseChapter text
             in
               case chapterDecoding of
                 Ok chapter ->

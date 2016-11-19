@@ -1,11 +1,11 @@
-module NarratorApp.Api exposing (..)
+module ChapterEditApp.Api exposing (..)
 
 import Task
 import Http
 
-import NarratorApp.Messages exposing (Msg, Msg(..))
-import NarratorApp.Models exposing (Chapter)
-import NarratorApp.Api.Json exposing (parseChapter, parseNarration, encodeChapter, encodeCharacter)
+import ChapterEditApp.Messages exposing (Msg, Msg(..))
+import ChapterEditApp.Models exposing (Chapter)
+import ChapterEditApp.Api.Json exposing (parseChapter, parseNarration, encodeChapter, encodeCharacter)
 
 fetchChapterInfo : Int -> Cmd Msg
 fetchChapterInfo chapterId =

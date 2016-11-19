@@ -1,9 +1,9 @@
-module NarratorApp.Api.Json exposing (..)
+module ChapterEditApp.Api.Json exposing (..)
 
 import Json.Decode as Json exposing (..)
 import Json.Encode
 
-import NarratorApp.Models exposing (Chapter)
+import ChapterEditApp.Models exposing (Chapter)
 import Common.Models exposing (Character, Narration, FileSet)
 
 parseCharacter : Json.Decoder Character
