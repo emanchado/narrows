@@ -1,12 +1,11 @@
 TODO
 ====
 
+* Implement the "Published" button
 * Allow writing messages as narrator
 * Redesign chapter editing and/or make a chapter commandeering page
 * Make some way to preview chapters for different characters
 * Really wait until everything is loaded before showing the "Start" button
-* Character reference (with short description) inside chapters?
-* Add fields for description (public) and backstory (private)
 
 Later
 -----
@@ -15,7 +14,8 @@ Later
   effectively inverts the audio toggle functionality??
 * Allow narrators to change password, and create more narrators
 * Maybe add an "admin" role so that not all narrators can create users?
-* Show background information or whatever to players
+* Show background information or whatever to players (add fields for
+  description (public) and backstory (private))
 
 Initial narrator
 ----------------

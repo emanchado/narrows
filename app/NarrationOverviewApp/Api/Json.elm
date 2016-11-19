@@ -39,7 +39,7 @@ parseChapterOverview =
     ("id" := int)
     ("title" := string)
     ("numberMessages" := int)
-    (maybe ("published" := int))
+    (maybe ("published" := string))
     ("reactions" := list parseReaction)
 
 parseNarrationOverview : Json.Decoder NarrationOverview

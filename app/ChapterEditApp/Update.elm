@@ -45,7 +45,7 @@ updateChapter chapter uploadResponse =
 urlUpdate : Routing.Route -> Model -> (Model, Cmd Msg)
 urlUpdate route model =
     case route of
-      Routing.ChapterNarratorPage chapterId ->
+      Routing.ChapterEditNarratorPage chapterId ->
         ( model
         , ChapterEditApp.Api.fetchChapterInfo chapterId
         )

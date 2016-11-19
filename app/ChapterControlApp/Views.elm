@@ -1,12 +1,12 @@
-module NarrationOverviewApp.Views exposing (..)
+module ChapterControlApp.Views exposing (..)
 
 import List
 import Html exposing (Html, main', h1, div, ul, li, a, text)
 import Html.Attributes exposing (id, class, href)
 
-import NarrationOverviewApp.Messages exposing (..)
+import ChapterControlApp.Messages exposing (..)
 import Common.Models exposing (Narration)
-import NarrationOverviewApp.Models exposing (Model, NarrationOverview, ChapterOverview)
+import ChapterControlApp.Models exposing (Model, ChapterControl, ChapterOverview)
 
 unpublishedChapterView : ChapterOverview -> Html Msg
 unpublishedChapterView chapterOverview =
@@ -44,7 +44,7 @@ chapterOverviewView chapterOverview =
     Nothing ->
       unpublishedChapterView chapterOverview
 
-overviewView : Narration -> NarrationOverview -> Html Msg
+overviewView : Narration -> ChapterControl -> Html Msg
 overviewView narration overview =
   main' [ id "narrator-app" ]
     [ h1 []
@@ -66,12 +66,13 @@ loadingView model =
 
 mainView : Model -> Html Msg
 mainView model =
-  case model.narrationOverview of
-    Just overview ->
-      case model.narration of
-        Just narration ->
-          overviewView narration overview
-        Nothing ->
-          loadingView model
-    Nothing ->
-      loadingView model
+  text "Chapter control"
+  -- case model.chapterControl of
+  --   Just overview ->
+  --     case model.narration of
+  --       Just narration ->
+  --         overviewView narration overview
+  --       Nothing ->
+  --         loadingView model
+  --   Nothing ->
+  --     loadingView model

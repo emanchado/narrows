@@ -1,4 +1,4 @@
-module NarrationOverviewApp.Models exposing (..)
+module ChapterControlApp.Models exposing (..)
 
 import Routing
 import Common.Models exposing (Narration, Banner)
@@ -17,12 +17,14 @@ type alias ChapterOverview =
   , reactions : List Reaction
   }
 
-type alias NarrationOverview =
+type alias ChapterControl =
   { chapters : List ChapterOverview
   }
 
 type alias Model =
   { narration : Maybe Narration
-  , narrationOverview : Maybe NarrationOverview
+  , chapterControl : Maybe ChapterControl
   , banner : Maybe Banner
   }
+
+-- Text, reactions, messages, message sender
