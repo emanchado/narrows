@@ -64,6 +64,7 @@ label {
     background-color: #151;
 }
 .banner-error {
+    color: #ddd;
     background-color: #511;
 }
 
