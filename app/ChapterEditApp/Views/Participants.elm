@@ -4,10 +4,10 @@ import Html exposing (Html, ul, li, img, a, text)
 import Html.Attributes exposing (href, src, target)
 import Html.Events exposing (onClick)
 
-import Common.Models exposing (Character)
+import Common.Models exposing (FullCharacter)
 import ChapterEditApp.Messages exposing (..)
 
-participantView : Int -> Character -> Html Msg
+participantView : Int -> FullCharacter -> Html Msg
 participantView chapterId character =
   li []
     [ a [ href ("/read/" ++ (toString chapterId) ++ "/" ++ character.token)
@@ -21,7 +21,7 @@ participantView chapterId character =
         []
     ]
 
-nonParticipantView : Character -> Html Msg
+nonParticipantView : FullCharacter -> Html Msg
 nonParticipantView character =
   li []
     [ text character.name
@@ -32,7 +32,7 @@ nonParticipantView character =
         []
     ]
 
-participantListView : Int -> List Character -> List Character -> Html Msg
+participantListView : Int -> List FullCharacter -> List FullCharacter -> Html Msg
 participantListView chapterId allCharacters currentParticipants =
   let
     nonParticipants =

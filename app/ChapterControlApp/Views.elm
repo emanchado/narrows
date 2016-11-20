@@ -1,58 +1,56 @@
 module ChapterControlApp.Views exposing (..)
 
-import List
-import Html exposing (Html, main', h1, div, ul, li, a, text)
+import Html exposing (Html, main', h1, h2, nav, section, div, ul, li, a, text)
 import Html.Attributes exposing (id, class, href)
 
+import Common.Models exposing (Narration, Reaction, loadingPlaceholderChapter)
+import Common.Views exposing (threadView)
+
 import ChapterControlApp.Messages exposing (..)
-import Common.Models exposing (Narration)
-import ChapterControlApp.Models exposing (Model, ChapterControl, ChapterOverview)
+import ChapterControlApp.Models exposing (Model, ChapterInteractions)
 
-unpublishedChapterView : ChapterOverview -> Html Msg
-unpublishedChapterView chapterOverview =
-  li []
-    [ a [ href <| "/chapters/" ++ (toString chapterOverview.id) ++ "/edit" ]
-        [ text chapterOverview.title ]
-    , text (" - " ++ (toString <| List.length chapterOverview.reactions) ++
-              " participants")
-    ]
-
-publishedChapterView : ChapterOverview -> Html Msg
-publishedChapterView chapterOverview =
-  let
-    sentReactions =
-      List.filter
-        (\r -> case r.text of
-                 Nothing -> False
-                 _ -> True)
-        chapterOverview.reactions
-  in
-    li []
-      [ a [ href <| "/chapters/" ++ (toString chapterOverview.id) ]
-          [ text chapterOverview.title ]
-      , text (" - " ++ (toString <| List.length sentReactions) ++
-                " / " ++ (toString <| List.length chapterOverview.reactions) ++
-                " reactions (" ++ (toString chapterOverview.numberMessages) ++
-                " messages)")
-      ]
-
-chapterOverviewView : ChapterOverview -> Html Msg
-chapterOverviewView chapterOverview =
-  case chapterOverview.published of
-    Just published ->
-      publishedChapterView chapterOverview
+reactionView : Reaction -> Html Msg
+reactionView reaction =
+  case reaction.text of
+    Just reactionText ->
+      div [ class "reaction" ]
+        [ text <| "From: " ++ reaction.character.name
+        , div []
+          [ text reactionText
+          ]
+        ]
     Nothing ->
-      unpublishedChapterView chapterOverview
+      text ""
 
-overviewView : Narration -> ChapterControl -> Html Msg
-overviewView narration overview =
+interactionsView : ChapterInteractions -> Html Msg
+interactionsView interactions =
   main' [ id "narrator-app" ]
     [ h1 []
-        [ text <| "Narration " ++ narration.title ]
-    , ul [ class "chapter-list" ]
-      (List.map chapterOverviewView overview.chapters)
-    , a [ href <| "/narrations/" ++ (toString narration.id) ++ "/new" ]
-        [ text "Write new chapter" ]
+        [ text <| interactions.chapter.title ]
+    , nav []
+        [ a [ href <| "/narrations/" ++ (toString interactions.chapter.narrationId) ]
+            [ text "Narration" ]
+        , text " ⇢ "
+        , a [ href <| "/chapters/" ++ (toString interactions.chapter.id) ++ "/edit" ]
+            [ text "Edit" ]
+        ]
+    , div [ class "two-column" ]
+        [ section []
+          [ div [ id "chapter-text" ] []
+          ]
+        , section []
+          [ h2 []
+              [ text "Conversation" ]
+          , ul [ class "conversation" ]
+            (List.map
+               (\mt -> threadView mt 0)
+               interactions.messageThreads)
+          , h2 []
+            [ text "Actions" ]
+          , ul [ class "reactions" ]
+            (List.map reactionView interactions.reactions)
+        ]
+        ]
     ]
 
 loadingView : Model -> Html Msg
@@ -66,13 +64,43 @@ loadingView model =
 
 mainView : Model -> Html Msg
 mainView model =
-  text "Chapter control"
-  -- case model.chapterControl of
-  --   Just overview ->
-  --     case model.narration of
-  --       Just narration ->
-  --         overviewView narration overview
-  --       Nothing ->
-  --         loadingView model
-  --   Nothing ->
-  --     loadingView model
+  let
+    (chapter, messageThreads, reactions) =
+      case model.interactions of
+        Just interactions -> ( interactions.chapter
+                             , interactions.messageThreads
+                             , interactions.reactions
+                             )
+        Nothing -> ( loadingPlaceholderChapter
+                   , []
+                   , []
+                   )
+  in
+    main' [ id "narrator-app" ]
+      [ h1 []
+          [ text <| chapter.title ]
+      , nav []
+          [ a [ href <| "/narrations/" ++ (toString chapter.narrationId) ]
+              [ text "Narration" ]
+          , text " ⇢ "
+          , a [ href <| "/chapters/" ++ (toString chapter.id) ++ "/edit" ]
+              [ text "Edit" ]
+          ]
+      , div [ class "two-column" ]
+          [ section []
+            [ div [ id "chapter-text" ] []
+            ]
+          , section []
+            [ h2 []
+                [ text "Conversation" ]
+            , ul [ class "conversation" ]
+              (List.map
+                 (\mt -> threadView mt 0)
+                 messageThreads)
+            , h2 []
+              [ text "Actions" ]
+            , ul [ class "reactions" ]
+              (List.map reactionView reactions)
+          ]
+          ]
+      ]

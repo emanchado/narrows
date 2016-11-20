@@ -3,32 +3,7 @@ module ChapterEditApp.Models exposing (..)
 import Json.Decode
 import Json.Encode
 
-import Common.Models exposing (Character, Narration, Banner)
-
-loadingPlaceholderChapter : Chapter
-loadingPlaceholderChapter =
-  { id = 0
-  , narrationId = 0
-  , title = ""
-  , audio = Nothing
-  , backgroundImage = Nothing
-  , text = Json.Encode.list []
-  , participants = []
-  , published = Nothing
-  }
-
-loadingPlaceholderNarration : Narration
-loadingPlaceholderNarration =
-  { id = 0
-  , title = ""
-  , characters = []
-  , defaultAudio = Nothing
-  , defaultBackgroundImage = Nothing
-  , files = { audio = []
-            , backgroundImages = []
-            , images = []
-            }
-  }
+import Common.Models exposing (FullCharacter, Narration, Chapter, Banner)
 
 newEmptyChapter : Narration -> Chapter
 newEmptyChapter narration =
@@ -42,20 +17,9 @@ newEmptyChapter narration =
   , published = Nothing
   }
 
-type alias Chapter =
-  { id : Int
-  , narrationId : Int
-  , title : String
-  , audio : Maybe String
-  , backgroundImage : Maybe String
-  , text : Json.Decode.Value
-  , participants : List Character
-  , published : Maybe String
-  }
-
 type alias EditorToolState =
   { newImageUrl : String
-  , newMentionTargets : List Character
+  , newMentionTargets : List FullCharacter
   }
 
 type alias Model =

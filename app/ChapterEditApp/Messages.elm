@@ -4,7 +4,7 @@ import Http
 import Json.Encode
 import Time exposing (Time)
 
-import Common.Models exposing (Character, Narration)
+import Common.Models exposing (FullCharacter, Narration, Chapter)
 import ChapterEditApp.Models exposing (..)
 import ChapterEditApp.Ports
 
@@ -18,11 +18,11 @@ type Msg
   | UpdateEditorContent Json.Encode.Value
   | UpdateNewImageUrl String
   | AddImage
-  | AddNewMentionCharacter Character
-  | RemoveNewMentionCharacter Character
+  | AddNewMentionCharacter FullCharacter
+  | RemoveNewMentionCharacter FullCharacter
   | AddMention
-  | AddParticipant Character
-  | RemoveParticipant Character
+  | AddParticipant FullCharacter
+  | RemoveParticipant FullCharacter
   | UpdateSelectedBackgroundImage String
   | UpdateSelectedAudio String
   | OpenMediaFileSelector String

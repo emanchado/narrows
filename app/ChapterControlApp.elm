@@ -14,7 +14,7 @@ type alias Msg = ChapterControlApp.Messages.Msg
 initialState : Model
 initialState =
   { narration = Nothing
-  , chapterControl = Nothing
+  , interactions = Nothing
   , banner = Nothing
   }
 

@@ -342,6 +342,25 @@ class NarrowsStore {
         );
     }
 
+    getChapterReactions(id) {
+        return Q.ninvoke(
+            this.db,
+            "all",
+            `SELECT main_text AS text,
+                    C.id AS characterId, C.name AS characterName
+               FROM reactions R
+               JOIN characters C
+                 ON R.character_id = C.id
+              WHERE chapter_id = ?`,
+            id
+        ).then(rows => (
+            rows.map(row => ({
+                character: { id: row.characterId, name: row.characterName },
+                text: row.text
+            }))
+        ));
+    }
+
     updateChapterParticipants(id, newParticipantList) {
         return this.getChapterParticipants(id).then(currentParticipantList => {
             const newHash = {}, currentHash = {};
@@ -472,6 +491,58 @@ class NarrowsStore {
         });
     }
 
+    _formatMessageList(messages) {
+        const messageIds = messages.map(m => m.id);
+        const placeholders = messageIds.map(() => "?").join(", ");
+
+        return Q.ninvoke(
+            this.db,
+            "all",
+            `SELECT MD.message_id AS messageId,
+                        MD.recipient_id AS recipientId,
+                        C.name
+                   FROM message_deliveries MD JOIN characters C
+                     ON MD.recipient_id = C.id
+                  WHERE message_id IN (${ placeholders })`,
+            messageIds
+        ).then(deliveries => {
+            const deliveryMap = {};
+            deliveries.forEach(({ messageId, recipientId, name }) => {
+                deliveryMap[messageId] = deliveryMap[messageId] || [];
+                deliveryMap[messageId].push({ id: recipientId,
+                                              name: name });
+            });
+
+            messages.forEach(message => {
+                message.recipients = deliveryMap[message.id];
+            });
+
+            return messages;
+        }).then(messages => {
+            const placeholders = messages.map(() => "?");
+
+            return Q.ninvoke(
+                this.db,
+                "all",
+                `SELECT id, name FROM characters
+                      WHERE id IN (${ placeholders })`,
+                messages.map(m => m.senderId)
+            ).then(characters => {
+                const characterMap = {};
+                characters.forEach(c => {
+                    characterMap[c.id] = {id: c.id, name: c.name};
+                });
+
+                messages.forEach(m => {
+                    m.sender = characterMap[m.senderId];
+                    delete m.senderId;
+                });
+
+                return messages;
+            });
+        });
+    }
+
     getChapterMessages(chapterId, characterId) {
         return Q.ninvoke(
             this.db,
@@ -483,57 +554,20 @@ class NarrowsStore {
                 AND (recipient_id = ? OR sender_id = ?)
            ORDER BY sent`,
             [chapterId, characterId, characterId]
-        ).then(messages => {
-            const messageIds = messages.map(m => m.id);
-            const placeholders = messageIds.map(() => "?").join(", ");
+        ).then(this._formatMessageList.bind(this));
+    }
 
-            return Q.ninvoke(
-                this.db,
-                "all",
-                `SELECT MD.message_id AS messageId,
-                        MD.recipient_id AS recipientId,
-                        C.name
-                   FROM message_deliveries MD JOIN characters C
-                     ON MD.recipient_id = C.id
-                  WHERE message_id IN (${ placeholders })`,
-                messageIds
-            ).then(deliveries => {
-                const deliveryMap = {};
-                deliveries.forEach(({ messageId, recipientId, name }) => {
-                    deliveryMap[messageId] = deliveryMap[messageId] || [];
-                    deliveryMap[messageId].push({ id: recipientId,
-                                                  name: name });
-                });
-
-                messages.forEach(message => {
-                    message.recipients = deliveryMap[message.id];
-                });
-
-                return messages;
-            }).then(messages => {
-                const placeholders = messages.map(() => "?");
-
-                return Q.ninvoke(
-                    this.db,
-                    "all",
-                    `SELECT id, name FROM characters
-                      WHERE id IN (${ placeholders })`,
-                    messages.map(m => m.senderId)
-                ).then(characters => {
-                    const characterMap = {};
-                    characters.forEach(c => {
-                        characterMap[c.id] = {id: c.id, name: c.name};
-                    });
-
-                    messages.forEach(m => {
-                        m.sender = characterMap[m.senderId];
-                        delete m.senderId;
-                    });
-
-                    return messages;
-                });
-            });
-        });
+    getAllChapterMessages(chapterId) {
+        return Q.ninvoke(
+            this.db,
+            "all",
+            `SELECT DISTINCT id, sender_id AS senderId, body, sent AS sentAt
+               FROM messages M LEFT JOIN message_deliveries MD
+                 ON M.id = MD.message_id
+              WHERE M.chapter_id = ?
+           ORDER BY sent`,
+            [chapterId]
+        ).then(this._formatMessageList.bind(this));
     }
 
     addMessage(chapterId, senderId, text, recipients) {

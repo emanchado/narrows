@@ -3,12 +3,11 @@ module ChapterEditApp.Api.Json exposing (..)
 import Json.Decode as Json exposing (..)
 import Json.Encode
 
-import ChapterEditApp.Models exposing (Chapter)
-import Common.Models exposing (Character, Narration, FileSet)
+import Common.Models exposing (FullCharacter, Narration, Chapter, FileSet)
 
-parseCharacter : Json.Decoder Character
-parseCharacter =
-  Json.object3 Character ("id" := int) ("name" := string) ("token" := string)
+parseFullCharacter : Json.Decoder FullCharacter
+parseFullCharacter =
+  Json.object3 FullCharacter ("id" := int) ("name" := string) ("token" := string)
 
 parseChapter : Json.Decoder Chapter
 parseChapter =
@@ -19,7 +18,7 @@ parseChapter =
     (maybe ("audio" := string))
     (maybe ("backgroundImage" := string))
     ("text" := Json.value)
-    ("participants" := list parseCharacter)
+    ("participants" := list parseFullCharacter)
     (maybe ("published" := string))
 
 parseFileSet : Json.Decoder FileSet
@@ -34,12 +33,12 @@ parseNarration =
   Json.object6 Narration
     ("id" := int)
     ("title" := string)
-    ("characters" := list parseCharacter)
+    ("characters" := list parseFullCharacter)
     (maybe ("defaultAudio" := string))
     (maybe ("defaultBackgroundImage" := string))
     ("files" := parseFileSet)
 
-encodeCharacter : Character -> Json.Encode.Value
+encodeCharacter : FullCharacter -> Json.Encode.Value
 encodeCharacter character =
   (Json.Encode.object [ ("id", Json.Encode.int character.id)
                       , ("name", Json.Encode.string character.name)

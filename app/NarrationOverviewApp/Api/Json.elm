@@ -2,34 +2,13 @@ module NarrationOverviewApp.Api.Json exposing (..)
 
 import Json.Decode as Json exposing (..)
 
-import Common.Models exposing (Narration, FileSet, Character)
+import Common.Models exposing (Narration, FileSet, FullCharacter)
+import Common.Api.Json exposing (parseFullCharacter, parseNarration)
 import NarrationOverviewApp.Models exposing (NarrationOverview, ChapterOverview, Reaction)
-
-parseCharacter : Json.Decoder Character
-parseCharacter =
-  Json.object3 Character ("id" := int) ("name" := string) ("token" := string)
-
-parseFileSet : Json.Decoder FileSet
-parseFileSet =
-  Json.object3 FileSet
-    ("audio" := list string)
-    ("backgroundImages" := list string)
-    ("images" := list string)
-
-parseNarration : Json.Decoder Narration
-parseNarration =
-  Json.object6 Narration
-    ("id" := int)
-    ("title" := string)
-    ("characters" := list parseCharacter)
-    (maybe ("defaultAudio" := string))
-    (maybe ("defaultBackgroundImage" := string))
-    ("files" := parseFileSet)
 
 parseReaction : Json.Decoder Reaction
 parseReaction =
-  Json.object3 Reaction
-    ("chapterId" := int)
+  Json.object2 Reaction
     ("characterId" := int)
     (maybe ("text" := string))
 

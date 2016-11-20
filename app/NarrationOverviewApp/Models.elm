@@ -4,8 +4,7 @@ import Routing
 import Common.Models exposing (Narration, Banner)
 
 type alias Reaction =
-  { chapterId : Int
-  , characterId : Int
+  { characterId : Int
   , text : Maybe String
   }
 

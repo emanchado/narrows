@@ -3,7 +3,7 @@ port module ChapterEditApp.Ports exposing (..)
 import Json.Encode
 import Json.Decode
 
-import Common.Models exposing (Character)
+import Common.Models exposing (FullCharacter)
 
 type alias InitEditorInfo =
   { elemId : String
@@ -17,7 +17,7 @@ type alias AddImageInfo =
 
 type alias AddMentionInfo =
   { editor : String
-  , targets : List Character
+  , targets : List FullCharacter
   }
 
 type alias FileUploadInfo =

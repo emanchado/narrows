@@ -9,10 +9,11 @@ import Time exposing (Time)
 import Time.DateTime as DateTime exposing (DateTime, fromTimestamp)
 
 import Routing
+import Common.Models exposing (Banner, Chapter, FileSet)
+
 import ChapterEditApp.Api
 import ChapterEditApp.Api.Json exposing (parseChapter)
 import ChapterEditApp.Messages exposing (..)
-import Common.Models exposing (Banner, FileSet)
 import ChapterEditApp.Models exposing (..)
 import ChapterEditApp.Ports exposing (initEditor, addImage, addMention, playPauseAudioPreview, openFileInput, uploadFile)
 

@@ -7,8 +7,8 @@ import Html exposing (Html, h2, div, main', nav, section, aside, ul, li, img, a,
 import Html.Attributes exposing (id, name, class, href, src, target, type', value, placeholder, checked, disabled)
 import Html.Events exposing (onClick, onInput, on)
 
-import Common.Models exposing (Character, Narration)
-import ChapterEditApp.Models exposing (Model, Chapter, EditorToolState)
+import Common.Models exposing (FullCharacter, Narration, Chapter)
+import ChapterEditApp.Models exposing (Model, EditorToolState)
 import ChapterEditApp.Messages exposing (..)
 import ChapterEditApp.Views.FileSelector exposing (fileSelector)
 import ChapterEditApp.Views.Participants exposing (participantListView)
@@ -25,7 +25,7 @@ addImageView newImageUrl =
         [ text "Add Image" ]
     ]
 
-characterForMention : Character -> Bool -> Html Msg
+characterForMention : FullCharacter -> Bool -> Html Msg
 characterForMention character isSelected =
   let
     message = if isSelected then
@@ -42,7 +42,7 @@ characterForMention character isSelected =
       , text character.name
       ]
 
-markForCharacter : List Character -> List Character -> Html Msg
+markForCharacter : List FullCharacter -> List FullCharacter -> Html Msg
 markForCharacter allCharacters newMentionTargets =
   div []
     [ text "Mark text for "
@@ -170,9 +170,9 @@ mainView model =
   let
     chapter = case model.chapter of
                 Just chapter -> chapter
-                Nothing -> ChapterEditApp.Models.loadingPlaceholderChapter
+                Nothing -> Common.Models.loadingPlaceholderChapter
     narration = case model.narration of
                   Just narration -> narration
-                  Nothing -> ChapterEditApp.Models.loadingPlaceholderNarration
+                  Nothing -> Common.Models.loadingPlaceholderNarration
   in
     chapterView chapter narration model.editorToolState

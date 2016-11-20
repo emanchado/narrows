@@ -4,7 +4,7 @@ import Task
 import Http
 
 import ChapterEditApp.Messages exposing (Msg, Msg(..))
-import ChapterEditApp.Models exposing (Chapter)
+import Common.Models exposing (Chapter)
 import ChapterEditApp.Api.Json exposing (parseChapter, parseNarration, encodeChapter, encodeCharacter)
 
 fetchChapterInfo : Int -> Cmd Msg

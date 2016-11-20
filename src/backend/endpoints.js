@@ -96,6 +96,26 @@ export function putChapter(req, res) {
     });
 }
 
+export function getChapterInteractions(req, res) {
+    const chapterId = req.params.chptId;
+
+    return Q.all([
+        store.getChapter(chapterId, { includePrivateFields: true }),
+        store.getAllChapterMessages(chapterId),
+        store.getChapterReactions(chapterId)
+    ]).spread((chapter, messages, reactions) => {
+        res.json({
+            chapter: chapter,
+            messageThreads: messageUtils.threadMessages(messages),
+            reactions: reactions
+        });
+    }).catch(err => {
+        res.status(500).json({
+            errorMessage: `Could not get messages: ${ err }`
+        });
+    });
+}
+
 export function postNewChapter(req, res) {
     const narrationId = parseInt(req.params.narrId, 10);
 

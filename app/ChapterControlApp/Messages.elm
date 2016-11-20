@@ -2,8 +2,11 @@ module ChapterControlApp.Messages exposing (..)
 
 import Http
 
-import Common.Models exposing (Narration)
-import ChapterControlApp.Models exposing (ChapterControl)
+import ChapterControlApp.Models exposing (ChapterInteractions)
 
 type Msg
   = NoOp
+  | ChapterInteractionsFetchError Http.Error
+  | ChapterInteractionsFetchSuccess ChapterInteractions
+  -- | ChapterFetchError Http.Error
+  -- | ChapterFetchSuccess Chapter

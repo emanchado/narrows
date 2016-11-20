@@ -1,47 +1,13 @@
 module ReaderApp.Views.MessageThreads exposing (..)
 
-import String
 import Html exposing (Html, div, text, textarea, input, button, ul, li, strong, span, label)
 import Html.Attributes exposing (id, class, value, rows, type', checked, disabled)
 import Html.Events exposing (onClick, onInput, onCheck)
 
-import ReaderApp.Models exposing (Model, MessageThread, Message, Character)
+import Common.Views exposing (threadView)
+
+import ReaderApp.Models exposing (Model, Character)
 import ReaderApp.Messages exposing (..)
-
-messageView : Message -> Html Msg
-messageView message =
-  div [ class "message" ]
-    [ strong []
-        [ text (case message.sender of
-                  Just sender -> sender.name
-                  Nothing -> "Narrator") ]
-    , text ": "
-    , span [ class (case message.sender of
-                      Just sender -> ""
-                      Nothing -> "narrator") ]
-        [ text message.body ]
-    ]
-
-threadView : MessageThread -> Int -> Html Msg
-threadView thread characterId =
-  let
-    participants =
-      List.map
-        (\c -> c.name)
-        (List.filter
-           (\c -> c.id /= characterId)
-           thread.participants)
-    participantString = String.join ", " participants
-    participantStringEnd = if List.length participants > 0 then
-                             ", the narrator, and you"
-                           else
-                             "the narrator and you"
-    participantsDiv =
-      div [ class "thread-participants" ]
-        [ text ("Between " ++ participantString ++ participantStringEnd) ]
-  in
-    li []
-      (participantsDiv :: List.map messageView thread.messages)
 
 recipientView : List Int -> Character -> Html Msg
 recipientView currentRecipients character =

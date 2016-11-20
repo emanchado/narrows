@@ -7,6 +7,18 @@
     padding: 30px;
 }
 
+.two-column {
+    display: flex;
+}
+.two-column > section {
+    width: 50%;
+    padding-right: 5px;
+    padding-left: 5px;
+}
+.two-column > section > *:first-child {
+    margin-top: 0;
+}
+
 input, .ProseMirror-content {
     font-family: StoryFont;
 }
@@ -63,6 +75,7 @@ aside ul {
 
     font-size: 14px;
 }
+
 
 
 /* Mentions */

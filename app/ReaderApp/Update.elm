@@ -4,10 +4,12 @@ import Http
 import Json.Decode
 
 import Routing
+import Common.Ports exposing (renderChapter)
+
 import ReaderApp.Api
 import ReaderApp.Messages exposing (..)
 import ReaderApp.Models exposing (..)
-import ReaderApp.Ports exposing (renderChapter, startNarration, playPauseNarrationMusic, flashElement)
+import ReaderApp.Ports exposing (startNarration, playPauseNarrationMusic, flashElement)
 
 
 maxBlurriness : Int
