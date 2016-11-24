@@ -5,8 +5,8 @@ import Http
 import Json.Decode as Json exposing (..)
 import Json.Encode
 
-import Common.Models exposing (FullCharacter, Message, MessageThread, ChapterMessages, Reaction)
-import Common.Api.Json exposing (parseCharacter, parseChapter)
+import Common.Models exposing (FullCharacter, Message, MessageThread, Reaction)
+import Common.Api.Json exposing (parseCharacter, parseChapter, parseMessageThread)
 
 import ChapterControlApp.Messages exposing (Msg, Msg(..))
 import ChapterControlApp.Models exposing (ChapterInteractions)
@@ -16,21 +16,6 @@ parseReaction =
   Json.object2 Reaction
     ("character" := parseCharacter)
     (maybe ("text" := string))
-
-parseMessage : Json.Decoder Message
-parseMessage =
-  Json.object5 Message
-    ("id" := int)
-    ("body" := string)
-    ("sentAt" := string)
-    (maybe ("sender" := parseCharacter))
-    (maybe ("recipients" := (list parseCharacter)))
-
-parseMessageThread : Json.Decoder MessageThread
-parseMessageThread =
-  Json.object2 MessageThread
-    ("participants" := list parseCharacter)
-    ("messages" := list parseMessage)
 
 parseChapterInteractions : Json.Decoder ChapterInteractions
 parseChapterInteractions =
@@ -47,12 +32,6 @@ fetchChapterInteractions chapterId =
   in
     Task.perform ChapterInteractionsFetchError ChapterInteractionsFetchSuccess
       (Http.get parseChapterInteractions chapterInteractionsApiUrl)
-
-parseChapterMessages : Json.Decoder ChapterMessages
-parseChapterMessages =
-  Json.object2 ChapterMessages
-    ("messageThreads" := list parseMessageThread)
-    (maybe ("characterId" := int))
 
 
 sendMessage : Int -> String -> List Int -> Cmd Msg

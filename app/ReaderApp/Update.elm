@@ -5,6 +5,7 @@ import Json.Decode
 
 import Routing
 import Common.Ports exposing (renderChapter)
+import Common.Api.Json exposing (parseChapterMessages)
 
 import ReaderApp.Api
 import ReaderApp.Messages exposing (..)
@@ -186,7 +187,7 @@ update msg model =
         Http.Text text ->
           let
             decodedResponse =
-              Json.Decode.decodeString ReaderApp.Api.parseChapterMessages text
+              Json.Decode.decodeString parseChapterMessages text
           in
             case decodedResponse of
               Ok result ->

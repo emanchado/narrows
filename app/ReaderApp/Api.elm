@@ -5,12 +5,10 @@ import Json.Encode
 import Task
 import Http
 
+import Common.Api.Json exposing (parseCharacter, parseChapterMessages)
+
 import ReaderApp.Messages exposing (Msg, Msg(..))
 import ReaderApp.Models exposing (Chapter, Character, OwnCharacter, ChapterMessages, MessageThread, Message)
-
-parseCharacter : Json.Decoder Character
-parseCharacter =
-  Json.object2 Character ("id" := int) ("name" := string)
 
 parseOwnCharacter : Json.Decoder OwnCharacter
 parseOwnCharacter =
@@ -19,21 +17,6 @@ parseOwnCharacter =
     ("name" := string)
     ("token" := string)
     (maybe ("notes" := string))
-
-parseMessage : Json.Decoder Message
-parseMessage =
-  Json.object5 Message
-    ("id" := int)
-    ("body" := string)
-    ("sentAt" := string)
-    (maybe ("sender" := parseCharacter))
-    (maybe ("recipients" := (list parseCharacter)))
-
-parseMessageThread : Json.Decoder MessageThread
-parseMessageThread =
-  Json.object2 MessageThread
-    ("participants" := list parseCharacter)
-    ("messages" := list parseMessage)
 
 parseChapter : Json.Decoder Chapter
 parseChapter =
@@ -50,12 +33,6 @@ parseChapter =
       (\f ->
          Json.object1 f
            ("character" := parseOwnCharacter))
-
-parseChapterMessages : Json.Decoder ChapterMessages
-parseChapterMessages =
-  Json.object2 ChapterMessages
-    ("messageThreads" := list parseMessageThread)
-    (maybe ("characterId" := int))
 
 fetchChapterInfo : Int -> String -> Cmd Msg
 fetchChapterInfo chapterId characterToken =
