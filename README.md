@@ -1,14 +1,13 @@
 TODO
 ====
 
-* Improve the chapter feedback page
 * Make some way to preview chapters for different characters
 * Really wait until everything is loaded before showing the "Start" button
 
 Later
 -----
 
-* Redesign chapter editing page
+* Redesign chapter editing page (show previous chapter's text & actions)
 * Allow narrators to change password, and create more narrators
 * Maybe add an "admin" role so that not all narrators can create users?
 * Show background information or whatever to players (add fields for

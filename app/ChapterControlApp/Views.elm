@@ -1,6 +1,6 @@
 module ChapterControlApp.Views exposing (..)
 
-import Html exposing (Html, main', h1, h2, nav, section, div, ul, li, textarea, input, button, label, a, text)
+import Html exposing (Html, main', h1, h2, nav, section, div, ul, li, textarea, input, button, label, a, strong, em, text)
 import Html.Attributes exposing (id, class, href, type', value, disabled, checked, rows, cols)
 import Html.Events exposing (onInput, onClick, onCheck)
 
@@ -12,16 +12,14 @@ import ChapterControlApp.Models exposing (Model, ChapterInteractions)
 
 reactionView : Reaction -> Html Msg
 reactionView reaction =
-  case reaction.text of
-    Just reactionText ->
-      div [ class "reaction" ]
-        [ text <| "From: " ++ reaction.character.name
-        , div []
-          [ text reactionText
-          ]
-        ]
-    Nothing ->
-      text ""
+  li [ class "reaction" ]
+    [ strong [] [ text reaction.character.name ]
+    , div []
+       [ case reaction.text of
+           Just reactionText -> text reactionText
+           Nothing -> em [] [ text "Not submitted yet." ]
+       ]
+    ]
 
 loadingView : Model -> Html Msg
 loadingView model =
@@ -103,7 +101,7 @@ mainView model =
               ]
             , h2 []
               [ text "Actions" ]
-            , ul [ class "reactions" ]
+            , ul [ class "reactions narrator" ]
               (List.map reactionView reactions)
           ]
           ]

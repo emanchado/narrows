@@ -139,5 +139,15 @@ aside ul {
 
 .new-message textarea {
     width: 100%;
+    /* max-width locks the user-resizing to be only vertical */
     max-width: 100%;
+}
+
+.reactions.narrator {
+    display: block;
+    padding-left: 0;
+}
+.reactions.narrator li {
+    display: block;
+    margin-bottom: 20px;
 }
