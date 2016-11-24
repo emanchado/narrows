@@ -1,17 +1,15 @@
 TODO
 ====
 
-* Implement the "Published" button
 * Allow writing messages as narrator
-* Redesign chapter editing and/or make a chapter commandeering page
+* Improve the chapter feedback page
 * Make some way to preview chapters for different characters
 * Really wait until everything is loaded before showing the "Start" button
 
 Later
 -----
 
-* Why does Opera for Android not start the music when it's on, and
-  effectively inverts the audio toggle functionality??
+* Redesign chapter editing page
 * Allow narrators to change password, and create more narrators
 * Maybe add an "admin" role so that not all narrators can create users?
 * Show background information or whatever to players (add fields for

@@ -22,37 +22,6 @@ reactionView reaction =
     Nothing ->
       text ""
 
-interactionsView : ChapterInteractions -> Html Msg
-interactionsView interactions =
-  main' [ id "narrator-app" ]
-    [ h1 []
-        [ text <| interactions.chapter.title ]
-    , nav []
-        [ a [ href <| "/narrations/" ++ (toString interactions.chapter.narrationId) ]
-            [ text "Narration" ]
-        , text " ⇢ "
-        , a [ href <| "/chapters/" ++ (toString interactions.chapter.id) ++ "/edit" ]
-            [ text "Edit" ]
-        ]
-    , div [ class "two-column" ]
-        [ section []
-          [ div [ id "chapter-text" ] []
-          ]
-        , section []
-          [ h2 []
-              [ text "Conversation" ]
-          , ul [ class "conversation" ]
-            (List.map
-               (\mt -> threadView mt 0)
-               interactions.messageThreads)
-          , h2 []
-            [ text "Actions" ]
-          , ul [ class "reactions" ]
-            (List.map reactionView interactions.reactions)
-        ]
-        ]
-    ]
-
 loadingView : Model -> Html Msg
 loadingView model =
   case model.banner of
@@ -88,12 +57,15 @@ mainView model =
           ]
       , div [ class "two-column" ]
           [ section []
-            [ div [ id "chapter-text" ] []
+            [ h2 [] [ text "Chapter text" ]
+            , div [ id "chapter-text"
+                  , class "chapter"
+                  ]
+                []
             ]
           , section []
-            [ h2 []
-                [ text "Conversation" ]
-            , ul [ class "conversation" ]
+            [ h2 [] [ text "Conversation" ]
+            , ul [ class "thread-list narrator" ]
               (List.map
                  (\mt -> threadView mt 0)
                  messageThreads)

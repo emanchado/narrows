@@ -30,12 +30,18 @@ threadView thread characterId =
            (\c -> c.id /= characterId)
            thread.participants)
     participantString = String.join ", " participants
-    participantStringEnd = if List.length participants > 0 then
-                             ", the narrator, and you"
+    participantStringEnd = if characterId == 0 then
+                             if List.length participants > 1 then
+                               ", and you"
+                             else
+                               " and you"
                            else
-                             "the narrator and you"
+                             if List.length participants > 0 then
+                               ", the narrator, and you"
+                             else
+                               "the narrator and you"
     participantsDiv =
-      div [ class "thread-participants" ]
+                div [ class "thread-participants" ]
         [ text ("Between " ++ participantString ++ participantStringEnd) ]
   in
     li []

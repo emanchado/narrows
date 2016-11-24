@@ -44,7 +44,7 @@ listView model =
                             []
   in
     div []
-      [ ul [ class "message-list" ]
+      [ ul [ class "thread-list reader" ]
           (case model.messageThreads of
              Just threads ->
                List.map

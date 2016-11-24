@@ -126,21 +126,8 @@
     padding: 5px;
 }
 
-ul.message-list {
-    display: block;
-    padding-left: 0;
-    margin-top: 0;
-}
-ul.message-list li {
-    display: block;
-    margin-bottom: 15px;
-}
-ul.message-list li span.narrator {
-    font-style: italic;
-}
-ul.message-list .message {
+ul.thread-list.reader .message {
     background-color: black;
-    padding: 5px;
 }
 
 .thread-participants {
