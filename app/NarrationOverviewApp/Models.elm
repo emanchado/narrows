@@ -1,6 +1,5 @@
 module NarrationOverviewApp.Models exposing (..)
 
-import Routing
 import Common.Models exposing (Narration, Banner)
 
 type alias Reaction =

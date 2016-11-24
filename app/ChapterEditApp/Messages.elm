@@ -5,7 +5,6 @@ import Json.Encode
 import Time exposing (Time)
 
 import Common.Models exposing (FullCharacter, Narration, Chapter)
-import ChapterEditApp.Models exposing (..)
 import ChapterEditApp.Ports
 
 type Msg

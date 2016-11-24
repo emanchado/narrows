@@ -1,6 +1,5 @@
 module ChapterControlApp.Models exposing (..)
 
-import Routing
 import Common.Models exposing (Narration, Chapter, Banner, Character, MessageThread, Reaction)
 
 type alias ChapterInteractions =

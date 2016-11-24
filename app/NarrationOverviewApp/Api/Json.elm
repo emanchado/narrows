@@ -2,8 +2,6 @@ module NarrationOverviewApp.Api.Json exposing (..)
 
 import Json.Decode as Json exposing (..)
 
-import Common.Models exposing (Narration, FileSet, FullCharacter)
-import Common.Api.Json exposing (parseFullCharacter, parseNarration)
 import NarrationOverviewApp.Models exposing (NarrationOverview, ChapterOverview, Reaction)
 
 parseReaction : Json.Decoder Reaction

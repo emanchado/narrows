@@ -1,6 +1,5 @@
 module ChapterEditApp.Models exposing (..)
 
-import Json.Decode
 import Json.Encode
 
 import Common.Models exposing (FullCharacter, Narration, Chapter, Banner)
