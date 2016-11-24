@@ -116,6 +116,29 @@ export function getChapterInteractions(req, res) {
     });
 }
 
+export function postChapterMessages(req, res) {
+    const chapterId = req.params.chptId,
+          messageText = req.body.text,
+          messageRecipients = req.body.recipients || [];
+
+    return store.addMessage(
+        chapterId,
+        null,
+        messageText,
+        messageRecipients
+    ).then(() => (
+        store.getAllChapterMessages(chapterId)
+    )).then(messages => {
+        res.json({
+            messageThreads: messageUtils.threadMessages(messages)
+        });
+    }).catch(err => {
+        res.status(500).json({
+            errorMessage: `Could not post message: ${ err }`
+        });
+    });
+}
+
 export function postNewChapter(req, res) {
     const narrationId = parseInt(req.params.narrId, 10);
 

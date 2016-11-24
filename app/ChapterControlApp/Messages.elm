@@ -8,5 +8,8 @@ type Msg
   = NoOp
   | ChapterInteractionsFetchError Http.Error
   | ChapterInteractionsFetchSuccess ChapterInteractions
-  -- | ChapterFetchError Http.Error
-  -- | ChapterFetchSuccess Chapter
+  | UpdateNewMessageText String
+  | UpdateNewMessageRecipient Int Bool
+  | SendMessage
+  | SendMessageError Http.RawError
+  | SendMessageSuccess Http.Response

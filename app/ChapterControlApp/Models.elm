@@ -13,4 +13,6 @@ type alias Model =
   { narration : Maybe Narration
   , interactions : Maybe ChapterInteractions
   , banner : Maybe Banner
+  , newMessageText : String
+  , newMessageRecipients : List Int
   }

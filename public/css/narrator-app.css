@@ -133,6 +133,11 @@ aside ul {
     max-height: 100px;
 }
 
-.conversation > li {
-    margin-bottom: 20px;
+.thread-list.narrator > li {
+    margin-bottom: 30px;
+}
+
+.new-message textarea {
+    width: 100%;
+    max-width: 100%;
 }

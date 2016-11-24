@@ -16,6 +16,8 @@ initialState =
   { narration = Nothing
   , interactions = Nothing
   , banner = Nothing
+  , newMessageText = ""
+  , newMessageRecipients = []
   }
 
 update : Msg -> Model -> (Model, Cmd Msg)

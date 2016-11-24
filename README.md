@@ -1,7 +1,6 @@
 TODO
 ====
 
-* Allow writing messages as narrator
 * Improve the chapter feedback page
 * Make some way to preview chapters for different characters
 * Really wait until everything is loaded before showing the "Start" button

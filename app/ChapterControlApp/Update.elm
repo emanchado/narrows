@@ -1,6 +1,7 @@
 module ChapterControlApp.Update exposing (..)
 
 import Http
+import Json.Decode
 
 import Routing
 import Common.Models exposing (Banner)
@@ -23,7 +24,6 @@ urlUpdate route model =
       Routing.ChapterControlPage chapterId ->
         ( model
         , Cmd.batch [ ChapterControlApp.Api.fetchChapterInteractions chapterId
-                    -- , ChapterControlApp.Api.fetchChapter chapterId
                     ]
         )
       _ ->
@@ -46,8 +46,71 @@ update msg model =
       in
         ({ model | banner = errorBanner errorString }, Cmd.none)
     ChapterInteractionsFetchSuccess interactions ->
-      ( { model | interactions = Just interactions }
-      , renderChapter { elemId = "chapter-text"
-                      , text = interactions.chapter.text
-                      }
-      )
+      let
+        participantIds =
+          List.map (\c -> c.id) interactions.chapter.participants
+      in
+        ( { model | interactions = Just interactions
+                  , newMessageRecipients = participantIds
+                  }
+        , renderChapter { elemId = "chapter-text"
+                        , text = interactions.chapter.text
+                        }
+        )
+    UpdateNewMessageText newText ->
+      ({ model | newMessageText = newText }, Cmd.none)
+    UpdateNewMessageRecipient characterId on ->
+      let
+        newRecipientsWithoutCharacter =
+          List.filter
+            (\r -> r /= characterId)
+            model.newMessageRecipients
+        newRecipients =
+          if on then
+            characterId :: newRecipientsWithoutCharacter
+          else
+            newRecipientsWithoutCharacter
+      in
+        ({ model | newMessageRecipients = newRecipients }, Cmd.none)
+    SendMessage ->
+      case model.interactions of
+        Just interactions ->
+          ( model
+          , ChapterControlApp.Api.sendMessage interactions.chapter.id model.newMessageText model.newMessageRecipients
+          )
+        Nothing ->
+          (model, Cmd.none)
+    SendMessageError error ->
+      ({ model | banner = Just { text = "Error sending reaction"
+                               , type' = "error"
+                               } }
+      , Cmd.none)
+    SendMessageSuccess resp ->
+      case resp.value of
+        Http.Text text ->
+          let
+            decodedResponse =
+              Json.Decode.decodeString ChapterControlApp.Api.parseChapterMessages text
+          in
+            case decodedResponse of
+              Ok result ->
+                let
+                  updatedInteractions = case model.interactions of
+                                          Just interactions ->
+                                            Just { interactions | messageThreads = result.messages }
+                                          Nothing ->
+                                            Nothing
+                in
+                  ( { model | interactions = updatedInteractions
+                            , newMessageText = "" }
+                  , Cmd.none)
+              _ ->
+                ({ model | banner = Just { text = "Error parsing response while sending message"
+                                   , type' = "error"
+                                   } }
+                , Cmd.none)
+        _ ->
+          ({ model | banner = Just { text = "Error sending message"
+                                   , type' = "error"
+                                   } }
+          , Cmd.none)

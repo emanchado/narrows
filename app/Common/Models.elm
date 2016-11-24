@@ -83,6 +83,12 @@ type alias MessageThread =
   , messages : List Message
   }
 
+-- Only used for JSON response decoding
+type alias ChapterMessages =
+  { messages : List MessageThread
+  , characterId : Maybe Int
+  }
+
 type alias Reaction =
   { character : Character
   , text : Maybe String
