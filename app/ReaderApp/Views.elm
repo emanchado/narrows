@@ -6,7 +6,7 @@ import Html.Events exposing (onClick)
 
 import ReaderApp.Models exposing (Model, Banner)
 import ReaderApp.Messages exposing (..)
-import ReaderApp.NarrationView
+import ReaderApp.Views.Narration
 import ReaderApp.Views.Banner
 
 loadingView : Maybe Banner -> Html Msg
@@ -52,5 +52,5 @@ mainView model =
             ]
         _ ->
           text ""
-    , ReaderApp.NarrationView.view model
+    , ReaderApp.Views.Narration.view model
     ]

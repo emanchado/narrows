@@ -1,4 +1,4 @@
-module ReaderApp.NarrationView exposing (view)
+module ReaderApp.Views.Narration exposing (view)
 
 import String
 import Html exposing (Html, h2, div, span, a, input, textarea, text, img, label, button, br, audio)
