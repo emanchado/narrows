@@ -53,7 +53,7 @@ listView model =
              Nothing ->
                [])
       , div [ class "new-message" ]
-        [ textarea [ rows 2
+        [ textarea [ rows 4
                    , onInput UpdateNewMessageText
                    , value model.newMessageText
                    ]
