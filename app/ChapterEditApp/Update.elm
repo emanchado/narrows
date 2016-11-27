@@ -321,7 +321,7 @@ update msg model =
                 Ok chapter ->
                   ( { model | banner = Nothing
                     }
-                  , Navigation.newUrl <| "/chapters/" ++ (toString chapter.id)
+                  , Navigation.newUrl <| "/chapters/" ++ (toString chapter.id) ++ "/edit"
                   )
                 _ ->
                   ( { model | banner = errorBanner "Error parsing chapter saving result" }
