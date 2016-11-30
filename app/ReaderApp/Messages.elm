@@ -28,3 +28,5 @@ type Msg
   | SendReaction
   | SendReactionError Http.RawError
   | SendReactionSuccess Http.Response
+  | ShowReferenceInformation
+  | HideReferenceInformation

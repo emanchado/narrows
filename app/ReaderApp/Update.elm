@@ -231,3 +231,7 @@ update msg model =
                            }
       in
         ({ model | reactionSent = True, banner = newBanner }, Cmd.none)
+    ShowReferenceInformation ->
+      ({ model | referenceInformationVisible = True }, Cmd.none)
+    HideReferenceInformation ->
+      ({ model | referenceInformationVisible = False }, Cmd.none)

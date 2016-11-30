@@ -143,3 +143,43 @@ ul.thread-list.reader .message {
     margin-right: 15px;
     color: #2b2;
 }
+
+.reference-container {
+    border: dashed 1px;
+    padding: 10px;
+    padding-bottom: 0;
+
+    overflow: hidden;
+}
+.reference-container.hidden {
+    height: 1.5em;
+}
+.arrow {
+    width: 0;
+    height: 0;
+
+    margin: 0 auto;
+    border: 15px solid transparent;
+
+    cursor: hand;
+}
+.arrow-up {
+    border-bottom-color: white;
+}
+.arrow-down {
+    border-top-color: white;
+}
+
+.dramatis-personae {
+    display: block;
+    padding-left: 0;
+}
+.dramatis-personae > li {
+    display: flex;
+    margin: 10px 0;
+}
+.dramatis-personae > li img {
+    margin-right: 10px;
+    max-width: 100px;
+    max-height: 100px;
+}

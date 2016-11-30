@@ -1,11 +1,11 @@
 module ReaderApp.Views.Narration exposing (view)
 
 import String
-import Html exposing (Html, h2, div, span, a, input, textarea, text, img, label, button, br, audio)
+import Html exposing (Html, h2, div, span, a, input, textarea, strong, text, img, label, button, br, audio, ul, li)
 import Html.Attributes exposing (id, class, style, for, src, href, target, type', checked, preload, loop, alt, value, rows, placeholder)
 import Html.Events exposing (onClick, onInput)
 
-import ReaderApp.Models exposing (Model, Chapter, Banner)
+import ReaderApp.Models exposing (Model, Chapter, ParticipantCharacter, Banner)
 import ReaderApp.Messages exposing (..)
 import ReaderApp.Views.Banner
 import ReaderApp.Views.MessageThreads
@@ -31,36 +31,79 @@ backgroundImageStyle chapter backgroundBlurriness =
     , ("filter", filter)
     ]
 
+characterView : Int -> ParticipantCharacter -> Html Msg
+characterView narrationId character =
+  let
+    avatarUrl =
+      case character.avatar of
+        Just avatar ->
+          "/static/narrations/" ++ (toString narrationId) ++ "/avatars/" ++ avatar
+        Nothing ->
+          "/img/default-avatar.png"
+    description =
+      case character.description of
+        Just desc -> desc
+        Nothing -> ""
+  in
+    li []
+      [ img [ class "avatar"
+            , src avatarUrl
+            ]
+          []
+      , div []
+          [ strong [] [ text character.name ]
+          , br [] []
+          , text description
+          ]
+      ]
+
 reactionView : Model -> Html Msg
 reactionView model =
   let
-    character = case model.chapter of
-                  Just chapter -> chapter.character
-                  Nothing -> { id = 0, name = "", token = "", notes = Nothing }
+    (character, participants, narrationId) =
+      case model.chapter of
+        Just chapter -> ( chapter.character
+                        , chapter.participants
+                        , chapter.narrationId
+                        )
+        Nothing -> ( { id = 0, name = "", token = "", notes = Nothing }
+                   , []
+                   , 0
+                   )
   in
     div [ class "interaction" ]
-      [ h2 []
-          [ text ("Story notes for " ++ character.name) ]
-      , div []
-          [ textarea [ placeholder "You can write some notes here. These are remembered between chapters!"
-                     , rows 10
-                     , onInput UpdateNotesText
-                     , value (case character.notes of
-                                Just notes -> notes
-                                Nothing -> "")
-                     ]
-              []
+      [ div [ class <| "reference-container" ++ if model.referenceInformationVisible then "" else " hidden"
+            ]
+          [ h2 [] [ text "Reference information" ]
+          , ul [ class "dramatis-personae" ]
+            (List.map (characterView narrationId) participants)
+          , h2 [] [ text ("Story notes for " ++ character.name) ]
+          , div []
+              [ textarea [ placeholder "You can write some notes here. These are remembered between chapters!"
+                         , rows 10
+                         , onInput UpdateNotesText
+                         , value (case character.notes of
+                                    Just notes -> notes
+                                    Nothing -> "")
+                         ]
+                  []
+              ]
+          , div [ class "btn-bar" ]
+              [ span [ id "save-notes-message"
+                    , style [ ("display", "none") ]
+                    ]
+                  [ text "Notes saved" ]
+              , button [ class "btn"
+                       , onClick SendNotes
+                       ]
+                  [ text "Save " ]
+              ]
+          , div [ class "arrow arrow-up", onClick HideReferenceInformation ] []
           ]
-      , div [ class "btn-bar" ]
-          [ span [ id "save-notes-message"
-                , style [ ("display", "none") ]
-                ]
-              [ text "Notes saved" ]
-          , button [ class "btn"
-                   , onClick SendNotes
-                   ]
-              [ text "Save " ]
-          ]
+      , if not model.referenceInformationVisible then
+          div [ class "arrow arrow-down", onClick ShowReferenceInformation ] []
+        else
+          text ""
       , h2 []
           [ text "Discussion "
           , a [ target "_blank"

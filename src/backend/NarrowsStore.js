@@ -300,7 +300,7 @@ class NarrowsStore {
         return Q.ninvoke(
             this.db,
             "all",
-            `SELECT C.id, C.name ${ extraFields }
+            `SELECT C.id, C.name, C.avatar, C.description ${ extraFields }
                FROM characters C JOIN reactions R ON C.id = R.character_id
               WHERE chapter_id = ?`,
             chapterId

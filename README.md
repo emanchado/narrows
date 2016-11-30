@@ -1,8 +1,9 @@
 TODO
 ====
 
-* Show background information or whatever to players (add fields for
-  description (public) and backstory (private))
+* Try to add a paragraph separator, but make sure it can be marked for
+  only certain characters
+* Show background information or whatever to players
 * Redesign chapter editing page (show previous chapter's text & actions)
 * Allow narrators to change password, and create more narrators
 * Really wait until everything is loaded before showing the "Start" button

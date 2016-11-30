@@ -87,6 +87,14 @@ const MIGRATIONS = [
         return statementListPromise(db, [
             "ALTER TABLE characters ADD notes text"
         ]);
+    },
+
+    function addExtraCharacterFields(db) {
+        return statementListPromise(db, [
+            "ALTER TABLE characters ADD avatar text",
+            "ALTER TABLE characters ADD description text",
+            "ALTER TABLE characters ADD backstory text"
+        ]);
     }
 ];
 

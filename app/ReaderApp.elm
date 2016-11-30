@@ -25,6 +25,7 @@ initialState =
   , reactionSent = False
   , reaction = ""
   , banner = Nothing
+  , referenceInformationVisible = False
   }
 
 update : Msg -> Model -> (Model, Cmd Msg)

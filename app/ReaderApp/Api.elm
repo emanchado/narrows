@@ -5,10 +5,18 @@ import Json.Encode
 import Task
 import Http
 
-import Common.Api.Json exposing (parseCharacter, parseChapterMessages)
+import Common.Api.Json exposing (parseChapterMessages)
 
 import ReaderApp.Messages exposing (Msg, Msg(..))
-import ReaderApp.Models exposing (Chapter, Character, OwnCharacter, ChapterMessages, MessageThread, Message)
+import ReaderApp.Models exposing (Chapter, ParticipantCharacter, OwnCharacter, ChapterMessages, MessageThread, Message)
+
+parseParticipantCharacter : Json.Decoder ParticipantCharacter
+parseParticipantCharacter =
+  Json.object4 ParticipantCharacter
+    ("id" := int)
+    ("name" := string)
+    (maybe ("avatar" := string))
+    (maybe ("description" := string))
 
 parseOwnCharacter : Json.Decoder OwnCharacter
 parseOwnCharacter =
@@ -27,7 +35,7 @@ parseChapter =
     ("audio" := string)
     ("backgroundImage" := string)
     ("text" := Json.value)
-    ("participants" := list parseCharacter)
+    ("participants" := list parseParticipantCharacter)
     (maybe ("reaction" := string))
     `andThen`
       (\f ->

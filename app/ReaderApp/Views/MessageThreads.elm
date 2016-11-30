@@ -6,10 +6,10 @@ import Html.Events exposing (onClick, onInput, onCheck)
 
 import Common.Views exposing (threadView)
 
-import ReaderApp.Models exposing (Model, Character)
+import ReaderApp.Models exposing (Model, ParticipantCharacter)
 import ReaderApp.Messages exposing (..)
 
-recipientView : List Int -> Character -> Html Msg
+recipientView : List Int -> ParticipantCharacter -> Html Msg
 recipientView currentRecipients character =
   label []
     [ input [ type' "checkbox"
@@ -21,7 +21,7 @@ recipientView currentRecipients character =
     , text character.name
     ]
 
-recipientListView : List Character -> List Int -> Html Msg
+recipientListView : List ParticipantCharacter -> List Int -> Html Msg
 recipientListView possibleRecipients currentRecipients =
   div [ class "recipients" ]
     ([ label [] [ text "Recipients:" ]

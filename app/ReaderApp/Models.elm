@@ -2,7 +2,7 @@ module ReaderApp.Models exposing (..)
 
 import Json.Decode
 
-import Common.Models
+import Common.Models exposing (Character)
 
 type alias Banner = Common.Models.Banner
 
@@ -11,9 +11,11 @@ type PageState
   | StartingNarration
   | Narrating
 
-type alias Character =
+type alias ParticipantCharacter =
   { id : Int
   , name : String
+  , avatar : Maybe String
+  , description : Maybe String
   }
 
 type alias OwnCharacter =
@@ -49,7 +51,7 @@ type alias Chapter =
   , audio : String
   , backgroundImage : String
   , text : Json.Decode.Value
-  , participants : List Character
+  , participants : List ParticipantCharacter
   , reaction : Maybe String
   , character : OwnCharacter
   }
@@ -66,4 +68,5 @@ type alias Model =
   , reactionSent : Bool
   , reaction : String
   , banner : Maybe Banner
+  , referenceInformationVisible : Bool
   }
