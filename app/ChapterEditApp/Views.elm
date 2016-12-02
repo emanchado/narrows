@@ -54,6 +54,72 @@ markForCharacter allCharacters newMentionTargets =
         [ text "Mark" ]
     ]
 
+
+chapterMediaView : Chapter -> Narration -> EditorToolState -> Html Msg
+chapterMediaView chapter narration editorToolState =
+  div [ class "chapter-media" ]
+    [ div [ class "image-selector" ]
+        [ label [] [ text "Background image:" ]
+        , fileSelector
+            UpdateSelectedBackgroundImage
+            (case chapter.backgroundImage of
+               Just image -> image
+               Nothing -> "")
+            (List.map
+               (\file -> (file, file))
+               narration.files.backgroundImages)
+        , img [ class "tiny-image-preview"
+              , src (case chapter.backgroundImage of
+                       Just image ->
+                         "/static/narrations/" ++
+                           (toString chapter.narrationId) ++
+                           "/background-images/" ++
+                           image
+                       Nothing ->
+                         "/img/no-preview.png")
+              ]
+            []
+        ]
+    , div [ class "audio-selector" ]
+        [ label [] [ text "Background audio:" ]
+        , fileSelector
+            UpdateSelectedAudio
+            (case chapter.audio of
+               Just audio -> audio
+               Nothing -> "")
+            (List.map
+               (\file -> (file, file))
+               narration.files.audio)
+        , button [ class "btn btn-small"
+                 , onClick PlayPauseAudioPreview
+                 ]
+            [ text "Preview"
+            , span [ id "bigger" ] [ text "♫" ]
+            ]
+        , case chapter.audio of
+            Just chapterAudio ->
+              audio [ id "audio-preview"
+                    , src ("/static/narrations/" ++
+                             (toString chapter.narrationId) ++
+                             "/audio/" ++ chapterAudio)
+                    ]
+                []
+            Nothing ->
+              text ""
+        , button [ class "btn btn-small btn-default"
+                 , onClick (OpenMediaFileSelector "new-media-file")
+                 ]
+            [ text "Add files" ]
+        , input [ type' "file"
+                , id "new-media-file"
+                , name "file"
+                , on "change" (Json.Decode.succeed <| AddMediaFile "new-media-file")
+                ]
+            []
+        ]
+    ]
+
+
 chapterView : Chapter -> Narration -> EditorToolState -> Html Msg
 chapterView chapter narration editorToolState =
   let
@@ -71,92 +137,32 @@ chapterView chapter narration editorToolState =
                   , onInput UpdateChapterTitle
                   ]
               []
-          , div [ id "editor-container" ] []
-          , addImageView editorToolState.newImageUrl
-          , markForCharacter chapter.participants editorToolState.newMentionTargets
-          , div [ class "btn-bar" ]
-              [ button [ class "btn"
-                       , onClick saveAction
-                       ]
-                  [ text "Save" ]
-              , button [ class "btn btn-default"
-                       , onClick publishAction
-                       ]
-                  [ text "Publish" ]
+          , div [ class "participants" ]
+              [ label [] [ text "Participants:" ]
+              , participantListView chapter.id narration.characters chapter.participants
               ]
           ]
-      , aside []
-          [ div [ class "participants" ]
-              [ h2 [] [ text "Participants" ]
-              , participantListView chapter.id narration.characters chapter.participants
-              , h2 [] [ text "Media" ]
-              , div [ class "image-selector" ]
-                  [ fileSelector
-                      UpdateSelectedBackgroundImage
-                      (case chapter.backgroundImage of
-                         Just image -> image
-                         Nothing -> "")
-                      (List.map
-                         (\file -> (file, file))
-                         narration.files.backgroundImages)
-                  ]
-              , em [] [ text "Preview:" ]
-              , br [] []
-              , img [ class "tiny-image-preview"
-                    , src (case chapter.backgroundImage of
-                             Just image ->
-                               "/static/narrations/" ++
-                                 (toString chapter.narrationId) ++
-                                 "/background-images/" ++
-                                 image
-                             Nothing ->
-                               "/img/no-preview.png")
-                    ]
-                  []
-              , div [ class "audio-selector" ]
-                  [ fileSelector
-                      UpdateSelectedAudio
-                      (case chapter.audio of
-                         Just audio -> audio
-                         Nothing -> "")
-                      (List.map
-                         (\file -> (file, file))
-                         narration.files.audio)
-                  , button [ class "btn btn-small"
-                           , onClick PlayPauseAudioPreview
-                           ]
-                      [ text "Preview"
-                      , span [ id "bigger" ] [ text "♫" ]
-                      ]
-                  , case chapter.audio of
-                      Just chapterAudio ->
-                        audio [ id "audio-preview"
-                              , src ("/static/narrations/" ++
-                                       (toString chapter.narrationId) ++
-                                       "/audio/" ++ chapterAudio)
-                              ]
-                          []
-                      Nothing ->
-                        text ""
-                  , button [ class "btn btn-small btn-default"
-                           , onClick (OpenMediaFileSelector "new-media-file")
-                           ]
-                      [ text "Add files" ]
-                  , input [ type' "file"
-                          , id "new-media-file"
-                          , name "file"
-                          , on "change" (Json.Decode.succeed <| AddMediaFile "new-media-file")
-                          ]
-                      []
-                  ]
-              ]
+      , chapterMediaView chapter narration editorToolState
+      , label [] [ text "Text:" ]
+      , div [ id "editor-container" ] []
+      , addImageView editorToolState.newImageUrl
+      , markForCharacter chapter.participants editorToolState.newMentionTargets
+      , div [ class "btn-bar" ]
+          [ button [ class "btn"
+                   , onClick saveAction
+                   ]
+              [ text "Save" ]
+          , button [ class "btn btn-default"
+                   , onClick publishAction
+                   ]
+              [ text "Publish" ]
           ]
       ]
 
 
 reactionView : LastReaction -> Html Msg
 reactionView reaction =
-  li [ ]
+  li []
     [ strong [] [ text reaction.character.name ]
     , text ", in chapter "
     , strong [] [ text reaction.chapterInfo.title ]
@@ -165,9 +171,10 @@ reactionView reaction =
             Just reactionText ->
               text reactionText
             Nothing ->
-              em [] [ text "Hasn't reacted yet." ]
+              em [ class "no-content" ] [ text "Has not reacted yet." ]
         ]
     ]
+
 
 lastReactionListView : LastReactions -> Chapter -> Html Msg
 lastReactionListView lastReactions chapter =

@@ -1,7 +1,7 @@
 module ChapterEditApp.Views.Participants exposing (participantListView)
 
 import Html exposing (Html, ul, li, img, a, text)
-import Html.Attributes exposing (href, src, target)
+import Html.Attributes exposing (class, href, src, target)
 import Html.Events exposing (onClick)
 
 import Common.Models exposing (FullCharacter)
@@ -42,5 +42,5 @@ participantListView chapterId allCharacters currentParticipants =
 
     nonParticipantItems = List.map nonParticipantView nonParticipants
   in
-    ul []
+    ul [ class "participants" ]
       (List.append participantItems nonParticipantItems)
