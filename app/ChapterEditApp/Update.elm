@@ -68,41 +68,37 @@ urlUpdate route model =
       _ ->
         (model, Cmd.none)
 
+genericHttpErrorHandler : Model -> Http.Error -> (Model, Cmd Msg)
+genericHttpErrorHandler model error =
+  let
+    errorString = case error of
+                    Http.UnexpectedPayload payload ->
+                      "Bad payload: " ++ payload
+                    Http.BadResponse status body ->
+                      "Got status " ++ (toString status) ++ " with body " ++ body
+                    _ ->
+                      "Network stuff"
+  in
+    ({ model | banner = errorBanner errorString }, Cmd.none)
+
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
   case msg of
     NoOp ->
       (model, Cmd.none)
     ChapterFetchError error ->
-      let
-        errorString = case error of
-                        Http.UnexpectedPayload payload ->
-                          "Bad payload: " ++ payload
-                        Http.BadResponse status body ->
-                          "Got status " ++ (toString status) ++ " with body " ++ body
-                        _ ->
-                          "Network stuff"
-      in
-        ({ model | banner = errorBanner errorString }, Cmd.none)
+      genericHttpErrorHandler model error
     ChapterFetchSuccess chapter ->
       ( { model | chapter = Just chapter }
       , Cmd.batch [ initEditor { elemId = "editor-container"
                                , text = chapter.text
                                }
                   , ChapterEditApp.Api.fetchNarrationInfo chapter.narrationId
+                  , ChapterEditApp.Api.fetchLastReactions chapter.narrationId
                   ]
       )
     NarrationFetchError error ->
-      let
-        errorString = case error of
-                        Http.UnexpectedPayload payload ->
-                          "Bad payload: " ++ payload
-                        Http.BadResponse status body ->
-                          "Got status " ++ (toString status) ++ " with body " ++ body
-                        _ ->
-                          "Network stuff"
-      in
-        ({ model | banner = errorBanner errorString }, Cmd.none)
+      genericHttpErrorHandler model error
     NarrationFetchSuccess narration ->
       let
         (updatedChapter, action) =
@@ -117,6 +113,11 @@ update msg model =
         ( { model | narration = Just narration, chapter = updatedChapter }
         , action
         )
+    LastReactionsFetchError error ->
+      genericHttpErrorHandler model error
+    LastReactionsFetchSuccess lastReactions ->
+      ({ model | lastReactions = Just lastReactions }, Cmd.none)
+
     UpdateChapterTitle newTitle ->
       case model.chapter of
         Just chapter ->

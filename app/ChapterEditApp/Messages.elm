@@ -5,6 +5,7 @@ import Json.Encode
 import Time exposing (Time)
 
 import Common.Models exposing (FullCharacter, Narration, Chapter)
+import ChapterEditApp.Models exposing (LastReactions)
 import ChapterEditApp.Ports
 
 type Msg
@@ -13,6 +14,8 @@ type Msg
   | ChapterFetchSuccess Chapter
   | NarrationFetchError Http.Error
   | NarrationFetchSuccess Narration
+  | LastReactionsFetchError Http.Error
+  | LastReactionsFetchSuccess LastReactions
   | UpdateChapterTitle String
   | UpdateEditorContent Json.Encode.Value
   | UpdateNewImageUrl String

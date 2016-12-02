@@ -630,7 +630,7 @@ class NarrowsStore {
                      REACT.character_id = CHAR.id)
               WHERE CHAR.id = ? AND published IS NOT NULL
            ORDER BY published DESC
-              LIMIT 1 ;`,
+              LIMIT 1`,
             characterId
         );
     }
@@ -641,6 +641,25 @@ class NarrowsStore {
             "run",
             `UPDATE characters SET notes = ? WHERE id = ?`,
             [newNotes, characterId]
+        );
+    }
+
+    getNarrationLastReactions(narrationId) {
+        return Q.ninvoke(
+            this.db,
+            "all",
+            `SELECT MAX(CHAP.published) AS chapterPublished,
+                    CHAP.id AS chapterId, CHAP.title AS chapterTitle,
+                    CHAR.id AS characterId, CHAR.name AS characterName,
+                    R.main_text AS text
+               FROM chapters CHAP
+               JOIN characters CHAR
+                 ON CHAP.narration_id = CHAR.narration_id
+               JOIN reactions R
+                 ON (R.chapter_id = CHAP.id AND R.character_id = CHAR.id)
+              WHERE CHAR.narration_id = ? AND published IS NOT NULL
+           GROUP BY R.character_id`,
+            narrationId
         );
     }
 }

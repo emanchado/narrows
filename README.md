@@ -1,10 +1,10 @@
 TODO
 ====
 
+* Redesign chapter editing page (show previous chapter's text & actions)
 * Try to add a paragraph separator, but make sure it can be marked for
   only certain characters
 * Show background information or whatever to players
-* Redesign chapter editing page (show previous chapter's text & actions)
 * Allow narrators to change password, and create more narrators
 * Really wait until everything is loaded before showing the "Start" button
 * Maybe add an "admin" role so that not all narrators can create users?

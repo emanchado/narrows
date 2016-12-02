@@ -2,7 +2,7 @@ module ChapterEditApp.Models exposing (..)
 
 import Json.Encode
 
-import Common.Models exposing (FullCharacter, Narration, Chapter, Banner)
+import Common.Models exposing (FullCharacter, Character, Narration, Chapter, Banner)
 
 newEmptyChapter : Narration -> Chapter
 newEmptyChapter narration =
@@ -21,9 +21,26 @@ type alias EditorToolState =
   , newMentionTargets : List FullCharacter
   }
 
+type alias LastReactionChapter =
+  { id : Int
+  , title : String
+  }
+
+type alias LastReaction =
+  { chapterInfo : LastReactionChapter
+  , character : Character
+  , text : Maybe String
+  }
+
+type alias LastReactions =
+  { narrationId : Int
+  , reactions : List LastReaction
+  }
+
 type alias Model =
   { chapter : Maybe Chapter
   , narration : Maybe Narration
-  , banner : Maybe Banner
+  , lastReactions : Maybe LastReactions
   , editorToolState : EditorToolState
+  , banner : Maybe Banner
   }

@@ -4,6 +4,9 @@ import Json.Decode as Json exposing (..)
 import Json.Encode
 
 import Common.Models exposing (FullCharacter, Narration, Chapter, FileSet)
+import Common.Api.Json exposing (parseCharacter)
+
+import ChapterEditApp.Models exposing (LastReactions, LastReaction, LastReactionChapter)
 
 parseFullCharacter : Json.Decoder FullCharacter
 parseFullCharacter =
@@ -37,6 +40,25 @@ parseNarration =
     (maybe ("defaultAudio" := string))
     (maybe ("defaultBackgroundImage" := string))
     ("files" := parseFileSet)
+
+parseLastReactionChapter : Json.Decoder LastReactionChapter
+parseLastReactionChapter =
+  Json.object2 LastReactionChapter
+    ("id" := int)
+    ("title" := string)
+
+parseLastReaction : Json.Decoder LastReaction
+parseLastReaction =
+  Json.object3 LastReaction
+    ("chapter" := parseLastReactionChapter)
+    ("character" := parseCharacter)
+    (maybe ("text" := string))
+
+parseLastReactions : Json.Decoder LastReactions
+parseLastReactions =
+  Json.object2 LastReactions
+    ("narrationId" := int)
+    ("lastReactions" := list parseLastReaction)
 
 encodeCharacter : FullCharacter -> Json.Encode.Value
 encodeCharacter character =

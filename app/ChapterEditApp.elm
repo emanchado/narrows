@@ -16,10 +16,11 @@ initialState : Model
 initialState =
   { chapter = Nothing
   , narration = Nothing
-  , banner = Nothing
+  , lastReactions = Nothing
   , editorToolState = { newImageUrl = ""
                       , newMentionTargets = []
                       }
+  , banner = Nothing
   }
 
 update : Msg -> Model -> (Model, Cmd Msg)

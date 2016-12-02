@@ -9,11 +9,15 @@
 
 .two-column {
     display: flex;
+    margin-top: 20px;
 }
 .two-column > section {
     width: 50%;
-    padding-right: 5px;
-    padding-left: 5px;
+    padding-left: 10px;
+}
+.two-column > section:first-child {
+    padding-left: 0;
+    padding-right: 10px;
 }
 .two-column > section > *:first-child {
     margin-top: 0;
@@ -150,4 +154,19 @@ aside ul {
 .reactions.narrator li {
     display: block;
     margin-bottom: 20px;
+}
+
+.last-reactions.narrator {
+    display: block;
+    padding-left: 0;
+}
+.last-reactions.narrator li {
+    display: block;
+    margin-bottom: 20px;
+}
+
+.last-reaction-text {
+    margin-top: 3px;
+    padding: 5px;
+    background: #ddd;
 }

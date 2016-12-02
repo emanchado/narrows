@@ -172,6 +172,25 @@ export function postNarrationFiles(req, res) {
     });
 }
 
+export function getNarrationLastReactions(req, res) {
+    const narrationId = parseInt(req.params.narrId, 10);
+
+    store.getNarrationLastReactions(narrationId).then(lastReactions => {
+        res.json({ narrationId: narrationId,
+                   lastReactions: lastReactions.map(reaction => (
+                       { chapter: { id: reaction.chapterId,
+                                    title: reaction.chapterTitle },
+                         character: { id: reaction.characterId,
+                                      name: reaction.characterName },
+                         text: reaction.text }
+                   )) });
+    }).catch(err => {
+        res.status(500).json({
+            errorMessage: `Cannot add new media file: ${ err }`
+        });
+    });
+}
+
 export function getStaticFile(req, res) {
     res.sendFile(path.join(req.params.narrId, req.params.filename),
                  { root: config.files.path });
