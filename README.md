@@ -1,7 +1,7 @@
 TODO
 ====
 
-* Redesign chapter editing page (show previous chapter's text & actions)
+* Upgrade to the latest ProseMirror
 * Try to add a paragraph separator, but make sure it can be marked for
   only certain characters
 * Show background information or whatever to players

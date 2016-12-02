@@ -1,7 +1,5 @@
 port module ReaderApp.Ports exposing (..)
 
-import Json.Decode
-
 type alias NarrationMediaInfo =
   { audioElemId : String
   }
