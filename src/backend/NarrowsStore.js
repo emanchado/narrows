@@ -644,11 +644,26 @@ class NarrowsStore {
         );
     }
 
-    getNarrationLastReactions(narrationId) {
+    getChapterLastReactions(chapterId) {
         return Q.ninvoke(
             this.db,
-            "all",
-            `SELECT MAX(CHAP.published) AS chapterPublished,
+            "get",
+            `SELECT published, narration_id AS narrationId
+               FROM chapters
+              WHERE id = ?`,
+            chapterId
+        ).then(row => {
+            const binds = [row.narrationId];
+            let extraWhereClause = "";
+            if (row.published) {
+                extraWhereClause += " AND CHAP.published < ?";
+                binds.push(row.published);
+            }
+
+            return Q.ninvoke(
+                this.db,
+                "all",
+                `SELECT MAX(CHAP.published) AS chapterPublished,
                     CHAP.id AS chapterId, CHAP.title AS chapterTitle,
                     CHAR.id AS characterId, CHAR.name AS characterName,
                     R.main_text AS text
@@ -658,9 +673,11 @@ class NarrowsStore {
                JOIN reactions R
                  ON (R.chapter_id = CHAP.id AND R.character_id = CHAR.id)
               WHERE CHAR.narration_id = ? AND published IS NOT NULL
+                    ${ extraWhereClause }
            GROUP BY R.character_id`,
-            narrationId
-        );
+                binds
+            );
+        });
     }
 }
 

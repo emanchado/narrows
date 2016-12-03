@@ -4,7 +4,7 @@ import String
 import Html exposing (Html, div, span, li, strong, text)
 import Html.Attributes exposing (class)
 
-import Common.Models exposing (MessageThread, Message)
+import Common.Models exposing (MessageThread, Message, Banner)
 
 messageView : Message -> Html msg
 messageView message =
@@ -46,3 +46,12 @@ threadView thread characterId =
   in
     li []
       (participantsDiv :: List.map messageView thread.messages)
+
+bannerView : Maybe Banner -> Html msg
+bannerView maybeBanner =
+  case maybeBanner of
+    Just banner ->
+      div [ class <| "banner banner-" ++ banner.type' ]
+        [ text banner.text ]
+    Nothing ->
+      text ""

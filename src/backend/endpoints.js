@@ -172,11 +172,11 @@ export function postNarrationFiles(req, res) {
     });
 }
 
-export function getNarrationLastReactions(req, res) {
-    const narrationId = parseInt(req.params.narrId, 10);
+export function getChapterLastReactions(req, res) {
+    const chapterId = parseInt(req.params.chptId, 10);
 
-    store.getNarrationLastReactions(narrationId).then(lastReactions => {
-        res.json({ narrationId: narrationId,
+    store.getChapterLastReactions(chapterId).then(lastReactions => {
+        res.json({ chapterId: chapterId,
                    lastReactions: lastReactions.map(reaction => (
                        { chapter: { id: reaction.chapterId,
                                     title: reaction.chapterTitle },

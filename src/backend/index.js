@@ -38,12 +38,12 @@ app.get("/api/narrations/:narrId", middlewares.apiAuth, endpoints.getNarration);
 app.get("/api/narrations/:narrId/chapters", middlewares.apiAuth, endpoints.getNarrationChapters);
 app.post("/api/narrations/:narrId/chapters", middlewares.apiAuth, endpoints.postNewChapter);
 app.post("/api/narrations/:narrId/files", middlewares.apiAuth, endpoints.postNarrationFiles);
-app.get("/api/narrations/:narrId/last-reactions", middlewares.apiAuth, endpoints.getNarrationLastReactions);
 
 app.get("/api/chapters/:chptId", middlewares.apiAuth, endpoints.getChapter);
 app.put("/api/chapters/:chptId", middlewares.apiAuth, endpoints.putChapter);
 app.get("/api/chapters/:chptId/interactions", middlewares.apiAuth, endpoints.getChapterInteractions);
 app.post("/api/chapters/:chptId/messages", middlewares.apiAuth, endpoints.postChapterMessages);
+app.get("/api/chapters/:chptId/last-reactions", middlewares.apiAuth, endpoints.getChapterLastReactions);
 
 app.get("/api/chapters/:chptId/:charToken", endpoints.getChapterCharacter);
 app.put("/api/reactions/:chptId/:charToken", endpoints.putReactionCharacter);

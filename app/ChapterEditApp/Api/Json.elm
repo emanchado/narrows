@@ -57,7 +57,7 @@ parseLastReaction =
 parseLastReactions : Json.Decoder LastReactions
 parseLastReactions =
   Json.object2 LastReactions
-    ("narrationId" := int)
+    ("chapterId" := int)
     ("lastReactions" := list parseLastReaction)
 
 encodeCharacter : FullCharacter -> Json.Encode.Value

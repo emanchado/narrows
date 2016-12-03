@@ -33,7 +33,7 @@ type alias LastReaction =
   }
 
 type alias LastReactions =
-  { narrationId : Int
+  { chapterId : Int
   , reactions : List LastReaction
   }
 

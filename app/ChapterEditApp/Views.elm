@@ -8,6 +8,8 @@ import Html.Attributes exposing (id, name, class, href, src, target, type', valu
 import Html.Events exposing (onClick, onInput, on)
 
 import Common.Models exposing (FullCharacter, Narration, Chapter)
+import Common.Views exposing (bannerView)
+
 import ChapterEditApp.Models exposing (Model, EditorToolState, LastReactions, LastReaction)
 import ChapterEditApp.Messages exposing (..)
 import ChapterEditApp.Views.FileSelector exposing (fileSelector)
@@ -211,13 +213,14 @@ mainView model =
                em [] [ text "New chapter" ]
              else
                text chapter.title)
-          , div [ class "two-column" ]
-              [ case model.lastReactions of
-                  Just lastReactions ->
-                    lastReactionListView lastReactions chapter
-                  Nothing ->
-                    text "No reactions"
-              , chapterView chapter narration model.editorToolState
-              ]
+          ]
+      , bannerView model.banner
+      , div [ class "two-column" ]
+          [ case model.lastReactions of
+              Just lastReactions ->
+                lastReactionListView lastReactions chapter
+              Nothing ->
+                section [] [ text "No reactions" ]
+          , chapterView chapter narration model.editorToolState
           ]
       ]

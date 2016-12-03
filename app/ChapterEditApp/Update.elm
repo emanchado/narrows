@@ -94,7 +94,7 @@ update msg model =
                                , text = chapter.text
                                }
                   , ChapterEditApp.Api.fetchNarrationInfo chapter.narrationId
-                  , ChapterEditApp.Api.fetchLastReactions chapter.narrationId
+                  , ChapterEditApp.Api.fetchLastReactions chapter.id
                   ]
       )
     NarrationFetchError error ->

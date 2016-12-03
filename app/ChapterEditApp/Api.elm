@@ -24,10 +24,10 @@ fetchNarrationInfo narrationId =
       (Http.get parseNarration narrationApiUrl)
 
 fetchLastReactions : Int -> Cmd Msg
-fetchLastReactions narrationId =
+fetchLastReactions chapterId =
   let
     lastReactionsApiUrl =
-      "/api/narrations/" ++ (toString narrationId) ++ "/last-reactions"
+      "/api/chapters/" ++ (toString chapterId) ++ "/last-reactions"
   in
     Task.perform LastReactionsFetchError LastReactionsFetchSuccess
       (Http.get parseLastReactions lastReactionsApiUrl)
