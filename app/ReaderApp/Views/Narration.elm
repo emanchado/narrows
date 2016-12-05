@@ -2,7 +2,7 @@ module ReaderApp.Views.Narration exposing (view)
 
 import String
 import Html exposing (Html, h2, div, span, a, input, textarea, strong, text, img, label, button, br, audio, ul, li)
-import Html.Attributes exposing (id, class, style, for, src, href, target, type', checked, preload, loop, alt, value, rows, placeholder)
+import Html.Attributes exposing (id, class, style, for, src, href, target, type', checked, preload, loop, alt, defaultValue, rows, placeholder)
 import Html.Events exposing (onClick, onInput)
 
 import ReaderApp.Models exposing (Model, Chapter, ParticipantCharacter, Banner)
@@ -82,9 +82,9 @@ reactionView model =
               [ textarea [ placeholder "You can write some notes here. These are remembered between chapters!"
                          , rows 10
                          , onInput UpdateNotesText
-                         , value (case character.notes of
-                                    Just notes -> notes
-                                    Nothing -> "")
+                         , defaultValue (case character.notes of
+                                           Just notes -> notes
+                                           Nothing -> "")
                          ]
                   []
               ]
@@ -124,7 +124,7 @@ reactionView model =
                                           "")) ]
         [ textarea [ placeholder "What do you do? Try to consider several possibilities…"
                    , rows 10
-                   , value model.reaction
+                   , defaultValue model.reaction
                    , onInput UpdateReactionText
                    ]
             []
