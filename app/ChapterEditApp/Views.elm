@@ -168,6 +168,7 @@ reactionView reaction =
     [ strong [] [ text reaction.character.name ]
     , text ", in chapter "
     , strong [] [ text reaction.chapterInfo.title ]
+    , text ":"
     , div [ class "last-reaction-text" ]
         [ case reaction.text of
             Just reactionText ->
