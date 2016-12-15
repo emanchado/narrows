@@ -1,6 +1,11 @@
 TODO
 ====
 
+* Make sure reactions are also fetched on the first screen of chapter
+  creation
+  * Bah, not so easy
+  * Reactions are taken for a chapter, maybe they should be taken for
+    a list of participants and an optional cut-off publishing date?
 * Upgrade to the latest ProseMirror
 * Try to add a paragraph separator, but make sure it can be marked for
   only certain characters
@@ -27,6 +32,9 @@ Credits
 * Add/plus icon by [Lucy G](http://www.flaticon.com/authors/lucy-g),
   from [Flaticon](http://www.flaticon.com). Licensed under Creative
   Commons BY 3.0.
-* RSS icon by Dave Gandy](http://www.flaticon.com/authors/dave-gandy)
+* RSS icon by [Dave Gandy](http://www.flaticon.com/authors/dave-gandy)
   from [Flaticon](http://www.flaticon.com). Licensed under Creative
   Commons BY 3.0.
+* Vintage divider by
+  [Web Design Hot](http://www.webdesignhot.com/free-vector-%20graphics/vector-set-of-vintage-design-divider-elements/). Licensed
+  under Creative Commons BY 3.0.
