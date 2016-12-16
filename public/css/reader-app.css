@@ -105,6 +105,18 @@
     font-style: italic;
 }
 
+.chapter > hr {
+    min-height: 20px;
+    min-width: 486px;
+    max-width: 50em;
+
+    border: none;
+    margin: 0 auto;
+    padding: 10px 20px;
+
+    background: url(/img/separator.png) no-repeat center #e5e5e5;
+}
+
 .interaction {
     position: relative;
     z-index: 5;
