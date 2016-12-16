@@ -25,7 +25,7 @@ app.ports.renderChapter.subscribe(evt => {
     }
     const importedText = editor.importText(evt.text);
     elem.innerHTML = "";
-    elem.appendChild(importedText.content.toDOM());
+    elem.appendChild(editor.exportTextToDOM(importedText));
 });
 
 app.ports.startNarration.subscribe(evt => {
@@ -72,20 +72,21 @@ document.addEventListener("scroll", function(evt) {
 /*
  * Ports for the narrator app
  */
-const editors = {};
+const editorViews = {};
 app.ports.initEditor.subscribe(evt => {
-    if (editors.hasOwnProperty(evt.elemId)) {
-        editors[evt.elemId].setDoc(editor.importText(evt.text));
+    if (editorViews.hasOwnProperty(evt.elemId)) {
+        editorViews[evt.elemId].setDoc(evt.text);
     } else {
         const container = document.getElementById(evt.elemId);
-        editors[evt.elemId] =
-            editor.create(editor.importText(evt.text), container, m => {
-                app.ports.editorContentChanged.send(editor.exportText(m));
+        editorViews[evt.elemId] =
+            editor.create(evt.text, container, () => {
+                const self = editorViews[evt.elemId];
+                app.ports.editorContentChanged.send(editor.exportText(self.editor));
             });
     }
 });
 app.ports.addImage.subscribe(evt => {
-    const editorInstance = editors[evt.editor];
+    const editorInstance = editorViews[evt.editor];
     if (!editorInstance) {
         return;
     }
@@ -93,7 +94,7 @@ app.ports.addImage.subscribe(evt => {
     editor.addImage(editorInstance, evt.imageUrl);
 });
 app.ports.addMention.subscribe(evt => {
-    const editorInstance = editors[evt.editor];
+    const editorInstance = editorViews[evt.editor];
     if (!editorInstance) {
         return;
     }

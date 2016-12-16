@@ -1,39 +1,25 @@
-const prosemirror = require("prosemirror");
-const schemaInfo = require("./narrows-schema"),
-      narrowsSchema = schemaInfo.schema,
-      MentionMark = schemaInfo.MentionMark;
-const schemaBasic = require("prosemirror/dist/schema-basic"),
-      BlockQuote = schemaBasic.BlockQuote;
-const model = require("prosemirror/dist/model"),
-      Schema = model.Schema,
-      Mark = model.Mark,
-      MarkType = model.MarkType,
-      Attribute = model.Attribute,
-      Fragment = model.Fragment,
-      Node = model.Node;
-const ir = require("prosemirror/dist/inputrules");
-
-const proseMirrorPlugins = [
-    ir.inputRules.config({
-        rules: ir.allInputRules.concat(
-            ir.blockQuoteRule(narrowsSchema.nodes.blockquote),
-            ir.bulletListRule(narrowsSchema.nodes.bullet_list),
-            ir.orderedListRule(narrowsSchema.nodes.ordered_list)
-        )
-    })
-];
+const {EditorState} = require("prosemirror-state");
+const {MenuBarEditorView} = require("prosemirror-menu");
+const {Node, DOMSerializer} = require("prosemirror-model");
+const {schema: narrowsSchema} = require("./narrows-schema");
+const {editorSetup} = require("./setup");
 
 function create(initialContent, place, onChangeHandler) {
-    const editor = new prosemirror.ProseMirror({
-        schema: narrowsSchema,
-        plugins: proseMirrorPlugins,
-        doc: initialContent,
-        place: place
+    const state = EditorState.create({
+        doc: importText(initialContent),
+        plugins: editorSetup({schema: narrowsSchema})
     });
 
-    editor.on.transform.add(onChangeHandler);
+    const view = new MenuBarEditorView(place, {
+        state: state,
+        images: ["church.jpg", "charleston.jpg"],
+        onAction(action) {
+            onChangeHandler(action);
+            view.updateState(view.editor.state.applyAction(action));
+        }
+    });
 
-    return editor;
+    return view;
 }
 
 function importText(text) {
@@ -44,30 +30,25 @@ function importText(text) {
 }
 
 function exportText(editor) {
-    return editor.doc.toJSON();
+    return editor.state.doc.toJSON();
 }
 
-function addImage(editor, imageUrl) {
-    const imageNodeType = narrowsSchema.nodes.image,
-          attrs = { src: imageUrl };
-
-    editor.tr.replaceSelection(imageNodeType.create(attrs)).apply();
+function exportTextToDOM(text) {
+    const serializer = DOMSerializer.fromSchema(narrowsSchema);
+    return serializer.serializeFragment(text.content);
 }
 
-function addMention(editor, characters) {
-    const {from, to} = editor.selection;
+function addMention(editorView, characters) {
+    const {from, to} = editorView.editor.state.selection;
+    const mark = schema.mark("mention", {mentionTargets: characters});
 
-    var type = new MentionMark("mention", 0, narrowsSchema);
-    editor.tr.addMark(
-        from,
-        to,
-        type.create({ mentionTargets: characters })
-    ).applyAndScroll();
+    const transf = state.tr.addMark(from, to, mark);
+    editorView.props.onAction(transf.scrollAction());
 }
 
 module.exports.schema = narrowsSchema;
 module.exports.create = create;
 module.exports.importText = importText;
 module.exports.exportText = exportText;
-module.exports.addImage = addImage;
+module.exports.exportTextToDOM = exportTextToDOM;
 module.exports.addMention = addMention;
