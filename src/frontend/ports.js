@@ -85,6 +85,14 @@ app.ports.initEditor.subscribe(evt => {
             });
     }
 });
+app.ports.updateParticipants.subscribe(evt => {
+    const editorInstance = editorViews[evt.editor];
+    if (!editorInstance) {
+        return;
+    }
+
+    editor.updateParticipants(editorInstance, evt.participantList);
+});
 app.ports.addImage.subscribe(evt => {
     const editorInstance = editorViews[evt.editor];
     if (!editorInstance) {

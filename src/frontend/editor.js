@@ -38,6 +38,10 @@ function exportTextToDOM(text) {
     return serializer.serializeFragment(text.content);
 }
 
+function updateParticipants(editorView, participants) {
+    editorView.props.participants = participants;
+}
+
 function addMention(editorView, characters) {
     const {from, to} = editorView.editor.state.selection;
     const mark = schema.mark("mention", {mentionTargets: characters});
@@ -51,4 +55,5 @@ module.exports.create = create;
 module.exports.importText = importText;
 module.exports.exportText = exportText;
 module.exports.exportTextToDOM = exportTextToDOM;
+module.exports.updateParticipants = updateParticipants;
 module.exports.addMention = addMention;

@@ -15,6 +15,11 @@ type alias AddImageInfo =
   , imageUrl : String
   }
 
+type alias UpdateParticipantsInfo =
+  { editor : String
+  , participantList : List FullCharacter
+  }
+
 type alias AddMentionInfo =
   { editor : String
   , targets : List FullCharacter
@@ -37,6 +42,7 @@ type alias FileUploadSuccess =
 
 port initEditor : InitEditorInfo -> Cmd msg
 port addImage : AddImageInfo -> Cmd msg
+port updateParticipants : UpdateParticipantsInfo -> Cmd msg
 port addMention : AddMentionInfo -> Cmd msg
 port playPauseAudioPreview : String -> Cmd msg
 port openFileInput : String -> Cmd msg

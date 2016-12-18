@@ -15,7 +15,7 @@ import ChapterEditApp.Api
 import ChapterEditApp.Api.Json exposing (parseChapter)
 import ChapterEditApp.Messages exposing (..)
 import ChapterEditApp.Models exposing (..)
-import ChapterEditApp.Ports exposing (initEditor, addImage, addMention, playPauseAudioPreview, openFileInput, uploadFile)
+import ChapterEditApp.Ports exposing (initEditor, addImage, updateParticipants, addMention, playPauseAudioPreview, openFileInput, uploadFile)
 
 
 errorBanner : String -> Maybe Banner
@@ -183,7 +183,11 @@ update msg model =
             chapterWithCharacter =
               { chapter | participants = participantsWithCharacter }
           in
-            ({ model | chapter = Just chapterWithCharacter }, Cmd.none)
+            ( { model | chapter = Just chapterWithCharacter }
+            , updateParticipants { editor = "editor-container"
+                                 , participantList = participantsWithCharacter
+                                 }
+            )
         Nothing ->
           (model, Cmd.none)
     RemoveParticipant character ->
@@ -195,7 +199,11 @@ update msg model =
             chapterWithoutCharacter =
               { chapter | participants = participantsWithoutCharacter }
           in
-            ({ model | chapter = Just chapterWithoutCharacter }, Cmd.none)
+            ( { model | chapter = Just chapterWithoutCharacter }
+            , updateParticipants { editor = "editor-container"
+                                 , participantList = participantsWithoutCharacter
+                                 }
+            )
         Nothing ->
           (model, Cmd.none)
 

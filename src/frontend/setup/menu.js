@@ -1,7 +1,5 @@
 const {wrapItem, blockTypeItem, Dropdown, DropdownSubmenu, joinUpItem, liftItem,
        selectParentNodeItem, undoItem, redoItem, icons, MenuItem} = require("prosemirror-menu")
-// const {createTable, addColumnBefore, addColumnAfter,
-//        removeColumn, addRowBefore, addRowAfter, removeRow} = require("prosemirror-schema-table")
 const {toggleMark} = require("prosemirror-commands")
 const {wrapInList} = require("prosemirror-schema-list")
 const {TextField, SelectField, openPrompt} = require("./prompt")
@@ -49,33 +47,6 @@ function insertImageItem(nodeType) {
 function positiveInteger(value) {
   if (!/^[1-9]\d*$/.test(value)) return "Should be a positive integer"
 }
-
-// function insertTableItem(tableType) {
-//   return new MenuItem({
-//     title: "Insert a table",
-//     run(_, _a, view) {
-//       openPrompt({
-//         title: "Insert table",
-//         fields: {
-//           rows: new TextField({label: "Rows", validate: positiveInteger}),
-//           cols: new TextField({label: "Columns", validate: positiveInteger})
-//         },
-//         callback({rows, cols}) {
-//           view.props.onAction(view.state.tr.replaceSelectionWith(createTable(tableType, +rows, +cols)).scrollAction())
-//         }
-//       })
-//     },
-//     select(state) {
-//       let $from = state.selection.$from
-//       for (let d = $from.depth; d >= 0; d--) {
-//         let index = $from.index(d)
-//         if ($from.node(d).canReplaceWith(index, index, tableType)) return true
-//       }
-//       return false
-//     },
-//     label: "Table"
-//   })
-// }
 
 function cmdItem(cmd, options) {
   let passedOptions = {
@@ -128,6 +99,20 @@ function linkItem(markType) {
           toggleMark(markType, attrs)(view.state, view.props.onAction)
         }
       })
+    }
+  })
+}
+
+function mentionItem(markType) {
+  return markItem(markType, {
+    title: "Insert mention",
+    run(state, onAction, view) {
+      if (markActive(state, markType)) {
+        toggleMark(markType)(state, onAction)
+        return true
+      }
+      const mentionedCharacters = view.props.participants.slice(0, 1)
+      toggleMark(markType, {mentionTargets: mentionedCharacters})(view.state, view.props.onAction)
     }
   })
 }
@@ -213,6 +198,8 @@ function buildMenuItems(schema) {
 
   if (type = schema.nodes.image)
     r.insertImage = insertImageItem(type)
+  if (type = schema.marks.mention)
+    r.insertMention = mentionItem(type, {title: "Toggle character mention"})
   if (type = schema.nodes.bullet_list)
     r.wrapBulletList = wrapListItem(type, {
       title: "Wrap in bullet list",
@@ -254,19 +241,9 @@ function buildMenuItems(schema) {
       run(state, onAction) { onAction(state.tr.replaceSelectionWith(hr.create()).action()) }
     })
   }
-  // if (type = schema.nodes.table)
-  //   r.insertTable = insertTableItem(type)
-  // if (type = schema.nodes.table_row) {
-  //   r.addRowBefore = cmdItem(addRowBefore, {title: "Add row before"})
-  //   r.addRowAfter = cmdItem(addRowAfter, {title: "Add row after"})
-  //   r.removeRow = cmdItem(removeRow, {title: "Remove row"})
-  //   r.addColumnBefore = cmdItem(addColumnBefore, {title: "Add column before"})
-  //   r.addColumnAfter = cmdItem(addColumnAfter, {title: "Add column after"})
-  //   r.removeColumn = cmdItem(removeColumn, {title: "Remove column"})
-  // }
 
   let cut = arr => arr.filter(x => x)
-  r.insertMenu = new Dropdown(cut([r.insertImage, r.insertHorizontalRule, r.insertTable]), {label: "Insert"})
+  r.insertMenu = new Dropdown(cut([r.insertImage, r.insertMention, r.insertHorizontalRule, r.insertTable]), {label: "Insert"})
   r.typeMenu = new Dropdown(cut([r.makeParagraph, r.makeCodeBlock, r.makeHead1 && new DropdownSubmenu(cut([
     r.makeHead1, r.makeHead2, r.makeHead3, r.makeHead4, r.makeHead5, r.makeHead6
   ]), {label: "Heading"})]), {label: "Type..."})

@@ -6,9 +6,6 @@ TODO
   * Bah, not so easy
   * Reactions are taken for a chapter, maybe they should be taken for
     a list of participants and an optional cut-off publishing date?
-* Upgrade to the latest ProseMirror
-* Try to add a paragraph separator, but make sure it can be marked for
-  only certain characters
 * Show background information or whatever to players
 * Allow narrators to change password, and create more narrators
 * Really wait until everything is loaded before showing the "Start" button

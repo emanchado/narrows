@@ -54,6 +54,15 @@ input, .ProseMirror-content {
     max-width: 100%;
 }
 
+#editor-container .ProseMirror-content hr {
+    min-height: 20px;
+    border: none;
+    margin: 0 auto;
+    padding: 10px 20px;
+
+    background: url(/img/separator.png) no-repeat center;
+}
+
 main.page-aside {
     display: flex;
 }
