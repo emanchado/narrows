@@ -1,6 +1,8 @@
 TODO
 ====
 
+* Re-add the "*" shortcut for lists
+* Send changes back to Elm!
 * Make sure reactions are also fetched on the first screen of chapter
   creation
   * Bah, not so easy

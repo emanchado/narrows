@@ -221,7 +221,11 @@ mainView model =
               Just lastReactions ->
                 lastReactionListView lastReactions chapter
               Nothing ->
-                section [] [ text "No reactions" ]
+                section []
+                  [ text <| if chapter.id == 0 then
+                              "Reactions will be loaded after saving the first version."
+                            else
+                              "No reactions." ]
           , chapterView chapter narration model.editorToolState
           ]
       ]

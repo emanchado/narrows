@@ -35,6 +35,7 @@ input, .ProseMirror-content {
     width: 100%;
     margin: 0;
     margin-bottom: 15px;
+    border: 1px solid black;
 }
 
 #editor-container .ProseMirror-content {

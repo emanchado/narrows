@@ -13,9 +13,9 @@ function create(initialContent, place, onChangeHandler) {
     const view = new MenuBarEditorView(place, {
         state: state,
         images: ["church.jpg", "charleston.jpg"],
-        onAction(action) {
-            onChangeHandler(action);
-            view.updateState(view.editor.state.applyAction(action));
+        dispatchTransaction: tr => {
+            view.updateState(view.editor.state.apply(tr));
+            onChangeHandler();
         }
     });
 
@@ -24,7 +24,7 @@ function create(initialContent, place, onChangeHandler) {
 
 function importText(text) {
     if (!text) {
-        return null;
+        return undefined;
     }
     return Node.fromJSON(narrowsSchema, text);
 }
