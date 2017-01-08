@@ -1,8 +1,9 @@
 TODO
 ====
 
-* Re-add the "*" shortcut for lists
-* Send changes back to Elm!
+* Add interface for the mentions
+* Add image selector in the editor (to add and upload images)
+* Add e-mail notifications
 * Make sure reactions are also fetched on the first screen of chapter
   creation
   * Bah, not so easy
