@@ -164,7 +164,7 @@ class SelectField extends Field {
       let opt = select.appendChild(document.createElement("option"))
       opt.value = o.value
       opt.selected = o.value == this.options.value
-      opt.label = o.label
+      opt.textContent = o.label
     })
     return select
   }
