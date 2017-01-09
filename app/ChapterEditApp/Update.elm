@@ -90,10 +90,7 @@ update msg model =
       genericHttpErrorHandler model error
     ChapterFetchSuccess chapter ->
       ( { model | chapter = Just chapter }
-      , Cmd.batch [ initEditor { elemId = "editor-container"
-                               , text = chapter.text
-                               }
-                  , ChapterEditApp.Api.fetchNarrationInfo chapter.narrationId
+      , Cmd.batch [ ChapterEditApp.Api.fetchNarrationInfo chapter.narrationId
                   , ChapterEditApp.Api.fetchLastReactions chapter.id
                   ]
       )
@@ -105,10 +102,18 @@ update msg model =
           case model.chapter of
             Nothing -> ( Just (newEmptyChapter narration)
                        , initEditor { elemId = "editor-container"
+                                    , narrationId = narration.id
+                                    , narrationImages = narration.files.images
                                     , text = Json.Encode.null
                                     }
                        )
-            _ -> (model.chapter, Cmd.none)
+            Just ch -> ( model.chapter
+                       , initEditor { elemId = "editor-container"
+                                    , narrationId = narration.id
+                                    , narrationImages = narration.files.images
+                                    , text = ch.text
+                                    }
+                       )
       in
         ( { model | narration = Just narration, chapter = updatedChapter }
         , action

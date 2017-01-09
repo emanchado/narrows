@@ -84,6 +84,8 @@ app.ports.initEditor.subscribe(evt => {
                 app.ports.editorContentChanged.send(editor.exportText(self.editor));
             });
     }
+    editorViews[evt.elemId].props.narrationId = evt.narrationId;
+    editorViews[evt.elemId].props.images = evt.narrationImages;
 });
 app.ports.updateParticipants.subscribe(evt => {
     const editorInstance = editorViews[evt.editor];

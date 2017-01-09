@@ -12,7 +12,7 @@ function create(initialContent, place, onChangeHandler) {
 
     const view = new MenuBarEditorView(place, {
         state: state,
-        images: ["church.jpg", "charleston.jpg"],
+        images: [],
         dispatchTransaction: tr => {
             view.updateState(view.editor.state.apply(tr));
             onChangeHandler();

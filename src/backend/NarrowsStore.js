@@ -481,7 +481,7 @@ class NarrowsStore {
      */
     addMediaFile(narrationId, filename, tmpPath, type) {
         type = type ||
-            AUDIO_REGEXP.test(filename) ? "audio" : "backgroundImages";
+            (AUDIO_REGEXP.test(filename) ? "audio" : "backgroundImages");
         const filesDir = path.join(config.files.path, narrationId.toString());
         const typeDir = type === "backgroundImages" ?
                   "background-images" : type;

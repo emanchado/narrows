@@ -7,6 +7,8 @@ import Common.Models exposing (FullCharacter)
 
 type alias InitEditorInfo =
   { elemId : String
+  , narrationId : Int
+  , narrationImages : List String
   , text : Json.Decode.Value
   }
 

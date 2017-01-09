@@ -3,6 +3,7 @@ const {wrapItem, blockTypeItem, Dropdown, DropdownSubmenu, joinUpItem, liftItem,
 const {toggleMark} = require("prosemirror-commands")
 const {wrapInList} = require("prosemirror-schema-list")
 const {TextField, SelectField, openPrompt} = require("./prompt")
+const {FileUploaderField} = require("./prompt-extra")
 
 // Helpers to create specific types of items
 
@@ -16,32 +17,36 @@ function canInsert(state, nodeType, attrs) {
 }
 
 function insertImageItem(nodeType) {
-  return new MenuItem({
-    title: "Insert image",
-    label: "Image",
-    select(state) { return canInsert(state, nodeType) },
-    run(state, _, view) {
-      let {node, from, to} = state.selection, attrs = nodeType && node && node.type == nodeType && node.attrs
-      openPrompt({
+    return new MenuItem({
         title: "Insert image",
-        fields: {
-            src: new SelectField({label: "Location",
-                                  required: true,
-                                  selected: attrs && attrs.src,
-                                  options: view.props.images.map(i => ({value: i, label: i}))}),
-          title: new TextField({label: "Title", value: attrs && attrs.title}),
-          alt: new TextField({label: "Description",
-                              value: attrs ? attrs.title : state.doc.textBetween(from, to, " ")})
-        },
-        // FIXME this (and similar uses) won't have the current state
-        // when it runs, leading to problems in, for example, a
-        // collaborative setup
-        callback(attrs) {
-          view.props.onAction(view.state.tr.replaceSelectionWith(nodeType.createAndFill(attrs)).action())
+        label: "Image",
+        select(state) { return canInsert(state, nodeType) },
+        run(state, _, view) {
+            let {node} = state.selection, attrs = nodeType && node &&
+                    node.type == nodeType && node.attrs;
+            const uploadUrl = `/api/narrations/${view.props.narrationId}/images`;
+
+            openPrompt({
+                title: "Choose an image",
+                fields: {
+                    src: new SelectField({label: "Image",
+                                          required: true,
+                                          selected: attrs && attrs.src,
+                                          options: view.props.images.map(img => ({value: img, label: img}))}),
+                    uploader: new FileUploaderField({required: false,
+                                                     url: uploadUrl})
+                },
+                // FIXME this (and similar uses) won't have the current state
+                // when it runs, leading to problems in, for example, a
+                // collaborative setup
+                callback(attrs) {
+                    const imageUrl = `/static/narrations/${view.props.narrationId}/images/${attrs.uploader || attrs.src}`;
+                    view.dispatch(view.state.tr.replaceSelectionWith(nodeType.createAndFill({src: imageUrl})));
+                    view.focus();
+                }
+            });
         }
-      })
-    }
-  })
+    });
 }
 
 function positiveInteger(value) {
