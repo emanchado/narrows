@@ -172,6 +172,31 @@ export function postNarrationFiles(req, res) {
     });
 }
 
+function uploadFile(req, res, type) {
+    const narrationId = parseInt(req.params.narrId, 10);
+
+    const form = new formidable.IncomingForm();
+    form.uploadDir = config.files.tmpPath;
+
+    Q.ninvoke(form, "parse", req).spread(function(fields, files) {
+        var uploadedFileInfo = files.file,
+            filename = path.basename(uploadedFileInfo.name),
+            tmpPath = uploadedFileInfo.path;
+
+        return store.addMediaFile(narrationId, filename, tmpPath, type);
+    }).then(fileInfo => {
+        res.json(fileInfo);
+    }).catch(err => {
+        res.status(500).json({
+            errorMessage: `Cannot add new media file: ${ err }`
+        });
+    });
+}
+
+export function postNarrationImages(req, res) {
+    uploadFile(req, res, "images");
+}
+
 export function getChapterLastReactions(req, res) {
     const chapterId = parseInt(req.params.chptId, 10);
 

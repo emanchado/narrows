@@ -479,14 +479,15 @@ class NarrowsStore {
      * Adds a media file to the given narration, specifying its
      * filename and a temporary path where the file lives.
      */
-    addMediaFile(narrationId, filename, tmpPath) {
+    addMediaFile(narrationId, filename, tmpPath, type) {
+        type = type ||
+            AUDIO_REGEXP.test(filename) ? "audio" : "backgroundImages";
         const filesDir = path.join(config.files.path, narrationId.toString());
-        const type = AUDIO_REGEXP.test(filename) ? "audio" : "backgroundImages";
-        const typeDir = type === "audio" ? "audio" : "background-images";
+        const typeDir = type === "backgroundImages" ?
+                  "background-images" : type;
         const finalPath = path.join(filesDir, typeDir, filename);
 
         return Q.nfcall(fs.move, tmpPath, finalPath).then(() => {
-
             return { name: filename, type: type };
         });
     }
