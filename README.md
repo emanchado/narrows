@@ -1,14 +1,10 @@
 TODO
 ====
 
+* Make sure you can upload images with the same name (renaming or whatever)
+* Make sure you can upload the first image!
 * Add interface for the mentions
-* Add image selector in the editor (to add and upload images)
 * Add e-mail notifications
-* Make sure reactions are also fetched on the first screen of chapter
-  creation
-  * Bah, not so easy
-  * Reactions are taken for a chapter, maybe they should be taken for
-    a list of participants and an optional cut-off publishing date?
 * Show background information or whatever to players
 * Allow narrators to change password, and create more narrators
 * Really wait until everything is loaded before showing the "Start" button
