@@ -29,21 +29,19 @@ app.ports.renderChapter.subscribe(evt => {
 });
 
 app.ports.startNarration.subscribe(evt => {
-    const breathHoldingTime = 700;
+    // Fade audio in
+    const audioEl = document.getElementById(evt.audioElemId);
+    if (!audioEl) {
+        return;
+    }
+    audioEl.volume = 0.1;
+    audioEl.play();
+    bumpVolume(audioEl);
 
-    // Make chapter fade-in after a short pause (breathHoldingTime
-    // above)
+    // Make chapter text fade-in after a short pause
+    const breathHoldingTime = 700;
     setTimeout(() => {
         app.ports.markNarrationAsStarted.send(breathHoldingTime);
-
-        // Fade audio in, too
-        const audioEl = document.getElementById(evt.audioElemId);
-        if (!audioEl) {
-            return;
-        }
-        audioEl.volume = 0.1;
-        audioEl.play();
-        bumpVolume(audioEl);
     }, breathHoldingTime);
 });
 
