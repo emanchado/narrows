@@ -58,6 +58,18 @@ function filesInDir(dir) {
     return Q.nfcall(fs.readdir, dir).catch(() => []);
 }
 
+function getFinalFilename(dir, filename) {
+    const probePath = path.join(dir, filename);
+
+    return Q.nfcall(fs.access, probePath).then(() => {
+        const ext = path.extname(filename);
+        const basename = path.basename(filename, ext);
+        const newFilename = `${basename} copy${ext}`;
+
+        return getFinalFilename(dir, newFilename);
+    }).catch(() => probePath);
+}
+
 class NarrowsStore {
     constructor(dbPath, narrationDir) {
         this.dbPath = dbPath;
@@ -485,10 +497,13 @@ class NarrowsStore {
         const filesDir = path.join(config.files.path, narrationId.toString());
         const typeDir = type === "backgroundImages" ?
                   "background-images" : type;
-        const finalPath = path.join(filesDir, typeDir, filename);
+        const finalDir = path.join(filesDir, typeDir);
 
-        return Q.nfcall(fs.move, tmpPath, finalPath).then(() => {
-            return { name: filename, type: type };
+        return getFinalFilename(finalDir, filename).then(finalPath => {
+            return Q.nfcall(fs.move, tmpPath, finalPath).then(() => ({
+                name: path.basename(finalPath),
+                type: type
+            }));
         });
     }
 

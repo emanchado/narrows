@@ -1,8 +1,8 @@
 TODO
 ====
 
-* Make sure you can upload images with the same name (renaming or whatever)
-* Make sure you can upload the first image!
+* Make sure you can upload the first image! (required: false? but
+  then, check on the callback)
 * Add interface for the mentions
 * Add e-mail notifications
 * Show background information or whatever to players
