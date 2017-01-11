@@ -41,6 +41,7 @@ label {
 
 #start-ui button {
     padding: 20px 30px;
+    background-color: buttonface; /* Needed for Firefox for some reason */
 }
 #start-ui label {
     font-size: 14px;
