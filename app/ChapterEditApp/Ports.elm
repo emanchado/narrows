@@ -9,6 +9,7 @@ type alias InitEditorInfo =
   { elemId : String
   , narrationId : Int
   , narrationImages : List String
+  , chapterParticipants : List FullCharacter
   , text : Json.Decode.Value
   }
 

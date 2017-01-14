@@ -42,13 +42,13 @@ function updateParticipants(editorView, participants) {
     editorView.props.participants = participants;
 }
 
-function addMention(editorView, characters) {
-    const {from, to} = editorView.editor.state.selection;
-    const mark = schema.mark("mention", {mentionTargets: characters});
+// function addMention(editorView, characters) {
+//     const {from, to} = editorView.editor.state.selection;
+//     const mark = schema.mark("mention", {mentionTargets: characters});
 
-    const transf = state.tr.addMark(from, to, mark);
-    editorView.props.onAction(transf.scrollAction());
-}
+//     const transf = state.tr.addMark(from, to, mark);
+//     editorView.props.onAction(transf.scrollAction());
+// }
 
 module.exports.schema = narrowsSchema;
 module.exports.create = create;
@@ -56,4 +56,4 @@ module.exports.importText = importText;
 module.exports.exportText = exportText;
 module.exports.exportTextToDOM = exportTextToDOM;
 module.exports.updateParticipants = updateParticipants;
-module.exports.addMention = addMention;
+// module.exports.addMention = addMention;

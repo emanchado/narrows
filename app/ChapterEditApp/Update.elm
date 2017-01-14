@@ -104,6 +104,7 @@ update msg model =
                        , initEditor { elemId = "editor-container"
                                     , narrationId = narration.id
                                     , narrationImages = narration.files.images
+                                    , chapterParticipants = []
                                     , text = Json.Encode.null
                                     }
                        )
@@ -111,6 +112,7 @@ update msg model =
                        , initEditor { elemId = "editor-container"
                                     , narrationId = narration.id
                                     , narrationImages = narration.files.images
+                                    , chapterParticipants = ch.participants
                                     , text = ch.text
                                     }
                        )

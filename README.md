@@ -1,10 +1,10 @@
 TODO
 ====
 
-* Make sure you can upload the first image! (required: false? but
-  then, check on the callback)
-* Add interface for the mentions
 * Add e-mail notifications
+* Rewrite the image uploader so it's a single, special component that
+  updates the dropdown as soon as an image is uploaded
+* Make it easier to remove mention marks
 * Show background information or whatever to players
 * Allow narrators to change password, and create more narrators
 * Really wait until everything is loaded before showing the "Start" button

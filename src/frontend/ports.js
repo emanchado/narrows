@@ -86,6 +86,7 @@ app.ports.initEditor.subscribe(evt => {
     }
     editorViews[evt.elemId].props.narrationId = evt.narrationId;
     editorViews[evt.elemId].props.images = evt.narrationImages;
+    editorViews[evt.elemId].props.participants = evt.chapterParticipants;
 });
 app.ports.updateParticipants.subscribe(evt => {
     const editorInstance = editorViews[evt.editor];

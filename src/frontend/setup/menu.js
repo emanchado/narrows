@@ -3,7 +3,7 @@ const {wrapItem, blockTypeItem, Dropdown, DropdownSubmenu, joinUpItem, liftItem,
 const {toggleMark} = require("prosemirror-commands")
 const {wrapInList} = require("prosemirror-schema-list")
 const {TextField, SelectField, openPrompt} = require("./prompt")
-const {FileUploaderField} = require("./prompt-extra")
+const {FileUploaderField, MultiSelectField} = require("./prompt-extra")
 
 // Helpers to create specific types of items
 
@@ -30,17 +30,24 @@ function insertImageItem(nodeType) {
                 title: "Choose an image",
                 fields: {
                     src: new SelectField({label: "Image",
-                                          required: true,
+                                          required: false,
                                           selected: attrs && attrs.src,
                                           options: view.props.images.map(img => ({value: img, label: img}))}),
                     uploader: new FileUploaderField({required: false,
+                                                     addImageCallback: name => {
+                                                         view.props.images.push(name);
+                                                     },
                                                      url: uploadUrl})
                 },
                 // FIXME this (and similar uses) won't have the current state
                 // when it runs, leading to problems in, for example, a
                 // collaborative setup
                 callback(attrs) {
-                    const imageUrl = `/static/narrations/${view.props.narrationId}/images/${attrs.uploader || attrs.src}`;
+                    const imageName = attrs.uploader || attrs.src;
+                    if (!imageName) {
+                        return;
+                    }
+                    const imageUrl = `/static/narrations/${view.props.narrationId}/images/${imageName}`;
                     view.dispatch(view.state.tr.replaceSelectionWith(nodeType.createAndFill({src: imageUrl})));
                     view.focus();
                 }
@@ -108,18 +115,44 @@ function linkItem(markType) {
   })
 }
 
-function mentionItem(markType) {
-  return markItem(markType, {
-    title: "Insert mention",
-    run(state, onAction, view) {
-      if (markActive(state, markType)) {
-        toggleMark(markType)(state, onAction)
-        return true
-      }
-      const mentionedCharacters = view.props.participants.slice(0, 1)
-      toggleMark(markType, {mentionTargets: mentionedCharacters})(view.state, view.props.onAction)
-    }
-  })
+function fetchCharacter(characterList, cId) {
+    const matches = characterList.filter(c => c.id === parseInt(cId, 10));
+    return matches.length ? matches[0] : null;
+}
+
+function markItemPrivate(markType) {
+    return markItem(markType, {
+        title: "Private text",
+        run(state, onAction, view) {
+            let {node} = state.selection, attrs = markType && node &&
+                    node.type == markType && node.attrs;
+
+            openPrompt({
+                title: "Choose the characters who will read the private text",
+                fields: {
+                    targetCharacters: new MultiSelectField({
+                        label: "Targets",
+                        required: true,
+                        selected: (attrs && attrs.mentionTargets) || [],
+                        options: view.props.participants.map(c => ({value: c.id,
+                                                                    label: c.name}))
+                    })
+                },
+                // FIXME this (and similar uses) won't have the current state
+                // when it runs, leading to problems in, for example, a
+                // collaborative setup
+                callback(attrs) {
+                    if (markActive(state, markType)) {
+                        toggleMark(markType)(state, onAction);
+                        return;
+                    }
+                    const targetCharacters =
+                              attrs.targetCharacters.map(c => fetchCharacter(view.props.participants, c));
+                    toggleMark(markType, {mentionTargets: targetCharacters})(state, onAction);
+                }
+            });
+        }
+    });
 }
 
 function wrapListItem(nodeType, options) {
@@ -204,7 +237,7 @@ function buildMenuItems(schema) {
   if (type = schema.nodes.image)
     r.insertImage = insertImageItem(type)
   if (type = schema.marks.mention)
-    r.insertMention = mentionItem(type, {title: "Toggle character mention"})
+    r.togglePrivate = markItemPrivate(type, {title: "Mark text as private", icon: 'Private text'})
   if (type = schema.nodes.bullet_list)
     r.wrapBulletList = wrapListItem(type, {
       title: "Wrap in bullet list",
@@ -248,7 +281,7 @@ function buildMenuItems(schema) {
   }
 
   let cut = arr => arr.filter(x => x)
-  r.insertMenu = new Dropdown(cut([r.insertImage, r.insertMention, r.insertHorizontalRule, r.insertTable]), {label: "Insert"})
+  r.insertMenu = new Dropdown(cut([r.insertImage, r.insertHorizontalRule, r.insertTable]), {label: "Insert"})
   r.typeMenu = new Dropdown(cut([r.makeParagraph, r.makeCodeBlock, r.makeHead1 && new DropdownSubmenu(cut([
     r.makeHead1, r.makeHead2, r.makeHead3, r.makeHead4, r.makeHead5, r.makeHead6
   ]), {label: "Heading"})]), {label: "Type..."})
@@ -256,7 +289,7 @@ function buildMenuItems(schema) {
   if (tableItems.length)
     r.tableMenu = new Dropdown(tableItems, {label: "Table"})
 
-  r.inlineMenu = [cut([r.toggleStrong, r.toggleEm, r.toggleCode, r.toggleLink]), [r.insertMenu]]
+    r.inlineMenu = [cut([r.toggleStrong, r.toggleEm, r.toggleCode, r.toggleLink]), [r.togglePrivate], [r.insertMenu]]
   r.blockMenu = [cut([r.typeMenu, r.tableMenu, r.wrapBulletList, r.wrapOrderedList, r.wrapBlockQuote, joinUpItem,
                       liftItem, selectParentNodeItem])]
   r.fullMenu = r.inlineMenu.concat(r.blockMenu).concat([[undoItem, redoItem]])
