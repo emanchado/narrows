@@ -64,7 +64,7 @@ function getFinalFilename(dir, filename) {
     return Q.nfcall(fs.access, probePath).then(() => {
         const ext = path.extname(filename);
         const basename = path.basename(filename, ext);
-        const newFilename = `${basename} copy${ext}`;
+        const newFilename = `${basename} extra${ext}`;
 
         return getFinalFilename(dir, newFilename);
     }).catch(() => probePath);
