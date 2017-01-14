@@ -11,7 +11,7 @@ function skipContentNotFor(paragraphContent, characterId) {
             return true;
         }
 
-        const mentions = bit.marks.filter(m => m._ === "mention");
+        const mentions = bit.marks.filter(m => m.type === "mention");
         return mentions.length === 0 || mentions.some(m => {
             return m.mentionTargets.some(t => t.id === characterId);
         });
@@ -36,7 +36,7 @@ function removeMentionsFromBit(bit) {
         return bit;
     }
 
-    const newMarks = marks.filter(m => m._ !== "mention");
+    const newMarks = marks.filter(m => m.type !== "mention");
     const paragraphContentCopy = merge({}, bit);
 
     delete paragraphContentCopy.marks;
