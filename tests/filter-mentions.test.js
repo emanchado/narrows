@@ -25,7 +25,7 @@ function mentioned(text, mentions) {
     return {
         type: "text",
         text: text,
-        marks: [ { type: "mention", mentionTargets: mentions } ]
+        marks: [ { type: "mention", attrs: { mentionTargets: mentions } } ]
     };
 }
 
@@ -105,7 +105,8 @@ test("leave alone other marks when removing mentions", t => {
         para([{
             type: "text",
             text: text,
-            marks: [ { type: "mention", mentionTargets: [{id: 1, name: "C1"}] },
+            marks: [ { type: "mention",
+                       attrs: { mentionTargets: [{id: 1, name: "C1"}] } },
                      { type: "unrelated-mark", level: "high" } ]
         }]),
 

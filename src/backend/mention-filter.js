@@ -13,7 +13,9 @@ function skipContentNotFor(paragraphContent, characterId) {
 
         const mentions = bit.marks.filter(m => m.type === "mention");
         return mentions.length === 0 || mentions.some(m => {
-            return m.mentionTargets.some(t => t.id === characterId);
+            return m.attrs &&
+                m.attrs.mentionTargets &&
+                m.attrs.mentionTargets.some(t => t.id === characterId);
         });
     });
 }
