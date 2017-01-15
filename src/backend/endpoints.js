@@ -83,10 +83,6 @@ export function putChapter(req, res) {
     const chapterId = parseInt(req.params.chptId, 10);
 
     req.body.text = JSON.stringify(req.body.text);
-    if ("published" in req.body) {
-        req.body.published = req.body.published ?
-            (new Date().toISOString()) : null;
-    }
     store.updateChapter(chapterId, req.body).then(chapter => {
         res.json(chapter);
     }).catch(err => {
