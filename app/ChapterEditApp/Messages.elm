@@ -18,11 +18,6 @@ type Msg
   | LastReactionsFetchSuccess LastReactions
   | UpdateChapterTitle String
   | UpdateEditorContent Json.Encode.Value
-  | UpdateNewImageUrl String
-  | AddImage
-  | AddNewMentionCharacter FullCharacter
-  | RemoveNewMentionCharacter FullCharacter
-  | AddMention
   | AddParticipant FullCharacter
   | RemoveParticipant FullCharacter
   | UpdateSelectedBackgroundImage String

@@ -16,11 +16,6 @@ newEmptyChapter narration =
   , published = Nothing
   }
 
-type alias EditorToolState =
-  { newImageUrl : String
-  , newMentionTargets : List FullCharacter
-  }
-
 type alias LastReactionChapter =
   { id : Int
   , title : String
@@ -41,6 +36,5 @@ type alias Model =
   { chapter : Maybe Chapter
   , narration : Maybe Narration
   , lastReactions : Maybe LastReactions
-  , editorToolState : EditorToolState
   , banner : Maybe Banner
   }

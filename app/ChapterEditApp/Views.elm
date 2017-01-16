@@ -10,55 +10,14 @@ import Html.Events exposing (onClick, onInput, on)
 import Common.Models exposing (FullCharacter, Narration, Chapter)
 import Common.Views exposing (bannerView)
 
-import ChapterEditApp.Models exposing (Model, EditorToolState, LastReactions, LastReaction)
+import ChapterEditApp.Models exposing (Model, LastReactions, LastReaction)
 import ChapterEditApp.Messages exposing (..)
 import ChapterEditApp.Views.FileSelector exposing (fileSelector)
 import ChapterEditApp.Views.Participants exposing (participantListView)
 
-addImageView : String -> Html Msg
-addImageView newImageUrl =
-  div [ class "add-image" ]
-    [ input [ type' "text"
-            , onInput UpdateNewImageUrl
-            , value newImageUrl
-            ]
-        []
-    , button [ onClick AddImage ]
-        [ text "Add Image" ]
-    ]
 
-characterForMention : FullCharacter -> Bool -> Html Msg
-characterForMention character isSelected =
-  let
-    message = if isSelected then
-                (RemoveNewMentionCharacter character)
-              else
-                (AddNewMentionCharacter character)
-  in
-    label []
-      [ input [ type' "checkbox"
-              , checked isSelected
-              , onClick message
-              ]
-          [ ]
-      , text character.name
-      ]
-
-markForCharacter : List FullCharacter -> List FullCharacter -> Html Msg
-markForCharacter allCharacters newMentionTargets =
-  div []
-    [ text "Mark text for "
-    , div []
-        (List.map
-           (\c -> characterForMention c <| List.member c newMentionTargets)
-           allCharacters)
-    , button [ onClick AddMention ]
-        [ text "Mark" ]
-    ]
-
-
-chapterMediaView : Chapter -> Narration -> EditorToolState -> Html Msg
-chapterMediaView chapter narration editorToolState =
+chapterMediaView : Chapter -> Narration -> Html Msg
+chapterMediaView chapter narration =
   div [ class "chapter-media" ]
     [ div [ class "image-selector" ]
         [ label [] [ text "Background image:" ]
@@ -122,8 +81,8 @@ chapterMediaView chapter narration editorToolState =
     ]
 
 
-chapterView : Chapter -> Narration -> EditorToolState -> Html Msg
-chapterView chapter narration editorToolState =
+chapterView : Chapter -> Narration -> Html Msg
+chapterView chapter narration =
   let
     (saveAction, publishAction) = if chapter.id == 0 then
                                     (SaveNewChapter, PublishNewChapter)
@@ -144,11 +103,9 @@ chapterView chapter narration editorToolState =
               , participantListView chapter.id narration.characters chapter.participants
               ]
           ]
-      , chapterMediaView chapter narration editorToolState
+      , chapterMediaView chapter narration
       , label [] [ text "Text:" ]
       , div [ id "editor-container" ] []
-      , addImageView editorToolState.newImageUrl
-      , markForCharacter chapter.participants editorToolState.newMentionTargets
       , div [ class "btn-bar" ]
           [ button [ class "btn"
                    , onClick saveAction
@@ -226,6 +183,6 @@ mainView model =
                               "Reactions will be loaded after saving the first version."
                             else
                               "No reactions." ]
-          , chapterView chapter narration model.editorToolState
+          , chapterView chapter narration
           ]
       ]

@@ -15,7 +15,7 @@ import ChapterEditApp.Api
 import ChapterEditApp.Api.Json exposing (parseChapter)
 import ChapterEditApp.Messages exposing (..)
 import ChapterEditApp.Models exposing (..)
-import ChapterEditApp.Ports exposing (initEditor, addImage, updateParticipants, addMention, playPauseAudioPreview, openFileInput, uploadFile)
+import ChapterEditApp.Ports exposing (initEditor, updateParticipants, playPauseAudioPreview, openFileInput, uploadFile)
 
 
 errorBanner : String -> Maybe Banner
@@ -143,41 +143,6 @@ update msg model =
             ({ model | chapter = Just updatedChapter }, Cmd.none)
         Nothing ->
           (model, Cmd.none)
-
-    UpdateNewImageUrl newUrl ->
-      let
-        oldEditorToolState = model.editorToolState
-        newEditorToolState = { oldEditorToolState | newImageUrl = newUrl }
-      in
-        ({ model | editorToolState = newEditorToolState }, Cmd.none)
-    AddImage ->
-      (model, addImage { editor = "editor-container"
-                       , imageUrl = model.editorToolState.newImageUrl
-                       })
-
-    AddNewMentionCharacter character ->
-      let
-        oldEditorToolState = model.editorToolState
-        newMentionList = character :: oldEditorToolState.newMentionTargets
-        newEditorToolState =
-          { oldEditorToolState | newMentionTargets = newMentionList }
-      in
-        ({ model | editorToolState = newEditorToolState }, Cmd.none)
-    RemoveNewMentionCharacter character ->
-      let
-        oldEditorToolState = model.editorToolState
-        newMentionList =
-          List.filter
-            (\t -> t /= character)
-            oldEditorToolState.newMentionTargets
-        newEditorToolState =
-          { oldEditorToolState | newMentionTargets = newMentionList }
-      in
-        ({ model | editorToolState = newEditorToolState }, Cmd.none)
-    AddMention ->
-      (model, addMention { editor = "editor-container"
-                         , targets = model.editorToolState.newMentionTargets
-                         })
 
     AddParticipant character ->
       case model.chapter of

@@ -17,9 +17,6 @@ initialState =
   { chapter = Nothing
   , narration = Nothing
   , lastReactions = Nothing
-  , editorToolState = { newImageUrl = ""
-                      , newMentionTargets = []
-                      }
   , banner = Nothing
   }
 

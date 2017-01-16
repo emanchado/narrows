@@ -96,22 +96,6 @@ app.ports.updateParticipants.subscribe(evt => {
 
     editor.updateParticipants(editorInstance, evt.participantList);
 });
-app.ports.addImage.subscribe(evt => {
-    const editorInstance = editorViews[evt.editor];
-    if (!editorInstance) {
-        return;
-    }
-
-    editor.addImage(editorInstance, evt.imageUrl);
-});
-app.ports.addMention.subscribe(evt => {
-    const editorInstance = editorViews[evt.editor];
-    if (!editorInstance) {
-        return;
-    }
-
-    editor.addMention(editorInstance, evt.targets);
-});
 app.ports.playPauseAudioPreview.subscribe(audioElemId => {
     const audioEl = document.getElementById(audioElemId);
     if (!audioEl) {

@@ -44,9 +44,7 @@ type alias FileUploadSuccess =
   }
 
 port initEditor : InitEditorInfo -> Cmd msg
-port addImage : AddImageInfo -> Cmd msg
 port updateParticipants : UpdateParticipantsInfo -> Cmd msg
-port addMention : AddMentionInfo -> Cmd msg
 port playPauseAudioPreview : String -> Cmd msg
 port openFileInput : String -> Cmd msg
 port uploadFile : FileUploadInfo -> Cmd msg
