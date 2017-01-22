@@ -276,7 +276,7 @@ function buildMenuItems(schema) {
       title: "Insert horizontal rule",
       label: "Horizontal rule",
       select(state) { return canInsert(state, hr) },
-      run(state, onAction) { onAction(state.tr.replaceSelectionWith(hr.create()).action()) }
+      run(state, dispatch) { dispatch(state.tr.replaceSelectionWith(hr.create())) }
     })
   }
 
