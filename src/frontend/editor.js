@@ -7,6 +7,7 @@ const {editorSetup} = require("./setup");
 function create(initialContent, place, onChangeHandler) {
     const state = EditorState.create({
         doc: importText(initialContent),
+        schema: narrowsSchema,
         plugins: editorSetup({schema: narrowsSchema})
     });
 
