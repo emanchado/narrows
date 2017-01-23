@@ -23,9 +23,8 @@ app.ports.renderChapter.subscribe(evt => {
                           ", element does not exist (yet?)");
         return;
     }
-    const importedText = editor.importText(evt.text);
     elem.innerHTML = "";
-    elem.appendChild(editor.exportTextToDOM(importedText));
+    elem.appendChild(editor.exportTextToDOM(evt.text));
 });
 
 app.ports.startNarration.subscribe(evt => {

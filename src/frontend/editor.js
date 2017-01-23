@@ -4,6 +4,13 @@ const {Node, DOMSerializer} = require("prosemirror-model");
 const {schema: narrowsSchema} = require("./narrows-schema");
 const {editorSetup} = require("./setup");
 
+function importText(text) {
+    if (!text) {
+        return undefined;
+    }
+    return Node.fromJSON(narrowsSchema, text);
+}
+
 function textToState(text) {
     return EditorState.create({
         doc: importText(text),
@@ -29,20 +36,14 @@ function updateText(editor, newText) {
     editor.updateState(textToState(newText));
 }
 
-function importText(text) {
-    if (!text) {
-        return undefined;
-    }
-    return Node.fromJSON(narrowsSchema, text);
-}
-
 function exportText(editor) {
     return editor.state.doc.toJSON();
 }
 
 function exportTextToDOM(text) {
+    const importedText = importText(text);
     const serializer = DOMSerializer.fromSchema(narrowsSchema);
-    return serializer.serializeFragment(text.content);
+    return serializer.serializeFragment(importedText.content);
 }
 
 function updateParticipants(editorView, participants) {
@@ -52,7 +53,6 @@ function updateParticipants(editorView, participants) {
 module.exports.schema = narrowsSchema;
 module.exports.create = create;
 module.exports.updateText = updateText;
-module.exports.importText = importText;
 module.exports.exportText = exportText;
 module.exports.exportTextToDOM = exportTextToDOM;
 module.exports.updateParticipants = updateParticipants;
