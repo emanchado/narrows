@@ -1,6 +1,7 @@
 TODO
 ====
 
+* Turn importText into private
 * Add e-mail notifications
 * Rewrite the image uploader so it's a single, special component that
   updates the dropdown as soon as an image is uploaded

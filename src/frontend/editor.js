@@ -4,23 +4,29 @@ const {Node, DOMSerializer} = require("prosemirror-model");
 const {schema: narrowsSchema} = require("./narrows-schema");
 const {editorSetup} = require("./setup");
 
-function create(initialContent, place, onChangeHandler) {
-    const state = EditorState.create({
-        doc: importText(initialContent),
+function textToState(text) {
+    return EditorState.create({
+        doc: importText(text),
         schema: narrowsSchema,
         plugins: editorSetup({schema: narrowsSchema})
     });
+}
 
+function create(initialContent, place, onChangeHandler) {
     const view = new MenuBarEditorView(place, {
-        state: state,
+        state: textToState(initialContent),
         images: [],
         dispatchTransaction: tr => {
             view.updateState(view.editor.state.apply(tr));
-            onChangeHandler();
+            onChangeHandler(view);
         }
     });
 
     return view;
+}
+
+function updateText(editor, newText) {
+    editor.updateState(textToState(newText));
 }
 
 function importText(text) {
@@ -45,6 +51,7 @@ function updateParticipants(editorView, participants) {
 
 module.exports.schema = narrowsSchema;
 module.exports.create = create;
+module.exports.updateText = updateText;
 module.exports.importText = importText;
 module.exports.exportText = exportText;
 module.exports.exportTextToDOM = exportTextToDOM;

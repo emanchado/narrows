@@ -77,13 +77,13 @@ document.addEventListener("scroll", function(evt) {
 const editorViews = {};
 app.ports.initEditor.subscribe(evt => {
     if (editorViews.hasOwnProperty(evt.elemId)) {
-        editorViews[evt.elemId].setDoc(evt.text);
+        editor.updateText(editorViews[evt.elemId], evt.text);
     } else {
+
         const container = document.getElementById(evt.elemId);
         editorViews[evt.elemId] =
-            editor.create(evt.text, container, () => {
-                const self = editorViews[evt.elemId];
-                app.ports.editorContentChanged.send(editor.exportText(self.editor));
+            editor.create(evt.text, container, view => {
+                app.ports.editorContentChanged.send(editor.exportText(view.editor));
             });
     }
     editorViews[evt.elemId].props.narrationId = evt.narrationId;
