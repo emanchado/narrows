@@ -14,10 +14,6 @@ const CHAR2_TOKEN = "bb0a38b4-97b4-11e6-906f-bfca08f8b9ae";
 const CHAR3_NAME = "Bilbo";
 const CHAR3_TOKEN = "62963d86-a9cf-11e6-8fbb-f717783bbfc5";
 
-function createCharacter(store, characterName, characterToken) {
-    return store.addCharacter(characterName, characterToken);
-}
-
 /**
  * Because running the migrations is ridiculously slow, we only do it
  * once in TEST_MIGRATED_DB, then copy that to TEST_DB before every
@@ -48,15 +44,15 @@ test.beforeEach(t => {
         t.context.store = store;
         t.context.testNarration = narration;
 
-        return createCharacter(t.context.store, CHAR1_NAME, CHAR1_TOKEN);
+        return t.context.store.addCharacter(CHAR1_NAME, CHAR1_TOKEN);
     }).then(characterId => {
         t.context.characterId1 = characterId;
 
-        return createCharacter(t.context.store, CHAR2_NAME, CHAR2_TOKEN);
+        return t.context.store.addCharacter(CHAR2_NAME, CHAR2_TOKEN);
     }).then(characterId => {
         t.context.characterId2 = characterId;
 
-        return createCharacter(t.context.store, CHAR3_NAME, CHAR3_TOKEN);
+        return t.context.store.addCharacter(CHAR3_NAME, CHAR3_TOKEN);
     }).then(characterId => {
         t.context.characterId3 = characterId;
     });
