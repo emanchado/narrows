@@ -95,6 +95,12 @@ const MIGRATIONS = [
             "ALTER TABLE characters ADD description text",
             "ALTER TABLE characters ADD backstory text"
         ]);
+    },
+
+    function addUserEmailField(db) {
+        return statementListPromise(db, [
+            "ALTER TABLE users ADD email text"
+        ]);
     }
 ];
 

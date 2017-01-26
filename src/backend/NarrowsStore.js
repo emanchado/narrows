@@ -304,10 +304,31 @@ class NarrowsStore {
         return deferred.promise;
     }
 
+    getCharacterEmails(characterIds) {
+        const placeholders = characterIds.map(_ => "?");
+
+        return Q.ninvoke(
+            this.db,
+            "all",
+            `SELECT C.id, U.email
+               FROM users U
+               JOIN characters C
+                 ON U.id = C.player_id
+              WHERE C.id IN (${placeholders.join(', ')})`,
+            characterIds
+        ).then(rows => {
+            const emails = {};
+            rows.forEach(row => {
+                emails[row.id] = row.email;
+            });
+            return emails;
+        });
+    }
+
     getChapterParticipants(chapterId, userOpts) {
         const opts = userOpts || {};
         const extraFields = opts.includePrivateFields ?
-                  ", C.token, C.notes" : "";
+                  ", C.player_id, C.token, C.notes" : "";
 
         return Q.ninvoke(
             this.db,
@@ -413,7 +434,7 @@ class NarrowsStore {
         ).then(
             () => this.updateChapterParticipants(id, participants)
         ).then(
-            () => this.getChapter(id)
+            () => this.getChapter(id, { includePrivateFields: true })
         );
     }
 
@@ -433,6 +454,17 @@ class NarrowsStore {
             "get",
             "SELECT id, name, token, notes FROM characters WHERE token = ?",
             characterToken
+        );
+    }
+
+    getCharacterTokenById(characterId) {
+        return Q.ninvoke(
+            this.db,
+            "get",
+            "SELECT token FROM characters WHERE id = ?",
+            characterId
+        ).then(
+            row => row.token
         );
     }
 

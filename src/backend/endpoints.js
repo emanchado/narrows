@@ -2,14 +2,19 @@ import path from "path";
 import config from "config";
 import Q from "q";
 import formidable from "formidable";
+import nodemailer from "nodemailer";
+import sendmailTransport from "nodemailer-sendmail-transport";
 
 import NarrowsStore from "./NarrowsStore";
 import mentionFilter from "./mention-filter";
 import messageUtils from "./message-utils";
 import feeds from "./feeds";
+import Mailer from "./Mailer";
 
 const store = new NarrowsStore(config.db.path, config.files.path);
 store.connect();
+const transporter = nodemailer.createTransport(sendmailTransport());
+const mailer = new Mailer(store, transporter);
 
 export function getNarration(req, res) {
     const narrationId = parseInt(req.params.narrId, 10);
@@ -83,8 +88,16 @@ export function putChapter(req, res) {
     const chapterId = parseInt(req.params.chptId, 10);
 
     req.body.text = JSON.stringify(req.body.text);
-    store.updateChapter(chapterId, req.body).then(chapter => {
-        res.json(chapter);
+    store.getChapter(chapterId).then(origChapter => {
+        const origPublished = origChapter.published;
+
+        store.updateChapter(chapterId, req.body).then(chapter => {
+            res.json(chapter);
+
+            if (!origPublished && req.body.published) {
+                mailer.chapterPublished(chapter);
+            }
+        });
     }).catch(err => {
         res.status(500).json({
             errorMessage: `There was a problem updating: ${ err }`
@@ -128,6 +141,11 @@ export function postChapterMessages(req, res) {
         res.json({
             messageThreads: messageUtils.threadMessages(messages)
         });
+
+        mailer.messagePosted({chapterId: chapterId,
+                              sender: {id: null, name: "Narrator"},
+                              text: messageText,
+                              recipients: messageRecipients});
     }).catch(err => {
         res.status(500).json({
             errorMessage: `Could not post message: ${ err }`
@@ -140,6 +158,10 @@ export function postNewChapter(req, res) {
 
     store.createChapter(narrationId, req.body).then(chapterData => {
         res.json(chapterData);
+
+        if (chapterData.published) {
+            mailer.chapterPublished(chapterData);
+        }
     }).catch(err => {
         res.status(500).json({
             errorMessage: `There was a problem: ${ err }`
@@ -272,6 +294,11 @@ export function postMessageCharacter(req, res) {
                 messageThreads: messageUtils.threadMessages(messages),
                 characterId: characterInfo.id
             });
+
+            mailer.messagePosted({chapterId: chapterId,
+                                  sender: characterInfo,
+                                  text: messageText,
+                                  recipients: messageRecipients});
         });
     }).catch(err => {
         res.status(500).json({
