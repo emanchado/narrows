@@ -11,7 +11,7 @@ import messageUtils from "./message-utils";
 import feeds from "./feeds";
 import Mailer from "./Mailer";
 
-const store = new NarrowsStore(config.db.path, config.files.path);
+const store = new NarrowsStore(config.db, config.files.path);
 store.connect();
 const transporter = nodemailer.createTransport(sendmailTransport());
 const mailer = new Mailer(store, transporter);
@@ -91,7 +91,7 @@ export function putChapter(req, res) {
     store.getChapter(chapterId).then(origChapter => {
         const origPublished = origChapter.published;
 
-        store.updateChapter(chapterId, req.body).then(chapter => {
+        return store.updateChapter(chapterId, req.body).then(chapter => {
             res.json(chapter);
 
             if (!origPublished && req.body.published) {
@@ -120,7 +120,7 @@ export function getChapterInteractions(req, res) {
         });
     }).catch(err => {
         res.status(500).json({
-            errorMessage: `Could not get messages: ${ err }`
+            errorMessage: `Could not get interactions: ${ err }`
         });
     });
 }
@@ -229,7 +229,7 @@ export function getChapterLastReactions(req, res) {
                    )) });
     }).catch(err => {
         res.status(500).json({
-            errorMessage: `Cannot add new media file: ${ err }`
+            errorMessage: `Cannot get last reactions: ${ err }`
         });
     });
 }

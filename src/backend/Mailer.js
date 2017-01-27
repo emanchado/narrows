@@ -15,7 +15,6 @@ class Mailer {
     }
 
     sendMail(template, recipient, subject, stash) {
-        console.log(`Sending message ${subject} to ${recipient}`);
         if (!recipient) {
             // Nothing to do
             return;

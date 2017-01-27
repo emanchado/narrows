@@ -1,30 +1,32 @@
-import sqlite3 from "sqlite3";
+import mysql from "mysql";
 import Q from "q";
 import bcrypt from "bcrypt";
 
 class UserStore {
-    constructor(dbPath) {
-        this.dbPath = dbPath;
+    constructor(connConfig) {
+        this.connConfig = connConfig;
     }
 
     connect() {
-        this.db = new sqlite3.Database(this.dbPath);
+        this.db = new mysql.createConnection(this.connConfig);
     }
 
     authenticate(username, password) {
         return Q.ninvoke(
             this.db,
-            "get",
+            "query",
             "SELECT password FROM users WHERE username = ?",
             username
-        ).then(userRow => {
-            if (!userRow) {
+        ).spread(userRows => {
+            console.log("userRows =", userRows);
+            if (userRows.length === 0) {
                 return false;
             }
 
             const deferred = Q.defer();
-            bcrypt.compare(password, userRow.password, function(err, res) {
+            bcrypt.compare(password, userRows[0].password, function(err, res) {
                 if (err) {
+                    console.log("Failed with error:", err);
                     deferred.reject(err);
                     return;
                 }

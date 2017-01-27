@@ -2,11 +2,9 @@ import fs from "fs-extra";
 import path from "path";
 
 import config from "config";
-import sqlite3 from "sqlite3";
+import mysql from "mysql";
 import Q from "q";
 
-import upgradeDb from "./sqlite-migrations";
-import migrations from "./migrations";
 import merge from "./merge";
 
 const JSON_TO_DB = {
@@ -70,15 +68,59 @@ function getFinalFilename(dir, filename) {
     }).catch(() => probePath);
 }
 
+function pad(number) {
+    return number < 10 ? `0${number}` : number;
+}
+
+function mysqlTimestamp(dateString) {
+    if (!dateString) {
+        return dateString;
+    }
+
+    const d = new Date(dateString);
+    const year = d.getFullYear(),
+          month = d.getMonth() + 1,
+          day = d.getDate();
+    const hour = d.getHours(),
+          minutes = d.getMinutes(),
+          seconds = d.getSeconds();
+
+    return `${year}-${pad(month)}-${pad(day)} ` +
+        `${pad(hour)}:${pad(minutes)}:${pad(seconds)}`;
+}
+
 class NarrowsStore {
-    constructor(dbPath, narrationDir) {
-        this.dbPath = dbPath;
+    constructor(connConfig, narrationDir) {
+        this.connConfig = connConfig;
         this.narrationDir = narrationDir;
     }
 
     connect() {
-        this.db = new sqlite3.Database(this.dbPath);
-        return upgradeDb(this.db, migrations);
+        this.db = new mysql.createConnection(this.connConfig);
+        // Temporary extra methods for compatibility with the sqlite API
+        this.db.run = function(stmt, binds, cb) {
+            this.query(stmt, binds, function(err, results, fields) {
+                cb(err, results);
+            });
+        };
+        this.db.get = function(stmt, binds, cb) {
+            this.query(stmt, binds, function(err, results, fields) {
+                if (err) {
+                    cb(err);
+                    return;
+                }
+                if (results.length !== 1) {
+                    cb('Did not receive exactly one result');
+                    return;
+                }
+                cb(err, results[0]);
+            });
+        };
+        this.db.all = function(stmt, binds, cb) {
+            this.query(stmt, binds, function(err, results, fields) {
+                cb(err, results);
+            });
+        };
     }
 
     createNarration(props) {
@@ -90,13 +132,13 @@ class NarrowsStore {
             `INSERT INTO narrations (${ fields.join(", ") })
                 VALUES (${ fields.map(() => "?").join(", ") })`,
             Object.keys(props).map(f => props[f]),
-            function(err) {
+            function(err, result) {
                 if (err) {
                     deferred.reject(err);
                     return;
                 }
 
-                const finalNarration = merge({ id: this.lastID },
+                const finalNarration = merge({ id: result.insertId },
                                              props);
                 deferred.resolve(finalNarration);
             }
@@ -174,7 +216,7 @@ class NarrowsStore {
                         character_id AS characterId,
                         main_text AS text
                    FROM reactions
-                  WHERE chapterId IN (${ placeholders.join(", ") })`,
+                  WHERE chapter_id IN (${ placeholders.join(", ") })`,
                 chapters.map(f => f.id)
             ).then(reactions => {
                 reactions.forEach(reaction => {
@@ -273,7 +315,10 @@ class NarrowsStore {
         const fields = Object.keys(basicProps).map(convertToDb),
               fieldString = fields.join(", "),
               placeholderString = fields.map(f => "?").join(", "),
-              values = Object.keys(basicProps).map(f => basicProps[f]);
+              values = Object.keys(basicProps).map(f => (
+                  f === "published" ?
+                      mysqlTimestamp(basicProps[f]) : basicProps[f]
+              ));
 
         const self = this;
         this.db.run(
@@ -281,13 +326,13 @@ class NarrowsStore {
                 (${ fieldString }, narration_id)
                 VALUES (${ placeholderString }, ?)`,
             values.concat(narrationId),
-            function(err) {
+            function(err, result) {
                 if (err) {
                     deferred.reject(err);
                     return;
                 }
 
-                const newChapterId = this.lastID;
+                const newChapterId = result.insertId;
 
                 self._insertParticipants(newChapterId, participants).then(() => {
                     return self.getChapter(newChapterId, { includePrivateFields: true });
@@ -353,7 +398,7 @@ class NarrowsStore {
                 throw new Error("Cannot find chapter " + id);
             }
 
-            chapterData.text = JSON.parse(chapterData.text);
+            chapterData.text = JSON.parse(chapterData.text.replace(/\r/g, ""));
             chapterData.text = fixBlockImages(chapterData.text);
 
             return this.getChapterParticipants(id, opts).then(participants => {
@@ -423,13 +468,15 @@ class NarrowsStore {
         delete props.participants;
 
         const propNames = Object.keys(props).map(convertToDb),
-              propNameString = propNames.map(p => `${p} = ?`).join(", ");
-        const propValues = Object.keys(props).map(n => props[n]);
+              propNameStrings = propNames.map(p => `${p} = ?`);
+        const propValues = Object.keys(props).map(n => (
+            n === "published" ? mysqlTimestamp(props[n]) : props[n]
+        ));
 
         return Q.ninvoke(
             this.db,
             "run",
-            `UPDATE chapters SET ${ propNameString } WHERE id = ?`,
+            `UPDATE chapters SET ${ propNameStrings.join(", ") } WHERE id = ?`,
             propValues.concat(id)
         ).then(
             () => this.updateChapterParticipants(id, participants)
@@ -474,13 +521,13 @@ class NarrowsStore {
         this.db.run(
             `INSERT INTO characters (name, token) VALUES (?, ?)`,
             [name, token],
-            function(err) {
+            function(err, result) {
                 if (err) {
                     deferred.reject(err);
                     return;
                 }
 
-                deferred.resolve(this.lastID);
+                deferred.resolve(result.insertId);
             }
         );
 
@@ -540,6 +587,10 @@ class NarrowsStore {
     }
 
     _formatMessageList(messages) {
+        if (messages.length === 0) {
+            return messages;
+        }
+
         const messageIds = messages.map(m => m.id);
         const placeholders = messageIds.map(() => "?").join(", ");
 
@@ -602,7 +653,9 @@ class NarrowsStore {
                 AND (recipient_id = ? OR sender_id = ?)
            ORDER BY sent`,
             [chapterId, characterId, characterId]
-        ).then(this._formatMessageList.bind(this));
+        ).then(
+            this._formatMessageList.bind(this)
+        );
     }
 
     getAllChapterMessages(chapterId) {
@@ -615,7 +668,9 @@ class NarrowsStore {
               WHERE M.chapter_id = ?
            ORDER BY sent`,
             [chapterId]
-        ).then(this._formatMessageList.bind(this));
+        ).then(
+            this._formatMessageList.bind(this)
+        );
     }
 
     addMessage(chapterId, senderId, text, recipients) {
@@ -623,10 +678,10 @@ class NarrowsStore {
         const self = this;
 
         this.db.run(
-            `INSERT INTO messages (chapter_id, sender_id, body, sent)
-               VALUES (?, ?, ?, DATETIME('now'))`,
+            `INSERT INTO messages (chapter_id, sender_id, body)
+               VALUES (?, ?, ?)`,
             [chapterId, senderId, text],
-            function(err) {
+            function(err, result) {
                 if (err) {
                     deferred.reject(err);
                     return;
@@ -641,7 +696,7 @@ class NarrowsStore {
                     return;
                 }
 
-                const messageId = this.lastID;
+                const messageId = result.insertId;
                 const valueQueryPart =
                           recipients.map(() => "(?, ?)").join(", ");
                 const queryValues = recipients.reduce((acc, mr) => (
@@ -669,14 +724,14 @@ class NarrowsStore {
         return Q.ninvoke(
             this.db,
             "get",
-            `SELECT CHAP.id, CHAP.title, CHAP.published
-               FROM chapters CHAP
-               JOIN characters CHAR
-                 ON CHAP.narration_id = CHAR.narration_id
+            `SELECT CHPT.id, CHPT.title, CHPT.published
+               FROM chapters CHPT
+               JOIN characters CHR
+                 ON CHPT.narration_id = CHR.narration_id
                JOIN reactions REACT
-                 ON (REACT.chapter_id = CHAP.id AND
-                     REACT.character_id = CHAR.id)
-              WHERE CHAR.id = ? AND published IS NOT NULL
+                 ON (REACT.chapter_id = CHPT.id AND
+                     REACT.character_id = CHR.id)
+              WHERE CHR.id = ? AND published IS NOT NULL
            ORDER BY published DESC
               LIMIT 1`,
             characterId
@@ -704,25 +759,28 @@ class NarrowsStore {
             const binds = [row.narrationId];
             let extraWhereClause = "";
             if (row.published) {
-                extraWhereClause += " AND CHAP.published < ?";
+                extraWhereClause += "WHERE published < ?";
                 binds.push(row.published);
             }
 
             return Q.ninvoke(
                 this.db,
                 "all",
-                `SELECT MAX(CHAP.published) AS chapterPublished,
-                    CHAP.id AS chapterId, CHAP.title AS chapterTitle,
-                    CHAR.id AS characterId, CHAR.name AS characterName,
+            `SELECT CHPT.published AS chapterPublished,
+                    CHPT.id AS chapterId, CHPT.title AS chapterTitle,
+                    CHR.id AS characterId, CHR.name AS characterName,
                     R.main_text AS text
-               FROM chapters CHAP
-               JOIN characters CHAR
-                 ON CHAP.narration_id = CHAR.narration_id
+               FROM chapters CHPT
+               JOIN characters CHR
+                 ON CHPT.narration_id = CHR.narration_id
                JOIN reactions R
-                 ON (R.chapter_id = CHAP.id AND R.character_id = CHAR.id)
-              WHERE CHAR.narration_id = ? AND published IS NOT NULL
-                    ${ extraWhereClause }
-           GROUP BY R.character_id`,
+                 ON (R.chapter_id = CHPT.id AND R.character_id = CHR.id)
+              WHERE CHR.narration_id = ? AND published IS NOT NULL
+                AND CHPT.id = (SELECT id
+                                 FROM chapters
+                                      ${ extraWhereClause }
+                             ORDER BY published DESC
+                                LIMIT 1)`,
                 binds
             );
         });

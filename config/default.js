@@ -3,7 +3,10 @@ module.exports = {
     publicAddress: 'http://localhost:3000',
 
     db: {
-        path: 'dev.db'
+        host: 'localhost',
+        user: 'narrows',
+        password: 'narratornarrows',
+        database: 'narrows'
     },
 
     files: {

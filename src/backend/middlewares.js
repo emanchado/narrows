@@ -6,7 +6,7 @@ import UserStore from "./UserStore";
 
 const STATIC_HTML_FILES = path.join(__dirname, "..", "html");
 
-const userStore = new UserStore(config.db.path);
+const userStore = new UserStore(config.db);
 userStore.connect();
 
 export function auth(req, res, next) {

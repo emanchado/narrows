@@ -2,7 +2,8 @@ import path from "path";
 import config from "config";
 import express from "express";
 import expressSession from "express-session";
-import connectSqlite3 from "connect-sqlite3";
+import mysql from "mysql";
+import mysqlSession from "express-mysql-session";
 import bodyParser from "body-parser";
 
 import * as endpoints from "./endpoints";
@@ -11,7 +12,7 @@ import * as middlewares from "./middlewares";
 const STATIC_HTML_FILES = path.join(__dirname, "..", "html");
 
 const app = express();
-const SQLiteStore = connectSqlite3(expressSession);
+const MySQLStore = mysqlSession(expressSession);
 const dbDirname = path.dirname(config.db.path),
       dbBasename = path.basename(config.db.path);
 
@@ -19,8 +20,7 @@ app.use(express.static('public'));
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 app.use(expressSession({
-    store: new SQLiteStore({ db: dbBasename.replace(".db", ""),
-                             dir: dbDirname }),
+    store: new MySQLStore({}, mysql.createConnection(config.db)),
     resave: false,
     saveUninitialized: false,
     secret: "b7404074-874d-11e6-855e-031b367b72bb",
