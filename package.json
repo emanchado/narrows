@@ -13,6 +13,7 @@
     "choo": "^3.3.0",
     "config": "^1.21.0",
     "connect-sqlite3": "^0.9.8",
+    "db-migrate": "^0.10.0-beta.20",
     "ejs": "^2.5.5",
     "express": "^4.14.0",
     "express-session": "^1.14.1",
