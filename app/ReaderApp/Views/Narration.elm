@@ -4,6 +4,7 @@ import String
 import Html exposing (Html, h2, div, span, a, input, textarea, strong, text, img, label, button, br, audio, ul, li)
 import Html.Attributes exposing (id, class, style, for, src, href, target, type', checked, preload, loop, alt, defaultValue, rows, placeholder)
 import Html.Events exposing (onClick, onInput)
+import Http exposing (uriEncode)
 
 import ReaderApp.Models exposing (Model, Chapter, ParticipantCharacter, Banner)
 import ReaderApp.Messages exposing (..)
@@ -22,7 +23,7 @@ backgroundImageStyle chapter backgroundBlurriness =
   let
     imageUrl =
       "/static/narrations/" ++ (toString chapter.narrationId) ++
-        "/background-images/" ++ chapter.backgroundImage
+        "/background-images/" ++ (uriEncode <| chapter.backgroundImage)
     filter = "blur(" ++ (toString backgroundBlurriness) ++ "px)"
   in
     [ ("background-image", "url(" ++ imageUrl ++ ")")
