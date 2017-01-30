@@ -756,10 +756,10 @@ class NarrowsStore {
               WHERE id = ?`,
             chapterId
         ).then(row => {
-            const binds = [row.narrationId];
+            const binds = [row.narrationId, row.narrationId];
             let extraWhereClause = "";
             if (row.published) {
-                extraWhereClause += "WHERE published < ?";
+                extraWhereClause += "AND published < ?";
                 binds.push(row.published);
             }
 
@@ -778,6 +778,7 @@ class NarrowsStore {
               WHERE CHR.narration_id = ? AND published IS NOT NULL
                 AND CHPT.id = (SELECT id
                                  FROM chapters
+                                WHERE narration_id = ?
                                       ${ extraWhereClause }
                              ORDER BY published DESC
                                 LIMIT 1)`,
