@@ -1,7 +1,7 @@
-DROP TABLE narrations;
+DROP TABLE message_deliveries;
+DROP TABLE messages;
+DROP TABLE reactions;
 DROP TABLE chapters;
 DROP TABLE characters;
-DROP TABLE reactions;
+DROP TABLE narrations;
 DROP TABLE users;
-DROP TABLE messages;
-DROP TABLE message_deliveries;

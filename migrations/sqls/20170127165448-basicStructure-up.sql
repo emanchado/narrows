@@ -2,7 +2,7 @@ CREATE TABLE users (id integer AUTO_INCREMENT PRIMARY KEY,
                     username varchar(64) UNIQUE,
                     password varchar(128),
                     role varchar(64),
-                    email text);
+                    email text) DEFAULT CHARSET=utf8;
 INSERT INTO users (username, password, role, email)
   VALUES ('narrator',
           '$2a$04$NrMPbG7wG26EwqJOun.SLOELYGOmbFs5aECGxhl8suPfVY049NZdG',
@@ -14,7 +14,7 @@ CREATE TABLE narrations (id integer AUTO_INCREMENT PRIMARY KEY,
                          default_audio varchar(256),
                          default_background_image varchar(256),
                          FOREIGN KEY (narrator_id) REFERENCES users(id)
-                         ON DELETE RESTRICT);
+                         ON DELETE RESTRICT) DEFAULT CHARSET=utf8;
 CREATE TABLE chapters (id integer AUTO_INCREMENT PRIMARY KEY,
                        narration_id integer,
                        title varchar(256),
@@ -22,10 +22,10 @@ CREATE TABLE chapters (id integer AUTO_INCREMENT PRIMARY KEY,
                        background_image varchar(256),
                        main_text text,
                        created timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-                       updated timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                       updated timestamp NOT NULL,
                        published timestamp NULL,
                        FOREIGN KEY (narration_id) REFERENCES narrations(id)
-                       ON DELETE RESTRICT);
+                       ON DELETE RESTRICT) DEFAULT CHARSET=utf8;
 CREATE TABLE characters (id integer AUTO_INCREMENT PRIMARY KEY,
                          narration_id integer,
                          player_id integer,
@@ -38,11 +38,11 @@ CREATE TABLE characters (id integer AUTO_INCREMENT PRIMARY KEY,
                          FOREIGN KEY (narration_id) REFERENCES narrations(id)
                          ON DELETE RESTRICT,
                          FOREIGN KEY (player_id) REFERENCES users(id)
-                         ON DELETE RESTRICT);
+                         ON DELETE RESTRICT) DEFAULT CHARSET=utf8;
 CREATE TABLE reactions (id integer AUTO_INCREMENT PRIMARY KEY,
                         chapter_id integer references chapters(id) ON DELETE CASCADE,
                         character_id integer references characters(id) ON DELETE CASCADE,
-                        main_text text);
+                        main_text text) DEFAULT CHARSET=utf8;
 CREATE TABLE messages (id integer AUTO_INCREMENT PRIMARY KEY,
                        chapter_id integer,
                        sender_id integer,
@@ -51,10 +51,10 @@ CREATE TABLE messages (id integer AUTO_INCREMENT PRIMARY KEY,
                        FOREIGN KEY (chapter_id) REFERENCES chapters(id)
                        ON DELETE RESTRICT,
                        FOREIGN KEY (sender_id) REFERENCES characters(id)
-                       ON DELETE RESTRICT);
+                       ON DELETE RESTRICT) DEFAULT CHARSET=utf8;
 CREATE TABLE message_deliveries (message_id integer,
                                  recipient_id integer,
                                  FOREIGN KEY (message_id) REFERENCES messages(id)
                                  ON DELETE CASCADE,
                                  FOREIGN KEY (recipient_id) REFERENCES characters(id)
-                                 ON DELETE CASCADE);
+                                 ON DELETE CASCADE) DEFAULT CHARSET=utf8;
