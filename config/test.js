@@ -1,8 +1,10 @@
 module.exports = {
-    port: 3000,
+    port: 666,
 
     db: {
-        path: 'test.db'
+        user: 'narrows-test',
+        password: 'narrows-test',
+        database: 'narrows-test'
     },
 
     files: {

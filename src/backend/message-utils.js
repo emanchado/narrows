@@ -24,7 +24,10 @@ export function threadMessages(messageList) {
             const lastTimestampA = a[a.length - 1].sentAt;
             const lastTimestampB = b[b.length - 1].sentAt;
 
-            return lastTimestampA - lastTimestampB;
+            if (lastTimestampA < lastTimestampB) {
+                return -1;
+            }
+            return lastTimestampA > lastTimestampB ? 1 : 0;
         }).
         map(messageGroup => {
             const randomMessage = messageGroup[0];

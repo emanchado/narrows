@@ -40,8 +40,8 @@
     "watchbe": "babel -w --modules common -d build/ src/backend",
     "buildfe": "brunch build",
     "watchfe": "brunch watch",
-    "test": "ava",
-    "watchtest": "ava --watch"
+    "test": "NODE_ENV=test NODE_CONFIG_DIR=../config ava",
+    "watchtest": "NODE_ENV=test NODE_CONFIG_DIR=../config ava --watch"
   },
   "devDependencies": {
     "ava": "^0.16.0",

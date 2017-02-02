@@ -1,9 +1,9 @@
+import config from "config";
 import test from "ava";
 import fs from "fs-extra";
+import { recreateDb } from "./test-utils.js";
 import NarrowsStore from "../src/backend/NarrowsStore";
 
-const TEST_DB = "test.db";
-const TEST_MIGRATED_DB = "test-migrated.db";
 const TEST_FILES = "testfiles";
 const DEFAULT_AUDIO = "creepy.mp3";
 const DEFAULT_BACKGROUND = "house.jpg";
@@ -14,45 +14,39 @@ const CHAR2_TOKEN = "bb0a38b4-97b4-11e6-906f-bfca08f8b9ae";
 const CHAR3_NAME = "Bilbo";
 const CHAR3_TOKEN = "62963d86-a9cf-11e6-8fbb-f717783bbfc5";
 
-/**
- * Because running the migrations is ridiculously slow, we only do it
- * once in TEST_MIGRATED_DB, then copy that to TEST_DB before every
- * test.
- */
+// Because recreating the database is heavy, we do it only once for
+// all tests, and then create a new narration for every test we run.
 test.before(t => {
-    const f = fs.openSync(TEST_MIGRATED_DB, "w+");
-    fs.closeSync(f);
-
-    const store = new NarrowsStore(TEST_MIGRATED_DB, TEST_FILES);
-    return store.connect();
+    // Recreate database
+    return recreateDb(config.db).then(() => {
+        const store = new NarrowsStore(config.db, TEST_FILES);
+        store.connect();
+        fs.removeSync(TEST_FILES);
+        fs.mkdirpSync(TEST_FILES);
+    });
 });
 
 test.beforeEach(t => {
-    fs.copySync(TEST_MIGRATED_DB, TEST_DB);
-    fs.removeSync(TEST_FILES);
-    fs.mkdirpSync(TEST_FILES);
-
-    const store = new NarrowsStore(TEST_DB, TEST_FILES);
-    return store.connect().then(() => {
-        return store.createNarration({
-            narratorId: 1,
-            title: "Basic Test Narration",
-            defaultAudio: DEFAULT_AUDIO,
-            defaultBackgroundImage: DEFAULT_BACKGROUND
-        });
+    const store = new NarrowsStore(config.db, TEST_FILES);
+    store.connect();
+    return store.createNarration({
+        narratorId: 1,
+        title: "Basic Test Narration",
+        defaultAudio: DEFAULT_AUDIO,
+        defaultBackgroundImage: DEFAULT_BACKGROUND
     }).then(narration => {
         t.context.store = store;
         t.context.testNarration = narration;
 
-        return t.context.store.addCharacter(CHAR1_NAME, CHAR1_TOKEN);
+        return t.context.store.addCharacter(CHAR1_NAME, CHAR1_TOKEN, t.context.testNarration.id);
     }).then(characterId => {
         t.context.characterId1 = characterId;
 
-        return t.context.store.addCharacter(CHAR2_NAME, CHAR2_TOKEN);
+        return t.context.store.addCharacter(CHAR2_NAME, CHAR2_TOKEN, t.context.testNarration.id);
     }).then(characterId => {
         t.context.characterId2 = characterId;
 
-        return t.context.store.addCharacter(CHAR3_NAME, CHAR3_TOKEN);
+        return t.context.store.addCharacter(CHAR3_NAME, CHAR3_TOKEN, t.context.testNarration.id);
     }).then(characterId => {
         t.context.characterId3 = characterId;
     });
@@ -79,7 +73,7 @@ test.serial("can create a simple chapter", t => {
     const props = {
         title: "Intro",
         text: [],
-        participants: [1]
+        participants: [{id: t.context.characterId1}]
     };
 
     return t.context.store.createChapter(narrationId, props).then(chapter => {
@@ -92,7 +86,8 @@ test.serial("can create a simple chapter", t => {
 
 test.serial("uses background/audio from narration as defaults", t => {
     const narrationId = t.context.testNarration.id;
-    const props = { title: "Intro", text: [], participants: [1] };
+    const character = {id: t.context.characterId1};
+    const props = { title: "Intro", text: [], participants: [character] };
 
     return t.context.store.createChapter(narrationId, props).then(chapter => {
         t.is(chapter.audio, DEFAULT_AUDIO);
@@ -105,7 +100,7 @@ test.serial("can set a specific audio for the chapter", t => {
     const props = {
         title: "Intro",
         text: [],
-        participants: [1],
+        participants: [{id: t.context.characterId1}],
         audio: "action.mp3"
     };
 
@@ -120,7 +115,7 @@ test.serial("can set a specific background image for the chapter", t => {
     const props = {
         title: "Intro",
         text: [],
-        participants: [1],
+        participants: [{id: t.context.characterId1}],
         backgroundImage: "hostel.jpg"
     };
 
@@ -139,7 +134,7 @@ test.serial("can get the messages for a chapter", t => {
     const narrationId = t.context.testNarration.id;
     const props = { title: "Intro",
                     text: [],
-                    participants: [1],
+                    participants: [{id: t.context.characterId1}],
                     backgroundImage: "hostel.jpg" };
     let chapterId;
 
@@ -167,7 +162,7 @@ test.serial("can get the messages to the narrator (no recipients)", t => {
     const narrationId = t.context.testNarration.id;
     const props = { title: "Intro",
                     text: [],
-                    participants: [1],
+                    participants: [{id: t.context.characterId1}],
                     backgroundImage: "hostel.jpg" };
     let chapterId;
 
@@ -190,7 +185,7 @@ test.serial("messages are only added once", t => {
     const narrationId = t.context.testNarration.id;
     const props = { title: "Intro",
                     text: [],
-                    participants: [1],
+                    participants: [{id: t.context.characterId1}],
                     backgroundImage: "hostel.jpg" };
     let chapterId;
 
@@ -210,10 +205,56 @@ test.serial("messages are only added once", t => {
     });
 });
 
-test.afterEach.always(t => {
-    fs.unlinkSync(TEST_DB);
+test.serial("last reactions work when different characters last appeared in different chapters", t => {
+    const ctx = t.context;
+    const chapterProps1 = { title: "Intro for char1",
+                            text: [],
+                            participants: [{id: ctx.characterId1}],
+                            published: new Date() };
+    const chapterProps2 = { title: "Intro for char2",
+                            text: [],
+                            participants: [{id: ctx.characterId2}],
+                            published: new Date()  };
+    const chapterProps3 = { title: "First joint chapter",
+                            text: [],
+                            participants: [{id: ctx.characterId1},
+                                           {id: ctx.characterId2}] };
+    let chapterId1, chapterId2, chapterId3;
+
+    return ctx.store.createChapter(
+        ctx.testNarration.id,
+        chapterProps1
+    ).then(chapter => {
+        chapterId1 = chapter.id;
+
+        return ctx.store.updateReaction(
+            chapterId1, ctx.characterId1, "Character 1 reaction"
+        );
+    }).then(() => (
+        ctx.store.createChapter(
+            ctx.testNarration.id,
+            chapterProps2
+        )
+    )).then(chapter => {
+        chapterId2 = chapter.id;
+
+        return ctx.store.updateReaction(
+            chapterId2, ctx.characterId2, "Character 2 reaction"
+        );
+    }).then(() => (
+        ctx.store.createChapter(
+            ctx.testNarration.id,
+            chapterProps3
+        )
+    )).then(chapter => {
+        chapterId3 = chapter.id;
+
+        return ctx.store.getChapterLastReactions(chapterId3);
+    }).then(lastReactions => {
+        t.is(lastReactions.length, 2);
+    });
 });
 
 test.after.always(t => {
-    fs.unlinkSync(TEST_MIGRATED_DB);
+    fs.removeSync(TEST_FILES);
 });

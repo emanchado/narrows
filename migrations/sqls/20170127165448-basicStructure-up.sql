@@ -22,7 +22,7 @@ CREATE TABLE chapters (id integer AUTO_INCREMENT PRIMARY KEY,
                        background_image varchar(256),
                        main_text text,
                        created timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-                       updated timestamp NOT NULL,
+                       updated timestamp NOT NULL DEFAULT '2000-01-01',
                        published timestamp NULL,
                        FOREIGN KEY (narration_id) REFERENCES narrations(id)
                        ON DELETE RESTRICT) DEFAULT CHARSET=utf8;

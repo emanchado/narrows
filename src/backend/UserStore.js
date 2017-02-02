@@ -18,7 +18,6 @@ class UserStore {
             "SELECT password FROM users WHERE username = ?",
             username
         ).spread(userRows => {
-            console.log("userRows =", userRows);
             if (userRows.length === 0) {
                 return false;
             }

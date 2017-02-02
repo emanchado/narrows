@@ -515,12 +515,13 @@ class NarrowsStore {
         );
     }
 
-    addCharacter(name, token) {
+    addCharacter(name, token, narrationId) {
         const deferred = Q.defer();
 
         this.db.run(
-            `INSERT INTO characters (name, token) VALUES (?, ?)`,
-            [name, token],
+            `INSERT INTO characters (name, token, narration_id)
+                             VALUES (?, ?, ?)`,
+            [name, token, narrationId],
             function(err, result) {
                 if (err) {
                     deferred.reject(err);
@@ -756,12 +757,13 @@ class NarrowsStore {
               WHERE id = ?`,
             chapterId
         ).then(row => {
-            const binds = [row.narrationId, row.narrationId];
+            const binds = [row.narrationId];
             let extraWhereClause = "";
             if (row.published) {
                 extraWhereClause += "AND published < ?";
                 binds.push(row.published);
             }
+            binds.push(row.narrationId);
 
             return Q.ninvoke(
                 this.db,
@@ -774,14 +776,18 @@ class NarrowsStore {
                JOIN characters CHR
                  ON CHPT.narration_id = CHR.narration_id
                JOIN reactions R
-                 ON (R.chapter_id = CHPT.id AND R.character_id = CHR.id)
-              WHERE CHR.narration_id = ? AND published IS NOT NULL
-                AND CHPT.id = (SELECT id
-                                 FROM chapters
-                                WHERE narration_id = ?
-                                      ${ extraWhereClause }
-                             ORDER BY published DESC
-                                LIMIT 1)`,
+                 ON (R.chapter_id = CHPT.id AND R.character_id = CHR.id),
+                     (SELECT MAX(CHAP.published) AS published, character_id
+                        FROM reactions R
+                        JOIN chapters CHAP
+                          ON R.chapter_id = CHAP.id
+                       WHERE narration_id = ?
+                             ${ extraWhereClause }
+                    GROUP BY character_id) AS reaction_per_character
+              WHERE reaction_per_character.published = CHPT.published
+                AND reaction_per_character.character_id = CHR.id
+                AND CHR.narration_id = ?
+                AND CHPT.published IS NOT NULL`,
                 binds
             );
         });
