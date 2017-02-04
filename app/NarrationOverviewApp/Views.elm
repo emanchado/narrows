@@ -46,7 +46,7 @@ chapterOverviewView chapterOverview =
 
 overviewView : Narration -> NarrationOverview -> Html Msg
 overviewView narration overview =
-  main' [ id "narrator-app" ]
+  main' [ id "narrator-app", class "app-container" ]
     [ h1 []
         [ text <| "Narration " ++ narration.title ]
     , ul [ class "chapter-list" ]

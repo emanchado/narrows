@@ -3,10 +3,6 @@
   src: url("../fonts/OldstyHPLHS.otf");
 }
 
-#narrator-app {
-    padding: 30px;
-}
-
 .two-column {
     display: flex;
     margin-top: 20px;
@@ -39,29 +35,7 @@ input, .ProseMirror-content {
 }
 
 #editor-container .ProseMirror {
-    padding: 5px;
     min-height: 200px;
-    outline: -webkit-focus-ring-color auto 5px;
-}
-
-#editor-container .ProseMirror p:first-child {
-    margin-top: 0;
-}
-#editor-container .ProseMirror p:last-child {
-    margin-bottom: 0;
-}
-
-#editor-container .ProseMirror img {
-    max-width: 100%;
-}
-
-#editor-container .ProseMirror hr {
-    min-height: 20px;
-    border: none;
-    margin: 0 auto;
-    padding: 10px 20px;
-
-    background: url(/img/separator.png) no-repeat center;
 }
 
 main.page-aside {

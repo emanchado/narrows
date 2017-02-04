@@ -75,9 +75,8 @@ reactionView model =
     div [ class "interaction" ]
       [ div [ class <| "reference-container" ++ if model.referenceInformationVisible then "" else " hidden"
             ]
-          [ h2 [] [ text "Reference information" ]
-          , ul [ class "dramatis-personae" ]
-            (List.map (characterView narrationId) participants)
+          [ h2 [ style <| if model.referenceInformationVisible then [ ("display", "none") ] else [] ]
+              [ text "Reference information" ]
           , h2 [] [ text ("Story notes for " ++ character.name) ]
           , div []
               [ textarea [ placeholder "You can write some notes here. These are remembered between chapters!"
@@ -99,6 +98,9 @@ reactionView model =
                        ]
                   [ text "Save " ]
               ]
+          , h2 [] [ text "Characters" ]
+          , ul [ class "dramatis-personae" ]
+            (List.map (characterView narrationId) participants)
           , div [ class "arrow arrow-up", onClick HideReferenceInformation ] []
           ]
       , if not model.referenceInformationVisible then

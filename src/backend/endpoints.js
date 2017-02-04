@@ -345,3 +345,18 @@ export function putNotesCharacter(req, res) {
         });
     });
 }
+
+export function getCharacter(req, res) {
+    const characterToken = req.params.charToken;
+
+    return store.getCharacterInfo(characterToken).then(character => (
+        store.getFullCharacterStats(character.id).then(stats => {
+            res.json(stats);
+        })
+    )).catch(err => {
+        res.status(500).json({
+            errorMessage: `Could not get full character stats for ` +
+                `character ${ characterToken }: ${ err }`
+        });
+    });
+}

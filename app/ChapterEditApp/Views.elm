@@ -162,7 +162,7 @@ mainView model =
                 Just narration -> narration
                 Nothing -> Common.Models.loadingPlaceholderNarration
   in
-    div [ id "narrator-app" ]
+    div [ id "narrator-app", class "app-container" ]
       [ nav []
           [ a [ href ("/narrations/" ++ (toString chapter.narrationId)) ]
               [ text "Narration" ]

@@ -10,12 +10,13 @@ import Time.DateTime as DateTime exposing (DateTime, fromTimestamp)
 
 import Routing
 import Common.Models exposing (Banner, Chapter, FileSet)
+import Common.Ports exposing (initEditor)
 
 import ChapterEditApp.Api
 import ChapterEditApp.Api.Json exposing (parseChapter)
 import ChapterEditApp.Messages exposing (..)
 import ChapterEditApp.Models exposing (..)
-import ChapterEditApp.Ports exposing (initEditor, updateParticipants, playPauseAudioPreview, openFileInput, uploadFile)
+import ChapterEditApp.Ports exposing (updateParticipants, playPauseAudioPreview, openFileInput, uploadFile)
 
 
 errorBanner : String -> Maybe Banner

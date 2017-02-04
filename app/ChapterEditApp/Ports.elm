@@ -5,14 +5,6 @@ import Json.Decode
 
 import Common.Models exposing (FullCharacter)
 
-type alias InitEditorInfo =
-  { elemId : String
-  , narrationId : Int
-  , narrationImages : List String
-  , chapterParticipants : List FullCharacter
-  , text : Json.Decode.Value
-  }
-
 type alias AddImageInfo =
   { editor : String
   , imageUrl : String
@@ -43,7 +35,6 @@ type alias FileUploadSuccess =
   , type' : String
   }
 
-port initEditor : InitEditorInfo -> Cmd msg
 port updateParticipants : UpdateParticipantsInfo -> Cmd msg
 port playPauseAudioPreview : String -> Cmd msg
 port openFileInput : String -> Cmd msg

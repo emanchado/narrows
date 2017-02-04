@@ -22,6 +22,10 @@ label {
     font-weight: bold;
 }
 
+.app-container {
+    padding: 30px;
+}
+
 #loader {
     width: 100%;
     height: 100%;
@@ -104,4 +108,31 @@ ul.thread-list li span.narrator {
 }
 ul.thread-list .message {
     padding: 5px;
+}
+
+.ProseMirror {
+    padding: 5px;
+    color: #113;
+    background-color: #eee;
+    outline: -webkit-focus-ring-color auto 5px;
+}
+
+.ProseMirror p:first-child {
+    margin-top: 0;
+}
+.ProseMirror p:last-child {
+    margin-bottom: 0;
+}
+
+.ProseMirror img {
+    max-width: 100%;
+}
+
+.ProseMirror hr {
+    min-height: 20px;
+    border: none;
+    margin: 0 auto;
+    padding: 10px 20px;
+
+    background: url(/img/separator.png) no-repeat center;
 }

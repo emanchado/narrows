@@ -1,6 +1,11 @@
 #reader-app {
+    min-height: 100%;
     background-color: black;
     color: #e5e5e5;
+}
+
+#reader-app a {
+    color: inherit;
 }
 
 #chapter-container {
@@ -193,4 +198,11 @@ ul.thread-list.reader .message {
     margin-right: 10px;
     max-width: 100px;
     max-height: 100px;
+}
+
+#description-editor .ProseMirror {
+    min-height: 100px;
+}
+#backstory-editor .ProseMirror {
+    min-height: 200px;
 }

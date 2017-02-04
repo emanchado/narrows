@@ -61,7 +61,7 @@ mainView model =
                    , []
                    )
   in
-    main' [ id "narrator-app" ]
+    main' [ id "narrator-app", class "app-container" ]
       [ h1 []
           [ text <| chapter.title ]
       , nav []

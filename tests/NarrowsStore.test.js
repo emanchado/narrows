@@ -214,7 +214,7 @@ test.serial("last reactions work when different characters last appeared in diff
     const chapterProps2 = { title: "Intro for char2",
                             text: [],
                             participants: [{id: ctx.characterId2}],
-                            published: new Date()  };
+                            published: new Date() };
     const chapterProps3 = { title: "First joint chapter",
                             text: [],
                             participants: [{id: ctx.characterId1},
@@ -252,6 +252,32 @@ test.serial("last reactions work when different characters last appeared in diff
         return ctx.store.getChapterLastReactions(chapterId3);
     }).then(lastReactions => {
         t.is(lastReactions.length, 2);
+    });
+});
+
+test.serial("character stats only lists chapters the character has appeared in", t => {
+    const ctx = t.context;
+    const chapterProps1 = { title: "Intro for char1",
+                            text: [],
+                            participants: [{id: ctx.characterId1}],
+                            published: new Date() };
+    const chapterProps2 = { title: "Intro for char2",
+                            text: [],
+                            participants: [{id: ctx.characterId2}],
+                            published: new Date() };
+
+    return ctx.store.createChapter(
+        ctx.testNarration.id,
+        chapterProps1
+    ).then(() => (
+        ctx.store.createChapter(
+            ctx.testNarration.id,
+            chapterProps2
+        )
+    )).then(chapter => (
+        ctx.store.getFullCharacterStats(ctx.characterId1)
+    )).then(stats => {
+        t.is(stats.narration.chapters.length, 1);
     });
 });
 

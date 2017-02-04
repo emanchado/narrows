@@ -6,6 +6,7 @@ import UrlParser exposing (..)
 
 type Route
   = ChapterReaderPage Int String
+  | CharacterPage String
   | ChapterEditNarratorPage Int
   | ChapterControlPage Int
   | CreateChapterPage Int
@@ -16,6 +17,7 @@ matchers : Parser (Route -> a) a
 matchers =
   oneOf
     [ format ChapterReaderPage (s "read" </> int </> string)
+    , format CharacterPage (s "characters" </> string)
     , format ChapterEditNarratorPage (s "chapters" </> int </> s "edit")
     , format ChapterControlPage (s "chapters" </> int)
     , format CreateChapterPage (s "narrations" </> int </> s "new")

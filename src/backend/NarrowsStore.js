@@ -792,6 +792,44 @@ class NarrowsStore {
             );
         });
     }
+
+    getFullCharacterStats(characterId) {
+        return Q.ninvoke(
+            this.db,
+            "get",
+            `SELECT C.id, C.name, C.avatar, C.description, C.backstory,
+                    N.id AS narrationId, N.title AS narrationTitle
+               FROM characters C
+               JOIN narrations N
+                 ON C.narration_id = N.id
+              WHERE C.id = ?`,
+            characterId
+        ).then(basicStats => {
+            return Q.ninvoke(
+                this.db,
+                "all",
+                `SELECT C.id, C.title
+                   FROM chapters C
+                   JOIN reactions R
+                     ON C.id = R.chapter_id
+                  WHERE narration_id = ?
+                    AND published IS NOT NULL
+                    AND R.character_id = ?`,
+                [basicStats.narrationId, characterId]
+            ).then(chapters => ({
+                id: basicStats.id,
+                name: basicStats.name,
+                avatar: basicStats.avatar,
+                description: JSON.parse(basicStats.description),
+                backstory: JSON.parse(basicStats.backstory),
+                narration: {
+                    id: basicStats.narrationId,
+                    title: basicStats.narrationTitle,
+                    chapters: chapters
+                }
+            }));
+        });
+    }
 }
 
 export default NarrowsStore;

@@ -78,7 +78,6 @@ app.ports.initEditor.subscribe(evt => {
     if (editorViews.hasOwnProperty(evt.elemId)) {
         editor.updateText(editorViews[evt.elemId], evt.text);
     } else {
-
         const container = document.getElementById(evt.elemId);
         editorViews[evt.elemId] =
             editor.create(evt.text, container, view => {
