@@ -1,6 +1,7 @@
 /*global app */
 
 const editor = require("./editor");
+const schemas = require("./narrows-schemas");
 
 /*
  * Ports for the reader app
@@ -24,7 +25,7 @@ app.ports.renderChapter.subscribe(evt => {
         return;
     }
     elem.innerHTML = "";
-    elem.appendChild(editor.exportTextToDOM(evt.text));
+    elem.appendChild(editor.exportTextToDOM(evt.text, schemas.chapter));
 });
 
 app.ports.startNarration.subscribe(evt => {
@@ -75,12 +76,14 @@ document.addEventListener("scroll", function(evt) {
  */
 const editorViews = {};
 app.ports.initEditor.subscribe(evt => {
+    const schema = schemas[evt.editorType];
+
     if (editorViews.hasOwnProperty(evt.elemId)) {
-        editor.updateText(editorViews[evt.elemId], evt.text);
+        editor.updateText(editorViews[evt.elemId], evt.text, schema);
     } else {
         const container = document.getElementById(evt.elemId);
         editorViews[evt.elemId] =
-            editor.create(evt.text, container, view => {
+            editor.create(evt.text, schema, container, view => {
                 app.ports.editorContentChanged.send(editor.exportText(view.editor));
             });
     }

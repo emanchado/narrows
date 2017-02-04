@@ -48,12 +48,14 @@ update msg model =
                                , narrationImages = []
                                , chapterParticipants = []
                                , text = character.description
+                               , editorType = "description"
                                }
                   , initEditor { elemId = "backstory-editor"
                                , narrationId = 0
                                , narrationImages = []
                                , chapterParticipants = []
                                , text = character.backstory
+                               , editorType = "description"
                                }
                   ]
       )

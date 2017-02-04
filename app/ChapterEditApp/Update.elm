@@ -107,6 +107,7 @@ update msg model =
                                     , narrationImages = narration.files.images
                                     , chapterParticipants = []
                                     , text = Json.Encode.null
+                                    , editorType = "chapter"
                                     }
                        )
             Just ch -> ( model.chapter
@@ -115,6 +116,7 @@ update msg model =
                                     , narrationImages = narration.files.images
                                     , chapterParticipants = ch.participants
                                     , text = ch.text
+                                    , editorType = "chapter"
                                     }
                        )
       in

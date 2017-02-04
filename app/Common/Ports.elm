@@ -15,6 +15,7 @@ type alias InitEditorInfo =
   , narrationImages : List String
   , chapterParticipants : List FullCharacter
   , text : Json.Decode.Value
+  , editorType : String
   }
 
 port renderChapter : RenderChapterInfo -> Cmd msg

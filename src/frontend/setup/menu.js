@@ -289,7 +289,7 @@ function buildMenuItems(schema) {
   if (tableItems.length)
     r.tableMenu = new Dropdown(tableItems, {label: "Table"})
 
-    r.inlineMenu = [cut([r.toggleStrong, r.toggleEm, r.toggleCode, r.toggleLink]), [r.togglePrivate], [r.insertMenu]]
+    r.inlineMenu = [cut([r.toggleStrong, r.toggleEm, r.toggleCode, r.toggleLink]), cut([r.togglePrivate]), [r.insertMenu]]
   r.blockMenu = [cut([r.typeMenu, r.tableMenu, r.wrapBulletList, r.wrapOrderedList, r.wrapBlockQuote, joinUpItem,
                       liftItem, selectParentNodeItem])]
   r.fullMenu = r.inlineMenu.concat(r.blockMenu).concat([[undoItem, redoItem]])
