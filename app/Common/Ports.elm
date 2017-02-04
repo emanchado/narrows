@@ -4,9 +4,10 @@ import Json.Decode
 
 import Common.Models exposing (FullCharacter)
 
-type alias RenderChapterInfo =
+type alias RenderTextInfo =
   { elemId : String
   , text : Json.Decode.Value
+  , proseMirrorType : String
   }
 
 type alias InitEditorInfo =
@@ -18,5 +19,5 @@ type alias InitEditorInfo =
   , editorType : String
   }
 
-port renderChapter : RenderChapterInfo -> Cmd msg
+port renderText : RenderTextInfo -> Cmd msg
 port initEditor : InitEditorInfo -> Cmd msg

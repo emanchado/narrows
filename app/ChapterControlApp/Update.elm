@@ -5,7 +5,7 @@ import Json.Decode
 
 import Routing
 import Common.Models exposing (Banner)
-import Common.Ports exposing (renderChapter)
+import Common.Ports exposing (renderText)
 import Common.Api.Json exposing (parseChapterMessages)
 
 import ChapterControlApp.Api
@@ -54,9 +54,10 @@ update msg model =
         ( { model | interactions = Just interactions
                   , newMessageRecipients = participantIds
                   }
-        , renderChapter { elemId = "chapter-text"
-                        , text = interactions.chapter.text
-                        }
+        , renderText { elemId = "chapter-text"
+                     , text = interactions.chapter.text
+                     , proseMirrorType = "chapter"
+                     }
         )
     UpdateNewMessageText newText ->
       ({ model | newMessageText = newText }, Cmd.none)

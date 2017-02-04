@@ -16,7 +16,7 @@ parseParticipantCharacter =
     ("id" := int)
     ("name" := string)
     (maybe ("avatar" := string))
-    (maybe ("description" := string))
+    ("description" := Json.value)
 
 parseOwnCharacter : Json.Decoder OwnCharacter
 parseOwnCharacter =

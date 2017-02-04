@@ -4,7 +4,7 @@ import Http
 import Json.Decode
 
 import Routing
-import Common.Ports exposing (renderChapter)
+import Common.Ports exposing (renderText)
 import Common.Api.Json exposing (parseChapterMessages)
 
 import ReaderApp.Api
@@ -25,6 +25,13 @@ urlUpdate route model =
       )
     _ ->
       (model, Cmd.none)
+
+descriptionRenderCommand : ParticipantCharacter -> Cmd Msg
+descriptionRenderCommand character =
+  renderText { elemId = "description-character-" ++ (toString character.id)
+             , text = character.description
+             , proseMirrorType = "description"
+             }
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
@@ -86,12 +93,17 @@ update msg model =
                         ""
         command = case model.chapter of
                     Just chapterData ->
-                      Cmd.batch
-                        [ renderChapter { elemId = "chapter-text"
-                                        , text = chapterData.text
-                                        }
-                        , startNarration { audioElemId = audioElemId }
-                        ]
+                      Cmd.batch <|
+                        List.append
+                          [ renderText { elemId = "chapter-text"
+                                       , text = chapterData.text
+                                       , proseMirrorType = "chapter"
+                                       }
+                          , startNarration { audioElemId = audioElemId }
+                          ]
+                          (List.map
+                             descriptionRenderCommand
+                               chapterData.participants)
                     Nothing ->
                       Cmd.none
       in

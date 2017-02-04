@@ -382,7 +382,14 @@ class NarrowsStore {
                FROM characters C JOIN reactions R ON C.id = R.character_id
               WHERE chapter_id = ?`,
             chapterId
-        );
+        ).then(participants => (
+            participants.map(participant => (
+                Object.assign(
+                    participant,
+                    { description: JSON.parse(participant.description) }
+                )
+            ))
+        ));
     }
 
     getChapter(id, opts) {

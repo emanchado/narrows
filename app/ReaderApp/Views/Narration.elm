@@ -41,10 +41,6 @@ characterView narrationId character =
           "/static/narrations/" ++ (toString narrationId) ++ "/avatars/" ++ avatar
         Nothing ->
           "/img/default-avatar.png"
-    description =
-      case character.description of
-        Just desc -> desc
-        Nothing -> ""
   in
     li []
       [ img [ class "avatar"
@@ -54,7 +50,10 @@ characterView narrationId character =
       , div []
           [ strong [] [ text character.name ]
           , br [] []
-          , text description
+          , div [ id <| "description-character-" ++ (toString character.id)
+                , class "character-description"
+                ]
+              []
           ]
       ]
 

@@ -17,10 +17,10 @@ function bumpVolume(audioEl) {
     }
 }
 
-app.ports.renderChapter.subscribe(evt => {
+app.ports.renderText.subscribe(evt => {
     const elem = document.getElementById(evt.elemId);
     if (!elem) {
-        console.error("Cannot render chapter into " + evt.elemId +
+        console.error("Cannot render text into " + evt.elemId +
                           ", element does not exist (yet?)");
         return;
     }
