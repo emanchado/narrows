@@ -6,7 +6,7 @@ import Html.Attributes exposing (id, class, style, for, src, href, target, type'
 import Html.Events exposing (onClick, onInput)
 import Http exposing (uriEncode)
 
-import ReaderApp.Models exposing (Model, Chapter, ParticipantCharacter, Banner)
+import ReaderApp.Models exposing (Model, Chapter, OwnCharacter, ParticipantCharacter, Banner)
 import ReaderApp.Messages exposing (..)
 import ReaderApp.Views.Banner
 import ReaderApp.Views.MessageThreads
@@ -32,11 +32,11 @@ backgroundImageStyle chapter backgroundBlurriness =
     , ("filter", filter)
     ]
 
-characterView : Int -> ParticipantCharacter -> Html Msg
-characterView narrationId character =
+characterView : Int -> OwnCharacter -> ParticipantCharacter -> Html Msg
+characterView narrationId ownCharacter participant =
   let
     avatarUrl =
-      case character.avatar of
+      case participant.avatar of
         Just avatar ->
           "/static/narrations/" ++ (toString narrationId) ++ "/avatars/" ++ avatar
         Nothing ->
@@ -48,9 +48,16 @@ characterView narrationId character =
             ]
           []
       , div []
-          [ strong [] [ text character.name ]
+          [ strong [] [ text participant.name ]
+          , if ownCharacter.id == participant.id then
+              span [] [ text " — "
+                      , a [ href <| "/characters/" ++ ownCharacter.token ]
+                          [ text "character sheet" ]
+                      ]
+            else
+              text ""
           , br [] []
-          , div [ id <| "description-character-" ++ (toString character.id)
+          , div [ id <| "description-character-" ++ (toString participant.id)
                 , class "character-description"
                 ]
               []
@@ -99,7 +106,7 @@ reactionView model =
               ]
           , h2 [] [ text "Characters" ]
           , ul [ class "dramatis-personae" ]
-            (List.map (characterView narrationId) participants)
+            (List.map (characterView narrationId character) participants)
           , div [ class "arrow arrow-up", onClick HideReferenceInformation ] []
           ]
       , if not model.referenceInformationVisible then
