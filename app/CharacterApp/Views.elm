@@ -1,8 +1,8 @@
 module CharacterApp.Views exposing (mainView)
 
-import Html exposing (Html, section, h2, h3, div, ul, li, img, a, label, em, text)
+import Html exposing (Html, section, h2, h3, div, ul, li, img, button, a, label, em, text)
 import Html.Attributes exposing (id, class, for, src, href, type', checked)
--- import Html.Events exposing (onClick)
+import Html.Events exposing (onClick)
 
 import Common.Views exposing (bannerView)
 
@@ -50,6 +50,12 @@ mainView model =
             , div [ id "description-editor" ] []
             , label [] [ text "Backstory" ]
             , div [ id "backstory-editor" ] []
+            , div [ class "btn-bar" ]
+                [ button [ class "btn btn-default"
+                         , onClick SaveCharacter
+                         ]
+                    [ text "Save" ]
+                ]
             ]
         , section []
             [ h3 [] [ text "Appears in these chapters:" ]

@@ -7,6 +7,7 @@ import CharacterApp.Messages exposing (..)
 import CharacterApp.Models exposing (..)
 import CharacterApp.Update
 import CharacterApp.Views
+import CharacterApp.Ports
 
 type alias Model = CharacterApp.Models.Model
 type alias Msg = CharacterApp.Messages.Msg
@@ -29,4 +30,6 @@ view = CharacterApp.Views.mainView
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-  Sub.none
+  Sub.batch [ CharacterApp.Ports.descriptionContentChanged UpdateDescriptionText
+            , CharacterApp.Ports.backstoryContentChanged UpdateBackstoryText
+            ]

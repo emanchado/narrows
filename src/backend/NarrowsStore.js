@@ -16,7 +16,9 @@ const JSON_TO_DB = {
     published: "published",
     narratorId: "narrator_id",
     defaultBackgroundImage: "default_background_image",
-    defaultAudio: "default_audio"
+    defaultAudio: "default_audio",
+    description: "description",
+    backstory: "backstory"
 };
 
 const AUDIO_REGEXP = new RegExp("\.mp3$", "i");
@@ -836,6 +838,25 @@ class NarrowsStore {
                 }
             }));
         });
+    }
+
+    updateCharacter(characterId, props) {
+        const propNames = Object.keys(props).map(convertToDb),
+              propNameStrings = propNames.map(p => `${p} = ?`);
+        const propValues = Object.keys(props).map(p => props[p]);
+
+        if (!propValues.length) {
+            return this.getFullCharacterStats(characterId);
+        }
+
+        return Q.ninvoke(
+            this.db,
+            "run",
+            `UPDATE characters SET ${ propNameStrings.join(", ") } WHERE id = ?`,
+            propValues.concat(characterId)
+        ).then(
+            () => this.getFullCharacterStats(characterId)
+        );
     }
 }
 

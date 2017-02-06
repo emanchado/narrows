@@ -356,7 +356,32 @@ export function getCharacter(req, res) {
     )).catch(err => {
         res.status(500).json({
             errorMessage: `Could not get full character stats for ` +
-                `character ${ characterToken }: ${ err }`
+                `character '${ characterToken }': ${ err }`
+        });
+    });
+}
+
+export function putCharacter(req, res) {
+    const characterToken = req.params.charToken;
+    const newProps = req.body;
+
+    if (newProps.description) {
+        newProps.description = JSON.stringify(newProps.description);
+    }
+    if (newProps.backstory) {
+        newProps.backstory = JSON.stringify(newProps.backstory);
+    }
+
+    console.log("newProps =", JSON.stringify(newProps, null, 2));
+
+    return store.getCharacterInfo(characterToken).then(character => (
+        store.updateCharacter(character.id, newProps).then(newCharacter => {
+            res.json(newCharacter);
+        })
+    )).catch(err => {
+        res.status(500).json({
+            errorMessage: `Could not update character with ` +
+                `id '${ characterToken }': ${ err }`
         });
     });
 }

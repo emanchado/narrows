@@ -4,31 +4,9 @@ import Json.Decode as Json exposing (..)
 import Task
 import Http
 
+import CharacterApp.Api.Json exposing (parseCharacterInfo, encodeCharacterUpdate)
 import CharacterApp.Messages exposing (Msg, Msg(..))
-import CharacterApp.Models exposing (CharacterInfo, ChapterSummary, NarrationSummary)
-
-parseChapterSummary : Json.Decoder ChapterSummary
-parseChapterSummary =
-  Json.object2 ChapterSummary
-    ("id" := int)
-    ("title" := string)
-
-parseNarrationSummary : Json.Decoder NarrationSummary
-parseNarrationSummary =
-  Json.object3 NarrationSummary
-    ("id" := int)
-    ("title" := string)
-    ("chapters" := list parseChapterSummary)
-
-parseCharacterInfo : Json.Decoder CharacterInfo
-parseCharacterInfo =
-  Json.object6 CharacterInfo
-    ("id" := int)
-    ("name" := string)
-    (maybe ("avatar" := string))
-    ("description" := Json.value)
-    ("backstory" := Json.value)
-    ("narration" := parseNarrationSummary)
+import CharacterApp.Models exposing (CharacterInfo)
 
 fetchCharacterInfo : String -> Cmd Msg
 fetchCharacterInfo characterToken =
@@ -37,3 +15,16 @@ fetchCharacterInfo characterToken =
   in
     Task.perform CharacterFetchError CharacterFetchSuccess
       (Http.get parseCharacterInfo characterApiUrl)
+
+saveCharacter : String -> CharacterInfo -> Cmd Msg
+saveCharacter characterToken characterInfo =
+  Task.perform
+    SaveCharacterError
+    SaveCharacterSuccess
+    (Http.send
+       Http.defaultSettings
+       { verb = "PUT"
+       , url = "/api/characters/" ++ characterToken
+       , headers = [("Content-Type", "application/json")]
+       , body = Http.string <| encodeCharacterUpdate characterInfo
+       })

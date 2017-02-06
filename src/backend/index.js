@@ -52,6 +52,7 @@ app.get("/api/messages/:chptId/:charToken", endpoints.getMessagesCharacter);
 app.post("/api/messages/:chptId/:charToken", endpoints.postMessageCharacter);
 app.put("/api/notes/:charToken", endpoints.putNotesCharacter);
 app.get("/api/characters/:charToken", endpoints.getCharacter);
+app.put("/api/characters/:charToken", endpoints.putCharacter);
 
 app.use("/static/narrations", express.static(config.files.path));
 

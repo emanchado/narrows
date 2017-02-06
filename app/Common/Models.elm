@@ -28,6 +28,12 @@ loadingPlaceholderNarration =
             }
   }
 
+errorBanner : String -> Maybe Banner
+errorBanner errorMessage =
+  Just { text = errorMessage
+       , type' = "error"
+       }
+
 type alias Banner =
   { type' : String
   , text : String

@@ -84,7 +84,13 @@ app.ports.initEditor.subscribe(evt => {
         const container = document.getElementById(evt.elemId);
         editorViews[evt.elemId] =
             editor.create(evt.text, schema, container, view => {
-                app.ports.editorContentChanged.send(editor.exportText(view.editor));
+                const port = app.ports[evt.updatePortName];
+                if (port) {
+                    port.send(editor.exportText(view.editor));
+                } else {
+                    console.error("Cannot find editor update port '" +
+                                  evt.updatePortName + "'");
+                }
             });
     }
     editorViews[evt.elemId].props.narrationId = evt.narrationId;

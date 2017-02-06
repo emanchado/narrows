@@ -9,7 +9,7 @@ import Time exposing (Time)
 import Time.DateTime as DateTime exposing (DateTime, fromTimestamp)
 
 import Routing
-import Common.Models exposing (Banner, Chapter, FileSet)
+import Common.Models exposing (Banner, Chapter, FileSet, errorBanner)
 import Common.Ports exposing (initEditor)
 
 import ChapterEditApp.Api
@@ -18,12 +18,6 @@ import ChapterEditApp.Messages exposing (..)
 import ChapterEditApp.Models exposing (..)
 import ChapterEditApp.Ports exposing (updateParticipants, playPauseAudioPreview, openFileInput, uploadFile)
 
-
-errorBanner : String -> Maybe Banner
-errorBanner errorMessage =
-  Just { text = errorMessage
-       , type' = "error"
-       }
 
 updateNarrationFiles : FileSet -> ChapterEditApp.Ports.FileUploadSuccess -> FileSet
 updateNarrationFiles fileSet uploadResponse =
@@ -108,6 +102,7 @@ update msg model =
                                     , chapterParticipants = []
                                     , text = Json.Encode.null
                                     , editorType = "chapter"
+                                    , updatePortName = "editorContentChanged"
                                     }
                        )
             Just ch -> ( model.chapter
@@ -117,6 +112,7 @@ update msg model =
                                     , chapterParticipants = ch.participants
                                     , text = ch.text
                                     , editorType = "chapter"
+                                    , updatePortName = "editorContentChanged"
                                     }
                        )
       in

@@ -1,10 +1,9 @@
 TODO
 ====
 
-* Add a way for readers to navigate between chapters and/or an index
 * Send message notifications to narrators, too!
 * Send action notifications to narrators!
-* Button to send reminder e-mails?
+* Allow the player to change the character avatar
 * Rewrite the image uploader so it's a single, special component that
   updates the dropdown as soon as an image is uploaded
 * Make it easier to remove mention marks
