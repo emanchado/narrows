@@ -1,7 +1,6 @@
 port module ChapterEditApp.Ports exposing (..)
 
 import Json.Encode
-import Json.Decode
 
 import Common.Models exposing (FullCharacter)
 

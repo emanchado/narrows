@@ -3,9 +3,6 @@ module CharacterApp.Api.Json exposing (..)
 import Json.Decode as Json exposing (..)
 import Json.Encode
 
-import Common.Models exposing (FullCharacter, Narration, Chapter, FileSet)
-import Common.Api.Json exposing (parseCharacter)
-
 import CharacterApp.Models exposing (CharacterInfo, ChapterSummary, NarrationSummary)
 
 parseChapterSummary : Json.Decoder ChapterSummary

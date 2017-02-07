@@ -1,6 +1,5 @@
 module CharacterApp.Api exposing (..)
 
-import Json.Decode as Json exposing (..)
 import Task
 import Http
 
