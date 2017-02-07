@@ -30,7 +30,7 @@ app.use(expressSession({
 // These static file endpoints also accept POST because that's how the
 // login system works
 app.all("/read/:chptId/:characterId", function(req, res) {
-    res.sendFile(path.resolve(path.join(STATIC_HTML_FILES, "read.html")));
+    res.sendFile(path.resolve(path.join(STATIC_HTML_FILES, "index.html")));
 });
 app.get("/feeds/:charToken", endpoints.getFeedsCharacter);
 
@@ -57,7 +57,7 @@ app.put("/api/characters/:charToken", endpoints.putCharacter);
 app.use("/static/narrations", express.static(config.files.path));
 
 app.use(middlewares.auth, function(req, res) {
-    res.sendFile(path.resolve(path.join(STATIC_HTML_FILES, "read.html")));
+    res.sendFile(path.resolve(path.join(STATIC_HTML_FILES, "index.html")));
 });
 
 app.listen(config.port, function () {
