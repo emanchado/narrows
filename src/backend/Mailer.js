@@ -99,6 +99,30 @@ class Mailer {
             }
         }).catch(console.error);
     }
+
+    reactionPosted(chapterId, characterToken, reactionText) {
+        return Q.all([
+            this.store.getChapter(chapterId),
+            this.store.getCharacterInfo(characterToken)
+        ]).spread((chapter, character) => {
+            return Q.all([
+                this.store.getNarration(chapter.narrationId),
+                this.store.getNarratorEmail(chapter.narrationId)
+            ]).spread((narration, narratorEmail) => {
+                this.sendMail(
+                    "reactionPosted",
+                    narratorEmail,
+                    `${character.name} reacted to` +
+                        ` "${chapter.title}" in "${narration.title}"`,
+                    {characterName: character.name,
+                     reactionText: reactionText,
+                     chapterTitle: chapter.title,
+                     narrationTitle: narration.title,
+                     chapterUrl: this.chapterNarratorUrlFor(chapter.id)}
+                ).catch(console.error);
+            });
+        }).catch(console.error);
+    }
 };
 
 module.exports = Mailer;

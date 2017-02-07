@@ -247,6 +247,8 @@ export function putReactionCharacter(req, res) {
     store.getCharacterInfo(characterToken).then(({ id: characterId }) => {
         return store.updateReaction(chapterId, characterId, reactionText).then(() => {
             res.json({ chapterId, characterId, reactionText });
+
+            mailer.reactionPosted(chapterId, characterToken, reactionText);
         });
     }).catch(err => {
         res.status(500).json({
