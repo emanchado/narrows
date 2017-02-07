@@ -372,6 +372,21 @@ class NarrowsStore {
         });
     }
 
+    getNarratorEmail(narrationId) {
+        return Q.ninvoke(
+            this.db,
+            "get",
+            `SELECT email
+               FROM narrations N
+               JOIN users U
+                 ON N.narrator_id = U.id
+              WHERE N.id = ?`,
+            narrationId
+        ).then(
+            narrationRow => narrationRow.email
+        );
+    }
+
     getChapterParticipants(chapterId, userOpts) {
         const opts = userOpts || {};
         const extraFields = opts.includePrivateFields ?

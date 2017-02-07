@@ -14,6 +14,10 @@ class Mailer {
         return `${config.publicAddress}/read/${chapterId}/${characterToken}`;
     }
 
+    chapterNarratorUrlFor(chapterId) {
+        return `${config.publicAddress}/chapters/${chapterId}`;
+    }
+
     sendMail(template, recipient, subject, stash) {
         if (!recipient) {
             // Nothing to do
@@ -70,7 +74,7 @@ class Mailer {
                     this.sendMail(
                         "messagePosted",
                         emails[recipient],
-                        `New message posted in "${chapter.title}"`,
+                        `New message in "${chapter.title}"`,
                         {senderName: message.sender.name,
                          messageText: message.text,
                          chapterTitle: chapter.title,
@@ -78,6 +82,21 @@ class Mailer {
                     ).catch(console.error)
                 ));
             });
+
+            // If this was sent by a player, send a copy to the narrator
+            if (message.sender.id) {
+                this.store.getNarratorEmail(chapter.narrationId).then(email => (
+                    this.sendMail(
+                        "messagePosted",
+                        email,
+                        `New message in "${chapter.title}"`,
+                        {senderName: message.sender.name,
+                         messageText: message.text,
+                         chapterTitle: chapter.title,
+                         chapterUrl: this.chapterNarratorUrlFor(chapter.id)}
+                    ).catch(console.error)
+                ));
+            }
         }).catch(console.error);
     }
 };

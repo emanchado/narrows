@@ -1,18 +1,16 @@
 TODO
 ====
 
-* Send message notifications to narrators, too!
 * Send action notifications to narrators!
-* Allow the player to change the character avatar
+* Allow the player to change the character avatar, e-mail address
 * Rewrite the image uploader so it's a single, special component that
   updates the dropdown as soon as an image is uploaded
 * Make it easier to remove mention marks
-* Show background information or whatever to players
+* Create new narrations
+* Dashboard to see all narrations
 * Allow narrators to change password, and create more narrators
-* Allow players to change their e-mail address
-* Allow players to change their character's backstory/description/avatar
 * Maybe add an "admin" role so that not all narrators can create users?
-* Add feedback on save (narrator pages)
+* Add feedback on save (narrator pages, character page)
 * Really wait until everything is loaded before showing the "Start" button
 
 Initial narrator
