@@ -48,7 +48,8 @@
     "brunch": "^2.8.2",
     "elm-brunch": "^0.5.0",
     "elm-test": "^0.17.3",
-    "nodemon": "^1.10.2"
+    "nodemon": "^1.10.2",
+    "robohydra": "^0.6.5"
   },
   "ava": {
     "require": [
