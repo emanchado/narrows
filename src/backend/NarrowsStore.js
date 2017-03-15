@@ -166,7 +166,8 @@ class NarrowsStore {
             this.db,
             "get",
             `SELECT id, title, default_audio AS defaultAudio,
-                    default_background_image AS defaultBackgroundImage
+                    default_background_image AS defaultBackgroundImage,
+                    narrator_id AS narratorId
                FROM narrations WHERE id = ?`,
             id
         ).then(narrationInfo => {

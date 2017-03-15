@@ -6,6 +6,7 @@ import nodemailer from "nodemailer";
 import sendmailTransport from "nodemailer-sendmail-transport";
 
 import NarrowsStore from "./NarrowsStore";
+import UserStore from "./UserStore";
 import mentionFilter from "./mention-filter";
 import messageUtils from "./message-utils";
 import feeds from "./feeds";
@@ -13,6 +14,9 @@ import Mailer from "./Mailer";
 
 const store = new NarrowsStore(config.db, config.files.path);
 store.connect();
+const userStore = new UserStore(config.db);
+userStore.connect();
+
 const transporter = nodemailer.createTransport(sendmailTransport());
 const mailer = new Mailer(store, transporter);
 
@@ -20,10 +24,16 @@ export function getNarration(req, res) {
     const narrationId = parseInt(req.params.narrId, 10);
 
     store.getNarration(narrationId).then(narrationData => {
-        res.json(narrationData);
+        return userStore.canActAs(
+            req.session.userId,
+            narrationData.narratorId
+        ).then(() => {
+            res.json(narrationData);
+        });
     }).catch(err => {
         res.status(404).json({
-            errorMessage: `Cannot find narration ${ narrationId }`
+            errorMessage: `Cannot find narration ${ narrationId } for ` +
+                `this user: ${ err }`
         });
     });
 }
@@ -31,9 +41,13 @@ export function getNarration(req, res) {
 export function getChapter(req, res) {
     const chapterId = parseInt(req.params.chptId, 10);
 
-    store.getChapter(chapterId, { includePrivateFields: true }).then(chapterData => {
-        res.json(chapterData);
-    }).catch(err => {
+    store.getChapter(chapterId, { includePrivateFields: true }).then(chapterData => (
+        store.getNarration(chapterData.narrationId).then(narrationData => (
+            userStore.canActAs(req.session.userId, narrationData.narratorId)
+        )).then(() => (
+            res.json(chapterData)
+        ))
+    )).catch(err => {
         res.status(404).json({
             errorMessage: `Cannot find chapter ${ chapterId }: ${ err }`
         });
@@ -75,8 +89,16 @@ export function getChapterCharacter(req, res) {
 export function getNarrationChapters(req, res) {
     const narrationId = parseInt(req.params.narrId, 10);
 
-    store.getNarrationChapters(narrationId).then(chapterListData => {
-        res.json({ chapters: chapterListData });
+    Q.all([
+        store.getNarrationChapters(narrationId),
+        store.getNarration(narrationId)
+    ]).spread((chapterListData, narrationData) => {
+        return userStore.canActAs(
+            req.session.userId,
+            narrationData.narratorId
+        ).then(() => {
+            res.json({ chapters: chapterListData });
+        });
     }).catch(err => {
         res.status(404).json({
             errorMessage: `Cannot find chapters for narration ${ narrationId }: ${ err }`
@@ -88,17 +110,21 @@ export function putChapter(req, res) {
     const chapterId = parseInt(req.params.chptId, 10);
 
     req.body.text = JSON.stringify(req.body.text);
-    store.getChapter(chapterId).then(origChapter => {
-        const origPublished = origChapter.published;
+    store.getChapter(chapterId).then(origChapter => (
+        store.getNarration(origChapter.narrationId).then(narrationData => (
+            userStore.canActAs(req.session.userId, narrationData.narratorId)
+        )).then(() => {
+            const origPublished = origChapter.published;
 
-        return store.updateChapter(chapterId, req.body).then(chapter => {
-            res.json(chapter);
+            return store.updateChapter(chapterId, req.body).then(chapter => {
+                res.json(chapter);
 
-            if (!origPublished && req.body.published) {
-                mailer.chapterPublished(chapter);
-            }
-        });
-    }).catch(err => {
+                if (!origPublished && req.body.published) {
+                    mailer.chapterPublished(chapter);
+                }
+            });
+        })
+    )).catch(err => {
         res.status(500).json({
             errorMessage: `There was a problem updating: ${ err }`
         });
@@ -112,13 +138,17 @@ export function getChapterInteractions(req, res) {
         store.getChapter(chapterId, { includePrivateFields: true }),
         store.getAllChapterMessages(chapterId),
         store.getChapterReactions(chapterId)
-    ]).spread((chapter, messages, reactions) => {
-        res.json({
-            chapter: chapter,
-            messageThreads: messageUtils.threadMessages(messages),
-            reactions: reactions
-        });
-    }).catch(err => {
+    ]).spread((chapter, messages, reactions) => (
+        store.getNarration(chapter.narrationId).then(narrationData => (
+            userStore.canActAs(req.session.userId, narrationData.narratorId)
+        )).then(() => (
+            res.json({
+                chapter: chapter,
+                messageThreads: messageUtils.threadMessages(messages),
+                reactions: reactions
+            })
+        ))
+    )).catch(err => {
         res.status(500).json({
             errorMessage: `Could not get interactions: ${ err }`
         });
@@ -130,12 +160,18 @@ export function postChapterMessages(req, res) {
           messageText = req.body.text,
           messageRecipients = req.body.recipients || [];
 
-    return store.addMessage(
-        chapterId,
-        null,
-        messageText,
-        messageRecipients
-    ).then(() => (
+    return store.getChapter(chapterId).then(chapterData => (
+        store.getNarration(chapterData.narrationId)
+    )).then(narrationData => (
+        userStore.canActAs(req.session.userId, narrationData.narratorId)
+    )).then(() => (
+        store.addMessage(
+            chapterId,
+            null,
+            messageText,
+            messageRecipients
+        )
+    )).then(() => (
         store.getAllChapterMessages(chapterId)
     )).then(messages => {
         res.json({
@@ -156,7 +192,11 @@ export function postChapterMessages(req, res) {
 export function postNewChapter(req, res) {
     const narrationId = parseInt(req.params.narrId, 10);
 
-    store.createChapter(narrationId, req.body).then(chapterData => {
+    store.getNarration(narrationId).then(narrationData => (
+        userStore.canActAs(req.session.userId, narrationData.narratorId)
+    )).then(() => (
+        store.createChapter(narrationId, req.body)
+    )).then(chapterData => {
         res.json(chapterData);
 
         if (chapterData.published) {
@@ -175,15 +215,20 @@ export function postNarrationFiles(req, res) {
     const form = new formidable.IncomingForm();
     form.uploadDir = config.files.tmpPath;
 
-    Q.ninvoke(form, "parse", req).spread(function(fields, files) {
+    store.getNarration(narrationId).then(narrationData => (
+        userStore.canActAs(req.session.userId, narrationData.narratorId)
+    )).then(() => (
+        Q.ninvoke(form, "parse", req)
+    )).spread(function(fields, files) {
         var uploadedFileInfo = files.file,
             filename = path.basename(uploadedFileInfo.name),
             tmpPath = uploadedFileInfo.path;
 
         return store.addMediaFile(narrationId, filename, tmpPath);
-    }).then(fileInfo => {
-        res.json(fileInfo);
-    }).catch(err => {
+    }).then(fileInfo => (
+        res.json(fileInfo)
+    )).catch(err => {
+        console.error("Caught error???");
         res.status(500).json({
             errorMessage: `Cannot add new media file: ${ err }`
         });
@@ -196,7 +241,11 @@ function uploadFile(req, res, type) {
     const form = new formidable.IncomingForm();
     form.uploadDir = config.files.tmpPath;
 
-    Q.ninvoke(form, "parse", req).spread(function(fields, files) {
+    store.getNarration(narrationId).then(narrationData => (
+        userStore.canActAs(req.session.userId, narrationData.narratorId)
+    )).then(() => (
+        Q.ninvoke(form, "parse", req)
+    )).spread(function(fields, files) {
         var uploadedFileInfo = files.file,
             filename = path.basename(uploadedFileInfo.name),
             tmpPath = uploadedFileInfo.path;
@@ -218,7 +267,13 @@ export function postNarrationImages(req, res) {
 export function getChapterLastReactions(req, res) {
     const chapterId = parseInt(req.params.chptId, 10);
 
-    store.getChapterLastReactions(chapterId).then(lastReactions => {
+    store.getChapter(chapterId).then(chapterData => (
+        store.getNarration(chapterData.narrationId)
+    )).then(narrationData => (
+        userStore.canActAs(req.session.userId, narrationData.narratorId)
+    )).then(() => (
+        store.getChapterLastReactions(chapterId)
+    )).then(lastReactions => {
         res.json({ chapterId: chapterId,
                    lastReactions: lastReactions.map(reaction => (
                        { chapter: { id: reaction.chapterId,
