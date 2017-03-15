@@ -26,7 +26,10 @@ class Mailer {
 
         const textTemplate = path.join(config.mail.templateDir, `${template}.txt.ejs`);
         const htmlTemplate = path.join(config.mail.templateDir, `${template}.html.ejs`);
-        const text = ejs.render(fs.readFileSync(textTemplate, "utf-8"), stash);
+        // Don't escape plain text
+        const text = ejs.render(fs.readFileSync(textTemplate, "utf-8"),
+                                stash,
+                                { escape: text => text });
         const html = ejs.render(fs.readFileSync(htmlTemplate, "utf-8"), stash);
 
         const mailOptions = {
