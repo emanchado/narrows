@@ -82,7 +82,7 @@ class Mailer {
                          messageText: message.text,
                          chapterTitle: chapter.title,
                          chapterUrl: this.chapterUrlFor(chapter.id, token)}
-                    ).catch(console.error)
+                    )
                 ));
             });
 
@@ -97,7 +97,7 @@ class Mailer {
                          messageText: message.text,
                          chapterTitle: chapter.title,
                          chapterUrl: this.chapterNarratorUrlFor(chapter.id)}
-                    ).catch(console.error)
+                    )
                 ));
             }
         }).catch(console.error);
@@ -111,7 +111,7 @@ class Mailer {
             return Q.all([
                 this.store.getNarration(chapter.narrationId),
                 this.store.getNarratorEmail(chapter.narrationId)
-            ]).spread((narration, narratorEmail) => {
+            ]).spread((narration, narratorEmail) => (
                 this.sendMail(
                     "reactionPosted",
                     narratorEmail,
@@ -122,8 +122,8 @@ class Mailer {
                      chapterTitle: chapter.title,
                      narrationTitle: narration.title,
                      chapterUrl: this.chapterNarratorUrlFor(chapter.id)}
-                ).catch(console.error);
-            });
+                )
+            ));
         }).catch(console.error);
     }
 };
