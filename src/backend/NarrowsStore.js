@@ -352,6 +352,10 @@ class NarrowsStore {
     }
 
     getCharacterEmails(characterIds) {
+        if (!characterIds.length) {
+            return Q({});
+        }
+
         const placeholders = characterIds.map(_ => "?");
 
         return Q.ninvoke(
