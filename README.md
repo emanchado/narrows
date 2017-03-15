@@ -1,6 +1,10 @@
 TODO
 ====
 
+* Keep newlines in messages
+* Improve the message sending/replying UI
+* When publishing a chapter, redirect to the control page
+* ProseMirror (or configuration?) bug in Firefox
 * Avoid that the page gets reloaded
 * Allow the player to change the character avatar, e-mail address
 * Rewrite the image uploader so it's a single, special component that
@@ -9,7 +13,6 @@ TODO
 * Create new narrations
 * Dashboard to see all narrations
 * Allow narrators to change password, and create more narrators
-* Maybe add an "admin" role so that not all narrators can create users?
 * Add feedback on save (narrator pages, character page)
 * Really wait until everything is loaded before showing the "Start" button
 

@@ -104,7 +104,7 @@ reactionView model =
                        ]
                   [ text "Save " ]
               ]
-          , h2 [] [ text "Characters" ]
+          , h2 [] [ text "Characters in this chapter" ]
           , ul [ class "dramatis-personae" ]
             (List.map (characterView narrationId character) participants)
           , div [ class "arrow arrow-up", onClick HideReferenceInformation ] []
