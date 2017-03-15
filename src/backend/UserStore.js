@@ -15,7 +15,7 @@ class UserStore {
         return Q.ninvoke(
             this.db,
             "query",
-            "SELECT password FROM users WHERE username = ?",
+            "SELECT id, password FROM users WHERE username = ?",
             username
         ).spread(userRows => {
             if (userRows.length === 0) {
@@ -24,12 +24,12 @@ class UserStore {
 
             const deferred = Q.defer();
             bcrypt.compare(password, userRows[0].password, function(err, res) {
-                if (err) {
-                    console.log("Failed with error:", err);
+                if (err || !res) {
+                    console.error("Failed with error:", err);
                     deferred.reject(err);
                     return;
                 }
-                deferred.resolve(res);
+                deferred.resolve(userRows[0].id);
             });
             return deferred.promise;
         });

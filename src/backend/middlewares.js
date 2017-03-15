@@ -14,13 +14,13 @@ export function auth(req, res, next) {
 
     if (req.body && req.body.username) {
         const { username, password } = req.body;
-        promise = userStore.authenticate(username, password).then(result => {
-            req.session.loggedIn = result;
+        promise = userStore.authenticate(username, password).then(userId => {
+            req.session.userId = userId;
         });
     }
 
     return promise.then(() => {
-        if (req.session.loggedIn) {
+        if (req.session.userId) {
             next();
         } else {
             res.statusCode = 401;
