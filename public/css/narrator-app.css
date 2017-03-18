@@ -169,6 +169,7 @@ aside ul {
 .reactions.narrator li {
     display: block;
     margin-bottom: 20px;
+    white-space: pre-wrap;
 }
 
 .last-reactions.narrator {
@@ -184,4 +185,5 @@ aside ul {
     margin-top: 3px;
     padding: 5px;
     background: #ddd;
+    white-space: pre-wrap;
 }

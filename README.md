@@ -1,7 +1,6 @@
 TODO
 ====
 
-* Keep newlines in messages
 * Create new narrations
 * Dashboard to see all narrations
 * Allow narrators to change password, and create more narrators

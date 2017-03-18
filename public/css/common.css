@@ -109,6 +109,7 @@ ul.thread-list li span.narrator {
 }
 ul.thread-list .message {
     padding: 5px;
+    white-space: pre-wrap;
 }
 ul.thread-list li .btn-bar {
     padding: 10px 5px 10px 0;
