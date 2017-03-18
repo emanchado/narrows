@@ -1,8 +1,6 @@
 TODO
 ====
 
-* Make sure message replies work from command & control
-* When publishing a chapter, redirect to the control page
 * Keep newlines in messages
 * Create new narrations
 * Dashboard to see all narrations

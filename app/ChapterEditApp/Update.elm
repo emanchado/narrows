@@ -261,12 +261,22 @@ update msg model =
       ({ model | banner = errorBanner "Error saving chapter" }
       , Cmd.none)
     SaveChapterSuccess resp ->
-      if (resp.status >= 200) && (resp.status < 300) then
-        (model, Cmd.none)
-      else
-        ( { model | banner = errorBanner <| "Error saving chapter, status code " ++ (toString resp.status) }
-        , Cmd.none
-        )
+      case model.chapter of
+        Just chapter ->
+          if (resp.status >= 200) && (resp.status < 300) then
+            case chapter.published of
+              Just published ->
+                ( model
+                , Navigation.newUrl <| "/chapters/" ++ (toString chapter.id)
+                )
+              Nothing ->
+                (model, Cmd.none)
+          else
+            ( { model | banner = errorBanner <| "Error saving chapter, status code " ++ (toString resp.status) }
+            , Cmd.none
+            )
+        Nothing ->
+          (model, Cmd.none)
 
     SaveNewChapter ->
       case model.chapter of
@@ -280,7 +290,8 @@ update msg model =
       case model.chapter of
         Just chapter ->
           let
-            updatedChapter = { chapter | published = Just <| DateTime.toISO8601 (fromTimestamp time) }
+            publishTimestamp = Just <| DateTime.toISO8601 (fromTimestamp time)
+            updatedChapter = { chapter | published = publishTimestamp }
           in
             ( { model | chapter = Just updatedChapter }
             , ChapterEditApp.Api.createChapter updatedChapter
