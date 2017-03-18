@@ -83,7 +83,15 @@ mainView model =
             [ h2 [] [ text "Conversation" ]
             , ul [ class "thread-list narrator" ]
               (List.map
-                 (\mt -> threadView mt 0)
+                 (\mt ->
+                    threadView
+                      Nothing
+                      (ShowReply mt.participants)
+                      UpdateReplyText
+                      SendReply
+                      CloseReply
+                      model.reply
+                      mt)
                  messageThreads)
             , div [ class "new-message" ]
                 [ textarea [ rows 3

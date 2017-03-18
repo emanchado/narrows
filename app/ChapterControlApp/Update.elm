@@ -4,7 +4,7 @@ import Http
 import Json.Decode
 
 import Routing
-import Common.Models exposing (Banner)
+import Common.Models exposing (Banner, Character)
 import Common.Ports exposing (renderText)
 import Common.Api.Json exposing (parseChapterMessages)
 
@@ -29,6 +29,10 @@ urlUpdate route model =
         )
       _ ->
         (model, Cmd.none)
+
+messageRecipients : List Character -> List Int
+messageRecipients recipients =
+  List.map (\r -> r.id) recipients
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
@@ -59,6 +63,84 @@ update msg model =
                      , proseMirrorType = "chapter"
                      }
         )
+
+    ShowReply participants ->
+      let
+        newReply = case model.reply of
+                     Just reply ->
+                       { reply | recipients = participants }
+                     Nothing ->
+                       { recipients = participants
+                       , body = ""
+                       }
+      in
+        ({ model | reply = Just newReply }, Cmd.none)
+    UpdateReplyText newText ->
+      let
+        newReply = case model.reply of
+                     Just reply ->
+                       { reply | body = newText }
+                     Nothing ->
+                       { recipients = []
+                       , body = newText
+                       }
+      in
+        ({ model | reply = Just newReply }, Cmd.none)
+
+    SendReply ->
+      case model.interactions of
+        Just interactions ->
+          case model.reply of
+            Just reply ->
+              ( model
+              , ChapterControlApp.Api.sendReply
+                  interactions.chapter.id
+                  reply.body
+                  (messageRecipients reply.recipients)
+              )
+            Nothing ->
+              (model, Cmd.none)
+        Nothing ->
+          (model, Cmd.none)
+    SendReplyError error ->
+      ({ model | banner = Just { text = "Error sending reply"
+                               , type' = "error"
+                               } }
+      , Cmd.none)
+    SendReplySuccess resp ->
+      case resp.value of
+        Http.Text text ->
+          let
+            decodedResponse =
+              Json.Decode.decodeString parseChapterMessages text
+          in
+            case decodedResponse of
+              Ok result ->
+                let
+                  updatedInteractions = case model.interactions of
+                                          Just interactions ->
+                                            Just { interactions | messageThreads = result.messages }
+                                          Nothing ->
+                                            Nothing
+                in
+                  ( { model | interactions = updatedInteractions
+                            , reply = Nothing
+                    }
+                  , Cmd.none)
+              _ ->
+                ({ model | banner = Just { text = "Error parsing response while sending message"
+                                   , type' = "error"
+                                   } }
+                , Cmd.none)
+        _ ->
+          ({ model | banner = Just { text = "Error sending message"
+                                   , type' = "error"
+                                   } }
+          , Cmd.none)
+
+    CloseReply ->
+      ({ model | reply = Nothing }, Cmd.none)
+
     UpdateNewMessageText newText ->
       ({ model | newMessageText = newText }, Cmd.none)
     UpdateNewMessageRecipient characterId on ->
@@ -83,7 +165,7 @@ update msg model =
         Nothing ->
           (model, Cmd.none)
     SendMessageError error ->
-      ({ model | banner = Just { text = "Error sending reaction"
+      ({ model | banner = Just { text = "Error sending message"
                                , type' = "error"
                                } }
       , Cmd.none)
@@ -104,7 +186,8 @@ update msg model =
                                             Nothing
                 in
                   ( { model | interactions = updatedInteractions
-                            , newMessageText = "" }
+                            , newMessageText = ""
+                    }
                   , Cmd.none)
               _ ->
                 ({ model | banner = Just { text = "Error parsing response while sending message"

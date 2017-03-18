@@ -1,19 +1,19 @@
 TODO
 ====
 
-* Keep newlines in messages
-* Improve the message sending/replying UI
+* Make sure message replies work from command & control
 * When publishing a chapter, redirect to the control page
+* Keep newlines in messages
+* Create new narrations
+* Dashboard to see all narrations
+* Allow narrators to change password, and create more narrators
+* Add feedback on save (narrator pages, character page)
 * ProseMirror (or configuration?) bug in Firefox
 * Avoid that the page gets reloaded
 * Allow the player to change the character avatar, e-mail address
 * Rewrite the image uploader so it's a single, special component that
   updates the dropdown as soon as an image is uploaded
 * Make it easier to remove mention marks
-* Create new narrations
-* Dashboard to see all narrations
-* Allow narrators to change password, and create more narrators
-* Add feedback on save (narrator pages, character page)
 * Really wait until everything is loaded before showing the "Start" button
 
 Initial narrator

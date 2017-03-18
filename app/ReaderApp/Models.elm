@@ -2,7 +2,7 @@ module ReaderApp.Models exposing (..)
 
 import Json.Decode
 
-import Common.Models exposing (Character)
+import Common.Models exposing (Character, ReplyInformation)
 
 type alias Banner = Common.Models.Banner
 
@@ -63,6 +63,8 @@ type alias Model =
   , backgroundMusic : Bool
   , musicPlaying : Bool
   , backgroundBlurriness : Int
+  , reply : Maybe ReplyInformation
+  , showNewMessageUi : Bool
   , newMessageText : String
   , newMessageRecipients : List Int
   , reactionSent : Bool

@@ -99,3 +99,8 @@ type alias Reaction =
   { character : Character
   , text : Maybe String
   }
+
+type alias ReplyInformation =
+  { recipients : List Character
+  , body : String
+  }

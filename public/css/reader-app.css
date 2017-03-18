@@ -129,7 +129,7 @@
     margin: 40px auto 0 auto;
     padding: 20px;
 
-    background-color: #222;
+    background-color: #333;
 }
 
 .interaction h2 {
@@ -143,6 +143,9 @@
 }
 
 ul.thread-list.reader .message {
+    background-color: black;
+}
+ul.thread-list.reader li .btn-bar {
     background-color: black;
 }
 

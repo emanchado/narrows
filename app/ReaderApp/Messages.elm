@@ -2,6 +2,7 @@ module ReaderApp.Messages exposing (..)
 
 import Http
 
+import Common.Models exposing (Character)
 import ReaderApp.Models exposing (..)
 
 type Msg
@@ -19,6 +20,14 @@ type Msg
   | SendNotes
   | SendNotesError Http.RawError
   | SendNotesSuccess Http.Response
+  | ShowReply (List Character)
+  | UpdateReplyText String
+  | SendReply
+  | SendReplyError Http.RawError
+  | SendReplySuccess Http.Response
+  | CloseReply
+  | ShowNewMessageUi
+  | HideNewMessageUi
   | UpdateNewMessageText String
   | UpdateNewMessageRecipient Int Bool
   | SendMessage

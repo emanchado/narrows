@@ -16,6 +16,7 @@ initialState =
   { narration = Nothing
   , interactions = Nothing
   , banner = Nothing
+  , reply = Nothing
   , newMessageText = ""
   , newMessageRecipients = []
   }

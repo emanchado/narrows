@@ -1,10 +1,12 @@
 module ReaderApp.Update exposing (..)
 
+import String
 import Http
 import Json.Decode
 
 import Routing
 import Common.Ports exposing (renderText)
+import Common.Models exposing (Character)
 import Common.Api.Json exposing (parseChapterMessages)
 
 import ReaderApp.Api
@@ -12,6 +14,11 @@ import ReaderApp.Messages exposing (..)
 import ReaderApp.Models exposing (..)
 import ReaderApp.Ports exposing (startNarration, playPauseNarrationMusic, flashElement)
 
+messageRecipients : List Character -> Int -> List Int
+messageRecipients recipients senderId =
+  List.filter
+    (\r -> r /= senderId)
+    (List.map (\r -> r.id) recipients)
 
 maxBlurriness : Int
 maxBlurriness = 10
@@ -166,6 +173,85 @@ update msg model =
       in
         ({ model | banner = newBanner }, flashElement "save-notes-message")
 
+    ShowReply participants ->
+      let
+        newReply = case model.reply of
+                     Just reply ->
+                       { reply | recipients = participants }
+                     Nothing ->
+                       { recipients = participants
+                       , body = ""
+                       }
+      in
+        ({ model | reply = Just newReply }, Cmd.none)
+    UpdateReplyText newText ->
+      let
+        newReply = case model.reply of
+                     Just reply ->
+                       { reply | body = newText }
+                     Nothing ->
+                       { recipients = []
+                       , body = newText
+                       }
+      in
+        ({ model | reply = Just newReply }, Cmd.none)
+
+    SendReply ->
+      case model.reply of
+        Just reply ->
+          if String.isEmpty <| String.trim reply.body then
+            (model, Cmd.none)
+          else
+            case model.chapter of
+              Just chapter ->
+                ( model
+                , ReaderApp.Api.sendReply
+                    chapter.id
+                    chapter.character.token
+                    reply.body
+                    (messageRecipients reply.recipients chapter.character.id)
+                )
+              Nothing ->
+                (model, Cmd.none)
+        Nothing ->
+          (model, Cmd.none)
+    SendReplyError error ->
+      ({ model | banner = Just { text = "Error sending reply"
+                               , type' = "error"
+                               } }
+      , Cmd.none)
+    SendReplySuccess resp ->
+      case resp.value of
+        Http.Text text ->
+          let
+            decodedResponse =
+              Json.Decode.decodeString parseChapterMessages text
+          in
+            case decodedResponse of
+              Ok result ->
+                ( { model | messageThreads = Just result.messages
+                          , reply = Nothing }
+                , Cmd.none
+                )
+              _ ->
+                ({ model | banner = Just { text = "Error parsing response while sending message"
+                                   , type' = "error"
+                                   } }
+                , Cmd.none
+                )
+        _ ->
+          ({ model | banner = Just { text = "Error sending message"
+                                   , type' = "error"
+                                   } }
+          , Cmd.none
+          )
+    CloseReply ->
+      ({ model | reply = Nothing }, Cmd.none)
+
+    ShowNewMessageUi ->
+      ({ model | showNewMessageUi = True }, Cmd.none)
+    HideNewMessageUi ->
+      ({ model | showNewMessageUi = False }, Cmd.none)
     UpdateNewMessageText newText ->
       ({ model | newMessageText = newText }, Cmd.none)
     UpdateNewMessageRecipient characterId on ->
@@ -184,13 +270,16 @@ update msg model =
     SendMessage ->
       case model.chapter of
         Just chapter ->
-          ( model
-          , ReaderApp.Api.sendMessage chapter.id chapter.character.token model.newMessageText model.newMessageRecipients
-          )
+          if String.isEmpty <| String.trim model.newMessageText then
+            (model, Cmd.none)
+          else
+            ( model
+            , ReaderApp.Api.sendMessage chapter.id chapter.character.token model.newMessageText model.newMessageRecipients
+            )
         Nothing ->
           (model, Cmd.none)
     SendMessageError error ->
-      ({ model | banner = Just { text = "Error sending reaction"
+      ({ model | banner = Just { text = "Error sending message"
                                , type' = "error"
                                } }
       , Cmd.none)

@@ -83,6 +83,7 @@ label {
     padding: 5px 10px;
 
     font-size: 18px;
+    background-color: whitesmoke;
 }
 
 .btn-default {
@@ -108,6 +109,9 @@ ul.thread-list li span.narrator {
 }
 ul.thread-list .message {
     padding: 5px;
+}
+ul.thread-list li .btn-bar {
+    padding: 10px 5px 10px 0;
 }
 
 .ProseMirror {

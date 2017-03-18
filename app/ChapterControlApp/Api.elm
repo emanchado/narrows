@@ -54,3 +54,25 @@ sendMessage chapterId messageText messageRecipients =
          , headers = [("Content-Type", "application/json")]
          , body = Http.string jsonEncodedBody
          })
+
+
+sendReply : Int -> String -> List Int -> Cmd Msg
+sendReply chapterId messageText messageRecipients =
+  let
+    sendMessageApiUrl = "/api/chapters/" ++ (toString chapterId) ++ "/messages"
+    jsonEncodedBody =
+      (Json.Encode.encode
+         0
+         (Json.Encode.object [ ("text", Json.Encode.string messageText)
+                             , ("recipients", Json.Encode.list (List.map Json.Encode.int messageRecipients))]))
+  in
+    Task.perform
+      SendReplyError
+      SendReplySuccess
+      (Http.send
+         Http.defaultSettings
+         { verb = "POST"
+         , url = sendMessageApiUrl
+         , headers = [("Content-Type", "application/json")]
+         , body = Http.string jsonEncodedBody
+         })

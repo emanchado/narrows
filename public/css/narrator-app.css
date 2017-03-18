@@ -152,6 +152,9 @@ aside ul {
 .thread-list.narrator > li {
     margin-bottom: 30px;
 }
+.thread-list.narrator textarea {
+    width: 100%;
+}
 
 .new-message textarea {
     width: 100%;

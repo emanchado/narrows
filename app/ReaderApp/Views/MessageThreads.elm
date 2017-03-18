@@ -48,22 +48,40 @@ listView model =
           (case model.messageThreads of
              Just threads ->
                List.map
-                 (\mt -> threadView mt character.id)
+                 (\t ->
+                    threadView
+                      (Just character.id)
+                      (ShowReply t.participants)
+                      UpdateReplyText
+                      SendReply
+                      CloseReply
+                      model.reply
+                      t)
                  threads
              Nothing ->
                [])
-      , div [ class "new-message" ]
-        [ textarea [ rows 4
-                   , onInput UpdateNewMessageText
-                   , value model.newMessageText
-                   ]
-            [ text model.newMessageText ]
-        , recipientListView otherParticipants model.newMessageRecipients
-        , div [ class "btn-bar" ]
-            [ button [ class "btn"
-                    , onClick SendMessage
-                    ]
-                [ text "Send" ]
+      , if model.showNewMessageUi then
+          div [ class "new-message" ]
+            [ textarea [ rows 4
+                       , onInput UpdateNewMessageText
+                       , value model.newMessageText
+                       ]
+                [ text model.newMessageText ]
+            , recipientListView otherParticipants model.newMessageRecipients
+            , div [ class "btn-bar" ]
+              [ button [ class "btn btn-default btn-small"
+                       , onClick SendMessage
+                       ]
+                  [ text "Send" ]
+              , button [ class "btn btn-small"
+                       , onClick HideNewMessageUi
+                       ]
+                  [ text "Close" ]
+              ]
             ]
-        ]
+        else
+          div [ class "btn-bar" ]
+            [ button [ class "btn btn-small", onClick ShowNewMessageUi ]
+                [ text "New message" ]
+            ]
       ]
