@@ -1,6 +1,7 @@
 TODO
 ====
 
+* Add a JS confirmation thing to the publish button?
 * Create new narrations
 * Dashboard to see all narrations
 * Allow narrators to change password, and create more narrators

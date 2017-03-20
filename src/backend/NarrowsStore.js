@@ -352,31 +352,6 @@ class NarrowsStore {
         return deferred.promise;
     }
 
-    getCharacterEmails(characterIds) {
-        if (!characterIds.length) {
-            return Q({});
-        }
-
-        const placeholders = characterIds.map(_ => "?");
-
-        return Q.ninvoke(
-            this.db,
-            "all",
-            `SELECT C.id, U.email
-               FROM users U
-               JOIN characters C
-                 ON U.id = C.player_id
-              WHERE C.id IN (${placeholders.join(', ')})`,
-            characterIds
-        ).then(rows => {
-            const emails = {};
-            rows.forEach(row => {
-                emails[row.id] = row.email;
-            });
-            return emails;
-        });
-    }
-
     getNarratorEmail(narrationId) {
         return Q.ninvoke(
             this.db,
@@ -531,6 +506,31 @@ class NarrowsStore {
             "SELECT id, name, token, notes FROM characters WHERE token = ?",
             characterToken
         );
+    }
+
+    getCharacterInfoBulk(characterIds) {
+        if (!characterIds.length) {
+            return Q({});
+        }
+
+        const placeholders = characterIds.map(_ => "?");
+
+        return Q.ninvoke(
+            this.db,
+            "all",
+            `SELECT C.id, C.name, U.email
+               FROM users U
+               JOIN characters C
+                 ON U.id = C.player_id
+              WHERE C.id IN (${placeholders.join(', ')})`,
+            characterIds
+        ).then(rows => {
+            const info = {};
+            rows.forEach(row => {
+                info[row.id] = { name: row.name, email: row.email };
+            });
+            return info;
+        });
     }
 
     getCharacterTokenById(characterId) {

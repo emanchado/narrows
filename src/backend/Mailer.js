@@ -52,12 +52,12 @@ class Mailer {
 
         return Q.all([
             this.store.getNarration(chapter.narrationId),
-            this.store.getCharacterEmails(participants.map(p => p.id))
-        ]).spread((narration, emails) => {
+            this.store.getCharacterInfoBulk(participants.map(p => p.id))
+        ]).spread((narration, info) => {
             participants.forEach(participant => {
                 this.sendMail(
                     "chapterPublished",
-                    emails[participant.id],
+                    info[participant.id].email,
                     `New chapter published: "${chapter.title}"`,
                     {narrationTitle: narration.title,
                      chapterTitle: chapter.title,
@@ -70,15 +70,26 @@ class Mailer {
     messagePosted(message) {
         return Q.all([
             this.store.getChapter(message.chapterId),
-            this.store.getCharacterEmails(message.recipients)
-        ]).spread((chapter, emails) => {
-            message.recipients.forEach(recipient => {
-                this.store.getCharacterTokenById(recipient).then(token => (
+            this.store.getCharacterInfoBulk(message.recipients)
+        ]).spread((chapter, info) => {
+            message.recipients.forEach(recipientId => {
+                const otherRecipientIds = Object.keys(info).filter(
+                    id => parseInt(id, 10) !== recipientId
+                );
+                const baseRecipients =
+                      otherRecipientIds.map(id => info[id].name).join(", ");
+                const recipients =
+                      baseRecipients + (otherRecipientIds.length ?
+                                        ", the narrator, and you" :
+                                        "the narrator and you");
+
+                this.store.getCharacterTokenById(recipientId).then(token => (
                     this.sendMail(
                         "messagePosted",
-                        emails[recipient],
+                        info[recipientId].email,
                         `New message in "${chapter.title}"`,
                         {senderName: message.sender.name,
+                         recipientListString: recipients,
                          messageText: message.text,
                          chapterTitle: chapter.title,
                          chapterUrl: this.chapterUrlFor(chapter.id, token)}
@@ -88,12 +99,19 @@ class Mailer {
 
             // If this was sent by a player, send a copy to the narrator
             if (message.sender.id) {
+                const baseRecipients =
+                      Object.keys(info).map(id => info[id].name).join(", ");
+                const recipients =
+                      baseRecipients + (Object.keys(info).length > 1 ?
+                                        ", and you" : " and you");
+
                 this.store.getNarratorEmail(chapter.narrationId).then(email => (
                     this.sendMail(
                         "messagePosted",
                         email,
                         `New message in "${chapter.title}"`,
                         {senderName: message.sender.name,
+                         recipientListString: recipients,
                          messageText: message.text,
                          chapterTitle: chapter.title,
                          chapterUrl: this.chapterNarratorUrlFor(chapter.id)}
