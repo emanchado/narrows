@@ -2,8 +2,7 @@ module NarrationOverviewApp.Messages exposing (..)
 
 import Http
 
-import Common.Models exposing (Narration)
-import NarrationOverviewApp.Models exposing (NarrationOverview)
+import Common.Models exposing (Narration, NarrationOverview)
 
 type Msg
   = NoOp

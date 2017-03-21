@@ -104,3 +104,15 @@ type alias ReplyInformation =
   { recipients : List Character
   , body : String
   }
+
+type alias ChapterOverview =
+  { id : Int
+  , title : String
+  , numberMessages : Int
+  , published : Maybe String
+  , reactions : List Reaction
+  }
+
+type alias NarrationOverview =
+  { chapters : List ChapterOverview
+  }

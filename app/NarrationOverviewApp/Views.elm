@@ -5,8 +5,8 @@ import Html exposing (Html, main', h1, div, ul, li, a, text)
 import Html.Attributes exposing (id, class, href)
 
 import NarrationOverviewApp.Messages exposing (..)
-import Common.Models exposing (Narration)
-import NarrationOverviewApp.Models exposing (Model, NarrationOverview, ChapterOverview)
+import Common.Models exposing (Narration, ChapterOverview, NarrationOverview)
+import NarrationOverviewApp.Models exposing (Model)
 
 unpublishedChapterView : ChapterOverview -> Html Msg
 unpublishedChapterView chapterOverview =
