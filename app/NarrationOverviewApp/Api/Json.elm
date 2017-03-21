@@ -2,12 +2,13 @@ module NarrationOverviewApp.Api.Json exposing (..)
 
 import Json.Decode as Json exposing (..)
 
+import Common.Api.Json exposing (parseCharacter)
 import NarrationOverviewApp.Models exposing (NarrationOverview, ChapterOverview, Reaction)
 
 parseReaction : Json.Decoder Reaction
 parseReaction =
   Json.object2 Reaction
-    ("characterId" := int)
+    ("character" := parseCharacter)
     (maybe ("text" := string))
 
 parseChapterOverview : Json.Decoder ChapterOverview

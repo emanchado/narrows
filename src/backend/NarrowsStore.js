@@ -215,16 +215,22 @@ class NarrowsStore {
             return Q.ninvoke(
                 this.db,
                 "all",
-                `SELECT chapter_id AS chapterId,
-                        character_id AS characterId,
-                        main_text AS text
-                   FROM reactions
+                `SELECT R.chapter_id AS chapterId,
+                        R.character_id AS characterId,
+                        C.name AS characterName,
+                        R.main_text AS text
+                   FROM reactions R
+                   JOIN characters C ON R.character_id = C.id
                   WHERE chapter_id IN (${ placeholders.join(", ") })`,
                 chapters.map(f => f.id)
             ).then(reactions => {
                 reactions.forEach(reaction => {
                     const chapter = chapterMap[reaction.chapterId];
-                    chapter.reactions.push(reaction);
+                    chapter.reactions.push({
+                        character: { id: reaction.characterId,
+                                     name: reaction.characterName },
+                        text: reaction.text
+                    });
                 });
                 return [chapters, chapterMap];
             });

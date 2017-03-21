@@ -1,9 +1,9 @@
 module NarrationOverviewApp.Models exposing (..)
 
-import Common.Models exposing (Narration, Banner)
+import Common.Models exposing (Narration, Banner, Character)
 
 type alias Reaction =
-  { characterId : Int
+  { character : Character
   , text : Maybe String
   }
 
