@@ -1,11 +1,11 @@
 TODO
 ====
 
-* Add a JS confirmation thing to the publish button?
-* Create new narrations
 * Dashboard to see all narrations
+* Create new narrations
 * Allow narrators to change password, and create more narrators
 * Add feedback on save (narrator pages, character page)
+* Add a JS confirmation thing to the publish button?
 * ProseMirror (or configuration?) bug in Firefox
 * Avoid that the page gets reloaded
 * Allow the player to change the character avatar, e-mail address

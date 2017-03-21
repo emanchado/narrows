@@ -6,6 +6,7 @@ import Html exposing (Html, div, span, a, input, text, img, label, button, br)
 import Routing
 import ReaderApp
 import CharacterApp
+import NarratorDashboardApp
 import NarrationOverviewApp
 import ChapterEditApp
 import ChapterControlApp
@@ -14,6 +15,7 @@ type alias Model =
   { route : Routing.Route
   , readerApp : ReaderApp.Model
   , characterApp : CharacterApp.Model
+  , narratorDashboardApp : NarratorDashboardApp.Model
   , narrationOverviewApp : NarrationOverviewApp.Model
   , chapterEditApp : ChapterEditApp.Model
   , chapterControlApp : ChapterControlApp.Model
@@ -23,6 +25,7 @@ type Msg
   = NoOp
   | ReaderMsg ReaderApp.Msg
   | CharacterMsg CharacterApp.Msg
+  | NarratorDashboardMsg NarratorDashboardApp.Msg
   | NarrationOverviewMsg NarrationOverviewApp.Msg
   | ChapterEditMsg ChapterEditApp.Msg
   | ChapterControlMsg ChapterControlApp.Msg
@@ -33,6 +36,7 @@ initialState result =
   combinedUrlUpdate result { route = Routing.NotFoundRoute
                            , readerApp = ReaderApp.initialState
                            , characterApp = CharacterApp.initialState
+                           , narratorDashboardApp = NarratorDashboardApp.initialState
                            , narrationOverviewApp = NarrationOverviewApp.initialState
                            , chapterEditApp = ChapterEditApp.initialState
                            , chapterControlApp = ChapterControlApp.initialState
@@ -45,18 +49,21 @@ combinedUrlUpdate result model =
     (updatedReaderModel, readerCmd) = ReaderApp.urlUpdate currentRoute model.readerApp
     (updatedCharacterModel, characterCmd) = CharacterApp.urlUpdate currentRoute model.characterApp
     (updatedNarratorModel, narratorCmd) = ChapterEditApp.urlUpdate currentRoute model.chapterEditApp
+    (updatedNarratorDashboardModel, narratorDashboardCmd) = NarratorDashboardApp.urlUpdate currentRoute model.narratorDashboardApp
     (updatedNarrationOverviewModel, narrationOverviewCmd) = NarrationOverviewApp.urlUpdate currentRoute model.narrationOverviewApp
     (updatedChapterControlModel, chapterControlCmd) = ChapterControlApp.urlUpdate currentRoute model.chapterControlApp
   in
     ( { model | route = currentRoute
               , readerApp = updatedReaderModel
               , characterApp = updatedCharacterModel
+              , narratorDashboardApp = updatedNarratorDashboardModel
               , narrationOverviewApp = updatedNarrationOverviewModel
               , chapterEditApp = updatedNarratorModel
               , chapterControlApp = updatedChapterControlModel
               }
     , Cmd.batch [ Cmd.map ReaderMsg readerCmd
                 , Cmd.map CharacterMsg characterCmd
+                , Cmd.map NarratorDashboardMsg narratorDashboardCmd
                 , Cmd.map NarrationOverviewMsg narrationOverviewCmd
                 , Cmd.map ChapterEditMsg narratorCmd
                 , Cmd.map ChapterControlMsg chapterControlCmd
@@ -76,6 +83,11 @@ combinedUpdate msg model =
         (newCharacterModel, cmd) = CharacterApp.update characterMsg model.characterApp
       in
         ({ model | characterApp = newCharacterModel }, Cmd.map CharacterMsg cmd)
+    NarratorDashboardMsg narratorDashboardMsg ->
+      let
+        (newNarratorDashboardModel, cmd) = NarratorDashboardApp.update narratorDashboardMsg model.narratorDashboardApp
+      in
+        ({ model | narratorDashboardApp = newNarratorDashboardModel }, Cmd.map NarratorDashboardMsg cmd)
     NarrationOverviewMsg narrationOverviewMsg ->
       let
         (newNarrationOverviewModel, cmd) = NarrationOverviewApp.update narrationOverviewMsg model.narrationOverviewApp
@@ -98,6 +110,7 @@ subscriptions : Model -> Sub Msg
 subscriptions model =
   Sub.batch [ Sub.map ReaderMsg (ReaderApp.subscriptions model.readerApp)
             , Sub.map CharacterMsg (CharacterApp.subscriptions model.characterApp)
+            , Sub.map NarratorDashboardMsg (NarratorDashboardApp.subscriptions model.narratorDashboardApp)
             , Sub.map NarrationOverviewMsg (NarrationOverviewApp.subscriptions model.narrationOverviewApp)
             , Sub.map ChapterEditMsg (ChapterEditApp.subscriptions model.chapterEditApp)
             , Sub.map ChapterControlMsg (ChapterControlApp.subscriptions model.chapterControlApp)
@@ -116,6 +129,8 @@ mainApplicationView model =
       App.map ReaderMsg (ReaderApp.view model.readerApp)
     Routing.CharacterPage characterToken ->
       App.map CharacterMsg (CharacterApp.view model.characterApp)
+    Routing.NarratorIndex ->
+      App.map NarratorDashboardMsg (NarratorDashboardApp.view model.narratorDashboardApp)
     Routing.NarrationPage narrationId ->
       App.map NarrationOverviewMsg (NarrationOverviewApp.view model.narrationOverviewApp)
     Routing.CreateChapterPage narrationId ->
