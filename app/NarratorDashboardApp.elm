@@ -14,6 +14,7 @@ type alias Msg = NarratorDashboardApp.Messages.Msg
 initialState : Model
 initialState =
   { banner = Nothing
+  , narrations = Nothing
   }
 
 update : Msg -> Model -> (Model, Cmd Msg)

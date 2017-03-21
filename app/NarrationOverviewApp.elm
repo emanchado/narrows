@@ -13,8 +13,7 @@ type alias Msg = NarrationOverviewApp.Messages.Msg
 
 initialState : Model
 initialState =
-  { narration = Nothing
-  , narrationOverview = Nothing
+  { narrationOverview = Nothing
   , banner = Nothing
   }
 

@@ -44,15 +44,15 @@ chapterOverviewView chapterOverview =
     Nothing ->
       unpublishedChapterView chapterOverview
 
-overviewView : Narration -> NarrationOverview -> Html Msg
-overviewView narration overview =
+overviewView : NarrationOverview -> Html Msg
+overviewView overview =
   main' [ id "narrator-app", class "app-container" ]
     [ h1 []
-        [ text <| "Narration " ++ narration.title ]
+        [ text <| "Narration " ++ overview.narration.title ]
+    , a [ href <| "/narrations/" ++ (toString overview.narration.id) ++ "/new" ]
+        [ text "Write new chapter" ]
     , ul [ class "chapter-list" ]
       (List.map chapterOverviewView overview.chapters)
-    , a [ href <| "/narrations/" ++ (toString narration.id) ++ "/new" ]
-        [ text "Write new chapter" ]
     ]
 
 loadingView : Model -> Html Msg
@@ -68,10 +68,6 @@ mainView : Model -> Html Msg
 mainView model =
   case model.narrationOverview of
     Just overview ->
-      case model.narration of
-        Just narration ->
-          overviewView narration overview
-        Nothing ->
-          loadingView model
+      overviewView overview
     Nothing ->
       loadingView model

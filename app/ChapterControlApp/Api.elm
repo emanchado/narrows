@@ -5,17 +5,10 @@ import Http
 import Json.Decode as Json exposing (..)
 import Json.Encode
 
-import Common.Models exposing (FullCharacter, Message, MessageThread, Reaction)
-import Common.Api.Json exposing (parseCharacter, parseChapter, parseMessageThread)
+import Common.Api.Json exposing (parseChapter, parseReaction, parseMessageThread)
 
 import ChapterControlApp.Messages exposing (Msg, Msg(..))
 import ChapterControlApp.Models exposing (ChapterInteractions)
-
-parseReaction : Json.Decoder Reaction
-parseReaction =
-  Json.object2 Reaction
-    ("character" := parseCharacter)
-    (maybe ("text" := string))
 
 parseChapterInteractions : Json.Decoder ChapterInteractions
 parseChapterInteractions =

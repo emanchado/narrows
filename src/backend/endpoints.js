@@ -20,6 +20,17 @@ userStore.connect();
 const transporter = nodemailer.createTransport(sendmailTransport());
 const mailer = new Mailer(store, transporter);
 
+export function getNarrationOverview(req, res) {
+    store.getNarrationOverview(req.session.userId, 5).then(narrationOverviewData => {
+        res.json(narrationOverviewData);
+    }).catch(err => {
+        res.status(500).json({
+            errorMessage: `Cannot get narration overview for ` +
+                `this user: ${ err }`
+        });
+    });
+}
+
 export function getNarration(req, res) {
     const narrationId = parseInt(req.params.narrId, 10);
 
@@ -97,7 +108,7 @@ export function getNarrationChapters(req, res) {
             req.session.userId,
             narrationData.narratorId
         ).then(() => {
-            res.json({ chapters: chapterListData });
+            res.json({ narration: narrationData, chapters: chapterListData });
         });
     }).catch(err => {
         res.status(404).json({

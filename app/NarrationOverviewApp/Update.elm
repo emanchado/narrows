@@ -13,7 +13,7 @@ urlUpdate route model =
     case route of
       Routing.NarrationPage narrationId ->
         ( model
-        , NarrationOverviewApp.Api.fetchNarrationInfo narrationId
+        , NarrationOverviewApp.Api.fetchNarrationOverview narrationId
         )
       _ ->
         (model, Cmd.none)
@@ -25,21 +25,23 @@ update msg model =
       (model, Cmd.none)
 
     NarrationFetchError error ->
-      let
-        errorString = case error of
-                        Http.UnexpectedPayload payload ->
-                          "Bad payload: " ++ payload
-                        Http.BadResponse status body ->
-                          "Got status " ++ (toString status) ++ " with body " ++ body
-                        _ ->
-                          "Network stuff"
-      in
-        ( { model | banner = Just { type' = "error", text = errorString } }
-        , Cmd.none)
+      -- let
+      --   errorString = case error of
+      --                   Http.UnexpectedPayload payload ->
+      --                     "Bad payload: " ++ payload
+      --                   Http.BadResponse status body ->
+      --                     "Got status " ++ (toString status) ++ " with body " ++ body
+      --                   _ ->
+      --                     "Network stuff"
+      -- in
+      --   ( { model | banner = Just { type' = "error", text = errorString } }
+      --   , Cmd.none)
+      (model, Cmd.none)
     NarrationFetchSuccess narration ->
-      ( { model | narration = Just narration }
-      , NarrationOverviewApp.Api.fetchNarrationOverview narration.id
-      )
+      -- ( { model | narration = Just narration }
+      -- , NarrationOverviewApp.Api.fetchNarrationOverview narration.id
+      -- )
+      (model, Cmd.none)
 
     NarrationOverviewFetchError error ->
       case error of

@@ -2,7 +2,7 @@ module Common.Api.Json exposing (..)
 
 import Json.Decode as Json exposing (..)
 
-import Common.Models exposing (Character, FullCharacter, Narration, Chapter, FileSet, ChapterMessages, MessageThread, Message)
+import Common.Models exposing (Character, FullCharacter, Narration, Chapter, FileSet, ChapterMessages, MessageThread, Message, Reaction, ChapterOverview, NarrationOverview)
 
 parseCharacter : Json.Decoder Character
 parseCharacter =
@@ -61,3 +61,24 @@ parseChapterMessages =
   Json.object2 ChapterMessages
     ("messageThreads" := list parseMessageThread)
     (maybe ("characterId" := int))
+
+parseReaction : Json.Decoder Reaction
+parseReaction =
+  Json.object2 Reaction
+    ("character" := parseCharacter)
+    (maybe ("text" := string))
+
+parseChapterOverview : Json.Decoder ChapterOverview
+parseChapterOverview =
+  Json.object5 ChapterOverview
+    ("id" := int)
+    ("title" := string)
+    ("numberMessages" := int)
+    (maybe ("published" := string))
+    ("reactions" := list parseReaction)
+
+parseNarrationOverview : Json.Decoder NarrationOverview
+parseNarrationOverview =
+  Json.object2 NarrationOverview
+    ("narration" := parseNarration)
+    ("chapters" := list parseChapterOverview)

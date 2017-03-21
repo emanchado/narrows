@@ -31,16 +31,6 @@ parseFileSet =
     ("backgroundImages" := list string)
     ("images" := list string)
 
-parseNarration : Json.Decoder Narration
-parseNarration =
-  Json.object6 Narration
-    ("id" := int)
-    ("title" := string)
-    ("characters" := list parseFullCharacter)
-    (maybe ("defaultAudio" := string))
-    (maybe ("defaultBackgroundImage" := string))
-    ("files" := parseFileSet)
-
 parseLastReactionChapter : Json.Decoder LastReactionChapter
 parseLastReactionChapter =
   Json.object2 LastReactionChapter

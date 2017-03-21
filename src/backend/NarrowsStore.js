@@ -149,6 +149,17 @@ class NarrowsStore {
         return deferred.promise;
     }
 
+    _getNarrationCharacters(narrationId) {
+        return Q.ninvoke(
+            this.db,
+            "all",
+            `SELECT id, name, token
+                       FROM characters
+                      WHERE narration_id = ?`,
+            narrationId
+        );
+    }
+
     _getNarrationFiles(narrationId) {
         const filesDir = path.join(config.files.path, narrationId.toString());
 
@@ -176,14 +187,7 @@ class NarrowsStore {
             }
 
             return Q.all([
-                Q.ninvoke(
-                    this.db,
-                    "all",
-                    `SELECT id, name, token
-                       FROM characters
-                      WHERE narration_id = ?`,
-                    id
-                ),
+                this._getNarrationCharacters(id),
                 this._getNarrationFiles(id)
             ]).spread((characters, files) => {
                 narrationInfo.characters = characters;
@@ -193,13 +197,25 @@ class NarrowsStore {
         });
     }
 
-    getNarrationChapters(id) {
+    getNarrationChapters(id, userOpts) {
+        const opts = Object.assign({ limit: -1 }, userOpts);
+        const limitClause = opts.limit > 0 ?
+              `LIMIT ${parseInt(opts.limit, 10)}` : "";
+
         return Q.ninvoke(
             this.db,
             "all",
-            "SELECT id, title, published FROM chapters WHERE narration_id = ?",
+            `SELECT id, title, published
+               FROM chapters
+              WHERE narration_id = ?
+           ORDER BY published DESC
+                    ${ limitClause }`,
             id
         ).then(chapters => {
+            if (chapters.length === 0) {
+                return [[], {}];
+            }
+
             const chapterMap = {};
             chapters.forEach(chapter => {
                 chapterMap[chapter.id] = chapter;
@@ -235,6 +251,10 @@ class NarrowsStore {
                 return [chapters, chapterMap];
             });
         }).spread((chapters, chapterMap) => {
+            if (chapters.length === 0) {
+                return [];
+            }
+
             let placeholders = [];
             for (let i = 0; i < chapters.length; i++) {
                 placeholders.push("?");
@@ -259,6 +279,42 @@ class NarrowsStore {
         });
     }
 
+    getNarrationOverview(userId) {
+        return Q.ninvoke(
+            this.db,
+            "all",
+            `SELECT id, title, default_audio AS defaultAudio,
+                    default_background_image AS defaultBackgroundImage
+               FROM narrations
+              WHERE narrator_id = ?`,
+            userId
+        ).then(rows => (
+            Q.all([
+                Q.all(rows.map(row => (
+                    this.getNarrationChapters(row.id, { limit: 5 })
+                ))),
+                Q.all(rows.map(row => this._getNarrationCharacters(row.id))),
+                Q.all(rows.map(row => this._getNarrationFiles(row.id)))
+            ]).spread((chapterLists, characterLists, fileLists) => ({
+                narrations: chapterLists.map((chapters, i) => ({
+                    narration: Object.assign(rows[i],
+                                             {characters: characterLists[i],
+                                              files: fileLists[i]}),
+                    chapters: chapters
+                }))
+            }))
+        ));
+    }
+
+    deleteChapter(id) {
+        return Q.ninvoke(
+            this.db,
+            "run",
+            "DELETE FROM chapters WHERE id = ?",
+            id
+        ).catch(err => true);
+    }
+
     _insertParticipants(id, participants) {
         let promise = Q(true);
 
@@ -275,15 +331,6 @@ class NarrowsStore {
         });
 
         return promise;
-    }
-
-    deleteChapter(id) {
-        return Q.ninvoke(
-            this.db,
-            "run",
-            "DELETE FROM chapters WHERE id = ?",
-            id
-        ).catch(err => true);
     }
 
     /**

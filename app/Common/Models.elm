@@ -114,5 +114,6 @@ type alias ChapterOverview =
   }
 
 type alias NarrationOverview =
-  { chapters : List ChapterOverview
+  { narration : Narration
+  , chapters : List ChapterOverview
   }
