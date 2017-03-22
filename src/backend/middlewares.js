@@ -33,7 +33,7 @@ export function auth(req, res, next) {
 }
 
 export function apiAuth(req, res, next) {
-    if (req.session.loggedIn) {
+    if (req.session.userId) {
         next();
     } else {
         res.statusCode = 403;
