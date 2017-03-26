@@ -71,7 +71,7 @@ export function getChapterCharacter(req, res) {
 
     store.getCharacterInfo(characterToken).then(charInfo => {
         return store.getChapter(chapterId).then(chapterData => {
-            if (!chapterData.published && !req.session.loggedIn) {
+            if (!chapterData.published && !req.session.userId) {
                 throw new Error("Unpublished chapter");
             }
 
