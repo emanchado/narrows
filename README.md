@@ -1,7 +1,6 @@
 TODO
 ====
 
-* Dashboard to see all narrations
 * Create new narrations
 * Allow narrators to change password, and create more narrators
 * Add feedback on save (narrator pages, character page)
