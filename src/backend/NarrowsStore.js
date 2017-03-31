@@ -208,11 +208,7 @@ class NarrowsStore {
             `SELECT id, title, published
                FROM chapters
               WHERE narration_id = ?
-           ORDER BY (CASE
-                     WHEN published IS NOT NULL
-                     THEN published
-                     ELSE created
-                     END) DESC
+           ORDER BY COALESCE(published, created) DESC
                     ${ limitClause }`,
             id
         ).then(chapters => {
