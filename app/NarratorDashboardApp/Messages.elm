@@ -8,3 +8,4 @@ type Msg
   = NoOp
   | NarratorOverviewFetchError Http.Error
   | NarratorOverviewFetchSuccess NarratorOverview
+  | NewNarration

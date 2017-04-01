@@ -1,8 +1,9 @@
 module NarratorDashboardApp.Views exposing (..)
 
 import List
-import Html exposing (Html, main', h1, h2, div, ul, li, a, text)
+import Html exposing (Html, main', h1, h2, div, button, ul, li, a, text)
 import Html.Attributes exposing (id, class, href)
+import Html.Events exposing (onClick)
 
 import Common.Models exposing (NarrationOverview, ChapterOverview)
 import NarratorDashboardApp.Messages exposing (..)
@@ -79,4 +80,10 @@ mainView model =
             (List.map narrationView narrations)
         Nothing ->
           loadingView model
+    , div [ class "btn-bar" ]
+        [ button [ class "btn"
+                 , onClick NewNarration
+                 ]
+            [ text "New narration" ]
+        ]
     ]

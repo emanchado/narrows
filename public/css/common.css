@@ -25,6 +25,9 @@ label {
 .app-container {
     padding: 30px;
 }
+.app-container-simple {
+    max-width: 50em;
+}
 
 #loader {
     width: 100%;
@@ -71,6 +74,10 @@ label {
 .banner-error {
     color: #ddd;
     background-color: #511;
+}
+
+.large-text-input {
+    font-size: 200%;
 }
 
 .btn-bar {

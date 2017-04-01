@@ -1,7 +1,6 @@
 TODO
 ====
 
-* Create new narrations
 * Allow narrators to change password, and create more narrators
 * Add feedback on save (narrator pages, character page)
 * Add a JS confirmation thing to the publish button?

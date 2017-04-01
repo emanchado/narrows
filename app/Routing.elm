@@ -8,6 +8,7 @@ type Route
   = ChapterReaderPage Int String
   | CharacterPage String
   | NarratorIndex
+  | NarrationCreationPage
   | ChapterEditNarratorPage Int
   | ChapterControlPage Int
   | CreateChapterPage Int
@@ -20,6 +21,7 @@ matchers =
     [ format ChapterReaderPage (s "read" </> int </> string)
     , format CharacterPage (s "characters" </> string)
     , format NarratorIndex (s "")
+    , format NarrationCreationPage (s "narrations" </> s "new")
     , format ChapterEditNarratorPage (s "chapters" </> int </> s "edit")
     , format ChapterControlPage (s "chapters" </> int)
     , format CreateChapterPage (s "narrations" </> int </> s "new")

@@ -1,6 +1,7 @@
 module NarratorDashboardApp.Update exposing (..)
 
 import Http
+import Navigation
 
 import Routing
 import NarratorDashboardApp.Api
@@ -50,4 +51,9 @@ update msg model =
     NarratorOverviewFetchSuccess narratorOverview ->
       ( { model | narrations = Just narratorOverview.narrations }
       , Cmd.none
+      )
+
+    NewNarration ->
+      ( model
+      , Navigation.newUrl "/narrations/new"
       )
