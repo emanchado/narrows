@@ -38,6 +38,7 @@ app.all("/characters/:characterId", function(req, res) {
 app.get("/feeds/:charToken", endpoints.getFeedsCharacter);
 
 app.get("/api/narrations", middlewares.apiAuth, endpoints.getNarrationOverview);
+app.post("/api/narrations", middlewares.apiAuth, endpoints.postNarration);
 app.get("/api/narrations/:narrId", middlewares.apiAuth, endpoints.getNarration);
 app.get("/api/narrations/:narrId/chapters", middlewares.apiAuth, endpoints.getNarrationChapters);
 app.post("/api/narrations/:narrId/chapters", middlewares.apiAuth, endpoints.postNewChapter);

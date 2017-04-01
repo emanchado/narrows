@@ -49,6 +49,30 @@ export function getNarration(req, res) {
     });
 }
 
+export function postNarration(req, res) {
+    const narratorId = req.session.userId;
+
+    if (!req.body.title) {
+        res.status(400).json({
+            errorMessage: 'New narrations need at least a title'
+        });
+        return;
+    }
+
+    store.createNarration({
+        narratorId: narratorId,
+        title: req.body.title,
+        defaultAudio: req.body.defaultAudio,
+        defaultBackgroundImage: req.body.defaultBackgroundImage
+    }).then(narrationData => {
+        res.json(narrationData);
+    }).catch(err => {
+        res.status(400).json({
+            errorMessage: `Cannot create narration: ${ err }`
+        });
+    });
+}
+
 export function getChapter(req, res) {
     const chapterId = parseInt(req.params.chptId, 10);
 
