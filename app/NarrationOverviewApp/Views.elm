@@ -1,11 +1,11 @@
 module NarrationOverviewApp.Views exposing (..)
 
 import List
-import Html exposing (Html, main', h1, div, ul, li, a, text)
+import Html exposing (Html, main', h1, h2, section, div, ul, li, a, text)
 import Html.Attributes exposing (id, class, href)
 
 import NarrationOverviewApp.Messages exposing (..)
-import Common.Models exposing (Narration, ChapterOverview, NarrationOverview)
+import Common.Models exposing (Narration, ChapterOverview, NarrationOverview, FullCharacter)
 import NarrationOverviewApp.Models exposing (Model)
 
 unpublishedChapterView : ChapterOverview -> Html Msg
@@ -44,15 +44,33 @@ chapterOverviewView chapterOverview =
     Nothing ->
       unpublishedChapterView chapterOverview
 
+narrationCharacterView : FullCharacter -> Html Msg
+narrationCharacterView character =
+  li []
+    [ a [ href <| "/characters/" ++ character.token ]
+        [ text character.name ]
+    ]
+
 overviewView : NarrationOverview -> Html Msg
 overviewView overview =
   main' [ id "narrator-app", class "app-container" ]
-    [ h1 []
-        [ text <| "Narration " ++ overview.narration.title ]
-    , a [ href <| "/narrations/" ++ (toString overview.narration.id) ++ "/new" ]
-        [ text "Write new chapter" ]
-    , ul [ class "chapter-list" ]
-      (List.map chapterOverviewView overview.chapters)
+    [ h1 [] [ text <| "Narration " ++ overview.narration.title ]
+    , div [ class "two-column" ]
+        [ section []
+            [ h2 [] [ text "Chapters" ]
+            , a [ href <| "/narrations/" ++ (toString overview.narration.id) ++ "/new" ]
+                [ text "Write new chapter" ]
+            , ul [ class "chapter-list" ]
+                (List.map chapterOverviewView overview.chapters)
+            ]
+        , section [ class "page-aside" ]
+            [ h2 [] [ text "Characters" ]
+            , a [ href <| "/narrations/" ++ (toString overview.narration.id) ++ "/characters/new" ]
+                [ text "New character" ]
+            , ul [ class "character-list" ]
+                (List.map narrationCharacterView overview.narration.characters)
+            ]
+        ]
     ]
 
 loadingView : Model -> Html Msg

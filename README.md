@@ -1,6 +1,8 @@
 TODO
 ====
 
+* Narration creation needs character creation!
+* Drop username and index users by e-mail?
 * Allow narrators to change password, and create more narrators
 * Add feedback on save (narrator pages, character page)
 * Add a JS confirmation thing to the publish button?
