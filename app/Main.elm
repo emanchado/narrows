@@ -11,6 +11,7 @@ import NarrationCreationApp
 import NarrationOverviewApp
 import ChapterEditApp
 import ChapterControlApp
+import CharacterCreationApp
 
 type alias Model =
   { route : Routing.Route
@@ -21,6 +22,7 @@ type alias Model =
   , narrationOverviewApp : NarrationOverviewApp.Model
   , chapterEditApp : ChapterEditApp.Model
   , chapterControlApp : ChapterControlApp.Model
+  , characterCreationApp : CharacterCreationApp.Model
   }
 
 type Msg
@@ -32,6 +34,7 @@ type Msg
   | NarrationOverviewMsg NarrationOverviewApp.Msg
   | ChapterEditMsg ChapterEditApp.Msg
   | ChapterControlMsg ChapterControlApp.Msg
+  | CharacterCreationMsg CharacterCreationApp.Msg
 
 
 initialState : Result String Routing.Route -> (Model, Cmd Msg)
@@ -44,6 +47,7 @@ initialState result =
                            , narrationOverviewApp = NarrationOverviewApp.initialState
                            , chapterEditApp = ChapterEditApp.initialState
                            , chapterControlApp = ChapterControlApp.initialState
+                           , characterCreationApp = CharacterCreationApp.initialState
                            }
 
 combinedUrlUpdate : Result String Routing.Route -> Model -> (Model, Cmd Msg)
@@ -57,6 +61,7 @@ combinedUrlUpdate result model =
     (updatedNarrationCreationModel, narrationCreationCmd) = NarrationCreationApp.urlUpdate currentRoute model.narrationCreationApp
     (updatedNarrationOverviewModel, narrationOverviewCmd) = NarrationOverviewApp.urlUpdate currentRoute model.narrationOverviewApp
     (updatedChapterControlModel, chapterControlCmd) = ChapterControlApp.urlUpdate currentRoute model.chapterControlApp
+    (updatedCharacterCreationModel, characterCreationCmd) = CharacterCreationApp.urlUpdate currentRoute model.characterCreationApp
   in
     ( { model | route = currentRoute
               , readerApp = updatedReaderModel
@@ -66,6 +71,7 @@ combinedUrlUpdate result model =
               , narrationOverviewApp = updatedNarrationOverviewModel
               , chapterEditApp = updatedNarratorModel
               , chapterControlApp = updatedChapterControlModel
+              , characterCreationApp = updatedCharacterCreationModel
               }
     , Cmd.batch [ Cmd.map ReaderMsg readerCmd
                 , Cmd.map CharacterMsg characterCmd
@@ -74,6 +80,7 @@ combinedUrlUpdate result model =
                 , Cmd.map NarrationOverviewMsg narrationOverviewCmd
                 , Cmd.map ChapterEditMsg narratorCmd
                 , Cmd.map ChapterControlMsg chapterControlCmd
+                , Cmd.map CharacterCreationMsg characterCreationCmd
                 ]
     )
 
@@ -115,6 +122,11 @@ combinedUpdate msg model =
         (newChapterControlModel, cmd) = ChapterControlApp.update chapterControlMsg model.chapterControlApp
       in
         ({ model | chapterControlApp = newChapterControlModel }, Cmd.map ChapterControlMsg cmd)
+    CharacterCreationMsg characterCreationMsg ->
+      let
+        (newCharacterCreationModel, cmd) = CharacterCreationApp.update characterCreationMsg model.characterCreationApp
+      in
+        ({ model | characterCreationApp = newCharacterCreationModel }, Cmd.map CharacterCreationMsg cmd)
     _ ->
       (model, Cmd.none)
 
@@ -127,6 +139,7 @@ subscriptions model =
             , Sub.map NarrationOverviewMsg (NarrationOverviewApp.subscriptions model.narrationOverviewApp)
             , Sub.map ChapterEditMsg (ChapterEditApp.subscriptions model.chapterEditApp)
             , Sub.map ChapterControlMsg (ChapterControlApp.subscriptions model.chapterControlApp)
+            , Sub.map CharacterCreationMsg (CharacterCreationApp.subscriptions model.characterCreationApp)
             ]
 
 notFoundView : Html Msg
@@ -154,6 +167,8 @@ mainApplicationView model =
       App.map ChapterEditMsg (ChapterEditApp.view model.chapterEditApp)
     Routing.ChapterControlPage chapterId ->
       App.map ChapterControlMsg (ChapterControlApp.view model.chapterControlApp)
+    Routing.CharacterCreationPage chapterId ->
+      App.map CharacterCreationMsg (CharacterCreationApp.view model.characterCreationApp)
     Routing.NotFoundRoute ->
       notFoundView
 

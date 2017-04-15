@@ -13,6 +13,7 @@ type Route
   | ChapterControlPage Int
   | CreateChapterPage Int
   | NarrationPage Int
+  | CharacterCreationPage Int
   | NotFoundRoute
 
 matchers : Parser (Route -> a) a
@@ -25,6 +26,7 @@ matchers =
     , format ChapterEditNarratorPage (s "chapters" </> int </> s "edit")
     , format ChapterControlPage (s "chapters" </> int)
     , format CreateChapterPage (s "narrations" </> int </> s "new")
+    , format CharacterCreationPage (s "narrations" </> int </> s "characters" </> s "new")
     , format NarrationPage (s "narrations" </> int)
     ]
 

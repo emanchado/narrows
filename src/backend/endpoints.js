@@ -11,6 +11,7 @@ import mentionFilter from "./mention-filter";
 import messageUtils from "./message-utils";
 import feeds from "./feeds";
 import Mailer from "./Mailer";
+import { isValidEmail } from "./validation";
 
 const store = new NarrowsStore(config.db, config.files.path);
 store.connect();
@@ -263,7 +264,6 @@ export function postNarrationFiles(req, res) {
     }).then(fileInfo => (
         res.json(fileInfo)
     )).catch(err => {
-        console.error("Caught error???");
         res.status(500).json({
             errorMessage: `Cannot add new media file: ${ err }`
         });
@@ -297,6 +297,33 @@ function uploadFile(req, res, type) {
 
 export function postNarrationImages(req, res) {
     uploadFile(req, res, "images");
+}
+
+export function postNarrationCharacters(req, res) {
+    const narrationId = parseInt(req.params.narrId, 10),
+          name = req.body.name || "Unnamed character",
+          email = req.body.email;
+
+    if (!isValidEmail(email)) {
+        res.status(400).json({
+            errorMessage: `'${ email }' is not a valid e-mail`
+        });
+        return;
+    }
+
+    store.getUserByEmail(email).catch(() => (
+        store.addUser(email).then(() => (
+            store.getUserByEmail(email)
+        ))
+    )).then(user => (
+        store.addCharacter(name, user.id, narrationId)
+    )).then(character => (
+        res.json(character)
+    )).catch(err => {
+        res.status(500).json({
+            errorMessage: `Cannot add character to narration: ${ err }`
+        });
+    });
 }
 
 export function getChapterLastReactions(req, res) {
@@ -463,8 +490,6 @@ export function putCharacter(req, res) {
     if (newProps.backstory) {
         newProps.backstory = JSON.stringify(newProps.backstory);
     }
-
-    console.log("newProps =", JSON.stringify(newProps, null, 2));
 
     return store.getCharacterInfo(characterToken).then(character => (
         store.updateCharacter(character.id, newProps).then(newCharacter => {

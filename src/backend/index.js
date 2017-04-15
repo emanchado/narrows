@@ -44,6 +44,7 @@ app.get("/api/narrations/:narrId/chapters", middlewares.apiAuth, endpoints.getNa
 app.post("/api/narrations/:narrId/chapters", middlewares.apiAuth, endpoints.postNewChapter);
 app.post("/api/narrations/:narrId/files", middlewares.apiAuth, endpoints.postNarrationFiles);
 app.post("/api/narrations/:narrId/images", middlewares.apiAuth, endpoints.postNarrationImages);
+app.post("/api/narrations/:narrId/characters", middlewares.apiAuth, endpoints.postNarrationCharacters);
 
 app.get("/api/chapters/:chptId", middlewares.apiAuth, endpoints.getChapter);
 app.put("/api/chapters/:chptId", middlewares.apiAuth, endpoints.putChapter);

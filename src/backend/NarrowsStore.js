@@ -91,6 +91,13 @@ function mysqlTimestamp(dateString) {
         `${pad(hour)}:${pad(minutes)}:${pad(seconds)}`;
 }
 
+function generateCharacterToken(a) {
+    return a ?
+        (a^Math.random()*16>>a/4).toString(16) :
+        ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g,
+                                             generateCharacterToken);
+}
+
 class NarrowsStore {
     constructor(connConfig, narrationDir) {
         this.connConfig = connConfig;
@@ -597,24 +604,20 @@ class NarrowsStore {
         );
     }
 
-    addCharacter(name, token, narrationId) {
+    addCharacter(name, userId, narrationId) {
         const deferred = Q.defer();
 
-        this.db.run(
-            `INSERT INTO characters (name, token, narration_id)
-                             VALUES (?, ?, ?)`,
-            [name, token, narrationId],
-            function(err, result) {
-                if (err) {
-                    deferred.reject(err);
-                    return;
-                }
+        const newToken = generateCharacterToken();
 
-                deferred.resolve(result.insertId);
-            }
-        );
-
-        return deferred.promise;
+        return Q.ninvoke(
+            this.db,
+            "run",
+            `INSERT INTO characters (name, token, player_id, narration_id)
+                             VALUES (?, ?, ?, ?)`,
+            [name, newToken, userId, narrationId]
+        ).then(() => (
+            this.getCharacterInfo(newToken)
+        ));
     }
 
     addParticipant(chapterId, characterId) {
@@ -929,6 +932,24 @@ class NarrowsStore {
             propValues.concat(characterId)
         ).then(
             () => this.getFullCharacterStats(characterId)
+        );
+    }
+
+    getUserByEmail(email) {
+        return Q.ninvoke(
+            this.db,
+            "get",
+            `SELECT id, email, role FROM users WHERE email = ?`,
+            email
+        );
+    }
+
+    addUser(email) {
+        return Q.ninvoke(
+            this.db,
+            "run",
+            `INSERT INTO users (email, role) VALUES (?, 'player')`,
+            email
         );
     }
 }
