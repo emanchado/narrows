@@ -17,6 +17,7 @@ const JSON_TO_DB = {
     narratorId: "narrator_id",
     defaultBackgroundImage: "default_background_image",
     defaultAudio: "default_audio",
+    name: "name",
     description: "description",
     backstory: "backstory"
 };

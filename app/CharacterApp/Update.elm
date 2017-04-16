@@ -85,6 +85,16 @@ update msg model =
         Nothing ->
           (model, Cmd.none)
 
+    UpdateCharacterName newName ->
+      case model.characterInfo of
+        Just character ->
+          let
+            updatedCharacter = { character | name = newName }
+          in
+            ({ model | characterInfo = Just updatedCharacter }, Cmd.none)
+        Nothing ->
+          (model, Cmd.none)
+
     SaveCharacter ->
       case model.characterInfo of
         Just character ->

@@ -1,8 +1,8 @@
 module CharacterApp.Views exposing (mainView)
 
-import Html exposing (Html, section, h2, h3, div, ul, li, img, button, a, label, em, text)
-import Html.Attributes exposing (id, class, for, src, href, type', checked)
-import Html.Events exposing (onClick)
+import Html exposing (Html, section, h2, h3, div, ul, li, img, input, button, a, label, em, text)
+import Html.Attributes exposing (id, class, for, src, href, type', value, checked)
+import Html.Events exposing (onClick, onInput)
 
 import Common.Views exposing (bannerView)
 
@@ -41,8 +41,18 @@ mainView model =
         [ section []
             [ case model.characterInfo of
                 Just characterInfo ->
-                  div [ class "current-avatar" ]
-                    [ img [ src <| avatarUrl characterInfo.narration.id characterInfo.avatar ] []
+                  div []
+                    [ div [ class "current-avatar" ]
+                        [ img [ src <| avatarUrl characterInfo.narration.id characterInfo.avatar ] []
+                        ]
+                    , label [] [ text "Name" ]
+                    , div []
+                      [ input [ type' "text"
+                              , value characterInfo.name
+                              , onInput UpdateCharacterName
+                              ]
+                          []
+                ]
                     ]
                 Nothing ->
                   text "Loading"

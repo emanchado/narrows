@@ -32,6 +32,7 @@ encodeCharacterUpdate : CharacterInfo -> String
 encodeCharacterUpdate characterInfo =
   (Json.Encode.encode
      0
-     (Json.Encode.object [ ("description", characterInfo.description)
+     (Json.Encode.object [ ("name", Json.Encode.string characterInfo.name)
+                         , ("description", characterInfo.description)
                          , ("backstory", characterInfo.backstory)
                          ]))

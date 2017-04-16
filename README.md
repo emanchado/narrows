@@ -1,7 +1,7 @@
 TODO
 ====
 
-* Narration creation needs character creation!
+* Show list of characters in a narration?
 * Drop username and index users by e-mail?
 * Allow narrators to change password, and create more narrators
 * Add feedback on save (narrator pages, character page)
@@ -13,6 +13,7 @@ TODO
   updates the dropdown as soon as an image is uploaded
 * Make it easier to remove mention marks
 * Really wait until everything is loaded before showing the "Start" button
+* Delete characters from a narration?
 
 Initial narrator
 ----------------

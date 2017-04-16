@@ -9,6 +9,7 @@ type Msg
   = NoOp
   | CharacterFetchError Http.Error
   | CharacterFetchSuccess CharacterInfo
+  | UpdateCharacterName String
   | UpdateDescriptionText Json.Encode.Value
   | UpdateBackstoryText Json.Encode.Value
   | SaveCharacter
