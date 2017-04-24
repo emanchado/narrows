@@ -11,12 +11,12 @@ class UserStore {
         this.db = new mysql.createConnection(this.connConfig);
     }
 
-    authenticate(username, password) {
+    authenticate(email, password) {
         return Q.ninvoke(
             this.db,
             "query",
-            "SELECT id, password FROM users WHERE username = ?",
-            username
+            "SELECT id, password FROM users WHERE email = ?",
+            email
         ).spread(userRows => {
             if (userRows.length === 0) {
                 return false;

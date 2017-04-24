@@ -1,14 +1,13 @@
 TODO
 ====
 
-* Show list of characters in a narration?
-* Drop username and index users by e-mail?
 * Allow narrators to change password, and create more narrators
 * Add feedback on save (narrator pages, character page)
 * Add a JS confirmation thing to the publish button?
+* Upgrade ProseMirror
 * ProseMirror (or configuration?) bug in Firefox
 * Avoid that the page gets reloaded
-* Allow the player to change the character avatar, e-mail address
+* Allow the player to change the e-mail address (?), character avatar
 * Rewrite the image uploader so it's a single, special component that
   updates the dropdown as soon as an image is uploaded
 * Make it easier to remove mention marks
@@ -18,7 +17,8 @@ TODO
 Initial narrator
 ----------------
 
-The initial user/narrator is "narrator", and the password is "changeme!".
+The initial user/narrator is "narrator@example.com", and the password
+is "changeme!".
 
 Credits
 -------
