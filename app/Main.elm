@@ -1,7 +1,6 @@
 import Navigation
-
-import Html.App as App
-import Html exposing (Html, div, span, a, input, text, img, label, button, br)
+import Http
+import Json.Decode
 
 import Routing
 import ReaderApp
@@ -13,42 +12,32 @@ import ChapterEditApp
 import ChapterControlApp
 import CharacterCreationApp
 
-type alias Model =
-  { route : Routing.Route
-  , readerApp : ReaderApp.Model
-  , characterApp : CharacterApp.Model
-  , narratorDashboardApp : NarratorDashboardApp.Model
-  , narrationCreationApp : NarrationCreationApp.Model
-  , narrationOverviewApp : NarrationOverviewApp.Model
-  , chapterEditApp : ChapterEditApp.Model
-  , chapterControlApp : ChapterControlApp.Model
-  , characterCreationApp : CharacterCreationApp.Model
-  }
-
-type Msg
-  = NoOp
-  | ReaderMsg ReaderApp.Msg
-  | CharacterMsg CharacterApp.Msg
-  | NarratorDashboardMsg NarratorDashboardApp.Msg
-  | NarrationCreationMsg NarrationCreationApp.Msg
-  | NarrationOverviewMsg NarrationOverviewApp.Msg
-  | ChapterEditMsg ChapterEditApp.Msg
-  | ChapterControlMsg ChapterControlApp.Msg
-  | CharacterCreationMsg CharacterCreationApp.Msg
+import Core.Api
+import Core.Models exposing (Model, UserSession(..))
+import Core.Messages exposing (Msg(..))
+import Core.Views
 
 
 initialState : Result String Routing.Route -> (Model, Cmd Msg)
 initialState result =
-  combinedUrlUpdate result { route = Routing.NotFoundRoute
-                           , readerApp = ReaderApp.initialState
-                           , characterApp = CharacterApp.initialState
-                           , narratorDashboardApp = NarratorDashboardApp.initialState
-                           , narrationCreationApp = NarrationCreationApp.initialState
-                           , narrationOverviewApp = NarrationOverviewApp.initialState
-                           , chapterEditApp = ChapterEditApp.initialState
-                           , chapterControlApp = ChapterControlApp.initialState
-                           , characterCreationApp = CharacterCreationApp.initialState
-                           }
+  let
+    currentRoute = Routing.routeFromResult result
+  in
+    ( { route = currentRoute
+      , session = Nothing
+      , email = ""
+      , password = ""
+      , readerApp = ReaderApp.initialState
+      , characterApp = CharacterApp.initialState
+      , narratorDashboardApp = NarratorDashboardApp.initialState
+      , narrationCreationApp = NarrationCreationApp.initialState
+      , narrationOverviewApp = NarrationOverviewApp.initialState
+      , chapterEditApp = ChapterEditApp.initialState
+      , chapterControlApp = ChapterControlApp.initialState
+      , characterCreationApp = CharacterCreationApp.initialState
+      }
+    , Core.Api.refreshSession
+    )
 
 combinedUrlUpdate : Result String Routing.Route -> Model -> (Model, Cmd Msg)
 combinedUrlUpdate result model =
@@ -87,6 +76,38 @@ combinedUrlUpdate result model =
 combinedUpdate : Msg -> Model -> (Model, Cmd Msg)
 combinedUpdate msg model =
   case msg of
+    SessionFetchSuccess session ->
+      combinedUrlUpdate
+        (Ok model.route)
+        { model | session = Just <| LoggedInSession session }
+    SessionFetchError err ->
+      ({ model | session = Just AnonymousSession }, Cmd.none)
+
+    UpdateEmail newEmail ->
+      ({ model | email = newEmail }, Cmd.none)
+    UpdatePassword newPassword ->
+      ({ model | password = newPassword }, Cmd.none)
+    Login ->
+      (model, Core.Api.login model.email model.password)
+    LoginSuccess resp ->
+      case resp.value of
+        Http.Text text ->
+          let
+            decodedResponse =
+              Json.Decode.decodeString Core.Api.parseSession text
+          in
+            case decodedResponse of
+              Ok result ->
+                combinedUrlUpdate
+                  (Ok model.route)
+                  { model | session = Just <| LoggedInSession result }
+              _ ->
+                (model, Cmd.none)
+        _ ->
+          (model, Cmd.none)
+    LoginError err ->
+      ({ model | session = Just AnonymousSession }, Cmd.none)
+
     ReaderMsg readerMsg ->
       let
         (newReaderModel, cmd) = ReaderApp.update readerMsg model.readerApp
@@ -142,36 +163,6 @@ subscriptions model =
             , Sub.map CharacterCreationMsg (CharacterCreationApp.subscriptions model.characterCreationApp)
             ]
 
-notFoundView : Html Msg
-notFoundView =
-  div []
-    [ div [] [ text "404 Not Found" ]
-    ]
-
-mainApplicationView : Model -> Html Msg
-mainApplicationView model =
-  case model.route of
-    Routing.ChapterReaderPage chapterId characterToken ->
-      App.map ReaderMsg (ReaderApp.view model.readerApp)
-    Routing.CharacterPage characterToken ->
-      App.map CharacterMsg (CharacterApp.view model.characterApp)
-    Routing.NarratorIndex ->
-      App.map NarratorDashboardMsg (NarratorDashboardApp.view model.narratorDashboardApp)
-    Routing.NarrationCreationPage ->
-      App.map NarrationCreationMsg (NarrationCreationApp.view model.narrationCreationApp)
-    Routing.NarrationPage narrationId ->
-      App.map NarrationOverviewMsg (NarrationOverviewApp.view model.narrationOverviewApp)
-    Routing.CreateChapterPage narrationId ->
-      App.map ChapterEditMsg (ChapterEditApp.view model.chapterEditApp)
-    Routing.ChapterEditNarratorPage chapterId ->
-      App.map ChapterEditMsg (ChapterEditApp.view model.chapterEditApp)
-    Routing.ChapterControlPage chapterId ->
-      App.map ChapterControlMsg (ChapterControlApp.view model.chapterControlApp)
-    Routing.CharacterCreationPage chapterId ->
-      App.map CharacterCreationMsg (CharacterCreationApp.view model.characterCreationApp)
-    Routing.NotFoundRoute ->
-      notFoundView
-
 main : Program Never
 main =
   Navigation.program Routing.parser
@@ -179,5 +170,5 @@ main =
     , update = combinedUpdate
     , urlUpdate = combinedUrlUpdate
     , subscriptions = subscriptions
-    , view = mainApplicationView
+    , view = Core.Views.mainView
     }

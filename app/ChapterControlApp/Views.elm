@@ -64,7 +64,7 @@ mainView model =
     main' [ id "narrator-app", class "app-container" ]
       [ h1 []
           [ text <| chapter.title ]
-      , nav []
+      , nav [ class "breadcrumbs" ]
           [ a [ href <| "/narrations/" ++ (toString chapter.narrationId) ]
               [ text "Narration" ]
           , text " ⇢ "

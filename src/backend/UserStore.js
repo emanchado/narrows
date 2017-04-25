@@ -11,6 +11,21 @@ class UserStore {
         this.db = new mysql.createConnection(this.connConfig);
     }
 
+    getUserInfo(userId) {
+        return Q.ninvoke(
+            this.db,
+            "query",
+            "SELECT id, email, role FROM users WHERE id = ?",
+            userId
+        ).spread(userRows => {
+            if (userRows.length === 0) {
+                throw new Error(`Cannot find user ${ userId }`);
+            }
+
+            return userRows[0];
+        });
+    }
+
     authenticate(email, password) {
         return Q.ninvoke(
             this.db,

@@ -163,7 +163,7 @@ mainView model =
                 Nothing -> Common.Models.loadingPlaceholderNarration
   in
     div [ id "narrator-app", class "app-container" ]
-      [ nav []
+      [ nav [ class "breadcrumbs" ]
           [ a [ href ("/narrations/" ++ (toString chapter.narrationId)) ]
               [ text "Narration" ]
           , text " ⇢ "

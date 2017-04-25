@@ -12,7 +12,13 @@ h1 {
     margin-bottom: 10px;
 }
 
-nav {
+nav.top-bar {
+    margin: 0;
+    padding: 10px;
+    border-bottom: 2px solid #aaa;
+}
+
+nav.breadcrumbs {
     margin-top: 10px;
     margin-bottom: 10px;
 }
@@ -24,9 +30,31 @@ label {
 
 .app-container {
     padding: 30px;
+    padding-top: 0;
 }
 .app-container-simple {
     max-width: 50em;
+}
+
+.login-page {
+    margin-top: 30vh;
+    text-align: center;
+}
+.site-title {
+    margin-bottom: 20px;
+    font-size: 24px;
+}
+.login-form {
+    width: 100%;
+}
+.login-form .form-line label {
+    display: inline-block;
+    min-width: 100px;
+    text-align: right;
+    margin-right: 10px;
+}
+.login-form .form-actions {
+    margin-top: 5px;
 }
 
 #loader {

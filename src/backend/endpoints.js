@@ -21,6 +21,39 @@ userStore.connect();
 const transporter = nodemailer.createTransport(sendmailTransport());
 const mailer = new Mailer(store, transporter);
 
+export function getSession(req, res) {
+    const userId = req.session.userId;
+
+    if (userId) {
+        userStore.getUserInfo(userId).then(info => (
+            res.json(info)
+        )).catch(err => {
+            res.status(404).json({});
+        });
+    } else {
+        res.status(404).json({});
+    }
+}
+
+export function postSession(req, res) {
+    const email = req.body.email;
+    const password = req.body.password;
+
+    console.log("email =", email);
+    console.log("password =", password);
+    userStore.authenticate(email, password).then(userId => (
+        userId ?
+            userStore.getUserInfo(userId).then(info => {
+                req.session.userId = userId;
+                res.json(info);
+            })
+            :
+            res.status(404).json({notFound: true})
+    )).catch(err => {
+        res.status(500).json({error: err});
+    });
+}
+
 export function getNarrationOverview(req, res) {
     store.getNarrationOverview(req.session.userId, 5).then(narrationOverviewData => {
         res.json(narrationOverviewData);

@@ -37,6 +37,9 @@ app.all("/characters/:characterId", function(req, res) {
 });
 app.get("/feeds/:charToken", endpoints.getFeedsCharacter);
 
+app.get("/api/session", endpoints.getSession);
+app.post("/api/session", endpoints.postSession);
+
 app.get("/api/narrations", middlewares.apiAuth, endpoints.getNarrationOverview);
 app.post("/api/narrations", middlewares.apiAuth, endpoints.postNarration);
 app.get("/api/narrations/:narrId", middlewares.apiAuth, endpoints.getNarration);
@@ -62,7 +65,7 @@ app.put("/api/characters/:charToken", endpoints.putCharacter);
 
 app.use("/static/narrations", express.static(config.files.path));
 
-app.use(middlewares.auth, function(req, res) {
+app.use(function(req, res) {
     res.sendFile(path.resolve(path.join(STATIC_HTML_FILES, "index.html")));
 });
 

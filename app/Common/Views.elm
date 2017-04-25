@@ -89,6 +89,13 @@ threadView maybeCharacterId showReplyMessage updateReplyMessage sendReplyMessage
                    , [ replyBoxDiv ]
                    ])
 
+loadingView : Maybe Banner -> Html msg
+loadingView maybeBanner =
+  div []
+    [ bannerView maybeBanner
+    , text "Loading…"
+    ]
+
 bannerView : Maybe Banner -> Html msg
 bannerView maybeBanner =
   case maybeBanner of
