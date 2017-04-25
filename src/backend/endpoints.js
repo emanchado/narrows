@@ -25,7 +25,7 @@ export function getSession(req, res) {
     const userId = req.session.userId;
 
     if (userId) {
-        userStore.getUserInfo(userId).then(info => (
+        userStore.getUser(userId).then(info => (
             res.json(info)
         )).catch(err => {
             res.status(404).json({});
@@ -39,11 +39,9 @@ export function postSession(req, res) {
     const email = req.body.email;
     const password = req.body.password;
 
-    console.log("email =", email);
-    console.log("password =", password);
     userStore.authenticate(email, password).then(userId => (
         userId ?
-            userStore.getUserInfo(userId).then(info => {
+            userStore.getUser(userId).then(info => {
                 req.session.userId = userId;
                 res.json(info);
             })
@@ -532,6 +530,41 @@ export function putCharacter(req, res) {
         res.status(500).json({
             errorMessage: `Could not update character with ` +
                 `id '${ characterToken }': ${ err }`
+        });
+    });
+}
+
+export function getUsers(req, res) {
+    return userStore.getUsers().then(users => (
+        res.json({ users: users })
+    )).catch(err => {
+        res.status(500).json({
+            errorMessage: `There was a problem getting the users: ${ err }`
+        });
+    });
+}
+
+export function postUser(req, res) {
+    const props = req.body;
+
+    return userStore.createUser(props).then(user => (
+        res.json(user)
+    )).catch(err => {
+        res.status(500).json({
+            errorMessage: `There was a problem creating the new user: ${ err }`
+        });
+    });
+}
+
+export function putUser(req, res) {
+    const userId = req.params.userId;
+    const newProps = req.body;
+
+    userStore.updateUser(userId, newProps).then(user => {
+        res.json(user);
+    }).catch(err => {
+        res.status(500).json({
+            errorMessage: `There was a problem updating: ${ err }`
         });
     });
 }

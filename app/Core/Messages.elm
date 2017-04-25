@@ -3,7 +3,6 @@ module Core.Messages exposing (..)
 import Http
 
 import Core.Models
-import Routing
 import ReaderApp
 import CharacterApp
 import NarratorDashboardApp
@@ -12,10 +11,11 @@ import NarrationOverviewApp
 import ChapterEditApp
 import ChapterControlApp
 import CharacterCreationApp
+import UserManagementApp
 
 type Msg
   = NoOp
-  | SessionFetchSuccess Core.Models.UserSessionInfo
+  | SessionFetchSuccess Core.Models.UserInfo
   | SessionFetchError Http.Error
   | UpdateEmail String
   | UpdatePassword String
@@ -30,3 +30,4 @@ type Msg
   | ChapterEditMsg ChapterEditApp.Msg
   | ChapterControlMsg ChapterControlApp.Msg
   | CharacterCreationMsg CharacterCreationApp.Msg
+  | UserManagementMsg UserManagementApp.Msg

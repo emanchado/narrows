@@ -59,6 +59,9 @@ app.ports.playPauseNarrationMusic.subscribe(evt => {
 app.ports.flashElement.subscribe(elemId => {
     const el = document.getElementById(elemId);
     if (!el) {
+        console.error(
+            "Element", elemId, "doesn't exist (yet?), cannot flash it"
+        );
         return;
     }
     el.style.display = "";
@@ -100,6 +103,10 @@ app.ports.initEditor.subscribe(evt => {
 app.ports.updateParticipants.subscribe(evt => {
     const editorInstance = editorViews[evt.editor];
     if (!editorInstance) {
+        console.error(
+            "Cannot update participants in " + evt.editor +
+                " as it doesn't exist (yet?)"
+        );
         return;
     }
 
@@ -108,6 +115,7 @@ app.ports.updateParticipants.subscribe(evt => {
 app.ports.playPauseAudioPreview.subscribe(audioElemId => {
     const audioEl = document.getElementById(audioElemId);
     if (!audioEl) {
+        console.error("Cannot play audio in non-existent element", audioElemId);
         return;
     }
 
@@ -120,6 +128,7 @@ app.ports.playPauseAudioPreview.subscribe(audioElemId => {
 app.ports.openFileInput.subscribe(fileInputId => {
     const fileInput = document.getElementById(fileInputId);
     if (!fileInput) {
+        console.error("Cannot open non-existent element", fileInputId);
         return;
     }
 

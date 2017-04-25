@@ -13,8 +13,12 @@ h1 {
 }
 
 nav.top-bar {
+    display: flex;
+    justify-content: space-between;
+
     margin: 0;
     padding: 10px;
+
     border-bottom: 2px solid #aaa;
 }
 

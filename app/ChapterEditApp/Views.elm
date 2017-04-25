@@ -3,7 +3,7 @@ module ChapterEditApp.Views exposing (mainView)
 import String
 import Json.Decode
 
-import Html exposing (Html, h2, div, main', nav, section, aside, ul, li, img, a, input, button, audio, br, span, label, strong, em, text)
+import Html exposing (Html, h2, div, main', nav, section, ul, li, img, a, input, button, audio, br, span, label, strong, em, text)
 import Html.Attributes exposing (id, name, class, href, src, target, type', value, placeholder, checked, disabled)
 import Html.Events exposing (onClick, onInput, on)
 
@@ -98,7 +98,7 @@ chapterView chapter narration =
                   , onInput UpdateChapterTitle
                   ]
               []
-          , div [ class "participants" ]
+          , div [ class "participant-list" ]
               [ label [] [ text "Participants:" ]
               , participantListView chapter.id narration.characters chapter.participants
               ]

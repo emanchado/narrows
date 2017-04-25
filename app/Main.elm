@@ -11,6 +11,7 @@ import NarrationOverviewApp
 import ChapterEditApp
 import ChapterControlApp
 import CharacterCreationApp
+import UserManagementApp
 
 import Core.Api
 import Core.Models exposing (Model, UserSession(..))
@@ -35,6 +36,7 @@ initialState result =
       , chapterEditApp = ChapterEditApp.initialState
       , chapterControlApp = ChapterControlApp.initialState
       , characterCreationApp = CharacterCreationApp.initialState
+      , userManagementApp = UserManagementApp.initialState
       }
     , Core.Api.refreshSession
     )
@@ -51,6 +53,7 @@ combinedUrlUpdate result model =
     (updatedNarrationOverviewModel, narrationOverviewCmd) = NarrationOverviewApp.urlUpdate currentRoute model.narrationOverviewApp
     (updatedChapterControlModel, chapterControlCmd) = ChapterControlApp.urlUpdate currentRoute model.chapterControlApp
     (updatedCharacterCreationModel, characterCreationCmd) = CharacterCreationApp.urlUpdate currentRoute model.characterCreationApp
+    (updatedUserManagementModel, userManagementCmd) = UserManagementApp.urlUpdate currentRoute model.userManagementApp
   in
     ( { model | route = currentRoute
               , readerApp = updatedReaderModel
@@ -61,6 +64,7 @@ combinedUrlUpdate result model =
               , chapterEditApp = updatedNarratorModel
               , chapterControlApp = updatedChapterControlModel
               , characterCreationApp = updatedCharacterCreationModel
+              , userManagementApp = updatedUserManagementModel
               }
     , Cmd.batch [ Cmd.map ReaderMsg readerCmd
                 , Cmd.map CharacterMsg characterCmd
@@ -70,6 +74,7 @@ combinedUrlUpdate result model =
                 , Cmd.map ChapterEditMsg narratorCmd
                 , Cmd.map ChapterControlMsg chapterControlCmd
                 , Cmd.map CharacterCreationMsg characterCreationCmd
+                , Cmd.map UserManagementMsg userManagementCmd
                 ]
     )
 
@@ -81,7 +86,9 @@ combinedUpdate msg model =
         (Ok model.route)
         { model | session = Just <| LoggedInSession session }
     SessionFetchError err ->
-      ({ model | session = Just AnonymousSession }, Cmd.none)
+      combinedUrlUpdate
+        (Ok model.route)
+        { model | session = Just AnonymousSession }
 
     UpdateEmail newEmail ->
       ({ model | email = newEmail }, Cmd.none)
@@ -148,6 +155,12 @@ combinedUpdate msg model =
         (newCharacterCreationModel, cmd) = CharacterCreationApp.update characterCreationMsg model.characterCreationApp
       in
         ({ model | characterCreationApp = newCharacterCreationModel }, Cmd.map CharacterCreationMsg cmd)
+    UserManagementMsg userManagementMsg ->
+      let
+        (newUserManagementModel, cmd) = UserManagementApp.update userManagementMsg model.userManagementApp
+      in
+        ({ model | userManagementApp = newUserManagementModel }, Cmd.map UserManagementMsg cmd)
+
     _ ->
       (model, Cmd.none)
 
@@ -161,6 +174,7 @@ subscriptions model =
             , Sub.map ChapterEditMsg (ChapterEditApp.subscriptions model.chapterEditApp)
             , Sub.map ChapterControlMsg (ChapterControlApp.subscriptions model.chapterControlApp)
             , Sub.map CharacterCreationMsg (CharacterCreationApp.subscriptions model.characterCreationApp)
+            , Sub.map UserManagementMsg (UserManagementApp.subscriptions model.userManagementApp)
             ]
 
 main : Program Never

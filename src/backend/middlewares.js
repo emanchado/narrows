@@ -36,7 +36,25 @@ export function apiAuth(req, res, next) {
     if (req.session.userId) {
         next();
     } else {
-        res.statusCode = 403;
+        res.statusCode = 401;
+        res.send("Need to authenticate to use this API endpoint");
+    }
+}
+
+export function apiAdminAuth(req, res, next) {
+    const userId = req.session.userId;
+
+    if (userId) {
+        userStore.isAdmin(userId).then(isAdmin => {
+            if (isAdmin) {
+                next();
+            } else {
+                res.statusCode = 403;
+                res.send("Need to be an admin to use this API endpoint");
+            }
+        });
+    } else {
+        res.statusCode = 401;
         res.send("Need to authenticate to use this API endpoint");
     }
 }

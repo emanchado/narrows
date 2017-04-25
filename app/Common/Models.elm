@@ -117,3 +117,9 @@ type alias NarrationOverview =
   { narration : Narration
   , chapters : List ChapterOverview
   }
+
+type alias UserInfo =
+  { id : Int
+  , email : String
+  , role : String
+  }

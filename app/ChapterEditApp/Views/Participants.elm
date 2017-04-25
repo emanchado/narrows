@@ -42,5 +42,5 @@ participantListView chapterId allCharacters currentParticipants =
 
     nonParticipantItems = List.map nonParticipantView nonParticipants
   in
-    ul [ class "participants" ]
+    ul [ class "participant-list" ]
       (List.append participantItems nonParticipantItems)

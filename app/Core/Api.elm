@@ -8,9 +8,9 @@ import Json.Encode
 import Core.Models
 import Core.Messages exposing (..)
 
-parseSession : Json.Decoder Core.Models.UserSessionInfo
+parseSession : Json.Decoder Core.Models.UserInfo
 parseSession =
-  Json.object3 Core.Models.UserSessionInfo
+  Json.object3 Core.Models.UserInfo
     ("id" := int)
     ("email" := string)
     ("role" := string)

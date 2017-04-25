@@ -1,10 +1,10 @@
 TODO
 ====
 
-* Allow narrators to change password, and create more narrators
 * Add feedback on save (narrator pages, character page)
 * Add a JS confirmation thing to the publish button?
 * Upgrade ProseMirror
+* Upgrade Elm
 * ProseMirror (or configuration?) bug in Firefox
 * Avoid that the page gets reloaded
 * Allow the player to change the e-mail address (?), character avatar

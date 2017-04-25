@@ -9,8 +9,9 @@ import NarrationOverviewApp
 import ChapterEditApp
 import ChapterControlApp
 import CharacterCreationApp
+import UserManagementApp
 
-type alias UserSessionInfo =
+type alias UserInfo =
   { id : Int
   , email : String
   , role : String
@@ -18,7 +19,7 @@ type alias UserSessionInfo =
 
 type UserSession
   = AnonymousSession
-  | LoggedInSession UserSessionInfo
+  | LoggedInSession UserInfo
 
 type alias Model =
   { route : Routing.Route
@@ -34,4 +35,5 @@ type alias Model =
   , chapterEditApp : ChapterEditApp.Model
   , chapterControlApp : ChapterControlApp.Model
   , characterCreationApp : CharacterCreationApp.Model
+  , userManagementApp : UserManagementApp.Model
   }

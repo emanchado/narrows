@@ -1,9 +1,9 @@
 module Core.Views exposing (..)
 
 import Html.App as App
-import Html exposing (Html, nav, div, span, a, form, input, text, img, label, button, br)
-import Html.Attributes exposing (class, type', placeholder, href)
-import Html.Events exposing (onInput, onClick)
+import Html exposing (Html, nav, div, span, a, form, input, code, text, img, label, button, br)
+import Html.Attributes exposing (class, type', placeholder, autofocus, href)
+import Html.Events exposing (onInput, onClick, onSubmit)
 
 import Routing
 import ReaderApp
@@ -14,9 +14,10 @@ import NarrationOverviewApp
 import ChapterEditApp
 import ChapterControlApp
 import CharacterCreationApp
+import UserManagementApp
 
 import Core.Messages exposing (Msg(..))
-import Core.Models exposing (Model)
+import Core.Models exposing (Model, UserSession(..))
 import Common.Views
 
 notFoundView : Html Msg
@@ -25,12 +26,24 @@ notFoundView =
     [ div [] [ text "404 Not Found" ]
     ]
 
+unregisteredPageView : Html Msg
+unregisteredPageView =
+  div []
+    [ div []
+        [ text "Cannot page the page: maybe you forgot to register it in "
+        , code [] [ text "Core.Views" ]
+        , text "?"
+        ]
+    ]
+
 loginView : Html Msg
 loginView =
   div [ class "login-page" ]
     [ div [ class "site-title" ]
         [ text "Narrows - NARRation On Web System" ]
-    , div [ class "login-form" ]
+    , form [ class "login-form"
+           , onSubmit Login
+           ]
         [ div [ class "form-line" ]
             [ label [] [ text "E-mail:" ]
             , input [ placeholder "user@example.com"
@@ -72,9 +85,12 @@ dispatchProtectedPage model =
       App.map ChapterControlMsg (ChapterControlApp.view model.chapterControlApp)
     Routing.CharacterCreationPage chapterId ->
       App.map CharacterCreationMsg (CharacterCreationApp.view model.characterCreationApp)
+    Routing.UserManagementPage ->
+      App.map UserManagementMsg (UserManagementApp.view model.userManagementApp)
+
     _ ->
-      -- Something went wrong: this doesn't make sense
-      loginView
+      -- Something went wrong, eg. forgot to register the new page
+      unregisteredPageView
 
 appContentView : Model -> Html Msg
 appContentView model =
@@ -96,13 +112,40 @@ appContentView model =
         Nothing ->
           Common.Views.loadingView Nothing
 
+adminLinks : Maybe UserSession -> List (Html msg)
+adminLinks maybeSession =
+  case maybeSession of
+    Just session ->
+      case session of
+        AnonymousSession ->
+          []
+        LoggedInSession userInfo ->
+          if userInfo.role == "admin" then
+            [ a [ href "/users" ]
+                [ text "Manage users" ]
+            ]
+          else
+            []
+    Nothing ->
+      []
+
 mainView : Model -> Html Msg
 mainView model =
-  div []
-    [ nav [ class "top-bar" ]
-        [ a [ href "/" ]
-            [ div [ class "logo" ] [ text "NARROWS" ]
-            ]
-        ]
-    , appContentView model
-    ]
+  let
+    baseLinks = [ a [ href "/" ]
+                    [ div [ class "logo" ] [ text "NARROWS" ] ]
+                ]
+    finalLinks = List.concat [ baseLinks, adminLinks model.session ]
+  in
+    case model.session of
+      Just session ->
+        case session of
+          AnonymousSession ->
+            appContentView model
+          LoggedInSession _ ->
+            div []
+              [ nav [ class "top-bar" ] finalLinks
+              , appContentView model
+              ]
+      Nothing ->
+        appContentView model
