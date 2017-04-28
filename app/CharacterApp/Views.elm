@@ -27,8 +27,7 @@ chapterParticipation characterToken chapter =
 mainView : Model -> Html Msg
 mainView model =
   div [ id "reader-app", class "app-container" ]
-    [ bannerView model.banner
-    , h2 []
+    [ h2 []
       (case model.characterInfo of
            Just characterInfo ->
              [ text <| characterInfo.name ++ ", character in "
@@ -37,6 +36,7 @@ mainView model =
            Nothing ->
              [ text "Loading"
              ])
+    , bannerView model.banner
     , div [ class "two-column" ]
         [ section []
             [ case model.characterInfo of

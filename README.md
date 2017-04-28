@@ -1,7 +1,7 @@
 TODO
 ====
 
-* Add feedback on save (narrator pages, character page)
+* Be more consistent with the breadcrumb-based navigation
 * Add a JS confirmation thing to the publish button?
 * Upgrade ProseMirror
 * Upgrade Elm

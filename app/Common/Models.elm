@@ -7,7 +7,7 @@ loadingPlaceholderChapter : Chapter
 loadingPlaceholderChapter =
   { id = 0
   , narrationId = 0
-  , title = ""
+  , title = "…"
   , audio = Nothing
   , backgroundImage = Nothing
   , text = Json.Encode.list []
@@ -18,7 +18,7 @@ loadingPlaceholderChapter =
 loadingPlaceholderNarration : Narration
 loadingPlaceholderNarration =
   { id = 0
-  , title = ""
+  , title = "…"
   , characters = []
   , defaultAudio = Nothing
   , defaultBackgroundImage = Nothing

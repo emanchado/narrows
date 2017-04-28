@@ -164,8 +164,11 @@ mainView model =
   in
     div [ id "narrator-app", class "app-container" ]
       [ nav [ class "breadcrumbs" ]
-          [ a [ href ("/narrations/" ++ (toString chapter.narrationId)) ]
-              [ text "Narration" ]
+          [ a [ href "/" ]
+              [ text "Home" ]
+          , text " ⇢ "
+          , a [ href ("/narrations/" ++ (toString chapter.narrationId)) ]
+              [ text narration.title ]
           , text " ⇢ "
           , (if String.isEmpty chapter.title then
                em [] [ text "New chapter" ]

@@ -4,7 +4,7 @@ import Http
 
 import Routing
 
-import Common.Models exposing (errorBanner)
+import Common.Models exposing (errorBanner, successBanner)
 import Common.Ports exposing (initEditor)
 
 import CharacterApp.Api
@@ -71,7 +71,11 @@ update msg model =
           let
             updatedCharacter = { character | description = newDescription }
           in
-            ({ model | characterInfo = Just updatedCharacter }, Cmd.none)
+            ( { model | characterInfo = Just updatedCharacter
+                      , banner = Nothing
+              }
+            , Cmd.none
+            )
         Nothing ->
           (model, Cmd.none)
 
@@ -81,7 +85,11 @@ update msg model =
           let
             updatedCharacter = { character | backstory = newBackstory }
           in
-            ({ model | characterInfo = Just updatedCharacter }, Cmd.none)
+            ( { model | characterInfo = Just updatedCharacter
+                      , banner = Nothing
+              }
+            , Cmd.none
+            )
         Nothing ->
           (model, Cmd.none)
 
@@ -91,7 +99,11 @@ update msg model =
           let
             updatedCharacter = { character | name = newName }
           in
-            ({ model | characterInfo = Just updatedCharacter }, Cmd.none)
+            ( { model | characterInfo = Just updatedCharacter
+                      , banner = Nothing
+              }
+            , Cmd.none
+            )
         Nothing ->
           (model, Cmd.none)
 
@@ -111,7 +123,9 @@ update msg model =
       , Cmd.none)
     SaveCharacterSuccess resp ->
       if (resp.status >= 200) && (resp.status < 300) then
-        (model, Cmd.none)
+        ( { model | banner = successBanner <| "Saved" }
+        , Cmd.none
+        )
       else
         ( { model | banner = errorBanner <| "Error saving character, status code " ++ (toString resp.status) }
         , Cmd.none

@@ -99,12 +99,13 @@ label {
 
     margin: 20px auto;
     padding: 10px 20px;
+
+    color: #ddd;
 }
 .banner-success {
     background-color: #151;
 }
 .banner-error {
-    color: #ddd;
     background-color: #511;
 }
 
