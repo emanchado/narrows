@@ -5,11 +5,12 @@ import Json.Decode
 import Json.Encode
 import Navigation
 import Task
+import Process
 import Time exposing (Time)
 import Time.DateTime as DateTime exposing (DateTime, fromTimestamp)
 
 import Routing
-import Common.Models exposing (Banner, Chapter, FileSet, errorBanner)
+import Common.Models exposing (Banner, Chapter, FileSet, errorBanner, successBanner)
 import Common.Ports exposing (initEditor)
 
 import ChapterEditApp.Api
@@ -76,11 +77,28 @@ genericHttpErrorHandler model error =
   in
     ({ model | banner = errorBanner errorString }, Cmd.none)
 
+showFlashMessage : Maybe Banner -> Cmd Msg
+showFlashMessage maybeBanner =
+  Cmd.batch
+    [ Process.sleep (Time.second * 0)
+        |> Task.perform (\_ -> SetFlashMessage maybeBanner) (\_ -> SetFlashMessage maybeBanner)
+    , Process.sleep (Time.second * 2)
+        |> Task.perform (\_ -> RemoveFlashMessage) (\_ -> RemoveFlashMessage)
+    ]
+
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
   case msg of
     NoOp ->
       (model, Cmd.none)
+    SetFlashMessage maybeBanner ->
+      ( { model | flash = maybeBanner }
+      , Cmd.none
+      )
+    RemoveFlashMessage ->
+      ( { model | flash = Nothing }
+      , Cmd.none
+      )
     ChapterFetchError error ->
       genericHttpErrorHandler model error
     ChapterFetchSuccess chapter ->
@@ -130,7 +148,11 @@ update msg model =
           let
             newChapter = { chapter | title = newTitle }
           in
-            ({ model | chapter = Just newChapter }, Cmd.none)
+            ( { model | chapter = Just newChapter
+                      , banner = Nothing
+              }
+            , Cmd.none
+            )
         Nothing ->
           (model, Cmd.none)
     UpdateEditorContent newText ->
@@ -139,7 +161,11 @@ update msg model =
           let
             updatedChapter = { chapter | text = newText }
           in
-            ({ model | chapter = Just updatedChapter }, Cmd.none)
+            ( { model | chapter = Just updatedChapter
+                      , banner = Nothing
+              }
+            , Cmd.none
+            )
         Nothing ->
           (model, Cmd.none)
 
@@ -241,11 +267,15 @@ update msg model =
     SaveChapter ->
       case model.chapter of
         Just chapter ->
-          (model, ChapterEditApp.Api.saveChapter chapter)
+          ({ model | banner = Nothing, flash = Nothing }
+           , ChapterEditApp.Api.saveChapter chapter
+           )
         Nothing ->
           (model, Cmd.none)
     PublishChapter ->
-      (model, Task.perform (\x -> NoOp) PublishChapterWithTime Time.now)
+      ({ model | banner = Nothing, flash = Nothing }
+      , Task.perform (\x -> NoOp) PublishChapterWithTime Time.now
+      )
     PublishChapterWithTime time ->
       case model.chapter of
         Just chapter ->
@@ -258,8 +288,7 @@ update msg model =
         Nothing ->
           (model, Cmd.none)
     SaveChapterError error ->
-      ({ model | banner = errorBanner "Error saving chapter" }
-      , Cmd.none)
+      (model, showFlashMessage <| errorBanner "Error saving chapter")
     SaveChapterSuccess resp ->
       case model.chapter of
         Just chapter ->
@@ -270,10 +299,12 @@ update msg model =
                 , Navigation.newUrl <| "/chapters/" ++ (toString chapter.id)
                 )
               Nothing ->
-                (model, Cmd.none)
+                ( model
+                , showFlashMessage <| successBanner "Saved"
+                )
           else
-            ( { model | banner = errorBanner <| "Error saving chapter, status code " ++ (toString resp.status) }
-            , Cmd.none
+            ( model
+            , showFlashMessage <| errorBanner <| "Error saving chapter, status code " ++ (toString resp.status)
             )
         Nothing ->
           (model, Cmd.none)

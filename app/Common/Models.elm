@@ -34,6 +34,12 @@ errorBanner errorMessage =
        , type' = "error"
        }
 
+successBanner : String -> Maybe Banner
+successBanner errorMessage =
+  Just { text = errorMessage
+       , type' = "success"
+       }
+
 type alias Banner =
   { type' : String
   , text : String

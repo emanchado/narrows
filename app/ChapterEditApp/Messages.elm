@@ -4,12 +4,14 @@ import Http
 import Json.Encode
 import Time exposing (Time)
 
-import Common.Models exposing (FullCharacter, Narration, Chapter)
+import Common.Models exposing (FullCharacter, Narration, Chapter, Banner)
 import ChapterEditApp.Models exposing (LastReactions)
 import ChapterEditApp.Ports
 
 type Msg
   = NoOp
+  | SetFlashMessage (Maybe Banner)
+  | RemoveFlashMessage
   | ChapterFetchError Http.Error
   | ChapterFetchSuccess Chapter
   | NarrationFetchError Http.Error

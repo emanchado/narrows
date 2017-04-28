@@ -183,6 +183,9 @@ mainView model =
                               "Reactions will be loaded after saving the first version."
                             else
                               "No reactions." ]
-          , chapterView chapter narration
+          , div []
+              [ chapterView chapter narration
+              , bannerView model.flash
+              ]
           ]
       ]

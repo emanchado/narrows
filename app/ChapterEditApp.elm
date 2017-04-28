@@ -18,6 +18,7 @@ initialState =
   , narration = Nothing
   , lastReactions = Nothing
   , banner = Nothing
+  , flash = Nothing
   }
 
 update : Msg -> Model -> (Model, Cmd Msg)

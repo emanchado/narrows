@@ -37,4 +37,5 @@ type alias Model =
   , narration : Maybe Narration
   , lastReactions : Maybe LastReactions
   , banner : Maybe Banner
+  , flash : Maybe Banner
   }
