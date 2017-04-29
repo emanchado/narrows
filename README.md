@@ -2,6 +2,7 @@ TODO
 ====
 
 * Be more consistent with the breadcrumb-based navigation
+* Use buttons consistently for actions, not links
 * Add a JS confirmation thing to the publish button?
 * Upgrade ProseMirror
 * Upgrade Elm

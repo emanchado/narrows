@@ -47,7 +47,7 @@ update msg model =
                         Http.BadResponse status body ->
                           "Got status " ++ (toString status) ++ " with body " ++ body
                         _ ->
-                          "Network stuff"
+                          "Cannot connect to server"
       in
         ({ model | banner = errorBanner errorString }, Cmd.none)
     ChapterInteractionsFetchSuccess interactions ->
