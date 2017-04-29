@@ -6,6 +6,7 @@ import Html.Attributes exposing (id, class, style, for, src, href, target, type'
 import Html.Events exposing (onClick, onInput)
 import Http exposing (uriEncode)
 
+import Common.Views exposing (linkTo)
 import ReaderApp.Models exposing (Model, Chapter, OwnCharacter, ParticipantCharacter, Banner)
 import ReaderApp.Messages exposing (..)
 import ReaderApp.Views.Banner
@@ -51,7 +52,9 @@ characterView narrationId ownCharacter participant =
           [ strong [] [ text participant.name ]
           , if ownCharacter.id == participant.id then
               span [] [ text " — "
-                      , a [ href <| "/characters/" ++ ownCharacter.token ]
+                      , a (linkTo
+                             NavigateTo
+                             ("/characters/" ++ ownCharacter.token))
                           [ text "character sheet" ]
                       ]
             else

@@ -24,6 +24,8 @@ update msg model =
   case msg of
     NoOp ->
       (model, Cmd.none)
+    NavigateTo url ->
+      (model, Navigation.newUrl url)
 
     NarratorOverviewFetchError error ->
       case error of

@@ -15,6 +15,7 @@ import UserManagementApp
 
 type Msg
   = NoOp
+  | NavigateTo String
   | SessionFetchSuccess Core.Models.UserInfo
   | SessionFetchError Http.Error
   | UpdateEmail String

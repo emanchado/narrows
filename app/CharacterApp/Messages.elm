@@ -7,6 +7,7 @@ import CharacterApp.Models exposing (..)
 
 type Msg
   = NoOp
+  | NavigateTo String
   | CharacterFetchError Http.Error
   | CharacterFetchSuccess CharacterInfo
   | UpdateCharacterName String

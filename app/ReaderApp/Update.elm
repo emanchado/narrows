@@ -3,6 +3,7 @@ module ReaderApp.Update exposing (..)
 import String
 import Http
 import Json.Decode
+import Navigation
 
 import Routing
 import Common.Ports exposing (renderText)
@@ -43,6 +44,9 @@ descriptionRenderCommand character =
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
   case msg of
+    NavigateTo url ->
+      (model, Navigation.newUrl url)
+
     ChapterFetchError error ->
       let
         errorString = case error of

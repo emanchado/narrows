@@ -81,6 +81,9 @@ combinedUrlUpdate result model =
 combinedUpdate : Msg -> Model -> (Model, Cmd Msg)
 combinedUpdate msg model =
   case msg of
+    NavigateTo url ->
+      (model, Navigation.newUrl url)
+
     SessionFetchSuccess session ->
       combinedUrlUpdate
         (Ok model.route)

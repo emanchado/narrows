@@ -1,6 +1,7 @@
 module CharacterApp.Update exposing (..)
 
 import Http
+import Navigation
 
 import Routing
 
@@ -27,6 +28,8 @@ update msg model =
   case msg of
     NoOp ->
       (model, Cmd.none)
+    NavigateTo url ->
+      (model, Navigation.newUrl url)
 
     CharacterFetchError error ->
       let

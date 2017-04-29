@@ -6,6 +6,7 @@ import NarratorDashboardApp.Models exposing (NarratorOverview)
 
 type Msg
   = NoOp
+  | NavigateTo String
   | NarratorOverviewFetchError Http.Error
   | NarratorOverviewFetchSuccess NarratorOverview
   | NewNarration

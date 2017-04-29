@@ -6,6 +6,7 @@ import Html.Attributes exposing (id, class, href)
 import Html.Events exposing (onClick)
 
 import Common.Models exposing (NarrationOverview, ChapterOverview)
+import Common.Views exposing (linkTo)
 import NarratorDashboardApp.Messages exposing (..)
 import NarratorDashboardApp.Models exposing (..)
 
@@ -21,7 +22,9 @@ loadingView model =
 unpublishedChapterView : ChapterOverview -> Html Msg
 unpublishedChapterView chapterOverview =
   li []
-    [ a [ href <| "/chapters/" ++ (toString chapterOverview.id) ++ "/edit" ]
+    [ a (linkTo
+           NavigateTo
+           ("/chapters/" ++ (toString chapterOverview.id) ++ "/edit"))
         [ text chapterOverview.title ]
     , text (" - " ++ (toString <| List.length chapterOverview.reactions) ++
               " participants")
@@ -38,7 +41,9 @@ publishedChapterView chapterOverview =
         chapterOverview.reactions
   in
     li []
-      [ a [ href <| "/chapters/" ++ (toString chapterOverview.id) ]
+      [ a (linkTo
+             NavigateTo
+             ("/chapters/" ++ (toString chapterOverview.id)))
           [ text chapterOverview.title ]
       , text (" - " ++ (toString <| List.length sentReactions) ++
                 " / " ++ (toString <| List.length chapterOverview.reactions) ++
@@ -57,12 +62,16 @@ chapterOverviewView chapterOverview =
 narrationView : NarrationOverview -> Html Msg
 narrationView overview =
   div []
-    [ h2 [] [ a [ href <| "/narrations/" ++ (toString overview.narration.id)
-                ]
-                [ text overview.narration.title
-                ]
+    [ h2 []
+        [ a (linkTo
+               NavigateTo
+               ("/narrations/" ++ (toString overview.narration.id)))
+            [ text overview.narration.title
             ]
-    , a [ href <| "/narrations/" ++ (toString overview.narration.id) ++ "/new" ]
+        ]
+    , a (linkTo
+           NavigateTo
+           ("/narrations/" ++ (toString overview.narration.id) ++ "/new"))
         [ text "Write new chapter" ]
     , ul [ class "chapter-list" ]
         (List.map chapterOverviewView overview.chapters)

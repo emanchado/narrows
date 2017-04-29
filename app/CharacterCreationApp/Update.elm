@@ -58,4 +58,6 @@ update msg model =
         )
 
     CancelCreateCharacter ->
-      (model, Cmd.none)
+      ( model
+      , Navigation.newUrl <| "/narrations/" ++ (toString model.narrationId)
+      )

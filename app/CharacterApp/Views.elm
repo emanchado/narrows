@@ -4,7 +4,7 @@ import Html exposing (Html, section, h2, h3, div, ul, li, img, input, button, a,
 import Html.Attributes exposing (id, class, for, src, href, type', value, checked)
 import Html.Events exposing (onClick, onInput)
 
-import Common.Views exposing (bannerView)
+import Common.Views exposing (bannerView, linkTo)
 
 import CharacterApp.Models exposing (Model, CharacterInfo, ChapterSummary)
 import CharacterApp.Messages exposing (..)
@@ -20,7 +20,9 @@ avatarUrl narrationId maybeAvatar =
 chapterParticipation : String -> ChapterSummary -> Html Msg
 chapterParticipation characterToken chapter =
   li []
-    [ a [ href <| "/read/" ++ (toString chapter.id) ++ "/" ++ characterToken ]
+    [ a (linkTo
+           NavigateTo
+           ("/read/" ++ (toString chapter.id) ++ "/" ++ characterToken))
         [ text chapter.title ]
     ]
 

@@ -112,7 +112,7 @@ appContentView model =
         Nothing ->
           Common.Views.loadingView Nothing
 
-adminLinks : Maybe UserSession -> List (Html msg)
+adminLinks : Maybe UserSession -> List (Html Msg)
 adminLinks maybeSession =
   case maybeSession of
     Just session ->
@@ -121,7 +121,7 @@ adminLinks maybeSession =
           []
         LoggedInSession userInfo ->
           if userInfo.role == "admin" then
-            [ a [ href "/users" ]
+            [ a (Common.Views.linkTo NavigateTo "/users")
                 [ text "Manage users" ]
             ]
           else
@@ -132,7 +132,7 @@ adminLinks maybeSession =
 mainView : Model -> Html Msg
 mainView model =
   let
-    baseLinks = [ a [ href "/" ]
+    baseLinks = [ a (Common.Views.linkTo NavigateTo "/")
                     [ div [ class "logo" ] [ text "NARROWS" ] ]
                 ]
     finalLinks = List.concat [ baseLinks, adminLinks model.session ]

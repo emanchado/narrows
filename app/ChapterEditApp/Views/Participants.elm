@@ -5,14 +5,18 @@ import Html.Attributes exposing (class, href, src, target)
 import Html.Events exposing (onClick)
 
 import Common.Models exposing (FullCharacter)
+import Common.Views exposing (linkTo)
 import ChapterEditApp.Messages exposing (..)
 
 participantView : Int -> FullCharacter -> Html Msg
 participantView chapterId character =
   li []
-    [ a [ href ("/read/" ++ (toString chapterId) ++ "/" ++ character.token)
-        , target "_blank"
-        ]
+    [ a (List.concat
+           [ (linkTo
+                NavigateTo
+                ("/read/" ++ (toString chapterId) ++ "/" ++ character.token))
+           , [ target "_blank" ]
+           ])
         [ text character.name ]
     , text " "
     , img [ src "/img/delete.png"

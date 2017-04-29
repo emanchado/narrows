@@ -6,7 +6,8 @@ import Common.Models exposing (Character)
 import ReaderApp.Models exposing (..)
 
 type Msg
-  = StartNarration
+  = NavigateTo String
+  | StartNarration
   -- The parameter is useless here, but is a subscription so it needs it
   | NarrationStarted Int
   | ChapterFetchError Http.Error

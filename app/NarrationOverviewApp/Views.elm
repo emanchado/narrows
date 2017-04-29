@@ -5,14 +5,16 @@ import Html exposing (Html, main', h1, h2, section, div, ul, li, a, text)
 import Html.Attributes exposing (id, class, href)
 
 import Common.Models exposing (Narration, ChapterOverview, NarrationOverview, FullCharacter)
-import Common.Views exposing (breadcrumbNavView)
+import Common.Views exposing (linkTo, breadcrumbNavView)
 import NarrationOverviewApp.Messages exposing (..)
 import NarrationOverviewApp.Models exposing (Model)
 
 unpublishedChapterView : ChapterOverview -> Html Msg
 unpublishedChapterView chapterOverview =
   li []
-    [ a [ href <| "/chapters/" ++ (toString chapterOverview.id) ++ "/edit" ]
+    [ a (linkTo
+           NavigateTo
+           ("/chapters/" ++ (toString chapterOverview.id) ++ "/edit"))
         [ text chapterOverview.title ]
     , text (" - " ++ (toString <| List.length chapterOverview.reactions) ++
               " participants")
@@ -29,7 +31,9 @@ publishedChapterView chapterOverview =
         chapterOverview.reactions
   in
     li []
-      [ a [ href <| "/chapters/" ++ (toString chapterOverview.id) ]
+      [ a (linkTo
+             NavigateTo
+             ("/chapters/" ++ (toString chapterOverview.id)))
           [ text chapterOverview.title ]
       , text (" - " ++ (toString <| List.length sentReactions) ++
                 " / " ++ (toString <| List.length chapterOverview.reactions) ++
@@ -48,7 +52,9 @@ chapterOverviewView chapterOverview =
 narrationCharacterView : FullCharacter -> Html Msg
 narrationCharacterView character =
   li []
-    [ a [ href <| "/characters/" ++ character.token ]
+    [ a (linkTo
+           NavigateTo
+           ("/characters/" ++ character.token))
         [ text character.name ]
     ]
 
@@ -66,14 +72,18 @@ overviewView overview =
     , div [ class "two-column" ]
         [ section []
             [ h2 [] [ text "Chapters" ]
-            , a [ href <| "/narrations/" ++ (toString overview.narration.id) ++ "/new" ]
+            , a (linkTo
+                   NavigateTo
+                   ("/narrations/" ++ (toString overview.narration.id) ++ "/new"))
                 [ text "Write new chapter" ]
             , ul [ class "chapter-list" ]
                 (List.map chapterOverviewView overview.chapters)
             ]
         , section [ class "page-aside" ]
             [ h2 [] [ text "Characters" ]
-            , a [ href <| "/narrations/" ++ (toString overview.narration.id) ++ "/characters/new" ]
+            , a (linkTo
+                   NavigateTo
+                   ("/narrations/" ++ (toString overview.narration.id) ++ "/characters/new"))
                 [ text "New character" ]
             , ul [ class "character-list" ]
                 (List.map narrationCharacterView overview.narration.characters)
