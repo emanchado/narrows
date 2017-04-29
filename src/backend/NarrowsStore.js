@@ -384,6 +384,7 @@ class NarrowsStore {
                       mysqlTimestamp(basicProps[f]) : basicProps[f]
               ));
 
+
         const self = this;
         this.db.run(
             `INSERT INTO chapters
@@ -949,9 +950,11 @@ class NarrowsStore {
         return Q.ninvoke(
             this.db,
             "run",
-            `INSERT INTO users (email, role) VALUES (?, 'player')`,
+            `INSERT INTO users (email, role) VALUES (?, '')`,
             email
-        );
+        ).then(() => (
+            this.getUserByEmail(email)
+        ));
     }
 }
 
