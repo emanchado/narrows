@@ -6,14 +6,6 @@ import Http
 import NarrationOverviewApp.Messages exposing (Msg, Msg(..))
 import Common.Api.Json exposing (parseNarration, parseNarrationOverview)
 
-fetchNarrationInfo : Int -> Cmd Msg
-fetchNarrationInfo narrationId =
-  let
-    narrationApiUrl = "/api/narrations/" ++ (toString narrationId)
-  in
-    Task.perform NarrationFetchError NarrationFetchSuccess
-      (Http.get parseNarration narrationApiUrl)
-
 fetchNarrationOverview : Int -> Cmd Msg
 fetchNarrationOverview narrationId =
   let

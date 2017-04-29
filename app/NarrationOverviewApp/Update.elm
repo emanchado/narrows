@@ -24,22 +24,6 @@ update msg model =
     NoOp ->
       (model, Cmd.none)
 
-    NarrationFetchError error ->
-      let
-        errorString = case error of
-                        Http.UnexpectedPayload payload ->
-                          "Bad payload: " ++ payload
-                        Http.BadResponse status body ->
-                          "Got status " ++ (toString status) ++ " with body " ++ body
-                        _ ->
-                          "Cannot connect to server"
-      in
-        ( { model | banner = Just { type' = "error", text = errorString } }
-        , Cmd.none
-        )
-    NarrationFetchSuccess narration ->
-      (model, Cmd.none)
-
     NarrationOverviewFetchError error ->
       case error of
         Http.UnexpectedPayload message ->
