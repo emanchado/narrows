@@ -8,7 +8,7 @@ import Html.Attributes exposing (id, name, class, href, src, target, type', valu
 import Html.Events exposing (onClick, onInput, on)
 
 import Common.Models exposing (FullCharacter, Narration, Chapter)
-import Common.Views exposing (bannerView)
+import Common.Views exposing (bannerView, breadcrumbNavView)
 
 import ChapterEditApp.Models exposing (Model, LastReactions, LastReaction)
 import ChapterEditApp.Messages exposing (..)
@@ -163,18 +163,19 @@ mainView model =
                 Nothing -> Common.Models.loadingPlaceholderNarration
   in
     div [ id "narrator-app", class "app-container" ]
-      [ nav [ class "breadcrumbs" ]
-          [ a [ href "/" ]
-              [ text "Home" ]
-          , text " ⇢ "
-          , a [ href ("/narrations/" ++ (toString chapter.narrationId)) ]
-              [ text narration.title ]
-          , text " ⇢ "
-          , (if String.isEmpty chapter.title then
-               em [] [ text "New chapter" ]
-             else
-               text chapter.title)
+      [ breadcrumbNavView
+          NavigateTo
+          [ { title = "Home"
+            , url = "/"
+            }
+          , { title = narration.title
+            , url = "/narrations/" ++ (toString chapter.narrationId)
+            }
           ]
+          (if String.isEmpty chapter.title then
+             em [] [ text "New chapter" ]
+           else
+             text chapter.title)
       , bannerView model.banner
       , div [ class "two-column" ]
           [ case model.lastReactions of

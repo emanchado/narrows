@@ -1,6 +1,7 @@
 module NarrationOverviewApp.Update exposing (..)
 
 import Http
+import Navigation
 
 import Routing
 import NarrationOverviewApp.Api
@@ -23,6 +24,8 @@ update msg model =
   case msg of
     NoOp ->
       (model, Cmd.none)
+    NavigateTo url ->
+      (model, Navigation.newUrl url)
 
     NarrationOverviewFetchError error ->
       case error of

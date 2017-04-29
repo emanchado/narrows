@@ -1,11 +1,19 @@
 module Common.Views exposing (..)
 
 import String
-import Html exposing (Html, div, textarea, button, span, li, strong, text)
-import Html.Attributes exposing (class, rows, value)
-import Html.Events exposing (onClick, onInput)
+import Json.Decode
+import Html exposing (Html, div, nav, textarea, button, span, li, a, strong, text)
+import Html.Attributes exposing (class, rows, value, href)
+import Html.Events exposing (defaultOptions, onWithOptions, onClick, onInput)
 
-import Common.Models exposing (MessageThread, Message, Banner, ReplyInformation)
+import Common.Models exposing (MessageThread, Message, Banner, ReplyInformation, Breadcrumb)
+
+onPreventDefaultClick : msg -> Html.Attribute msg
+onPreventDefaultClick message =
+    onWithOptions
+        "click"
+        { defaultOptions | preventDefault = True }
+        (Json.Decode.succeed message)
 
 messageView : Message -> Html msg
 messageView message =
@@ -104,3 +112,26 @@ bannerView maybeBanner =
         [ text banner.text ]
     Nothing ->
       text ""
+
+linkTo : (String -> msg) -> String -> List (Html.Attribute msg)
+linkTo message url =
+  [ href url
+  , onPreventDefaultClick (message url)
+  ]
+
+breadcrumbView : (String -> msg) -> Breadcrumb -> Html msg
+breadcrumbView messageConstructor link =
+    a (linkTo messageConstructor link.url)
+      [ text link.title ]
+
+breadcrumbNavView : (String -> msg) -> List Breadcrumb -> Html msg -> Html msg
+breadcrumbNavView messageConstructor links pageTitle =
+  let
+    parts = List.concat [ (List.map (breadcrumbView messageConstructor) links)
+                        , [ pageTitle ]
+                        ]
+  in
+    nav [ class "breadcrumbs" ]
+      (List.intersperse
+         (text " ⇢ ")
+         parts)

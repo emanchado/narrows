@@ -129,3 +129,8 @@ type alias UserInfo =
   , email : String
   , role : String
   }
+
+type alias Breadcrumb =
+  { title : String
+  , url : String
+  }

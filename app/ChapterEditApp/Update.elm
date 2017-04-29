@@ -91,6 +91,8 @@ update msg model =
   case msg of
     NoOp ->
       (model, Cmd.none)
+    NavigateTo url ->
+      (model, Navigation.newUrl url)
     SetFlashMessage maybeBanner ->
       ( { model | flash = maybeBanner }
       , Cmd.none

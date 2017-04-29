@@ -5,7 +5,7 @@ import Http
 import Json.Decode as Json exposing (..)
 import Json.Encode
 
-import Common.Api.Json exposing (parseChapter, parseReaction, parseMessageThread)
+import Common.Api.Json exposing (parseChapter, parseReaction, parseMessageThread, parseNarration)
 
 import ChapterControlApp.Messages exposing (Msg, Msg(..))
 import ChapterControlApp.Models exposing (ChapterInteractions)
@@ -25,6 +25,14 @@ fetchChapterInteractions chapterId =
   in
     Task.perform ChapterInteractionsFetchError ChapterInteractionsFetchSuccess
       (Http.get parseChapterInteractions chapterInteractionsApiUrl)
+
+fetchNarrationInfo : Int -> Cmd Msg
+fetchNarrationInfo narrationId =
+  let
+    narrationApiUrl = "/api/narrations/" ++ (toString narrationId)
+  in
+    Task.perform NarrationFetchError NarrationFetchSuccess
+      (Http.get parseNarration narrationApiUrl)
 
 
 sendMessage : Int -> String -> List Int -> Cmd Msg

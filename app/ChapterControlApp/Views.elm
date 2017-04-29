@@ -5,7 +5,7 @@ import Html.Attributes exposing (id, class, href, type', value, disabled, checke
 import Html.Events exposing (onInput, onClick, onCheck)
 
 import Common.Models exposing (Character, FullCharacter, Narration, Reaction, loadingPlaceholderChapter)
-import Common.Views exposing (threadView)
+import Common.Views exposing (threadView, breadcrumbNavView)
 
 import ChapterControlApp.Messages exposing (..)
 import ChapterControlApp.Models exposing (Model, ChapterInteractions)
@@ -60,17 +60,35 @@ mainView model =
                    , []
                    , []
                    )
+    narration = case model.narration of
+                  Just narration -> narration
+                  Nothing -> { id = 0
+                             , title = "…"
+                             , characters = []
+                             , defaultAudio = Nothing
+                             , defaultBackgroundImage = Nothing
+                             , files = { audio = []
+                                       , backgroundImages = []
+                                       , images = []
+                                       }
+                             }
   in
     main' [ id "narrator-app", class "app-container" ]
       [ h1 []
           [ text <| chapter.title ]
-      , nav [ class "breadcrumbs" ]
-          [ a [ href <| "/narrations/" ++ (toString chapter.narrationId) ]
-              [ text "Narration" ]
-          , text " ⇢ "
-          , a [ href <| "/chapters/" ++ (toString chapter.id) ++ "/edit" ]
-              [ text "Edit" ]
+      , breadcrumbNavView
+          NavigateTo
+          [ { title = "Home"
+            , url = "/"
+            }
+          , { title = narration.title
+            , url = "/narrations/" ++ (toString chapter.narrationId)
+            }
+          , { title = chapter.title
+            , url = "/chapters/" ++ (toString chapter.id) ++ "/edit"
+            }
           ]
+          (text "Control")
       , div [ class "two-column" ]
           [ section []
             [ h2 [] [ text "Chapter text" ]

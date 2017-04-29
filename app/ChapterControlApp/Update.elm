@@ -2,6 +2,7 @@ module ChapterControlApp.Update exposing (..)
 
 import Http
 import Json.Decode
+import Navigation
 
 import Routing
 import Common.Models exposing (Banner, Character)
@@ -39,6 +40,9 @@ update msg model =
   case msg of
     NoOp ->
       (model, Cmd.none)
+    NavigateTo url ->
+      (model, Navigation.newUrl url)
+
     ChapterInteractionsFetchError error ->
       let
         errorString = case error of
@@ -58,11 +62,29 @@ update msg model =
         ( { model | interactions = Just interactions
                   , newMessageRecipients = participantIds
                   }
-        , renderText { elemId = "chapter-text"
-                     , text = interactions.chapter.text
-                     , proseMirrorType = "chapter"
-                     }
+        , Cmd.batch [ renderText { elemId = "chapter-text"
+                                 , text = interactions.chapter.text
+                                 , proseMirrorType = "chapter"
+                                 }
+                    , ChapterControlApp.Api.fetchNarrationInfo interactions.chapter.narrationId
+                    ]
         )
+
+    NarrationFetchError error ->
+      let
+        errorString = case error of
+                        Http.UnexpectedPayload payload ->
+                          "Bad payload: " ++ payload
+                        Http.BadResponse status body ->
+                          "Got status " ++ (toString status) ++ " with body " ++ body
+                        _ ->
+                          "Cannot connect to server"
+      in
+        ( { model | banner = Just { type' = "error", text = errorString } }
+        , Cmd.none
+        )
+    NarrationFetchSuccess narration ->
+      ({ model | narration = Just narration }, Cmd.none)
 
     ShowReply participants ->
       let

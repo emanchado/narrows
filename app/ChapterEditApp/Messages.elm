@@ -10,6 +10,7 @@ import ChapterEditApp.Ports
 
 type Msg
   = NoOp
+  | NavigateTo String
   | SetFlashMessage (Maybe Banner)
   | RemoveFlashMessage
   | ChapterFetchError Http.Error

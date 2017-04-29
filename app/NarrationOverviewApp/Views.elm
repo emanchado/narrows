@@ -4,8 +4,9 @@ import List
 import Html exposing (Html, main', h1, h2, section, div, ul, li, a, text)
 import Html.Attributes exposing (id, class, href)
 
-import NarrationOverviewApp.Messages exposing (..)
 import Common.Models exposing (Narration, ChapterOverview, NarrationOverview, FullCharacter)
+import Common.Views exposing (breadcrumbNavView)
+import NarrationOverviewApp.Messages exposing (..)
 import NarrationOverviewApp.Models exposing (Model)
 
 unpublishedChapterView : ChapterOverview -> Html Msg
@@ -54,7 +55,14 @@ narrationCharacterView character =
 overviewView : NarrationOverview -> Html Msg
 overviewView overview =
   main' [ id "narrator-app", class "app-container" ]
-    [ h1 [] [ text <| "Narration " ++ overview.narration.title ]
+    [ breadcrumbNavView
+        NavigateTo
+        [ { title = "Home"
+          , url = "/"
+          }
+        ]
+        (text overview.narration.title)
+    , h1 [] [ text <| "Narration " ++ overview.narration.title ]
     , div [ class "two-column" ]
         [ section []
             [ h2 [] [ text "Chapters" ]
