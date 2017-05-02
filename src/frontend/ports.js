@@ -81,21 +81,23 @@ const editorViews = {};
 app.ports.initEditor.subscribe(evt => {
     const schema = schemas[evt.editorType];
 
+    // Avoid memory leaks: if there was an editor with the same name
+    // from before, remove it.
     if (editorViews.hasOwnProperty(evt.elemId)) {
-        editor.updateText(editorViews[evt.elemId], evt.text, schema);
-    } else {
-        const container = document.getElementById(evt.elemId);
-        editorViews[evt.elemId] =
-            editor.create(evt.text, schema, container, view => {
-                const port = app.ports[evt.updatePortName];
-                if (port) {
-                    port.send(editor.exportText(view.editor));
-                } else {
-                    console.error("Cannot find editor update port '" +
-                                  evt.updatePortName + "'");
-                }
-            });
+        delete editorViews[evt.elemId];
     }
+
+    const container = document.getElementById(evt.elemId);
+    editorViews[evt.elemId] =
+        editor.create(evt.text, schema, container, view => {
+            const port = app.ports[evt.updatePortName];
+            if (port) {
+                port.send(editor.exportText(view.editor));
+            } else {
+                console.error("Cannot find editor update port '" +
+                              evt.updatePortName + "'");
+            }
+        });
     editorViews[evt.elemId].props.narrationId = evt.narrationId;
     editorViews[evt.elemId].props.images = evt.narrationImages;
     editorViews[evt.elemId].props.participants = evt.chapterParticipants;
