@@ -4,6 +4,7 @@ import fs from "fs-extra";
 import Q from "q";
 import { recreateDb } from "./test-utils.js";
 import NarrowsStore from "../src/backend/NarrowsStore";
+import UserStore from "../src/backend/UserStore";
 
 const TEST_FILES = "testfiles";
 const DEFAULT_AUDIO = "creepy.mp3";
@@ -16,7 +17,7 @@ const CHAR3_NAME = "Bilbo";
 const CHAR3_TOKEN = "62963d86-a9cf-11e6-8fbb-f717783bbfc5";
 
 // Cannot set t.context from "before", so just use global variables
-let store, userId1, userId2, userId3;
+let store, userStore, userId1, userId2, userId3;
 
 // Because recreating the database is heavy, we do it only once for
 // all tests, and then create a new narration for every test we run.
@@ -25,12 +26,14 @@ test.before(t => {
     return recreateDb(config.db).then(() => {
         store = new NarrowsStore(config.db, TEST_FILES);
         store.connect();
+        userStore = new UserStore(config.db);
+        userStore.connect();
         fs.removeSync(TEST_FILES);
         fs.mkdirpSync(TEST_FILES);
 
-        return Q.all([store.addUser("test1@example.com"),
-                      store.addUser("test2@example.com"),
-                      store.addUser("test3@example.com")]);
+        return Q.all([userStore.createUser({ email: "test1@example.com" }),
+                      userStore.createUser({ email: "test2@example.com" }),
+                      userStore.createUser({ email: "test3@example.com" })]);
     }).spread((user1, user2, user3) => {
         userId1 = user1.id;
         userId2 = user2.id;

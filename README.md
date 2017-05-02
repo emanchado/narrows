@@ -1,6 +1,8 @@
 TODO
 ====
 
+* Show the previous chapter when writing the next
+* Show the reactions on a new chapter?
 * Use buttons consistently for actions, not links
 * Add a JS confirmation thing to the publish button?
 * Upgrade ProseMirror

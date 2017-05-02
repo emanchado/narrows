@@ -936,26 +936,6 @@ class NarrowsStore {
             () => this.getFullCharacterStats(characterId)
         );
     }
-
-    getUserByEmail(email) {
-        return Q.ninvoke(
-            this.db,
-            "get",
-            `SELECT id, email, role FROM users WHERE email = ?`,
-            email
-        );
-    }
-
-    addUser(email) {
-        return Q.ninvoke(
-            this.db,
-            "run",
-            `INSERT INTO users (email, role) VALUES (?, '')`,
-            email
-        ).then(() => (
-            this.getUserByEmail(email)
-        ));
-    }
 }
 
 export default NarrowsStore;

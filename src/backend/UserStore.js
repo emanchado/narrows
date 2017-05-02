@@ -77,6 +77,21 @@ class UserStore {
         });
     }
 
+    getUserByEmail(email) {
+        return Q.ninvoke(
+            this.db,
+            "query",
+            `SELECT id, email, role FROM users WHERE email = ?`,
+            email
+        ).spread(userRows => {
+            if (userRows.length === 0) {
+                throw new Error(`Cannot find user with e-mail ${ email }`);
+            }
+
+            return userRows[0];
+        });
+    }
+
     updateUser(userId, props) {
         // Empty password means "no change"
         if (props.password === "") {

@@ -342,9 +342,9 @@ export function postNarrationCharacters(req, res) {
         return;
     }
 
-    store.getUserByEmail(email).catch(() => (
-        store.addUser(email).then(() => (
-            store.getUserByEmail(email)
+    userStore.getUserByEmail(email).catch(() => (
+        userStore.createUser({ email: email }).then(() => (
+            userStore.getUserByEmail(email)
         ))
     )).then(user => (
         store.addCharacter(name, user.id, narrationId)
