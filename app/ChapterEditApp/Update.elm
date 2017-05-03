@@ -51,7 +51,9 @@ urlUpdate route model =
     case route of
       Routing.ChapterEditNarratorPage chapterId ->
         ( model
-        , ChapterEditApp.Api.fetchChapterInfo chapterId
+        , Cmd.batch [ ChapterEditApp.Api.fetchChapterInfo chapterId
+                    , ChapterEditApp.Api.fetchLastReactions chapterId
+                    ]
         )
       Routing.CreateChapterPage narrationId ->
         let
@@ -64,7 +66,13 @@ urlUpdate route model =
                       Nothing ->
                         ChapterEditApp.Api.fetchNarrationInfo narrationId
         in
-          ({ model | chapter = Nothing }, command)
+          ( { model | chapter = Nothing
+                    , lastReactions = Nothing
+            }
+          , Cmd.batch [ command
+                      , ChapterEditApp.Api.fetchNarrationLastReactions narrationId
+                      ]
+          )
       _ ->
         (model, Cmd.none)
 
@@ -109,13 +117,10 @@ update msg model =
       genericHttpErrorHandler model error
     ChapterFetchSuccess chapter ->
       ( { model | chapter = Just chapter }
-      , Cmd.batch [ ChapterEditApp.Api.fetchNarrationInfo chapter.narrationId
-                  , ChapterEditApp.Api.fetchLastReactions chapter.id
-                  ]
+      , ChapterEditApp.Api.fetchNarrationInfo chapter.narrationId
       )
     InitNewChapter narration ->
       ( { model | chapter = Just (newEmptyChapter narration)
-                , lastReactions = Nothing
                 , banner = Nothing
                 , flash = Nothing
         }
@@ -147,6 +152,18 @@ update msg model =
         ( { model | narration = Just narration }
         , action
         )
+    NarrationLastReactionsFetchError error ->
+      genericHttpErrorHandler model error
+    NarrationLastReactionsFetchSuccess lastReactions ->
+      ( { model | lastReactions = Just <| Debug.log "Last narration reactions" lastReactions }
+      , Cmd.batch
+          (List.map
+             (\c -> renderText { elemId = "chapter-text-" ++ (toString c.id)
+                               , text = c.text
+                               , proseMirrorType = "chapter"
+                               })
+             lastReactions.chapters)
+      )
     LastReactionsFetchError error ->
       genericHttpErrorHandler model error
     LastReactionsFetchSuccess lastReactions ->

@@ -358,6 +358,22 @@ export function postNarrationCharacters(req, res) {
     });
 }
 
+export function getNarrationLastReactions(req, res) {
+    const narrationId = parseInt(req.params.narrId, 10);
+
+    store.getNarration(narrationId).then(narrationData => (
+        userStore.canActAs(req.session.userId, narrationData.narratorId)
+    )).then(() => (
+        store.getNarrationLastReactions(narrationId)
+    )).then(lastReactions => {
+        res.json(apiFormatter.formatLastReactions(narrationId, lastReactions));
+    }).catch(err => {
+        res.status(500).json({
+            errorMessage: `Cannot get last reactions: ${ err }`
+        });
+    });
+}
+
 export function getChapterLastReactions(req, res) {
     const chapterId = parseInt(req.params.chptId, 10);
 

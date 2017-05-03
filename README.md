@@ -1,7 +1,6 @@
 TODO
 ====
 
-* Show the reactions on a new chapter?
 * Use buttons consistently for actions, not links
 * Add a JS confirmation thing to the publish button?
 * Upgrade ProseMirror

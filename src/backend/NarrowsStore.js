@@ -843,18 +843,23 @@ class NarrowsStore {
                FROM chapters
               WHERE id = ?`,
             chapterId
-        ).then(row => {
-            const binds = [row.narrationId];
-            let extraWhereClause = "";
-            if (row.published) {
-                extraWhereClause += "AND published < ?";
-                binds.push(row.published);
-            }
-            binds.push(row.narrationId);
+        ).then(row => (
+            this.getNarrationLastReactions(row.narrationId, row.published)
+        ));
+    }
 
-            return Q.ninvoke(
-                this.db,
-                "all",
+    getNarrationLastReactions(narrationId, beforeDate) {
+        const binds = [narrationId];
+        let extraWhereClause = "";
+        if (beforeDate) {
+            extraWhereClause += "AND published < ?";
+            binds.push(beforeDate);
+        }
+        binds.push(narrationId);
+
+        return Q.ninvoke(
+            this.db,
+            "all",
             `SELECT CHPT.published AS chapterPublished,
                     CHPT.id AS chapterId, CHPT.title AS chapterTitle,
                     CHPT.main_text AS chapterText,
@@ -876,9 +881,8 @@ class NarrowsStore {
                 AND reaction_per_character.character_id = CHR.id
                 AND CHR.narration_id = ?
                 AND CHPT.published IS NOT NULL`,
-                binds
-            );
-        });
+            binds
+        );
     }
 
     getFullCharacterStats(characterId) {

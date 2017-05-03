@@ -33,6 +33,15 @@ fetchLastReactions chapterId =
     Task.perform LastReactionsFetchError LastReactionsFetchSuccess
       (Http.get parseLastReactions lastReactionsApiUrl)
 
+fetchNarrationLastReactions : Int -> Cmd Msg
+fetchNarrationLastReactions narrationId =
+  let
+    lastReactionsApiUrl =
+      "/api/narrations/" ++ (toString narrationId) ++ "/last-reactions"
+  in
+    Task.perform NarrationLastReactionsFetchError NarrationLastReactionsFetchSuccess
+      (Http.get parseLastReactions lastReactionsApiUrl)
+
 saveChapter : Chapter -> Cmd Msg
 saveChapter chapter =
   Task.perform

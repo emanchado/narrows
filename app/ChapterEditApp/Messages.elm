@@ -18,6 +18,8 @@ type Msg
   | InitNewChapter Narration
   | NarrationFetchError Http.Error
   | NarrationFetchSuccess Narration
+  | NarrationLastReactionsFetchError Http.Error
+  | NarrationLastReactionsFetchSuccess LastReactions
   | LastReactionsFetchError Http.Error
   | LastReactionsFetchSuccess LastReactions
   | UpdateChapterTitle String
