@@ -230,38 +230,22 @@ test.serial("last reactions work when different characters last appeared in diff
                             text: [],
                             participants: [{id: ctx.characterId1},
                                            {id: ctx.characterId2}] };
-    let chapterId1, chapterId2, chapterId3;
+    let chapterId3;
 
-    return store.createChapter(
-        ctx.testNarration.id,
-        chapterProps1
-    ).then(chapter => {
-        chapterId1 = chapter.id;
+    return Q.all([
+        store.createChapter(ctx.testNarration.id, chapterProps1),
+        store.createChapter(ctx.testNarration.id, chapterProps2),
+        store.createChapter(ctx.testNarration.id, chapterProps3)
+    ]).spread((chapter1, chapter2, chapter3) => {
+        chapterId3 = chapter3.id;
 
-        return store.updateReaction(
-            chapterId1, ctx.characterId1, "Character 1 reaction"
-        );
+        return Q.all([
+            store.updateReaction(chapter1.id, ctx.characterId1, "Reaction 1"),
+            store.updateReaction(chapter2.id, ctx.characterId2, "Reaction 2")
+        ]);
     }).then(() => (
-        store.createChapter(
-            ctx.testNarration.id,
-            chapterProps2
-        )
-    )).then(chapter => {
-        chapterId2 = chapter.id;
-
-        return store.updateReaction(
-            chapterId2, ctx.characterId2, "Character 2 reaction"
-        );
-    }).then(() => (
-        store.createChapter(
-            ctx.testNarration.id,
-            chapterProps3
-        )
-    )).then(chapter => {
-        chapterId3 = chapter.id;
-
-        return store.getChapterLastReactions(chapterId3);
-    }).then(lastReactions => {
+        store.getChapterLastReactions(chapterId3)
+    )).then(lastReactions => {
         t.is(lastReactions.length, 2);
     });
 });
