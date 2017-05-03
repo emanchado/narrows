@@ -10,7 +10,7 @@ import Time exposing (Time)
 import Time.DateTime as DateTime exposing (DateTime, fromTimestamp)
 
 import Routing
-import Common.Models exposing (Banner, Chapter, FileSet, errorBanner, successBanner)
+import Common.Models exposing (Banner, Narration, Chapter, FileSet, errorBanner, successBanner)
 import Common.Ports exposing (initEditor, renderText)
 
 import ChapterEditApp.Api
@@ -30,6 +30,10 @@ updateNarrationFiles fileSet uploadResponse =
     _ ->
       fileSet
 
+
+initNewChapterCmd : Narration -> Cmd Msg
+initNewChapterCmd narration =
+  Task.perform (\_ -> NoOp) (\_ -> InitNewChapter narration) (Task.succeed 1)
 
 updateChapter : Chapter -> ChapterEditApp.Ports.FileUploadSuccess -> Chapter
 updateChapter chapter uploadResponse =
@@ -51,16 +55,16 @@ urlUpdate route model =
         )
       Routing.CreateChapterPage narrationId ->
         let
-          action = case model.narration of
-                     Just narration ->
-                       if narration.id == narrationId then
-                         Cmd.none
-                       else
-                         ChapterEditApp.Api.fetchNarrationInfo narrationId
-                     Nothing ->
-                       ChapterEditApp.Api.fetchNarrationInfo narrationId
+          command = case model.narration of
+                      Just narration ->
+                        if narration.id == narrationId then
+                          initNewChapterCmd narration
+                        else
+                          ChapterEditApp.Api.fetchNarrationInfo narrationId
+                      Nothing ->
+                        ChapterEditApp.Api.fetchNarrationInfo narrationId
         in
-          ({ model | chapter = Nothing }, action)
+          ({ model | chapter = Nothing }, command)
       _ ->
         (model, Cmd.none)
 
@@ -109,34 +113,38 @@ update msg model =
                   , ChapterEditApp.Api.fetchLastReactions chapter.id
                   ]
       )
+    InitNewChapter narration ->
+      ( { model | chapter = Just (newEmptyChapter narration)
+                , lastReactions = Nothing
+                , banner = Nothing
+                , flash = Nothing
+        }
+      , initEditor { elemId = "editor-container"
+                   , narrationId = narration.id
+                   , narrationImages = narration.files.images
+                   , chapterParticipants = []
+                   , text = Json.Encode.null
+                   , editorType = "chapter"
+                   , updatePortName = "editorContentChanged"
+                   }
+      )
     NarrationFetchError error ->
       genericHttpErrorHandler model error
     NarrationFetchSuccess narration ->
       let
-        (updatedChapter, action) =
+        action =
           case model.chapter of
-            Nothing -> ( Just (newEmptyChapter narration)
-                       , initEditor { elemId = "editor-container"
-                                    , narrationId = narration.id
-                                    , narrationImages = narration.files.images
-                                    , chapterParticipants = []
-                                    , text = Json.Encode.null
-                                    , editorType = "chapter"
-                                    , updatePortName = "editorContentChanged"
-                                    }
-                       )
-            Just ch -> ( model.chapter
-                       , initEditor { elemId = "editor-container"
-                                    , narrationId = narration.id
-                                    , narrationImages = narration.files.images
-                                    , chapterParticipants = ch.participants
-                                    , text = ch.text
-                                    , editorType = "chapter"
-                                    , updatePortName = "editorContentChanged"
-                                    }
-                       )
+            Nothing -> initNewChapterCmd narration
+            Just ch -> initEditor { elemId = "editor-container"
+                                  , narrationId = narration.id
+                                  , narrationImages = narration.files.images
+                                  , chapterParticipants = ch.participants
+                                  , text = ch.text
+                                  , editorType = "chapter"
+                                  , updatePortName = "editorContentChanged"
+                                  }
       in
-        ( { model | narration = Just narration, chapter = updatedChapter }
+        ( { model | narration = Just narration }
         , action
         )
     LastReactionsFetchError error ->

@@ -15,6 +15,7 @@ type Msg
   | RemoveFlashMessage
   | ChapterFetchError Http.Error
   | ChapterFetchSuccess Chapter
+  | InitNewChapter Narration
   | NarrationFetchError Http.Error
   | NarrationFetchSuccess Narration
   | LastReactionsFetchError Http.Error

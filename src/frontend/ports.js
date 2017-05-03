@@ -90,20 +90,22 @@ app.ports.initEditor.subscribe(evt => {
         delete editorViews[evt.elemId];
     }
 
-    const container = document.getElementById(evt.elemId);
-    editorViews[evt.elemId] =
-        editor.create(evt.text, schema, container, view => {
-            const port = app.ports[evt.updatePortName];
-            if (port) {
-                port.send(editor.exportText(view.editor));
-            } else {
-                console.error("Cannot find editor update port '" +
-                              evt.updatePortName + "'");
-            }
-        });
-    editorViews[evt.elemId].props.narrationId = evt.narrationId;
-    editorViews[evt.elemId].props.images = evt.narrationImages;
-    editorViews[evt.elemId].props.participants = evt.chapterParticipants;
+    requestAnimationFrame(() => {
+        const container = document.getElementById(evt.elemId);
+        editorViews[evt.elemId] =
+            editor.create(evt.text, schema, container, view => {
+                const port = app.ports[evt.updatePortName];
+                if (port) {
+                    port.send(editor.exportText(view.editor));
+                } else {
+                    console.error("Cannot find editor update port '" +
+                                  evt.updatePortName + "'");
+                }
+            });
+        editorViews[evt.elemId].props.narrationId = evt.narrationId;
+        editorViews[evt.elemId].props.images = evt.narrationImages;
+        editorViews[evt.elemId].props.participants = evt.chapterParticipants;
+    });
 });
 app.ports.updateParticipants.subscribe(evt => {
     const editorInstance = editorViews[evt.editor];
