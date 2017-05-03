@@ -18,14 +18,17 @@ function bumpVolume(audioEl) {
 }
 
 app.ports.renderText.subscribe(evt => {
-    const elem = document.getElementById(evt.elemId);
-    if (!elem) {
-        console.error("Cannot render text into " + evt.elemId +
+    // Make sure the DOM elements are already rendered
+    requestAnimationFrame(() => {
+        const elem = document.getElementById(evt.elemId);
+        if (!elem) {
+            console.error("Cannot render text into " + evt.elemId +
                           ", element does not exist (yet?)");
-        return;
-    }
-    elem.innerHTML = "";
-    elem.appendChild(editor.exportTextToDOM(evt.text, schemas.chapter));
+            return;
+        }
+        elem.innerHTML = "";
+        elem.appendChild(editor.exportTextToDOM(evt.text, schemas.chapter));
+    });
 });
 
 app.ports.startNarration.subscribe(evt => {

@@ -857,6 +857,7 @@ class NarrowsStore {
                 "all",
             `SELECT CHPT.published AS chapterPublished,
                     CHPT.id AS chapterId, CHPT.title AS chapterTitle,
+                    CHPT.main_text AS chapterText,
                     CHR.id AS characterId, CHR.name AS characterName,
                     R.main_text AS text
                FROM chapters CHPT

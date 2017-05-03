@@ -3,6 +3,7 @@ import test from "ava";
 import fs from "fs-extra";
 import Q from "q";
 import { recreateDb } from "./test-utils.js";
+import apiFormatter from "../src/backend/api-formatter";
 import NarrowsStore from "../src/backend/NarrowsStore";
 import UserStore from "../src/backend/UserStore";
 
@@ -262,6 +263,51 @@ test.serial("last reactions work when different characters last appeared in diff
         return store.getChapterLastReactions(chapterId3);
     }).then(lastReactions => {
         t.is(lastReactions.length, 2);
+    });
+});
+
+// This test is specifically for the formatLastReactions function, but
+// it's a pain to setup another file with its own database just for
+// it, so at least for now it's here.
+test.serial("last reactions should return last-appearance chapters", t => {
+    const ctx = t.context;
+    const chapterProps1 = { title: "Intro for char1",
+                            text: [],
+                            participants: [{id: ctx.characterId1}],
+                            published: new Date() };
+    const chapterProps2 = { title: "Intro for char2 and char3",
+                            text: [],
+                            participants: [{id: ctx.characterId2},
+                                           {id: ctx.characterId3}],
+                            published: new Date() };
+    const chapterProps3 = { title: "All together now!",
+                            text: [],
+                            participants: [{id: ctx.characterId1},
+                                           {id: ctx.characterId2},
+                                           {id: ctx.characterId3}] };
+    let chapterId1, chapterId2, chapterId3;
+
+    return Q.all([
+        store.createChapter(ctx.testNarration.id, chapterProps1),
+        store.createChapter(ctx.testNarration.id, chapterProps2),
+        store.createChapter(ctx.testNarration.id, chapterProps3)
+    ]).spread((chapter1, chapter2, chapter3) => {
+        chapterId1 = chapter1.id;
+        chapterId2 = chapter2.id;
+        chapterId3 = chapter3.id;
+
+        return Q.all([
+            store.updateReaction(chapterId1, ctx.characterId1, "Reaction 1"),
+            store.updateReaction(chapterId2, ctx.characterId2, "Reaction 2"),
+            store.updateReaction(chapterId2, ctx.characterId3, "Reaction 3"),
+        ]);
+    }).then(() => (
+        store.getChapterLastReactions(chapterId3)
+    )).then(reactions => {
+        const formattedResponse =
+              apiFormatter.formatLastReactions(chapterId3, reactions);
+
+        t.is(formattedResponse.lastChapters.length, 2);
     });
 });
 

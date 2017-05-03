@@ -1,6 +1,7 @@
 module ChapterEditApp.Models exposing (..)
 
 import Json.Encode
+import Json.Decode
 
 import Common.Models exposing (FullCharacter, Character, Narration, Chapter, Banner)
 
@@ -21,6 +22,12 @@ type alias LastReactionChapter =
   , title : String
   }
 
+type alias LastChapter =
+  { id : Int
+  , title : String
+  , text : Json.Decode.Value
+  }
+
 type alias LastReaction =
   { chapterInfo : LastReactionChapter
   , character : Character
@@ -30,6 +37,7 @@ type alias LastReaction =
 type alias LastReactions =
   { chapterId : Int
   , reactions : List LastReaction
+  , chapters : List LastChapter
   }
 
 type alias Model =

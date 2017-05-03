@@ -154,16 +154,15 @@ ul.participant-list li {
     white-space: pre-wrap;
 }
 
-.last-reactions.narrator {
+.last-reactions.narrator, .last-chapters.narrator {
     display: block;
     padding-left: 0;
 }
-.last-reactions.narrator li {
+.last-reactions.narrator li, .last-chapters.narrator li {
     display: block;
     margin-bottom: 20px;
 }
-
-.last-reaction-text {
+.last-reactions.narrator li .last-reaction-text {
     margin-top: 3px;
     padding: 5px;
 

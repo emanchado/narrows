@@ -11,7 +11,7 @@ import Time.DateTime as DateTime exposing (DateTime, fromTimestamp)
 
 import Routing
 import Common.Models exposing (Banner, Chapter, FileSet, errorBanner, successBanner)
-import Common.Ports exposing (initEditor)
+import Common.Ports exposing (initEditor, renderText)
 
 import ChapterEditApp.Api
 import ChapterEditApp.Api.Json exposing (parseChapter)
@@ -142,7 +142,15 @@ update msg model =
     LastReactionsFetchError error ->
       genericHttpErrorHandler model error
     LastReactionsFetchSuccess lastReactions ->
-      ({ model | lastReactions = Just lastReactions }, Cmd.none)
+      ( { model | lastReactions = Just lastReactions }
+      , Cmd.batch
+          (List.map
+             (\c -> renderText { elemId = "chapter-text-" ++ (toString c.id)
+                               , text = c.text
+                               , proseMirrorType = "chapter"
+                               })
+             lastReactions.chapters)
+      )
 
     UpdateChapterTitle newTitle ->
       case model.chapter of
@@ -276,7 +284,7 @@ update msg model =
           (model, Cmd.none)
     PublishChapter ->
       ({ model | banner = Nothing, flash = Nothing }
-      , Task.perform (\x -> NoOp) PublishChapterWithTime Time.now
+      , Task.perform (\_ -> NoOp) PublishChapterWithTime Time.now
       )
     PublishChapterWithTime time ->
       case model.chapter of
@@ -318,7 +326,7 @@ update msg model =
         Nothing ->
           (model, Cmd.none)
     PublishNewChapter ->
-      (model, Task.perform (\x -> NoOp) PublishNewChapterWithTime Time.now)
+      (model, Task.perform (\_ -> NoOp) PublishNewChapterWithTime Time.now)
     PublishNewChapterWithTime time ->
       case model.chapter of
         Just chapter ->

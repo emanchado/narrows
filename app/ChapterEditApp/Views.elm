@@ -3,14 +3,14 @@ module ChapterEditApp.Views exposing (mainView)
 import String
 import Json.Decode
 
-import Html exposing (Html, h2, div, main', nav, section, ul, li, img, a, input, button, audio, br, span, label, strong, em, text)
+import Html exposing (Html, h2, h3, div, main', nav, section, ul, li, img, a, input, button, audio, br, span, label, strong, em, text)
 import Html.Attributes exposing (id, name, class, href, src, target, type', value, placeholder, checked, disabled)
 import Html.Events exposing (onClick, onInput, on)
 
 import Common.Models exposing (FullCharacter, Narration, Chapter)
 import Common.Views exposing (bannerView, breadcrumbNavView)
 
-import ChapterEditApp.Models exposing (Model, LastReactions, LastReaction)
+import ChapterEditApp.Models exposing (Model, LastReactions, LastChapter, LastReaction)
 import ChapterEditApp.Messages exposing (..)
 import ChapterEditApp.Views.FileSelector exposing (fileSelector)
 import ChapterEditApp.Views.Participants exposing (participantListView)
@@ -136,6 +136,17 @@ reactionView reaction =
     ]
 
 
+lastChapterView : LastChapter -> Html Msg
+lastChapterView chapter =
+  li []
+    [ h3 [] [ text chapter.title ]
+    , div [ id <| "chapter-text-" ++ (toString chapter.id)
+          , class "chapter"
+          ]
+        []
+    ]
+
+
 lastReactionListView : LastReactions -> Chapter -> Html Msg
 lastReactionListView lastReactions chapter =
   let
@@ -150,6 +161,9 @@ lastReactionListView lastReactions chapter =
                     else
                       text "")
              lastReactions.reactions)
+      , h2 [] [ text "Last chapters" ]
+      , ul [ class "last-chapters narrator" ]
+          (List.map lastChapterView lastReactions.chapters)
       ]
 
 mainView : Model -> Html Msg

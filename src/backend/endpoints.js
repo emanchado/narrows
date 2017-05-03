@@ -9,6 +9,7 @@ import NarrowsStore from "./NarrowsStore";
 import UserStore from "./UserStore";
 import mentionFilter from "./mention-filter";
 import messageUtils from "./message-utils";
+import apiFormatter from "./api-formatter";
 import feeds from "./feeds";
 import Mailer from "./Mailer";
 import { isValidEmail } from "./validation";
@@ -367,14 +368,7 @@ export function getChapterLastReactions(req, res) {
     )).then(() => (
         store.getChapterLastReactions(chapterId)
     )).then(lastReactions => {
-        res.json({ chapterId: chapterId,
-                   lastReactions: lastReactions.map(reaction => (
-                       { chapter: { id: reaction.chapterId,
-                                    title: reaction.chapterTitle },
-                         character: { id: reaction.characterId,
-                                      name: reaction.characterName },
-                         text: reaction.text }
-                   )) });
+        res.json(apiFormatter.formatLastReactions(chapterId, lastReactions));
     }).catch(err => {
         res.status(500).json({
             errorMessage: `Cannot get last reactions: ${ err }`
