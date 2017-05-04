@@ -1,6 +1,6 @@
 module CharacterApp.Views exposing (mainView)
 
-import Html exposing (Html, section, h2, h3, div, ul, li, img, input, button, a, label, em, text)
+import Html exposing (Html, main', section, h2, h3, div, ul, li, img, input, button, a, label, em, text)
 import Html.Attributes exposing (id, class, for, src, href, type', value, checked)
 import Html.Events exposing (onClick, onInput)
 
@@ -28,7 +28,7 @@ chapterParticipation characterToken chapter =
 
 mainView : Model -> Html Msg
 mainView model =
-  div [ id "reader-app", class "app-container" ]
+  main' [ id "reader-app", class "app-container" ]
     [ h2 []
       (case model.characterInfo of
            Just characterInfo ->

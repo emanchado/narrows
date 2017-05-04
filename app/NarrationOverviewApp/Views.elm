@@ -1,8 +1,9 @@
 module NarrationOverviewApp.Views exposing (..)
 
 import List
-import Html exposing (Html, main', h1, h2, section, div, ul, li, a, text)
+import Html exposing (Html, main', h1, h2, section, div, ul, li, button, a, text)
 import Html.Attributes exposing (id, class, href)
+import Html.Events exposing (onClick)
 
 import Common.Models exposing (Narration, ChapterOverview, NarrationOverview, FullCharacter)
 import Common.Views exposing (linkTo, breadcrumbNavView)
@@ -72,18 +73,18 @@ overviewView overview =
     , div [ class "two-column" ]
         [ section []
             [ h2 [] [ text "Chapters" ]
-            , a (linkTo
-                   NavigateTo
-                   ("/narrations/" ++ (toString overview.narration.id) ++ "/new"))
-                [ text "Write new chapter" ]
+            , button [ class "btn btn-add"
+                     , onClick (NavigateTo <| "/narrations/" ++ (toString overview.narration.id) ++ "/new")
+                     ]
+                [ text "New chapter" ]
             , ul [ class "chapter-list" ]
                 (List.map chapterOverviewView overview.chapters)
             ]
         , section [ class "page-aside" ]
             [ h2 [] [ text "Characters" ]
-            , a (linkTo
-                   NavigateTo
-                   ("/narrations/" ++ (toString overview.narration.id) ++ "/characters/new"))
+            , button [ class "btn btn-add"
+                     , onClick (NavigateTo <| "/narrations/" ++ (toString overview.narration.id) ++ "/characters/new")
+                     ]
                 [ text "New character" ]
             , ul [ class "character-list" ]
                 (List.map narrationCharacterView overview.narration.characters)

@@ -36,6 +36,14 @@ label {
     padding: 30px;
     padding-top: 0;
 }
+/* Unfortunately need this hack because reader app has black
+   background and having something at the top with margin-top (like
+   the "h2" title in the character app) leaves an ugly, white top
+   bar. Apparently it's enough to make it non-zero to make it work
+   properly. */
+#reader-app.app-container {
+    padding-top: 1px;
+}
 .app-container-simple {
     max-width: 50em;
 }
@@ -133,6 +141,13 @@ label {
 
 .btn-small {
     font-size: 12px;
+}
+
+.btn-add {
+    padding-left: 30px;
+    background-image: url("/img/add.png");
+    background-repeat: no-repeat;
+    background-position: 8px 50%;
 }
 
 ul.thread-list {

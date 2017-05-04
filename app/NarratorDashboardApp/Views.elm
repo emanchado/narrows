@@ -69,10 +69,10 @@ narrationView overview =
             [ text overview.narration.title
             ]
         ]
-    , a (linkTo
-           NavigateTo
-           ("/narrations/" ++ (toString overview.narration.id) ++ "/new"))
-        [ text "Write new chapter" ]
+    , button [ class "btn btn-add"
+             , onClick (NavigateTo <| "/narrations/" ++ (toString overview.narration.id) ++ "/new")
+             ]
+        [ text "New chapter" ]
     , ul [ class "chapter-list" ]
         (List.map chapterOverviewView overview.chapters)
     ]
