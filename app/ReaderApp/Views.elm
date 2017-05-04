@@ -4,20 +4,16 @@ import Html exposing (Html, div, span, a, input, text, img, label, button, br)
 import Html.Attributes exposing (id, class, for, src, href, type', checked)
 import Html.Events exposing (onClick)
 
+import Common.Views exposing (bannerView)
 import ReaderApp.Models exposing (Model, Banner)
 import ReaderApp.Messages exposing (..)
 import ReaderApp.Views.Narration
-import ReaderApp.Views.Banner
 
 loadingView : Maybe Banner -> Html Msg
 loadingView maybeBanner =
   div [ id "loader-contents" ]
     [ div [ id "spinner" ] [ text "Loading…" ]
-    , case maybeBanner of
-        Just banner ->
-          ReaderApp.Views.Banner.view banner
-        Nothing ->
-          text ""
+    , bannerView maybeBanner
     ]
 
 loadedView : Model -> Html Msg

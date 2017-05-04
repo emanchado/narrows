@@ -6,10 +6,9 @@ import Html.Attributes exposing (id, class, style, for, src, href, target, type'
 import Html.Events exposing (onClick, onInput)
 import Http exposing (uriEncode)
 
-import Common.Views exposing (linkTo)
+import Common.Views exposing (bannerView, linkTo)
 import ReaderApp.Models exposing (Model, Chapter, OwnCharacter, ParticipantCharacter, Banner)
 import ReaderApp.Messages exposing (..)
-import ReaderApp.Views.Banner
 import ReaderApp.Views.MessageThreads
 
 chapterContainerClass : Model -> String
@@ -127,9 +126,7 @@ reactionView model =
           [ ReaderApp.Views.MessageThreads.listView model
           ]
       , h2 [] [ text "Action" ]
-      , case model.banner of
-          Just banner -> ReaderApp.Views.Banner.view banner
-          Nothing -> text ""
+      , bannerView model.banner
       , div [ class ("player-reply" ++ (if model.reactionSent then
                                           " invisible"
                                         else
