@@ -578,3 +578,40 @@ export function putUser(req, res) {
         });
     });
 }
+
+export function getNovel(req, res) {
+    const novelToken = req.params.novelToken;
+
+    store.getNovelInfo(novelToken).spread((narrationId, characterId) => (
+        Q.all([
+            store.getPublicNarration(narrationId),
+            store.getCharacterChapters(characterId)
+        ]).spread((narration, chapters) => (
+            res.json({
+                token: novelToken,
+                characterId: characterId,
+                narration: narration,
+                chapters: chapters
+            })
+        ))
+    )).catch(err => {
+        res.status(500).json({
+            errorMessage: `There was a problem updating: ${ err }`
+        });
+    });
+}
+
+export function getNovels(req, res) {
+    const narrationId = parseInt(req.params.narrId, 10);
+
+    store.getNovels(narrationId).then(novels => (
+        res.json({
+            narrationId: narrationId,
+            novels: novels
+        })
+    )).catch(err => {
+        res.status(500).json({
+            errorMessage: `There was a problem updating: ${ err }`
+        });
+    });
+}

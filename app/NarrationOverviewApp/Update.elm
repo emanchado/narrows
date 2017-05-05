@@ -14,7 +14,9 @@ urlUpdate route model =
     case route of
       Routing.NarrationPage narrationId ->
         ( model
-        , NarrationOverviewApp.Api.fetchNarrationOverview narrationId
+        , Cmd.batch [ NarrationOverviewApp.Api.fetchNarrationOverview narrationId
+                    , NarrationOverviewApp.Api.fetchNarrationNovels narrationId
+                    ]
         )
       _ ->
         (model, Cmd.none)
@@ -52,5 +54,33 @@ update msg model =
           )
     NarrationOverviewFetchSuccess narrationOverview ->
       ( { model | narrationOverview = Just narrationOverview }
+      , Cmd.none
+      )
+
+    NarrationNovelsFetchError error ->
+      case error of
+        Http.UnexpectedPayload message ->
+          ( { model | banner = Just { text = "Error! " ++ message
+                                    , type' = "error"
+                                    }
+            }
+          , Cmd.none
+          )
+        Http.BadResponse status body ->
+          ( { model | banner = Just { text = "Error! Body: " ++ body
+                                    , type' = "error"
+                                    }
+            }
+          , Cmd.none
+          )
+        _ ->
+          ( { model | banner = Just { text = "Unknown error!"
+                                    , type' = "error"
+                                    }
+            }
+          , Cmd.none
+          )
+    NarrationNovelsFetchSuccess narrationNovels ->
+      ( { model | narrationNovels = Just narrationNovels.novels }
       , Cmd.none
       )

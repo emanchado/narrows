@@ -12,6 +12,7 @@ import ChapterEditApp
 import ChapterControlApp
 import CharacterCreationApp
 import UserManagementApp
+import NovelReaderApp
 
 type Msg
   = NoOp
@@ -32,3 +33,4 @@ type Msg
   | ChapterControlMsg ChapterControlApp.Msg
   | CharacterCreationMsg CharacterCreationApp.Msg
   | UserManagementMsg UserManagementApp.Msg
+  | NovelReaderMsg NovelReaderApp.Msg

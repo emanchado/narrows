@@ -48,12 +48,13 @@ app.post("/api/narrations/:narrId/chapters", middlewares.apiAuth, endpoints.post
 app.post("/api/narrations/:narrId/files", middlewares.apiAuth, endpoints.postNarrationFiles);
 app.post("/api/narrations/:narrId/images", middlewares.apiAuth, endpoints.postNarrationImages);
 app.post("/api/narrations/:narrId/characters", middlewares.apiAuth, endpoints.postNarrationCharacters);
+app.get("/api/narrations/:narrId/last-reactions", middlewares.apiAuth, endpoints.getNarrationLastReactions);
+app.get("/api/narrations/:narrId/novels", middlewares.apiAuth, endpoints.getNovels);
 
 app.get("/api/chapters/:chptId", middlewares.apiAuth, endpoints.getChapter);
 app.put("/api/chapters/:chptId", middlewares.apiAuth, endpoints.putChapter);
 app.get("/api/chapters/:chptId/interactions", middlewares.apiAuth, endpoints.getChapterInteractions);
 app.post("/api/chapters/:chptId/messages", middlewares.apiAuth, endpoints.postChapterMessages);
-app.get("/api/narrations/:narrId/last-reactions", middlewares.apiAuth, endpoints.getNarrationLastReactions);
 app.get("/api/chapters/:chptId/last-reactions", middlewares.apiAuth, endpoints.getChapterLastReactions);
 
 // These endpoints are only for admins!
@@ -61,6 +62,7 @@ app.get("/api/users", middlewares.apiAdminAuth, endpoints.getUsers);
 app.post("/api/users", middlewares.apiAdminAuth, endpoints.postUser);
 app.put("/api/users/:userId", middlewares.apiAdminAuth, endpoints.putUser);
 
+// Public endpoints, only protected by an unguessable string
 app.get("/api/chapters/:chptId/:charToken", endpoints.getChapterCharacter);
 app.put("/api/reactions/:chptId/:charToken", endpoints.putReactionCharacter);
 app.get("/api/messages/:chptId/:charToken", endpoints.getMessagesCharacter);
@@ -68,6 +70,7 @@ app.post("/api/messages/:chptId/:charToken", endpoints.postMessageCharacter);
 app.put("/api/notes/:charToken", endpoints.putNotesCharacter);
 app.get("/api/characters/:charToken", endpoints.getCharacter);
 app.put("/api/characters/:charToken", endpoints.putCharacter);
+app.get("/api/novels/:novelToken", endpoints.getNovel);
 
 app.use("/static/narrations", express.static(config.files.path));
 

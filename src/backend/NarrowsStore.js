@@ -168,6 +168,23 @@ class NarrowsStore {
         );
     }
 
+    _getPublicNarrationCharacters(narrationId) {
+        return Q.ninvoke(
+            this.db,
+            "all",
+            `SELECT id, name, description
+               FROM characters
+              WHERE narration_id = ?`,
+            narrationId
+        ).then(characters => {
+            characters.forEach(c => {
+                c.description = JSON.parse(c.description);
+            });
+
+            return characters;
+        });
+    }
+
     _getNarrationFiles(narrationId) {
         const filesDir = path.join(config.files.path, narrationId.toString());
 
@@ -202,6 +219,27 @@ class NarrowsStore {
                 narrationInfo.files = files;
                 return narrationInfo;
             });
+        });
+    }
+
+    getPublicNarration(id) {
+        return Q.all([
+            Q.ninvoke(
+                this.db,
+                "get",
+                `SELECT id, title, default_audio AS defaultAudio,
+                    default_background_image AS defaultBackgroundImage
+               FROM narrations WHERE id = ?`,
+                id
+            ),
+            this._getPublicNarrationCharacters(id)
+        ]).spread((narrationInfo, characters) => {
+            if (!narrationInfo) {
+                throw new Error("Cannot find narration " + id);
+            }
+
+            narrationInfo.characters = characters;
+            return narrationInfo;
         });
     }
 
@@ -885,30 +923,56 @@ class NarrowsStore {
         );
     }
 
-    getFullCharacterStats(characterId) {
+    getCharacterChaptersBasic(characterId) {
         return Q.ninvoke(
             this.db,
-            "get",
-            `SELECT C.id, C.name, C.avatar, C.description, C.backstory,
-                    N.id AS narrationId, N.title AS narrationTitle
-               FROM characters C
-               JOIN narrations N
-                 ON C.narration_id = N.id
-              WHERE C.id = ?`,
-            characterId
-        ).then(basicStats => {
-            return Q.ninvoke(
-                this.db,
-                "all",
-                `SELECT C.id, C.title
+            "all",
+            `SELECT C.id, C.title
                    FROM chapters C
                    JOIN reactions R
                      ON C.id = R.chapter_id
-                  WHERE narration_id = ?
-                    AND published IS NOT NULL
+                  WHERE published IS NOT NULL
                     AND R.character_id = ?`,
-                [basicStats.narrationId, characterId]
-            ).then(chapters => ({
+            characterId
+        );
+    }
+
+    getCharacterChapters(characterId) {
+        return Q.ninvoke(
+            this.db,
+            "all",
+            `SELECT C.id, C.title, C.main_text AS text,
+                    C.audio, C.background_image AS backgroundImage
+               FROM chapters C
+               JOIN reactions R
+                 ON C.id = R.chapter_id
+              WHERE published IS NOT NULL
+                AND R.character_id = ?`,
+            characterId
+        ).then(chapters => {
+            chapters.forEach(c => {
+                c.text = JSON.parse(c.text);
+            });
+
+            return chapters;
+        });
+    }
+
+    getFullCharacterStats(characterId) {
+        return Q.all([
+            Q.ninvoke(
+                this.db,
+                "get",
+                `SELECT C.id, C.name, C.avatar, C.description, C.backstory,
+                        N.id AS narrationId, N.title AS narrationTitle
+                   FROM characters C
+                   JOIN narrations N
+                     ON C.narration_id = N.id
+                  WHERE C.id = ?`,
+                characterId
+            ),
+            this.getCharacterChaptersBasic(characterId)
+        ]).spread((basicStats, chapters) => ({
                 id: basicStats.id,
                 name: basicStats.name,
                 avatar: basicStats.avatar,
@@ -919,8 +983,7 @@ class NarrowsStore {
                     title: basicStats.narrationTitle,
                     chapters: chapters
                 }
-            }));
-        });
+        }));
     }
 
     updateCharacter(characterId, props) {
@@ -940,6 +1003,42 @@ class NarrowsStore {
         ).then(
             () => this.getFullCharacterStats(characterId)
         );
+    }
+
+    getNovelInfo(novelToken) {
+        return Q.ninvoke(
+            this.db,
+            "query",
+            `SELECT NE.character_id AS characterId,
+                    C.narration_id AS narrationId
+               FROM narration_exports NE
+               JOIN characters C ON NE.character_id = C.id
+              WHERE NE.token = ?`,
+            novelToken
+        ).spread(results => {
+            if (results.length !== 1) {
+                throw new Error(
+                    `Could not find (a single) novel with token ${novelToken}`
+                );
+            }
+
+            return [results[0].narrationId, results[0].characterId];
+        });
+    }
+
+    getNovels(narrationId) {
+        return Q.ninvoke(
+            this.db,
+            "query",
+            `SELECT NE.id, NE.token, NE.created,
+                    NE.character_id AS characterId
+               FROM narration_exports NE
+               JOIN characters C ON NE.character_id = C.id
+              WHERE C.narration_id = ?`,
+            narrationId
+        ).spread(results => (
+            results
+        ));
     }
 }
 

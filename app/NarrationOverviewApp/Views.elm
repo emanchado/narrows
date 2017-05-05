@@ -1,14 +1,14 @@
 module NarrationOverviewApp.Views exposing (..)
 
 import List
-import Html exposing (Html, main', h1, h2, section, div, ul, li, button, a, text)
+import Html exposing (Html, main', h1, h2, section, div, ul, li, button, a, em, text)
 import Html.Attributes exposing (id, class, href)
 import Html.Events exposing (onClick)
 
 import Common.Models exposing (Narration, ChapterOverview, NarrationOverview, FullCharacter)
 import Common.Views exposing (linkTo, breadcrumbNavView)
 import NarrationOverviewApp.Messages exposing (..)
-import NarrationOverviewApp.Models exposing (Model)
+import NarrationOverviewApp.Models exposing (Model, NarrationNovel)
 
 unpublishedChapterView : ChapterOverview -> Html Msg
 unpublishedChapterView chapterOverview =
@@ -59,8 +59,30 @@ narrationCharacterView character =
         [ text character.name ]
     ]
 
-overviewView : NarrationOverview -> Html Msg
-overviewView overview =
+narrationNovelView : Narration -> NarrationNovel -> Html Msg
+narrationNovelView narration novel =
+  let
+    maybeCharacter =
+      List.filter
+        (\c -> c.id == novel.characterId)
+        narration.characters
+          |> List.head
+  in
+    case maybeCharacter of
+      Just character ->
+        li []
+          [ a [ href <| "/novels/" ++ novel.token ]
+              [ text <| "“" ++ narration.title ++ "” from "
+              , em [] [ text character.name ]
+              , text "’s POV"
+              ]
+          ]
+      Nothing ->
+        div []
+          [ text <| "Cannot find character with id " ++ (toString novel.characterId) ++ " WTF" ]
+
+overviewView : NarrationOverview -> List NarrationNovel -> Html Msg
+overviewView overview novels =
   main' [ id "narrator-app", class "app-container" ]
     [ breadcrumbNavView
         NavigateTo
@@ -88,6 +110,9 @@ overviewView overview =
                 [ text "New character" ]
             , ul [ class "character-list" ]
                 (List.map narrationCharacterView overview.narration.characters)
+            , h2 [] [ text "Novels" ]
+            , ul [ class "novel-list" ]
+                (List.map (narrationNovelView overview.narration) novels)
             ]
         ]
     ]
@@ -105,6 +130,10 @@ mainView : Model -> Html Msg
 mainView model =
   case model.narrationOverview of
     Just overview ->
-      overviewView overview
+      case model.narrationNovels of
+        Just novels ->
+          overviewView overview novels
+        Nothing ->
+          loadingView model
     Nothing ->
       loadingView model

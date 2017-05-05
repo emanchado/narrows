@@ -6,14 +6,13 @@ import Json.Decode
 import Navigation
 
 import Routing
-import Common.Ports exposing (renderText)
+import Common.Ports exposing (renderText, startNarration, playPauseNarrationMusic, flashElement)
 import Common.Models exposing (Character)
 import Common.Api.Json exposing (parseChapterMessages)
 
 import ReaderApp.Api
 import ReaderApp.Messages exposing (..)
 import ReaderApp.Models exposing (..)
-import ReaderApp.Ports exposing (startNarration, playPauseNarrationMusic, flashElement)
 
 messageRecipients : List Character -> Int -> List Int
 messageRecipients recipients senderId =

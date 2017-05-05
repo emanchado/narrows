@@ -10,6 +10,7 @@ import ChapterEditApp
 import ChapterControlApp
 import CharacterCreationApp
 import UserManagementApp
+import NovelReaderApp
 
 type alias UserInfo =
   { id : Int
@@ -36,4 +37,5 @@ type alias Model =
   , chapterControlApp : ChapterControlApp.Model
   , characterCreationApp : CharacterCreationApp.Model
   , userManagementApp : UserManagementApp.Model
+  , novelReaderApp : NovelReaderApp.Model
   }

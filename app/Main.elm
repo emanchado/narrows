@@ -12,6 +12,7 @@ import ChapterEditApp
 import ChapterControlApp
 import CharacterCreationApp
 import UserManagementApp
+import NovelReaderApp
 
 import Core.Api
 import Core.Models exposing (Model, UserSession(..))
@@ -37,6 +38,7 @@ initialState result =
       , chapterControlApp = ChapterControlApp.initialState
       , characterCreationApp = CharacterCreationApp.initialState
       , userManagementApp = UserManagementApp.initialState
+      , novelReaderApp = NovelReaderApp.initialState
       }
     , Core.Api.refreshSession
     )
@@ -54,6 +56,7 @@ combinedUrlUpdate result model =
     (updatedChapterControlModel, chapterControlCmd) = ChapterControlApp.urlUpdate currentRoute model.chapterControlApp
     (updatedCharacterCreationModel, characterCreationCmd) = CharacterCreationApp.urlUpdate currentRoute model.characterCreationApp
     (updatedUserManagementModel, userManagementCmd) = UserManagementApp.urlUpdate currentRoute model.userManagementApp
+    (updatedNovelReaderModel, novelReaderCmd) = NovelReaderApp.urlUpdate currentRoute model.novelReaderApp
   in
     ( { model | route = currentRoute
               , readerApp = updatedReaderModel
@@ -65,6 +68,7 @@ combinedUrlUpdate result model =
               , chapterControlApp = updatedChapterControlModel
               , characterCreationApp = updatedCharacterCreationModel
               , userManagementApp = updatedUserManagementModel
+              , novelReaderApp = updatedNovelReaderModel
               }
     , Cmd.batch [ Cmd.map ReaderMsg readerCmd
                 , Cmd.map CharacterMsg characterCmd
@@ -75,6 +79,7 @@ combinedUrlUpdate result model =
                 , Cmd.map ChapterControlMsg chapterControlCmd
                 , Cmd.map CharacterCreationMsg characterCreationCmd
                 , Cmd.map UserManagementMsg userManagementCmd
+                , Cmd.map NovelReaderMsg novelReaderCmd
                 ]
     )
 
@@ -163,6 +168,11 @@ combinedUpdate msg model =
         (newUserManagementModel, cmd) = UserManagementApp.update userManagementMsg model.userManagementApp
       in
         ({ model | userManagementApp = newUserManagementModel }, Cmd.map UserManagementMsg cmd)
+    NovelReaderMsg novelReaderMsg ->
+      let
+        (newNovelReaderModel, cmd) = NovelReaderApp.update novelReaderMsg model.novelReaderApp
+      in
+        ({ model | novelReaderApp = newNovelReaderModel }, Cmd.map NovelReaderMsg cmd)
 
     _ ->
       (model, Cmd.none)
@@ -178,6 +188,7 @@ subscriptions model =
             , Sub.map ChapterControlMsg (ChapterControlApp.subscriptions model.chapterControlApp)
             , Sub.map CharacterCreationMsg (CharacterCreationApp.subscriptions model.characterCreationApp)
             , Sub.map UserManagementMsg (UserManagementApp.subscriptions model.userManagementApp)
+            , Sub.map NovelReaderMsg (NovelReaderApp.subscriptions model.novelReaderApp)
             ]
 
 main : Program Never

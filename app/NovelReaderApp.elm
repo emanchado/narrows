@@ -1,44 +1,37 @@
-module ReaderApp exposing (..)
+module NovelReaderApp exposing (..)
 
 import Html exposing (Html)
 
 import Routing
 import Common.Ports
-import ReaderApp.Messages exposing (..)
-import ReaderApp.Models exposing (..)
-import ReaderApp.Update
-import ReaderApp.Views
--- import ReaderApp.Ports
+import NovelReaderApp.Messages exposing (..)
+import NovelReaderApp.Models exposing (..)
+import NovelReaderApp.Update
+import NovelReaderApp.Views
 
-type alias Model = ReaderApp.Models.Model
-type alias Msg = ReaderApp.Messages.Msg
+type alias Model = NovelReaderApp.Models.Model
+type alias Msg = NovelReaderApp.Messages.Msg
 
 initialState : Model
 initialState =
   { state = Loader
-  , chapter = Nothing
-  , messageThreads = Nothing
+  , novel = Nothing
+  , currentChapterIndex = 0
   , backgroundMusic = True
   , musicPlaying = True
   , backgroundBlurriness = 0
-  , reply = Nothing
-  , showNewMessageUi = False
-  , newMessageText = ""
-  , newMessageRecipients = []
-  , reactionSent = False
-  , reaction = ""
   , banner = Nothing
   , referenceInformationVisible = False
   }
 
 update : Msg -> Model -> (Model, Cmd Msg)
-update = ReaderApp.Update.update
+update = NovelReaderApp.Update.update
 
 urlUpdate : Routing.Route -> Model -> (Model, Cmd Msg)
-urlUpdate = ReaderApp.Update.urlUpdate
+urlUpdate = NovelReaderApp.Update.urlUpdate
 
 view : Model -> Html Msg
-view = ReaderApp.Views.mainView
+view = NovelReaderApp.Views.mainView
 
 subscriptions : Model -> Sub Msg
 subscriptions model =

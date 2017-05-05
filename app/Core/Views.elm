@@ -15,6 +15,7 @@ import ChapterEditApp
 import ChapterControlApp
 import CharacterCreationApp
 import UserManagementApp
+import NovelReaderApp
 
 import Core.Messages exposing (Msg(..))
 import Core.Models exposing (Model, UserSession(..))
@@ -97,6 +98,8 @@ appContentView model =
   case model.route of
     Routing.ChapterReaderPage chapterId characterToken ->
       App.map ReaderMsg (ReaderApp.view model.readerApp)
+    Routing.NovelReaderPage novelToken ->
+      App.map NovelReaderMsg (NovelReaderApp.view model.novelReaderApp)
     Routing.CharacterPage characterToken ->
       App.map CharacterMsg (CharacterApp.view model.characterApp)
     Routing.NotFoundRoute ->

@@ -15,6 +15,7 @@ initialState : Model
 initialState =
   { narrationOverview = Nothing
   , banner = Nothing
+  , narrationNovels = Nothing
   }
 
 update : Msg -> Model -> (Model, Cmd Msg)

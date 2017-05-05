@@ -15,6 +15,7 @@ type Route
   | NarrationPage Int
   | CharacterCreationPage Int
   | UserManagementPage
+  | NovelReaderPage String
   | NotFoundRoute
 
 matchers : Parser (Route -> a) a
@@ -30,6 +31,7 @@ matchers =
     , format CharacterCreationPage (s "narrations" </> int </> s "characters" </> s "new")
     , format NarrationPage (s "narrations" </> int)
     , format UserManagementPage (s "users")
+    , format NovelReaderPage (s "novels" </> string)
     ]
 
 urlPathParser : Navigation.Location -> Result String Route
