@@ -217,7 +217,7 @@ ul.thread-list.reader li .btn-bar {
 .chapter-navigation {
     position: fixed;
     top: 0;
-    z-index: 20;
+    z-index: 7; /* Has to be between .chapter's and #play-icon's */
 
     width: 50px;
     height: 100%;
