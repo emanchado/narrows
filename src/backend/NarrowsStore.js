@@ -172,7 +172,7 @@ class NarrowsStore {
         return Q.ninvoke(
             this.db,
             "all",
-            `SELECT id, name, description
+            `SELECT id, name, avatar, description
                FROM characters
               WHERE narration_id = ?`,
             narrationId
