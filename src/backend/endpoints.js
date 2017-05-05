@@ -586,14 +586,19 @@ export function getNovel(req, res) {
         Q.all([
             store.getPublicNarration(narrationId),
             store.getCharacterChapters(characterId)
-        ]).spread((narration, chapters) => (
-            res.json({
+        ]).spread((narration, chapters) => {
+            chapters.forEach(c => {
+                c.text =
+                    mentionFilter.filter(c.text, characterId);
+            });
+
+            return res.json({
                 token: novelToken,
                 characterId: characterId,
                 narration: narration,
                 chapters: chapters
-            })
-        ))
+            });
+        })
     )).catch(err => {
         res.status(500).json({
             errorMessage: `There was a problem updating: ${ err }`
