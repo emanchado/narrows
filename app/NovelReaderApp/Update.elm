@@ -11,6 +11,7 @@ import Common.Models exposing (Character)
 import NovelReaderApp.Api
 import NovelReaderApp.Messages exposing (..)
 import NovelReaderApp.Models exposing (..)
+import NovelReaderApp.Ports exposing (scrollTo)
 
 messageRecipients : List Character -> Int -> List Int
 messageRecipients recipients senderId =
@@ -37,6 +38,10 @@ descriptionRenderCommand character =
              , text = character.description
              , proseMirrorType = "description"
              }
+
+startNarrationCmd : Cmd Msg
+startNarrationCmd =
+  Task.perform (\_ -> StartNarration) (\_ -> StartNarration) (Task.succeed 1)
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
@@ -114,12 +119,14 @@ update msg model =
         ({ model | backgroundBlurriness = blurriness }, Cmd.none)
 
     PreviousChapter ->
-      let
-        newChapterIndex = max 0 (model.currentChapterIndex - 1)
-      in
-        ( { model | currentChapterIndex = newChapterIndex }
-        , Task.perform (\_ -> StartNarration) (\_ -> StartNarration) (Task.succeed 1)
+      if model.currentChapterIndex > 0 then
+        ( { model | currentChapterIndex = model.currentChapterIndex - 1 }
+        , Cmd.batch [ startNarrationCmd
+                    , scrollTo 0
+                    ]
         )
+      else
+        (model, Cmd.none)
     NextChapter ->
       let
         lastChapter = case model.novel of
@@ -127,9 +134,14 @@ update msg model =
                         Nothing -> 0
         newChapterIndex = min lastChapter (model.currentChapterIndex + 1)
       in
-        ( { model | currentChapterIndex = newChapterIndex }
-        , Task.perform (\_ -> StartNarration) (\_ -> StartNarration) (Task.succeed 1)
-        )
+        if newChapterIndex /= model.currentChapterIndex then
+          ( { model | currentChapterIndex = newChapterIndex }
+          , Cmd.batch [ startNarrationCmd
+                      , scrollTo 0
+                      ]
+          )
+        else
+          (model, Cmd.none)
 
     ShowReferenceInformation ->
       ({ model | referenceInformationVisible = True }, Cmd.none)

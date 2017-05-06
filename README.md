@@ -1,6 +1,8 @@
 TODO
 ====
 
+* Make different URLs for novel chapters in a novel, so they're easy to
+  bookmark and continue. Make sure the music continues (or doesn't start!).
 * Add a JS confirmation thing to the publish button?
 * Upgrade ProseMirror
 * Upgrade Elm

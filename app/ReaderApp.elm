@@ -8,7 +8,6 @@ import ReaderApp.Messages exposing (..)
 import ReaderApp.Models exposing (..)
 import ReaderApp.Update
 import ReaderApp.Views
--- import ReaderApp.Ports
 
 type alias Model = ReaderApp.Models.Model
 type alias Msg = ReaderApp.Messages.Msg

@@ -164,3 +164,7 @@ app.ports.uploadFile.subscribe(evt => {
     formData.append("file", fileInput.files[0]);
     xhr.send(formData);
 });
+
+app.ports.scrollTo.subscribe(evt => {
+    window.scrollTo(0, evt);
+});
