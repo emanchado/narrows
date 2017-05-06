@@ -192,13 +192,13 @@ mainView model =
              text chapter.title)
       , bannerView model.banner
       , div [ class "two-column" ]
-          [ case (Debug.log "Last reactions on the view" model.lastReactions) of
+          [ case model.lastReactions of
               Just lastReactions ->
                 lastReactionListView lastReactions chapter
               Nothing ->
                 section []
                   [ text "Loading reactions…" ]
-          , div []
+          , section []
               [ chapterView chapter narration
               , bannerView model.flash
               ]
