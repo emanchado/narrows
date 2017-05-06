@@ -42,7 +42,9 @@ function exportText(editor) {
 function exportTextToDOM(text, schema) {
     const importedText = _importText(text, schema);
     const serializer = DOMSerializer.fromSchema(schema);
-    return serializer.serializeFragment(importedText.content);
+    return importedText ?
+        serializer.serializeFragment(importedText.content) :
+        document.createElement("div");
 }
 
 function updateParticipants(editorView, participants) {
