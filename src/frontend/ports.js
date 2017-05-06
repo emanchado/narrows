@@ -40,6 +40,9 @@ app.ports.startNarration.subscribe(evt => {
         app.ports.markNarrationAsStarted.send(breathHoldingTime);
 
         // Fade audio in, too
+        if (!evt.audioElemId) {
+            return;
+        }
         const audioEl = document.getElementById(evt.audioElemId);
         if (!audioEl) {
             return;
