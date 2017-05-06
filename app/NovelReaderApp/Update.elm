@@ -29,6 +29,17 @@ urlUpdate route model =
       ( model
       , NovelReaderApp.Api.fetchNovelInfo novelToken
       )
+    Routing.NovelReaderChapterPage novelToken chapterIndex ->
+      ( { model | currentChapterIndex = chapterIndex }
+      , case model.novel of
+          Just novel ->
+            case model.state of
+              Narrating -> Cmd.batch [ startNarrationCmd
+                                     , scrollTo 0
+                                     ]
+              _ -> Cmd.none
+          Nothing -> NovelReaderApp.Api.fetchNovelInfo novelToken
+      )
     _ ->
       (model, Cmd.none)
 
@@ -64,9 +75,15 @@ update msg model =
                                   }) }
         , Cmd.none)
     NovelFetchSuccess novelData ->
-      ({ model | novel = Just novelData }
-      , Cmd.none
-      )
+      let
+        lastChapterIndex = (List.length novelData.chapters) - 1
+        newChapterIndex = min lastChapterIndex model.currentChapterIndex
+      in
+        ( { model | novel = Just novelData
+                  , currentChapterIndex = max 0 newChapterIndex
+          }
+        , Cmd.none
+        )
 
     StartNarration ->
       let
@@ -121,14 +138,16 @@ update msg model =
         ({ model | backgroundBlurriness = blurriness }, Cmd.none)
 
     PreviousChapter ->
-      if model.currentChapterIndex > 0 then
-        ( { model | currentChapterIndex = model.currentChapterIndex - 1 }
-        , Cmd.batch [ startNarrationCmd
-                    , scrollTo 0
-                    ]
-        )
-      else
-        (model, Cmd.none)
+      let
+        newChapterIndex = max 0 (model.currentChapterIndex - 1)
+      in
+        case model.novel of
+          Just novel ->
+            ( model
+            , Navigation.newUrl <| "/novels/" ++ novel.token ++ "/chapters/" ++ (toString newChapterIndex)
+            )
+          Nothing ->
+            (model, Cmd.none)
     NextChapter ->
       let
         lastChapter = case model.novel of
@@ -136,14 +155,13 @@ update msg model =
                         Nothing -> 0
         newChapterIndex = min lastChapter (model.currentChapterIndex + 1)
       in
-        if newChapterIndex /= model.currentChapterIndex then
-          ( { model | currentChapterIndex = newChapterIndex }
-          , Cmd.batch [ startNarrationCmd
-                      , scrollTo 0
-                      ]
-          )
-        else
-          (model, Cmd.none)
+        case model.novel of
+          Just novel ->
+            ( model
+            , Navigation.newUrl <| "/novels/" ++ novel.token ++ "/chapters/" ++ (toString newChapterIndex)
+            )
+          Nothing ->
+            (model, Cmd.none)
 
     ShowReferenceInformation ->
       ({ model | referenceInformationVisible = True }, Cmd.none)

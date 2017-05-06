@@ -100,6 +100,8 @@ appContentView model =
       App.map ReaderMsg (ReaderApp.view model.readerApp)
     Routing.NovelReaderPage novelToken ->
       App.map NovelReaderMsg (NovelReaderApp.view model.novelReaderApp)
+    Routing.NovelReaderChapterPage novelToken chapterIndex ->
+      App.map NovelReaderMsg (NovelReaderApp.view model.novelReaderApp)
     Routing.CharacterPage characterToken ->
       App.map CharacterMsg (CharacterApp.view model.characterApp)
     Routing.NotFoundRoute ->

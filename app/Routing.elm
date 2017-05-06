@@ -16,6 +16,7 @@ type Route
   | CharacterCreationPage Int
   | UserManagementPage
   | NovelReaderPage String
+  | NovelReaderChapterPage String Int
   | NotFoundRoute
 
 matchers : Parser (Route -> a) a
@@ -31,6 +32,7 @@ matchers =
     , format CharacterCreationPage (s "narrations" </> int </> s "characters" </> s "new")
     , format NarrationPage (s "narrations" </> int)
     , format UserManagementPage (s "users")
+    , format NovelReaderChapterPage (s "novels" </> string </> s "chapters" </> int)
     , format NovelReaderPage (s "novels" </> string)
     ]
 
