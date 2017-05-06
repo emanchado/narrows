@@ -951,7 +951,8 @@ class NarrowsStore {
             characterId
         ).then(chapters => {
             chapters.forEach(c => {
-                c.text = JSON.parse(c.text);
+                c.text = JSON.parse(c.text.replace(/\r/g, ""));
+                c.text = fixBlockImages(c.text);
             });
 
             return chapters;
