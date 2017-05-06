@@ -70,7 +70,7 @@ update msg model =
 
     StartNarration ->
       let
-        audioElemId = if model.backgroundMusic then
+        audioElemId = if model.musicPlaying then
                         "background-music"
                       else
                         ""
@@ -105,11 +105,13 @@ update msg model =
       let
         musicOn = not model.backgroundMusic
       in
-        ({ model | backgroundMusic = musicOn, musicPlaying = musicOn }
-        , Cmd.none)
+        ( { model | backgroundMusic = musicOn, musicPlaying = musicOn }
+        , Cmd.none
+        )
     PlayPauseMusic ->
-      ({ model | musicPlaying = not model.musicPlaying }
-      , playPauseNarrationMusic { audioElemId = "background-music" })
+      ( { model | musicPlaying = not model.musicPlaying }
+      , playPauseNarrationMusic { audioElemId = "background-music" }
+      )
 
     PageScroll scrollAmount ->
       let
