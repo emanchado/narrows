@@ -920,7 +920,14 @@ class NarrowsStore {
                 AND CHR.narration_id = ?
                 AND CHPT.published IS NOT NULL`,
             binds
-        );
+        ).then(reactions => {
+            reactions.forEach(reaction => {
+                reaction.chapterText = JSON.parse(reaction.chapterText.replace(/\r/g, ""));
+                reaction.chapterText = fixBlockImages(reaction.chapterText);
+            });
+
+            return reactions;
+        });
     }
 
     getCharacterChaptersBasic(characterId) {

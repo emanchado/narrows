@@ -23,7 +23,7 @@ export function formatLastReactions(chapterId, lastReactions) {
         lastChapters: Object.keys(lastChapters).map(chapter => (
             { id: lastChapters[chapter].id,
               title: lastChapters[chapter].title,
-              text: JSON.parse(lastChapters[chapter].text) }
+              text: lastChapters[chapter].text }
         ))
     };
 }
