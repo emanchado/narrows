@@ -155,7 +155,7 @@ update msg model =
     NarrationLastReactionsFetchError error ->
       genericHttpErrorHandler model error
     NarrationLastReactionsFetchSuccess lastReactions ->
-      ( { model | lastReactions = Just <| Debug.log "Last narration reactions" lastReactions }
+      ( { model | lastReactions = Just lastReactions }
       , Cmd.batch
           (List.map
              (\c -> renderText { elemId = "chapter-text-" ++ (toString c.id)
