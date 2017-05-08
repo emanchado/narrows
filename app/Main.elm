@@ -43,6 +43,30 @@ initialState result =
     , Core.Api.refreshSession
     )
 
+protectedCmd : Maybe UserSession -> Cmd Msg -> Cmd Msg
+protectedCmd maybeSession cmd =
+  case maybeSession of
+    Just session ->
+      case session of
+        AnonymousSession ->
+          Cmd.none
+        LoggedInSession _ ->
+          cmd
+    Nothing ->
+      Cmd.none
+
+protectedCmds : Maybe UserSession -> List (Cmd Msg) -> List (Cmd Msg)
+protectedCmds maybeSession cmds =
+  case maybeSession of
+    Just session ->
+      case session of
+        AnonymousSession ->
+          []
+        LoggedInSession _ ->
+          cmds
+    Nothing ->
+      []
+
 combinedUrlUpdate : Result String Routing.Route -> Model -> (Model, Cmd Msg)
 combinedUrlUpdate result model =
   let
@@ -70,17 +94,22 @@ combinedUrlUpdate result model =
               , userManagementApp = updatedUserManagementModel
               , novelReaderApp = updatedNovelReaderModel
               }
-    , Cmd.batch [ Cmd.map ReaderMsg readerCmd
-                , Cmd.map CharacterMsg characterCmd
-                , Cmd.map NarratorDashboardMsg narratorDashboardCmd
-                , Cmd.map NarrationCreationMsg narrationCreationCmd
-                , Cmd.map NarrationOverviewMsg narrationOverviewCmd
-                , Cmd.map ChapterEditMsg narratorCmd
-                , Cmd.map ChapterControlMsg chapterControlCmd
-                , Cmd.map CharacterCreationMsg characterCreationCmd
-                , Cmd.map UserManagementMsg userManagementCmd
-                , Cmd.map NovelReaderMsg novelReaderCmd
-                ]
+    , Cmd.batch <|
+        List.append
+          [ Cmd.map ReaderMsg readerCmd
+          , Cmd.map CharacterMsg characterCmd
+          , Cmd.map NovelReaderMsg novelReaderCmd
+          ]
+          (protectedCmds
+             model.session
+             [ Cmd.map NarratorDashboardMsg narratorDashboardCmd
+             , Cmd.map NarrationCreationMsg narrationCreationCmd
+             , Cmd.map NarrationOverviewMsg narrationOverviewCmd
+             , Cmd.map ChapterEditMsg narratorCmd
+             , Cmd.map ChapterControlMsg chapterControlCmd
+             , Cmd.map CharacterCreationMsg characterCreationCmd
+             , Cmd.map UserManagementMsg userManagementCmd
+             ])
     )
 
 combinedUpdate : Msg -> Model -> (Model, Cmd Msg)
@@ -133,46 +162,61 @@ combinedUpdate msg model =
         (newCharacterModel, cmd) = CharacterApp.update characterMsg model.characterApp
       in
         ({ model | characterApp = newCharacterModel }, Cmd.map CharacterMsg cmd)
-    NarratorDashboardMsg narratorDashboardMsg ->
-      let
-        (newNarratorDashboardModel, cmd) = NarratorDashboardApp.update narratorDashboardMsg model.narratorDashboardApp
-      in
-        ({ model | narratorDashboardApp = newNarratorDashboardModel }, Cmd.map NarratorDashboardMsg cmd)
-    NarrationCreationMsg narrationCreationMsg ->
-      let
-        (newNarrationCreationModel, cmd) = NarrationCreationApp.update narrationCreationMsg model.narrationCreationApp
-      in
-        ({ model | narrationCreationApp = newNarrationCreationModel }, Cmd.map NarrationCreationMsg cmd)
-    NarrationOverviewMsg narrationOverviewMsg ->
-      let
-        (newNarrationOverviewModel, cmd) = NarrationOverviewApp.update narrationOverviewMsg model.narrationOverviewApp
-      in
-        ({ model | narrationOverviewApp = newNarrationOverviewModel }, Cmd.map NarrationOverviewMsg cmd)
-    ChapterEditMsg chapterEditMsg ->
-      let
-        (newNarratorModel, cmd) = ChapterEditApp.update chapterEditMsg model.chapterEditApp
-      in
-        ({ model | chapterEditApp = newNarratorModel }, Cmd.map ChapterEditMsg cmd)
-    ChapterControlMsg chapterControlMsg ->
-      let
-        (newChapterControlModel, cmd) = ChapterControlApp.update chapterControlMsg model.chapterControlApp
-      in
-        ({ model | chapterControlApp = newChapterControlModel }, Cmd.map ChapterControlMsg cmd)
-    CharacterCreationMsg characterCreationMsg ->
-      let
-        (newCharacterCreationModel, cmd) = CharacterCreationApp.update characterCreationMsg model.characterCreationApp
-      in
-        ({ model | characterCreationApp = newCharacterCreationModel }, Cmd.map CharacterCreationMsg cmd)
-    UserManagementMsg userManagementMsg ->
-      let
-        (newUserManagementModel, cmd) = UserManagementApp.update userManagementMsg model.userManagementApp
-      in
-        ({ model | userManagementApp = newUserManagementModel }, Cmd.map UserManagementMsg cmd)
     NovelReaderMsg novelReaderMsg ->
       let
         (newNovelReaderModel, cmd) = NovelReaderApp.update novelReaderMsg model.novelReaderApp
       in
         ({ model | novelReaderApp = newNovelReaderModel }, Cmd.map NovelReaderMsg cmd)
+
+    NarratorDashboardMsg narratorDashboardMsg ->
+      let
+        (newNarratorDashboardModel, cmd) = NarratorDashboardApp.update narratorDashboardMsg model.narratorDashboardApp
+      in
+        ( { model | narratorDashboardApp = newNarratorDashboardModel }
+        , protectedCmd model.session <| Cmd.map NarratorDashboardMsg cmd
+        )
+    NarrationCreationMsg narrationCreationMsg ->
+      let
+        (newNarrationCreationModel, cmd) = NarrationCreationApp.update narrationCreationMsg model.narrationCreationApp
+      in
+        ( { model | narrationCreationApp = newNarrationCreationModel }
+        , protectedCmd model.session <| Cmd.map NarrationCreationMsg cmd
+        )
+    NarrationOverviewMsg narrationOverviewMsg ->
+      let
+        (newNarrationOverviewModel, cmd) = NarrationOverviewApp.update narrationOverviewMsg model.narrationOverviewApp
+      in
+        ( { model | narrationOverviewApp = newNarrationOverviewModel }
+        , protectedCmd model.session <| Cmd.map NarrationOverviewMsg cmd
+        )
+    ChapterEditMsg chapterEditMsg ->
+      let
+        (newNarratorModel, cmd) = ChapterEditApp.update chapterEditMsg model.chapterEditApp
+      in
+        ( { model | chapterEditApp = newNarratorModel }
+        , protectedCmd model.session <| Cmd.map ChapterEditMsg cmd
+        )
+    ChapterControlMsg chapterControlMsg ->
+      let
+        (newChapterControlModel, cmd) = ChapterControlApp.update chapterControlMsg model.chapterControlApp
+      in
+        ( { model | chapterControlApp = newChapterControlModel }
+        , protectedCmd model.session <| Cmd.map ChapterControlMsg cmd
+        )
+    CharacterCreationMsg characterCreationMsg ->
+      let
+        (newCharacterCreationModel, cmd) = CharacterCreationApp.update characterCreationMsg model.characterCreationApp
+      in
+        ( { model | characterCreationApp = newCharacterCreationModel }
+        , protectedCmd model.session <| Cmd.map CharacterCreationMsg cmd
+        )
+    UserManagementMsg userManagementMsg ->
+      let
+        (newUserManagementModel, cmd) = UserManagementApp.update userManagementMsg model.userManagementApp
+      in
+        ( { model | userManagementApp = newUserManagementModel }
+        , protectedCmd model.session <| Cmd.map UserManagementMsg cmd
+        )
 
     _ ->
       (model, Cmd.none)

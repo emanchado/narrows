@@ -1,7 +1,6 @@
 TODO
 ====
 
-* What is that "Got status 401 with body Unauthorized" when logging in?
 * Add a JS confirmation thing to the publish button?
 * Show error message on wrong login
 * Upgrade ProseMirror
