@@ -2,11 +2,9 @@ TODO
 ====
 
 * Add a JS confirmation thing to the publish button?
-* Show error message on wrong login
 * Upgrade ProseMirror
 * Upgrade Elm
 * ProseMirror (or configuration?) bug in Firefox
-* Avoid that the page gets reloaded
 * Allow the player to change the e-mail address (?), character avatar
 * Rewrite the image uploader so it's a single, special component that
   updates the dropdown as soon as an image is uploaded

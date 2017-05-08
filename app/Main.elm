@@ -14,6 +14,7 @@ import CharacterCreationApp
 import UserManagementApp
 import NovelReaderApp
 
+import Common.Models exposing (errorBanner)
 import Core.Api
 import Core.Models exposing (Model, UserSession(..))
 import Core.Messages exposing (Msg(..))
@@ -27,6 +28,7 @@ initialState result =
   in
     ( { route = currentRoute
       , session = Nothing
+      , banner = Nothing
       , email = ""
       , password = ""
       , readerApp = ReaderApp.initialState
@@ -134,23 +136,37 @@ combinedUpdate msg model =
     Login ->
       (model, Core.Api.login model.email model.password)
     LoginSuccess resp ->
-      case resp.value of
-        Http.Text text ->
-          let
-            decodedResponse =
-              Json.Decode.decodeString Core.Api.parseSession text
-          in
-            case decodedResponse of
-              Ok result ->
-                combinedUrlUpdate
-                  (Ok model.route)
-                  { model | session = Just <| LoggedInSession result }
-              _ ->
-                (model, Cmd.none)
-        _ ->
-          (model, Cmd.none)
+      if resp.status /= 200 then
+        ( { model | session = Just AnonymousSession
+                  , banner = errorBanner "Invalid credentials" }
+        , Cmd.none
+        )
+      else
+        case resp.value of
+          Http.Text text ->
+            let
+              decodedResponse =
+                Json.Decode.decodeString Core.Api.parseSession text
+            in
+              case decodedResponse of
+                Ok result ->
+                  combinedUrlUpdate
+                    (Ok model.route)
+                    { model | session = Just <| LoggedInSession result }
+                Err e ->
+                  ( { model | banner = errorBanner <| "Internal error: " ++ e }
+                  , Cmd.none
+                  )
+          _ ->
+            ( { model | banner = errorBanner "Internal error fetching session" }
+            , Cmd.none
+            )
     LoginError err ->
-      ({ model | session = Just AnonymousSession }, Cmd.none)
+      ( { model | session = Just AnonymousSession
+                , banner = errorBanner "Invalid credentials"
+        }
+      , Cmd.none
+      )
 
     ReaderMsg readerMsg ->
       let

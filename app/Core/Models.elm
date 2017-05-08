@@ -1,6 +1,8 @@
 module Core.Models exposing (..)
 
 import Routing
+import Common.Models exposing (Banner)
+
 import ReaderApp
 import CharacterApp
 import NarratorDashboardApp
@@ -25,6 +27,7 @@ type UserSession
 type alias Model =
   { route : Routing.Route
   , session : Maybe UserSession
+  , banner : Maybe Banner
   , email : String
   , password : String
 

@@ -37,8 +37,8 @@ unregisteredPageView =
         ]
     ]
 
-loginView : Html Msg
-loginView =
+loginView : Model -> Html Msg
+loginView model =
   div [ class "login-page" ]
     [ div [ class "site-title" ]
         [ text "Narrows - NARRation On Web System" ]
@@ -62,10 +62,10 @@ loginView =
         , div [ class "form-line form-actions" ]
             [ button [ class "btn btn-default"
                      , type' "submit"
-                     , onClick Login
                      ]
                 [ text "Login" ]
             ]
+        , Common.Views.bannerView model.banner
         ]
     ]
 
@@ -111,7 +111,7 @@ appContentView model =
         Just session ->
           case session of
             Core.Models.AnonymousSession ->
-              loginView
+              loginView model
             Core.Models.LoggedInSession _ ->
               dispatchProtectedPage model
         Nothing ->
