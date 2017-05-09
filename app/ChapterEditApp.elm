@@ -19,6 +19,7 @@ initialState =
   , lastReactions = Nothing
   , banner = Nothing
   , flash = Nothing
+  , showPublishChapterDialog = False
   }
 
 update : Msg -> Model -> (Model, Cmd Msg)

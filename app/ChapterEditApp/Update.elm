@@ -308,7 +308,18 @@ update msg model =
         Nothing ->
           (model, Cmd.none)
     PublishChapter ->
-      ({ model | banner = Nothing, flash = Nothing }
+      ( { model | showPublishChapterDialog = True }
+      , Cmd.none
+      )
+    CancelPublishChapter ->
+      ( { model | showPublishChapterDialog = False }
+      , Cmd.none
+      )
+    ConfirmPublishChapter ->
+      ( { model | banner = Nothing
+                , flash = Nothing
+                , showPublishChapterDialog = False
+        }
       , Task.perform (\_ -> NoOp) PublishChapterWithTime Time.now
       )
     PublishChapterWithTime time ->

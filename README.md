@@ -1,7 +1,6 @@
 TODO
 ====
 
-* Add a JS confirmation thing to the publish button?
 * Upgrade ProseMirror
 * Upgrade Elm
 * ProseMirror (or configuration?) bug in Firefox

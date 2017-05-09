@@ -46,4 +46,5 @@ type alias Model =
   , lastReactions : Maybe LastReactions
   , banner : Maybe Banner
   , flash : Maybe Banner
+  , showPublishChapterDialog : Bool
   }

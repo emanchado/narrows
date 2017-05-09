@@ -15,6 +15,13 @@ onPreventDefaultClick message =
         { defaultOptions | preventDefault = True }
         (Json.Decode.succeed message)
 
+onStopPropagationClick : msg -> Html.Attribute msg
+onStopPropagationClick message =
+    onWithOptions
+        "click"
+        { defaultOptions | stopPropagation = True }
+        (Json.Decode.succeed message)
+
 messageView : Message -> Html msg
 messageView message =
   div [ class "message" ]

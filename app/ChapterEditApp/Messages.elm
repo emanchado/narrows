@@ -40,6 +40,8 @@ type Msg
   | SaveNewChapterError Http.RawError
   | SaveNewChapterSuccess Http.Response
   | PublishChapter
+  | ConfirmPublishChapter
+  | CancelPublishChapter
   | PublishChapterWithTime Time
   | PublishNewChapter
   | PublishNewChapterWithTime Time
