@@ -2,37 +2,39 @@ module CharacterApp.Api.Json exposing (..)
 
 import Json.Decode as Json exposing (..)
 import Json.Encode
-
 import CharacterApp.Models exposing (CharacterInfo, ChapterSummary, NarrationSummary)
+
 
 parseChapterSummary : Json.Decoder ChapterSummary
 parseChapterSummary =
-  Json.object2 ChapterSummary
-    ("id" := int)
-    ("title" := string)
+    Json.map2 ChapterSummary
+        (field "id" int)
+        (field "title" string)
+
 
 parseNarrationSummary : Json.Decoder NarrationSummary
 parseNarrationSummary =
-  Json.object3 NarrationSummary
-    ("id" := int)
-    ("title" := string)
-    ("chapters" := list parseChapterSummary)
+    Json.map3 NarrationSummary
+        (field "id" int)
+        (field "title" string)
+        (field "chapters" <| list parseChapterSummary)
+
 
 parseCharacterInfo : Json.Decoder CharacterInfo
 parseCharacterInfo =
-  Json.object6 CharacterInfo
-    ("id" := int)
-    ("name" := string)
-    (maybe ("avatar" := string))
-    ("description" := Json.value)
-    ("backstory" := Json.value)
-    ("narration" := parseNarrationSummary)
+    Json.map6 CharacterInfo
+        (field "id" int)
+        (field "name" string)
+        (maybe (field "avatar" string))
+        (field "description" Json.value)
+        (field "backstory" Json.value)
+        (field "narration" parseNarrationSummary)
 
-encodeCharacterUpdate : CharacterInfo -> String
+
+encodeCharacterUpdate : CharacterInfo -> Value
 encodeCharacterUpdate characterInfo =
-  (Json.Encode.encode
-     0
-     (Json.Encode.object [ ("name", Json.Encode.string characterInfo.name)
-                         , ("description", characterInfo.description)
-                         , ("backstory", characterInfo.backstory)
-                         ]))
+  Json.Encode.object
+    [ ( "name", Json.Encode.string characterInfo.name )
+    , ( "description", characterInfo.description )
+    , ( "backstory", characterInfo.backstory )
+    ]

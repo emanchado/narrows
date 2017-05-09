@@ -1,6 +1,7 @@
 module Core.Messages exposing (..)
 
 import Http
+import Navigation
 
 import Core.Models
 import ReaderApp
@@ -14,23 +15,23 @@ import CharacterCreationApp
 import UserManagementApp
 import NovelReaderApp
 
+
 type Msg
-  = NoOp
-  | NavigateTo String
-  | SessionFetchSuccess Core.Models.UserInfo
-  | SessionFetchError Http.Error
-  | UpdateEmail String
-  | UpdatePassword String
-  | Login
-  | LoginSuccess Http.Response
-  | LoginError Http.RawError
-  | ReaderMsg ReaderApp.Msg
-  | CharacterMsg CharacterApp.Msg
-  | NarratorDashboardMsg NarratorDashboardApp.Msg
-  | NarrationCreationMsg NarrationCreationApp.Msg
-  | NarrationOverviewMsg NarrationOverviewApp.Msg
-  | ChapterEditMsg ChapterEditApp.Msg
-  | ChapterControlMsg ChapterControlApp.Msg
-  | CharacterCreationMsg CharacterCreationApp.Msg
-  | UserManagementMsg UserManagementApp.Msg
-  | NovelReaderMsg NovelReaderApp.Msg
+    = NoOp
+    | NavigateTo String
+    | UpdateLocation Navigation.Location
+    | SessionFetchResult (Result Http.Error Core.Models.UserInfo)
+    | UpdateEmail String
+    | UpdatePassword String
+    | Login
+    | LoginResult (Result Http.Error Core.Models.UserInfo)
+    | ReaderMsg ReaderApp.Msg
+    | CharacterMsg CharacterApp.Msg
+    | NarratorDashboardMsg NarratorDashboardApp.Msg
+    | NarrationCreationMsg NarrationCreationApp.Msg
+    | NarrationOverviewMsg NarrationOverviewApp.Msg
+    | ChapterEditMsg ChapterEditApp.Msg
+    | ChapterControlMsg ChapterControlApp.Msg
+    | CharacterCreationMsg CharacterCreationApp.Msg
+    | UserManagementMsg UserManagementApp.Msg
+    | NovelReaderMsg NovelReaderApp.Msg

@@ -2,7 +2,6 @@ TODO
 ====
 
 * Upgrade ProseMirror
-* Upgrade Elm
 * ProseMirror (or configuration?) bug in Firefox
 * Allow the player to change the e-mail address (?), character avatar
 * Rewrite the image uploader so it's a single, special component that

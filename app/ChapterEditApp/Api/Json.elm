@@ -2,89 +2,106 @@ module ChapterEditApp.Api.Json exposing (..)
 
 import Json.Decode as Json exposing (..)
 import Json.Encode
-
 import Common.Models exposing (FullCharacter, Narration, Chapter, FileSet)
 import Common.Api.Json exposing (parseCharacter)
-
 import ChapterEditApp.Models exposing (LastReactions, LastChapter, LastReaction, LastReactionChapter)
+
 
 parseFullCharacter : Json.Decoder FullCharacter
 parseFullCharacter =
-  Json.object3 FullCharacter ("id" := int) ("name" := string) ("token" := string)
+    Json.map3 FullCharacter (field "id" int) (field "name" string) (field "token" string)
+
 
 parseChapter : Json.Decoder Chapter
 parseChapter =
-  Json.object8 Chapter
-    ("id" := int)
-    ("narrationId" := int)
-    ("title" := string)
-    (maybe ("audio" := string))
-    (maybe ("backgroundImage" := string))
-    ("text" := Json.value)
-    ("participants" := list parseFullCharacter)
-    (maybe ("published" := string))
+    Json.map8 Chapter
+        (field "id" int)
+        (field "narrationId" int)
+        (field "title" string)
+        (maybe (field "audio" string))
+        (maybe (field "backgroundImage" string))
+        (field "text" Json.value)
+        (field "participants" <| list parseFullCharacter)
+        (maybe (field "published" string))
+
 
 parseFileSet : Json.Decoder FileSet
 parseFileSet =
-  Json.object3 FileSet
-    ("audio" := list string)
-    ("backgroundImages" := list string)
-    ("images" := list string)
+    Json.map3 FileSet
+        (field "audio" <| list string)
+        (field "backgroundImages" <| list string)
+        (field "images" <| list string)
+
 
 parseLastReactionChapter : Json.Decoder LastReactionChapter
 parseLastReactionChapter =
-  Json.object2 LastReactionChapter
-    ("id" := int)
-    ("title" := string)
+    Json.map2 LastReactionChapter
+        (field "id" int)
+        (field "title" string)
+
 
 parseLastReaction : Json.Decoder LastReaction
 parseLastReaction =
-  Json.object3 LastReaction
-    ("chapter" := parseLastReactionChapter)
-    ("character" := parseCharacter)
-    (maybe ("text" := string))
+    Json.map3 LastReaction
+        (field "chapter" parseLastReactionChapter)
+        (field "character" parseCharacter)
+        (maybe (field "text" string))
+
 
 parseLastChapter : Json.Decoder LastChapter
 parseLastChapter =
-  Json.object3 LastChapter
-    ("id" := int)
-    ("title" := string)
-    ("text" := Json.value)
+    Json.map3 LastChapter
+        (field "id" int)
+        (field "title" string)
+        (field "text" Json.value)
+
 
 parseLastReactions : Json.Decoder LastReactions
 parseLastReactions =
-  Json.object3 LastReactions
-    ("chapterId" := int)
-    ("lastReactions" := list parseLastReaction)
-    ("lastChapters" := list parseLastChapter)
+    Json.map3 LastReactions
+        (field "chapterId" int)
+        (field "lastReactions" <| list parseLastReaction)
+        (field "lastChapters" <| list parseLastChapter)
+
 
 encodeCharacter : FullCharacter -> Json.Encode.Value
 encodeCharacter character =
-  (Json.Encode.object [ ("id", Json.Encode.int character.id)
-                      , ("name", Json.Encode.string character.name)
-                      , ("token", Json.Encode.string character.token)
-                      ])
+    (Json.Encode.object
+        [ ( "id", Json.Encode.int character.id )
+        , ( "name", Json.Encode.string character.name )
+        , ( "token", Json.Encode.string character.token )
+        ]
+    )
 
-encodeChapter : Chapter -> String
+
+encodeChapter : Chapter -> Json.Encode.Value
 encodeChapter chapter =
-  (Json.Encode.encode
-     0
-     (Json.Encode.object [ ("title", Json.Encode.string chapter.title)
-                         , ("text", chapter.text)
-                         , ("audio", case chapter.audio of
-                                       Just audio ->
-                                         Json.Encode.string audio
-                                       Nothing ->
-                                         Json.Encode.null)
-                         , ("backgroundImage", case chapter.backgroundImage of
-                                                 Just bgImage ->
-                                                   Json.Encode.string bgImage
-                                                 Nothing ->
-                                                   Json.Encode.null)
-                         , ("participants", Json.Encode.list <| List.map encodeCharacter chapter.participants)
-                         , ("published", case chapter.published of
-                                           Just published ->
-                                             Json.Encode.string published
-                                           Nothing ->
-                                             Json.Encode.null)
-                         ]))
+  (Json.Encode.object
+      [ ( "title", Json.Encode.string chapter.title )
+      , ( "text", chapter.text )
+      , ( "audio"
+        , case chapter.audio of
+              Just audio ->
+                  Json.Encode.string audio
+
+              Nothing ->
+                  Json.Encode.null
+        )
+      , ( "backgroundImage"
+        , case chapter.backgroundImage of
+              Just bgImage ->
+                  Json.Encode.string bgImage
+
+              Nothing ->
+                  Json.Encode.null
+        )
+      , ( "participants", Json.Encode.list <| List.map encodeCharacter chapter.participants )
+      , ( "published"
+        , case chapter.published of
+              Just published ->
+                  Json.Encode.string published
+
+              Nothing ->
+                  Json.Encode.null
+        )
+      ])

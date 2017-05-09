@@ -1,21 +1,20 @@
 module ChapterControlApp.Api exposing (..)
 
-import Task
 import Http
 import Json.Decode as Json exposing (..)
 import Json.Encode
-
-import Common.Api.Json exposing (parseChapter, parseReaction, parseMessageThread, parseNarration)
-
+import Common.Api.Json exposing (parseChapter, parseReaction, parseMessageThread, parseNarration, parseChapterMessages)
 import ChapterControlApp.Messages exposing (Msg, Msg(..))
 import ChapterControlApp.Models exposing (ChapterInteractions)
 
+
 parseChapterInteractions : Json.Decoder ChapterInteractions
 parseChapterInteractions =
-  Json.object3 ChapterInteractions
-    ("chapter" := parseChapter)
-    ("reactions" := list parseReaction)
-    ("messageThreads" := list parseMessageThread)
+    Json.map3 ChapterInteractions
+        (field "chapter" parseChapter)
+        (field "reactions" <| list parseReaction)
+        (field "messageThreads" <| list parseMessageThread)
+
 
 fetchChapterInteractions : Int -> Cmd Msg
 fetchChapterInteractions chapterId =
@@ -23,57 +22,47 @@ fetchChapterInteractions chapterId =
     chapterInteractionsApiUrl =
       "/api/chapters/" ++ (toString chapterId) ++ "/interactions"
   in
-    Task.perform ChapterInteractionsFetchError ChapterInteractionsFetchSuccess
-      (Http.get parseChapterInteractions chapterInteractionsApiUrl)
+    Http.send ChapterInteractionsFetchResult <|
+      Http.get chapterInteractionsApiUrl parseChapterInteractions
+
 
 fetchNarrationInfo : Int -> Cmd Msg
 fetchNarrationInfo narrationId =
   let
     narrationApiUrl = "/api/narrations/" ++ (toString narrationId)
   in
-    Task.perform NarrationFetchError NarrationFetchSuccess
-      (Http.get parseNarration narrationApiUrl)
+    Http.send NarrationFetchResult <|
+      Http.get narrationApiUrl parseNarration
 
 
 sendMessage : Int -> String -> List Int -> Cmd Msg
 sendMessage chapterId messageText messageRecipients =
   let
     sendMessageApiUrl = "/api/chapters/" ++ (toString chapterId) ++ "/messages"
+
     jsonEncodedBody =
-      (Json.Encode.encode
-         0
-         (Json.Encode.object [ ("text", Json.Encode.string messageText)
-                             , ("recipients", Json.Encode.list (List.map Json.Encode.int messageRecipients))]))
+      (Json.Encode.object
+         [ ( "text", Json.Encode.string messageText )
+         , ( "recipients", Json.Encode.list (List.map Json.Encode.int messageRecipients) )
+         ])
   in
-    Task.perform
-      SendMessageError
-      SendMessageSuccess
-      (Http.send
-         Http.defaultSettings
-         { verb = "POST"
-         , url = sendMessageApiUrl
-         , headers = [("Content-Type", "application/json")]
-         , body = Http.string jsonEncodedBody
-         })
+    Http.send SendMessageResult <|
+      Http.post sendMessageApiUrl (Http.jsonBody jsonEncodedBody) parseChapterMessages
 
 
 sendReply : Int -> String -> List Int -> Cmd Msg
 sendReply chapterId messageText messageRecipients =
   let
     sendMessageApiUrl = "/api/chapters/" ++ (toString chapterId) ++ "/messages"
+
     jsonEncodedBody =
-      (Json.Encode.encode
-         0
-         (Json.Encode.object [ ("text", Json.Encode.string messageText)
-                             , ("recipients", Json.Encode.list (List.map Json.Encode.int messageRecipients))]))
+      (Json.Encode.object
+         [ ( "text", Json.Encode.string messageText )
+         , ( "recipients", Json.Encode.list (List.map Json.Encode.int messageRecipients) )
+         ])
   in
-    Task.perform
-      SendReplyError
-      SendReplySuccess
-      (Http.send
-         Http.defaultSettings
-         { verb = "POST"
-         , url = sendMessageApiUrl
-         , headers = [("Content-Type", "application/json")]
-         , body = Http.string jsonEncodedBody
-         })
+    Http.send SendReplyResult <|
+      Http.post
+        sendMessageApiUrl
+        (Http.jsonBody jsonEncodedBody)
+        parseChapterMessages

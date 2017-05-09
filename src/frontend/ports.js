@@ -167,7 +167,7 @@ app.ports.uploadFile.subscribe(evt => {
         }
 
         app.ports.uploadFileSuccess.send({ name: resp.name,
-                                           "type'": resp.type });
+                                           type_: resp.type });
     });
 
     const formData = new FormData();

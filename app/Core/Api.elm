@@ -1,41 +1,33 @@
 module Core.Api exposing (..)
 
 import Http
-import Task
 import Json.Decode as Json exposing (..)
 import Json.Encode
-
 import Core.Models
 import Core.Messages exposing (..)
 
+
 parseSession : Json.Decoder Core.Models.UserInfo
 parseSession =
-  Json.object3 Core.Models.UserInfo
-    ("id" := int)
-    ("email" := string)
-    ("role" := string)
+    Json.map3 Core.Models.UserInfo
+        (field "id" int)
+        (field "email" string)
+        (field "role" string)
+
 
 refreshSession : Cmd Msg
 refreshSession =
-  Task.perform SessionFetchError SessionFetchSuccess
-    (Http.get parseSession "/api/session")
+  Http.send SessionFetchResult <|
+    Http.get "/api/session" parseSession
+
 
 login : String -> String -> Cmd Msg
 login email password =
   let
-    jsonEncodedBody =
-      (Json.Encode.encode
-         0
-         (Json.Encode.object [ ("email", Json.Encode.string email)
-                             , ("password", Json.Encode.string password) ]))
+    jsonEncodedBody = (Json.Encode.object
+                         [ ( "email", Json.Encode.string email )
+                         , ( "password", Json.Encode.string password )
+                         ])
   in
-    Task.perform
-      LoginError
-      LoginSuccess
-      (Http.send
-         Http.defaultSettings
-         { verb = "POST"
-         , url = "/api/session"
-         , headers = [("Content-Type", "application/json")]
-         , body = Http.string jsonEncodedBody
-         })
+    Http.send LoginResult <|
+      Http.post "/api/session" (Http.jsonBody jsonEncodedBody) parseSession

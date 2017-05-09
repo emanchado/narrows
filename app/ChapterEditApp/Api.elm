@@ -1,6 +1,5 @@
 module ChapterEditApp.Api exposing (..)
 
-import Task
 import Http
 
 import ChapterEditApp.Messages exposing (Msg, Msg(..))
@@ -8,21 +7,24 @@ import Common.Models exposing (Chapter)
 import Common.Api.Json exposing (parseNarration)
 import ChapterEditApp.Api.Json exposing (parseChapter, parseLastReactions, encodeChapter, encodeCharacter)
 
+
 fetchChapterInfo : Int -> Cmd Msg
 fetchChapterInfo chapterId =
   let
     chapterApiUrl = "/api/chapters/" ++ (toString chapterId)
   in
-    Task.perform ChapterFetchError ChapterFetchSuccess
-      (Http.get parseChapter chapterApiUrl)
+    Http.send ChapterFetchResult <|
+      Http.get chapterApiUrl parseChapter
+
 
 fetchNarrationInfo : Int -> Cmd Msg
 fetchNarrationInfo narrationId =
   let
     narrationApiUrl = "/api/narrations/" ++ (toString narrationId)
   in
-    Task.perform NarrationFetchError NarrationFetchSuccess
-      (Http.get parseNarration narrationApiUrl)
+    Http.send NarrationFetchResult <|
+      Http.get narrationApiUrl parseNarration
+
 
 fetchLastReactions : Int -> Cmd Msg
 fetchLastReactions chapterId =
@@ -30,8 +32,9 @@ fetchLastReactions chapterId =
     lastReactionsApiUrl =
       "/api/chapters/" ++ (toString chapterId) ++ "/last-reactions"
   in
-    Task.perform LastReactionsFetchError LastReactionsFetchSuccess
-      (Http.get parseLastReactions lastReactionsApiUrl)
+    Http.send LastReactionsFetchResult <|
+      Http.get lastReactionsApiUrl parseLastReactions
+
 
 fetchNarrationLastReactions : Int -> Cmd Msg
 fetchNarrationLastReactions narrationId =
@@ -39,31 +42,30 @@ fetchNarrationLastReactions narrationId =
     lastReactionsApiUrl =
       "/api/narrations/" ++ (toString narrationId) ++ "/last-reactions"
   in
-    Task.perform NarrationLastReactionsFetchError NarrationLastReactionsFetchSuccess
-      (Http.get parseLastReactions lastReactionsApiUrl)
+    Http.send NarrationLastReactionsFetchResult <|
+      Http.get lastReactionsApiUrl parseLastReactions
+
 
 saveChapter : Chapter -> Cmd Msg
 saveChapter chapter =
-  Task.perform
-    SaveChapterError
-    SaveChapterSuccess
-    (Http.send
-       Http.defaultSettings
-       { verb = "PUT"
-       , url = "/api/chapters/" ++ (toString chapter.id)
-       , headers = [("Content-Type", "application/json")]
-       , body = Http.string <| encodeChapter chapter
-       })
+  Http.send SaveChapterResult <|
+    Http.request { method = "PUT"
+                 , url = "/api/chapters/" ++ (toString chapter.id)
+                 , headers = []
+                 , body = Http.jsonBody <| encodeChapter chapter
+                 , expect = Http.expectStringResponse Ok
+                 , timeout = Nothing
+                 , withCredentials = False
+                 }
+
 
 createChapter : Chapter -> Cmd Msg
 createChapter chapter =
-  Task.perform
-    SaveNewChapterError
-    SaveNewChapterSuccess
-    (Http.send
-       Http.defaultSettings
-       { verb = "POST"
-       , url = "/api/narrations/" ++ (toString chapter.narrationId) ++ "/chapters"
-       , headers = [("Content-Type", "application/json")]
-       , body = Http.string <| encodeChapter chapter
-       })
+  let
+    createChapterUrl = "/api/narrations/" ++ (toString chapter.narrationId) ++ "/chapters"
+  in
+    Http.send SaveNewChapterResult <|
+      Http.post
+        createChapterUrl
+        (Http.jsonBody <| encodeChapter chapter)
+        parseChapter

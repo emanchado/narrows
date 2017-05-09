@@ -1,21 +1,19 @@
 module NarrationCreationApp.Api exposing (..)
 
-import Task
 import Http
-
 import NarrationCreationApp.Messages exposing (Msg, Msg(..))
 import NarrationCreationApp.Models exposing (NarrationProperties)
-import NarrationCreationApp.Api.Json exposing (encodeNarrationProperties)
+import NarrationCreationApp.Api.Json exposing (encodeNarrationProperties, parseNarrationResponse)
+
 
 createNarration : NarrationProperties -> Cmd Msg
 createNarration props =
-  Task.perform
-    CreateNarrationError
-    CreateNarrationSuccess
-    (Http.send
-       Http.defaultSettings
-       { verb = "POST"
-       , url = "/api/narrations"
-       , headers = [("Content-Type", "application/json")]
-       , body = Http.string <| encodeNarrationProperties props
-       })
+    Http.send CreateNarrationResult <|
+    Http.request { method = "POST"
+                 , url = "/api/narrations/"
+                 , headers = []
+                 , body = Http.jsonBody <| encodeNarrationProperties props
+                 , expect = Http.expectJson parseNarrationResponse
+                 , timeout = Nothing
+                 , withCredentials = False
+                 }

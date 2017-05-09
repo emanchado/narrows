@@ -1,31 +1,43 @@
 module NarrationCreationApp exposing (..)
 
 import Html exposing (Html)
-
-import Routing
+import Core.Routes exposing (Route(..))
 import NarrationCreationApp.Messages exposing (..)
 import NarrationCreationApp.Models exposing (..)
 import NarrationCreationApp.Update
 import NarrationCreationApp.Views
 
-type alias Model = NarrationCreationApp.Models.Model
-type alias Msg = NarrationCreationApp.Messages.Msg
+
+type alias Model =
+    NarrationCreationApp.Models.Model
+
+
+type alias Msg =
+    NarrationCreationApp.Messages.Msg
+
 
 initialState : Model
 initialState =
-  { banner = Nothing
-  , title = ""
-  }
+    { banner = Nothing
+    , title = ""
+    }
 
-update : Msg -> Model -> (Model, Cmd Msg)
-update = NarrationCreationApp.Update.update
 
-urlUpdate : Routing.Route -> Model -> (Model, Cmd Msg)
-urlUpdate = NarrationCreationApp.Update.urlUpdate
+update : Msg -> Model -> ( Model, Cmd Msg )
+update =
+    NarrationCreationApp.Update.update
+
+
+urlUpdate : Route -> Model -> ( Model, Cmd Msg )
+urlUpdate =
+    NarrationCreationApp.Update.urlUpdate
+
 
 view : Model -> Html Msg
-view = NarrationCreationApp.Views.mainView
+view =
+    NarrationCreationApp.Views.mainView
+
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-  Sub.none
+    Sub.none

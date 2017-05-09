@@ -1,84 +1,99 @@
 module Common.Api.Json exposing (..)
 
 import Json.Decode as Json exposing (..)
+import Common.Models exposing (Character, FullCharacter, Narration, Chapter, FileSet, ChapterMessages, MessageThread, Message, Reaction, ChapterOverview, NarrationOverview, UserInfo)
 
-import Common.Models exposing (Character, FullCharacter, Narration, Chapter, FileSet, ChapterMessages, MessageThread, Message, Reaction, ChapterOverview, NarrationOverview)
+
+parseUserInfo : Json.Decoder UserInfo
+parseUserInfo =
+    Json.map3 UserInfo (field "id" int) (field "email" string) (field "role" string)
+
 
 parseCharacter : Json.Decoder Character
 parseCharacter =
-  Json.object2 Character ("id" := int) ("name" := string)
+    Json.map2 Character (field "id" int) (field "name" string)
+
 
 parseFullCharacter : Json.Decoder FullCharacter
 parseFullCharacter =
-  Json.object3 FullCharacter ("id" := int) ("name" := string) ("token" := string)
+    Json.map3 FullCharacter (field "id" int) (field "name" string) (field "token" string)
+
 
 parseFileSet : Json.Decoder FileSet
 parseFileSet =
-  Json.object3 FileSet
-    ("audio" := list string)
-    ("backgroundImages" := list string)
-    ("images" := list string)
+    Json.map3 FileSet
+        (field "audio" <| list string)
+        (field "backgroundImages" <| list string)
+        (field "images" <| list string)
+
 
 parseNarration : Json.Decoder Narration
 parseNarration =
-  Json.object6 Narration
-    ("id" := int)
-    ("title" := string)
-    ("characters" := list parseFullCharacter)
-    (maybe ("defaultAudio" := string))
-    (maybe ("defaultBackgroundImage" := string))
-    ("files" := parseFileSet)
+    Json.map6 Narration
+        (field "id" int)
+        (field "title" string)
+        (field "characters" <| list parseFullCharacter)
+        (maybe (field "defaultAudio" string))
+        (maybe (field "defaultBackgroundImage" string))
+        (field "files" parseFileSet)
+
 
 parseChapter : Json.Decoder Chapter
 parseChapter =
-  Json.object8 Chapter
-    ("id" := int)
-    ("narrationId" := int)
-    ("title" := string)
-    (maybe ("audio" := string))
-    (maybe ("backgroundImage" := string))
-    ("text" := Json.value)
-    ("participants" := list parseFullCharacter)
-    (maybe ("published" := string))
+    Json.map8 Chapter
+        (field "id" int)
+        (field "narrationId" int)
+        (field "title" string)
+        (maybe (field "audio" string))
+        (maybe (field "backgroundImage" string))
+        (field "text" Json.value)
+        (field "participants" <| list parseFullCharacter)
+        (maybe (field "published" string))
+
 
 parseMessage : Json.Decoder Message
 parseMessage =
-  Json.object5 Message
-    ("id" := int)
-    ("body" := string)
-    ("sentAt" := string)
-    (maybe ("sender" := parseCharacter))
-    (maybe ("recipients" := (list parseCharacter)))
+    Json.map5 Message
+        (field "id" int)
+        (field "body" string)
+        (field "sentAt" string)
+        (maybe (field "sender" parseCharacter))
+        (maybe (field "recipients" <| list parseCharacter))
+
 
 parseMessageThread : Json.Decoder MessageThread
 parseMessageThread =
-  Json.object2 MessageThread
-    ("participants" := list parseCharacter)
-    ("messages" := list parseMessage)
+    Json.map2 MessageThread
+        (field "participants" <| list parseCharacter)
+        (field "messages" <| list parseMessage)
+
 
 parseChapterMessages : Json.Decoder ChapterMessages
 parseChapterMessages =
-  Json.object2 ChapterMessages
-    ("messageThreads" := list parseMessageThread)
-    (maybe ("characterId" := int))
+    Json.map2 ChapterMessages
+        (field "messageThreads" <| list parseMessageThread)
+        (maybe (field "characterId" int))
+
 
 parseReaction : Json.Decoder Reaction
 parseReaction =
-  Json.object2 Reaction
-    ("character" := parseCharacter)
-    (maybe ("text" := string))
+    Json.map2 Reaction
+        (field "character" parseCharacter)
+        (maybe (field "text" string))
+
 
 parseChapterOverview : Json.Decoder ChapterOverview
 parseChapterOverview =
-  Json.object5 ChapterOverview
-    ("id" := int)
-    ("title" := string)
-    ("numberMessages" := int)
-    (maybe ("published" := string))
-    ("reactions" := list parseReaction)
+    Json.map5 ChapterOverview
+        (field "id" int)
+        (field "title" string)
+        (field "numberMessages" int)
+        (maybe (field "published" string))
+        (field "reactions" <| list parseReaction)
+
 
 parseNarrationOverview : Json.Decoder NarrationOverview
 parseNarrationOverview =
-  Json.object2 NarrationOverview
-    ("narration" := parseNarration)
-    ("chapters" := list parseChapterOverview)
+    Json.map2 NarrationOverview
+        (field "narration" parseNarration)
+        (field "chapters" <| list parseChapterOverview)
