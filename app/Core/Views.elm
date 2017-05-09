@@ -47,7 +47,8 @@ loginView model =
            ]
         [ div [ class "form-line" ]
             [ label [] [ text "E-mail:" ]
-            , input [ placeholder "user@example.com"
+            , input [ type' "email"
+                    , placeholder "user@example.com"
                     , onInput UpdateEmail
                     ] []
             ]
