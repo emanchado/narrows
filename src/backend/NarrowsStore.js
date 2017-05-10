@@ -571,18 +571,27 @@ class NarrowsStore {
         const participants = props.participants;
         delete props.participants;
 
-        const propNames = Object.keys(props).map(convertToDb),
-              propNameStrings = propNames.map(p => `${p} = ?`);
-        const propValues = Object.keys(props).map(n => (
-            n === "published" ? mysqlTimestamp(props[n]) : props[n]
-        ));
+        let updatePromise;
+        if (Object.keys(participants).length === 0) {
+            // No regular fields to update, avoid SQL error
+            updatePromise = Q(true);
+        } else {
+            const propNames = Object.keys(props).map(convertToDb),
+                  propNameStrings = propNames.map(p => `${p} = ?`);
+            const propValues = Object.keys(props).map(n => (
+                n === "published" ? mysqlTimestamp(props[n]) : props[n]
+            ));
 
-        return Q.ninvoke(
-            this.db,
-            "run",
-            `UPDATE chapters SET ${ propNameStrings.join(", ") } WHERE id = ?`,
-            propValues.concat(id)
-        ).then(
+            updatePromise = Q.ninvoke(
+                this.db,
+                "run",
+                `UPDATE chapters SET ${ propNameStrings.join(", ") }
+                  WHERE id = ?`,
+                propValues.concat(id)
+            );
+        }
+
+        return updatePromise.then(
             () => this.updateChapterParticipants(id, participants)
         ).then(
             () => this.getChapter(id, { includePrivateFields: true })
