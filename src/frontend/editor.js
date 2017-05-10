@@ -1,5 +1,5 @@
 const {EditorState} = require("prosemirror-state");
-const {MenuBarEditorView} = require("prosemirror-menu");
+const {EditorView} = require("prosemirror-view");
 const {Node, DOMSerializer} = require("prosemirror-model");
 const {editorSetup} = require("./setup");
 
@@ -19,11 +19,11 @@ function _textToState(text, schema) {
 }
 
 function create(initialContent, schema, place, onChangeHandler) {
-    const view = new MenuBarEditorView(place, {
+    const view = new EditorView(place, {
         state: _textToState(initialContent, schema),
         images: [],
         dispatchTransaction: tr => {
-            view.updateState(view.editor.state.apply(tr));
+            view.updateState(view.state.apply(tr));
             onChangeHandler(view);
         }
     });

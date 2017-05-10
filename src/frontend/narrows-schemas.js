@@ -7,7 +7,7 @@ const model = require("prosemirror-model"),
       Fragment = model.Fragment;
 const {addListNodes} = require("prosemirror-schema-list");
 
-const chapterMarkSpec = baseSchema.markSpec.append({mention: {
+const chapterMarkSpec = baseSchema.spec.marks.append({mention: {
     attrs: {
         mentionTargets: {default: []}
     },
@@ -28,13 +28,13 @@ const chapterMarkSpec = baseSchema.markSpec.append({mention: {
 }});
 
 const chapterSchema = new Schema({
-  nodes: addListNodes(baseSchema.nodeSpec, "paragraph block*", "block"),
+  nodes: addListNodes(baseSchema.spec.nodes, "paragraph block*", "block"),
   marks: chapterMarkSpec
 });
 
 const descriptionSchema = new Schema({
-  nodes: addListNodes(baseSchema.nodeSpec, "paragraph block*", "block"),
-  marks: baseSchema.markSpec
+  nodes: addListNodes(baseSchema.spec.nodes, "paragraph block*", "block"),
+  marks: baseSchema.spec.marks
 });
 
 module.exports.chapter = chapterSchema;

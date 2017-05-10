@@ -4,6 +4,7 @@ const {keymap} = require("prosemirror-keymap")
 const {history} = require("prosemirror-history")
 const {baseKeymap} = require("prosemirror-commands")
 const {Plugin} = require("prosemirror-state")
+const {menuBar} = require("prosemirror-menu");
 
 const {buildMenuItems} = require("./menu")
 exports.buildMenuItems = buildMenuItems
@@ -42,12 +43,9 @@ function editorSetup(options) {
   ]
   if (options.history !== false) deps.push(history())
 
-  return deps.concat(new Plugin({
-    props: {
-      class: () => "ProseMirror-narrows-setup",
-      menuContent: buildMenuItems(options.schema).fullMenu,
-      floatingMenu: true
-    }
+  return deps.concat(menuBar({
+    floating: true,
+    content: buildMenuItems(options.schema).fullMenu
   }))
 }
 exports.editorSetup = editorSetup

@@ -71,8 +71,8 @@ function cmdItem(cmd, options) {
 }
 
 function markActive(state, type) {
-  let {from, to, empty} = state.selection
-  if (empty) return type.isInSet(state.storedMarks || state.doc.marksAt(from))
+  let {from, $from, to, empty} = state.selection
+  if (empty) return type.isInSet(state.storedMarks || $from.marks())
   else return state.doc.rangeHasMark(from, to, type)
 }
 
@@ -85,12 +85,15 @@ function markItem(markType, options) {
 }
 
 function linkItem(markType) {
-  return markItem(markType, {
+  return new MenuItem({
     title: "Add or remove link",
     icon: icons.link,
-    run(state, onAction, view) {
+    active(state) { return markActive(state, markType) },
+    select(state) { return !state.selection.empty },
+    onDeselected: "disable",
+    run(state, dispatch, view) {
       if (markActive(state, markType)) {
-        toggleMark(markType)(state, onAction)
+        toggleMark(markType)(state, dispatch)
         return true
       }
       openPrompt({
@@ -108,7 +111,8 @@ function linkItem(markType) {
           title: new TextField({label: "Title"})
         },
         callback(attrs) {
-          toggleMark(markType, attrs)(view.state, view.props.onAction)
+          toggleMark(markType, attrs)(view.state, view.dispatch)
+          view.focus()
         }
       })
     }
@@ -289,7 +293,7 @@ function buildMenuItems(schema) {
   if (tableItems.length)
     r.tableMenu = new Dropdown(tableItems, {label: "Table"})
 
-    r.inlineMenu = [cut([r.toggleStrong, r.toggleEm, r.toggleCode, r.toggleLink]), cut([r.togglePrivate]), [r.insertMenu]]
+  r.inlineMenu = [cut([r.toggleStrong, r.toggleEm, r.toggleCode, r.toggleLink]), cut([r.togglePrivate]), [r.insertMenu]]
   r.blockMenu = [cut([r.typeMenu, r.tableMenu, r.wrapBulletList, r.wrapOrderedList, r.wrapBlockQuote, joinUpItem,
                       liftItem, selectParentNodeItem])]
   r.fullMenu = r.inlineMenu.concat(r.blockMenu).concat([[undoItem, redoItem]])

@@ -97,7 +97,7 @@ app.ports.initEditor.subscribe(evt => {
             while (container.firstChild) {
                 container.removeChild(container.firstChild);
             }
-            container.appendChild(editorEl.wrapper);
+            container.appendChild(editorEl.dom.parentNode);
 
             editor.updateText(editorEl, evt.text, schema);
         } else {
@@ -105,7 +105,7 @@ app.ports.initEditor.subscribe(evt => {
                 editor.create(evt.text, schema, container, view => {
                     const port = app.ports[evt.updatePortName];
                     if (port) {
-                        port.send(editor.exportText(view.editor));
+                        port.send(editor.exportText(view));
                     } else {
                         console.error("Cannot find editor update port '" +
                                       evt.updatePortName + "'");
