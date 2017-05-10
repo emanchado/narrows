@@ -185,7 +185,7 @@ ul.thread-list li .btn-bar {
 }
 
 .ProseMirror img {
-    max-width: 100%;
+    width: 100%;
 }
 
 .ProseMirror hr {
@@ -219,7 +219,7 @@ ul.thread-list li .btn-bar {
     padding: 15px;
 
     text-align: center;
-    background-color: #fff;
+    background-color: #eee;
 }
 
 .dialog-text {
