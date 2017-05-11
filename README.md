@@ -1,7 +1,6 @@
 TODO
 ====
 
-* ProseMirror (or configuration?) bug in Firefox
 * Allow the player to change the e-mail address (?), character avatar
 * Rewrite the image uploader so it's a single, special component that
   updates the dropdown as soon as an image is uploaded

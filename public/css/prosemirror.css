@@ -1,0 +1,46 @@
+.ProseMirror {
+  position: relative;
+}
+
+.ProseMirror {
+  word-wrap: break-word;
+  white-space: pre-wrap;
+}
+
+.ProseMirror ul, .ProseMirror ol {
+  cursor: default;
+}
+
+.ProseMirror pre {
+  white-space: pre-wrap;
+}
+
+.ProseMirror li {
+  position: relative;
+  pointer-events: none; /* Don't do weird stuff with marker clicks */
+}
+.ProseMirror li > * {
+  pointer-events: auto;
+}
+
+.ProseMirror-hideselection *::selection { background: transparent; }
+.ProseMirror-hideselection *::-moz-selection { background: transparent; }
+
+.ProseMirror-selectednode {
+  outline: 2px solid #8cf;
+}
+
+/* Make sure li selections wrap around markers */
+
+li.ProseMirror-selectednode {
+  outline: none;
+}
+
+li.ProseMirror-selectednode:after {
+  content: "";
+  position: absolute;
+  left: -32px;
+  right: -2px; top: -2px; bottom: -2px;
+  border: 2px solid #8cf;
+  pointer-events: none;
+}
