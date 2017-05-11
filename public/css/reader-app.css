@@ -214,6 +214,31 @@ ul.thread-list.reader li .btn-bar {
     margin-top: 0;
 }
 
+.avatars {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+}
+.avatars img {
+    max-width: 100px;
+    max-height: 100px;
+}
+.upload-new-avatar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.new-avatar-controls {
+    margin-left: 10px;
+    margin-right: 10px;
+}
+.new-avatar-controls label {
+    display: block;
+}
+.character-name {
+    font-size: 18px;
+}
+
 .chapter-navigation {
     position: fixed;
     top: 0;

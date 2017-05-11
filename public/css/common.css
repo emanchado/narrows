@@ -32,6 +32,11 @@ label {
     font-weight: bold;
 }
 
+input[type="file"] {
+    color: #eee;
+    background-color: buttonface;
+}
+
 .app-container {
     padding: 30px;
     padding-top: 0;
@@ -43,6 +48,7 @@ label {
    properly. */
 #reader-app.app-container {
     padding-top: 1px;
+    height: 100%
 }
 .app-container-simple {
     max-width: 50em;
@@ -225,4 +231,15 @@ ul.thread-list li .btn-bar {
 .dialog-text {
     margin: 2em;
     font-size: 18px;
+}
+
+.editor-container {
+    width: 100%;
+    margin: 0;
+    margin-bottom: 15px;
+    border: 1px solid black;
+}
+
+.editor-container .ProseMirror {
+    min-height: 200px;
 }

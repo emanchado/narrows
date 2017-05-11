@@ -70,6 +70,7 @@ app.post("/api/messages/:chptId/:charToken", endpoints.postMessageCharacter);
 app.put("/api/notes/:charToken", endpoints.putNotesCharacter);
 app.get("/api/characters/:charToken", endpoints.getCharacter);
 app.put("/api/characters/:charToken", endpoints.putCharacter);
+app.put("/api/characters/:charToken/avatar", endpoints.putCharacterAvatar);
 app.get("/api/novels/:novelToken", endpoints.getNovel);
 
 app.use("/static/narrations", express.static(config.files.path));

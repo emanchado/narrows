@@ -27,17 +27,6 @@ input, .ProseMirror-content {
     font-family: StoryFont;
 }
 
-#editor-container {
-    width: 100%;
-    margin: 0;
-    margin-bottom: 15px;
-    border: 1px solid black;
-}
-
-#editor-container .ProseMirror {
-    min-height: 200px;
-}
-
 main.page-aside {
     display: flex;
 }

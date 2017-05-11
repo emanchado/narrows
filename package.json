@@ -10,7 +10,6 @@
     "babel-preset-es2015": "^6.14.0",
     "bcrypt": "^1.0.2",
     "body-parser": "^1.15.2",
-    "choo": "^3.3.0",
     "config": "^1.21.0",
     "connect-sqlite3": "^0.9.8",
     "db-migrate": "^0.10.0-beta.20",
@@ -27,11 +26,12 @@
     "prosemirror-keymap": "^0.21.0",
     "prosemirror-menu": "^0.21.0",
     "prosemirror-model": "^0.21.0",
-    "prosemirror-view": "^0.21.0",
     "prosemirror-schema-basic": "^0.21.0",
     "prosemirror-schema-list": "^0.21.0",
+    "prosemirror-view": "^0.21.0",
     "q": "^1.4.1",
     "rss": "^1.2.1",
+    "sharp": "^0.17.3",
     "sqlite3": "^3.1.4"
   },
   "scripts": {

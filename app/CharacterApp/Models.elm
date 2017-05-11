@@ -30,5 +30,6 @@ type alias CharacterInfo =
 type alias Model =
     { characterToken : String
     , characterInfo : Maybe CharacterInfo
+    , newAvatarUrl : Maybe String
     , banner : Maybe Banner
     }

@@ -8,6 +8,7 @@ import Common.Ports exposing (initEditor)
 import CharacterApp.Api
 import CharacterApp.Messages exposing (..)
 import CharacterApp.Models exposing (..)
+import CharacterApp.Ports exposing (readAvatarAsUrl, uploadAvatar)
 
 
 urlUpdate : Route -> Model -> ( Model, Cmd Msg )
@@ -106,17 +107,43 @@ update msg model =
       case model.characterInfo of
         Just character ->
           let
-            updatedCharacter =
-              { character | name = newName }
+            updatedCharacter = { character | name = newName }
           in
             ( { model | characterInfo = Just updatedCharacter
                       , banner = Nothing
               }
             , Cmd.none
             )
-
         Nothing ->
           ( model, Cmd.none )
+
+    UpdateCharacterAvatar elementId ->
+      (model, readAvatarAsUrl { fileInputId = elementId })
+
+    ReceiveAvatarAsUrl dataUrl ->
+      ( { model | newAvatarUrl = Just dataUrl
+                , banner = Nothing
+        }
+      , Cmd.none
+      )
+
+    UploadAvatarError err ->
+      let
+        banner = errorBanner <| (toString err.status) ++ " - " ++ err.message
+      in
+        ( { model | banner = banner }
+        , Cmd.none
+        )
+    UploadAvatarSuccess newAvatarUrl ->
+      let
+        updatedCharacter =
+          case model.characterInfo of
+            Just character -> Just { character | avatar = Just newAvatarUrl }
+            Nothing -> Nothing
+      in
+        ( { model | characterInfo = updatedCharacter }
+        , Cmd.none
+        )
 
     SaveCharacter ->
       case model.characterInfo of
@@ -134,6 +161,14 @@ update msg model =
       )
 
     SaveCharacterResult (Ok resp) ->
-      ( { model | banner = successBanner <| "Saved" }
-      , Cmd.none
+      ( { model | banner = successBanner <| "Saved"
+                , newAvatarUrl = Nothing
+        }
+      , case model.newAvatarUrl of
+          Just avatar ->
+            uploadAvatar { fileInputId = "new-avatar"
+                         , characterToken = model.characterToken
+                         }
+          Nothing ->
+            Cmd.none
       )

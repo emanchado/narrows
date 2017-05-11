@@ -4,6 +4,7 @@ import Q from "q";
 import formidable from "formidable";
 import nodemailer from "nodemailer";
 import sendmailTransport from "nodemailer-sendmail-transport";
+import sharp from "sharp";
 
 import NarrowsStore from "./NarrowsStore";
 import UserStore from "./UserStore";
@@ -290,9 +291,9 @@ export function postNarrationFiles(req, res) {
     )).then(() => (
         Q.ninvoke(form, "parse", req)
     )).spread(function(fields, files) {
-        var uploadedFileInfo = files.file,
-            filename = path.basename(uploadedFileInfo.name),
-            tmpPath = uploadedFileInfo.path;
+        const uploadedFileInfo = files.file,
+              filename = path.basename(uploadedFileInfo.name),
+              tmpPath = uploadedFileInfo.path;
 
         return store.addMediaFile(narrationId, filename, tmpPath);
     }).then(fileInfo => (
@@ -315,9 +316,9 @@ function uploadFile(req, res, type) {
     )).then(() => (
         Q.ninvoke(form, "parse", req)
     )).spread(function(fields, files) {
-        var uploadedFileInfo = files.file,
-            filename = path.basename(uploadedFileInfo.name),
-            tmpPath = uploadedFileInfo.path;
+        const uploadedFileInfo = files.file,
+              filename = path.basename(uploadedFileInfo.name),
+              tmpPath = uploadedFileInfo.path;
 
         return store.addMediaFile(narrationId, filename, tmpPath, type);
     }).then(fileInfo => {
@@ -539,6 +540,36 @@ export function putCharacter(req, res) {
             res.json(newCharacter);
         })
     )).catch(err => {
+        res.status(500).json({
+            errorMessage: `Could not update character with ` +
+                `id '${ characterToken }': ${ err }`
+        });
+    });
+}
+
+export function putCharacterAvatar(req, res) {
+    const characterToken = req.params.charToken;
+    const form = new formidable.IncomingForm();
+    form.uploadDir = config.files.tmpPath;
+
+    return Q.all([
+        store.getCharacterInfo(characterToken),
+        Q.ninvoke(form, "parse", req)
+    ]).spread((character, [fields, files]) => {
+        const filename = path.basename(files.avatar.name);
+        const resizedPath = `${ files.avatar.path }-resized`;
+
+        // Resize image
+        return Q.ninvoke(
+            sharp(files.avatar.path).resize(100, 100),
+            "toFile",
+            resizedPath
+        ).then(() => (
+            store.updateCharacterAvatar(character.id, filename, resizedPath)
+        )).then(fullCharacter => {
+            res.json(fullCharacter);
+        });
+    }).catch(err => {
         res.status(500).json({
             errorMessage: `Could not update character with ` +
                 `id '${ characterToken }': ${ err }`

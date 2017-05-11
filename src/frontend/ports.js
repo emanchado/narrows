@@ -178,3 +178,41 @@ app.ports.uploadFile.subscribe(evt => {
 app.ports.scrollTo.subscribe(evt => {
     window.scrollTo(0, evt);
 });
+
+app.ports.readAvatarAsUrl.subscribe(evt => {
+    const file = document.getElementById(evt.fileInputId).files[0];
+    if (!file) {
+        return;
+    }
+
+    const reader = new FileReader();
+    reader.addEventListener("load", function () {
+        app.ports.receiveAvatarAsUrl.send(reader.result);
+    }, false);
+
+    reader.readAsDataURL(file);
+});
+app.ports.uploadAvatar.subscribe(evt => {
+    const fileInput = document.getElementById(evt.fileInputId);
+    const url = "/api/characters/" + evt.characterToken + "/avatar";
+
+    const xhr = new XMLHttpRequest();
+    xhr.open("PUT", url);
+    xhr.addEventListener("load", function() {
+        const resp = JSON.parse(this.responseText);
+
+        if (this.status < 200 || this.status >= 400) {
+            app.ports.uploadAvatarError.send({ status: this.status,
+                                               message: resp.errorMessage });
+            return;
+        }
+
+        // Fool the browser into thinking it's a new image
+        const cheekyAvatarUrl = resp.avatar + "?" + (new Date()).getTime();
+        app.ports.uploadAvatarSuccess.send(cheekyAvatarUrl);
+    });
+
+    const formData = new FormData();
+    formData.append("avatar", fileInput.files[0]);
+    xhr.send(formData);
+});

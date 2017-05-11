@@ -1,12 +1,13 @@
 TODO
 ====
 
-* Allow the player to change the e-mail address (?), character avatar
 * Rewrite the image uploader so it's a single, special component that
   updates the dropdown as soon as an image is uploaded
 * Make it easier to remove mention marks
 * Really wait until everything is loaded before showing the "Start" button
 * Delete characters from a narration?
+* First-time configuration without assuming admin@example.com?
+* Be able to create novels
 
 Initial narrator
 ----------------

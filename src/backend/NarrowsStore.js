@@ -1022,6 +1022,32 @@ class NarrowsStore {
         );
     }
 
+    updateCharacterAvatar(characterId, filename, tmpPath) {
+        return Q.ninvoke(
+            this.db,
+            "query",
+            `SELECT narration_id AS narrationId FROM characters WHERE id = ?`,
+            characterId
+        ).spread(results => {
+            const narrationId = results[0].narrationId;
+            const filesDir = path.join(config.files.path, narrationId.toString());
+            const fileExtension = path.extname(filename);
+            const finalBasename = `${ characterId }${ fileExtension }`;
+            const finalPath = path.join(filesDir, "avatars", finalBasename);
+
+            return Q.nfcall(fs.move, tmpPath, finalPath, {clobber: true}).then(() => {
+                return Q.ninvoke(
+                    this.db,
+                    "query",
+                    `UPDATE characters SET avatar = ? WHERE id = ?`,
+                    [finalBasename, characterId]
+                );
+            }).then(() => (
+                this.getFullCharacterStats(characterId)
+            ));
+        });
+    }
+
     getNovelInfo(novelToken) {
         return Q.ninvoke(
             this.db,

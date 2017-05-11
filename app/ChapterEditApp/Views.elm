@@ -126,7 +126,9 @@ chapterView chapter narration =
                 ]
             , chapterMediaView chapter narration
             , label [] [ text "Text:" ]
-            , div [ id "editor-container" ] []
+            , div [ id "editor-container"
+                  , class "editor-container"
+                  ] []
             , div [ class "btn-bar" ]
                 [ button
                     [ class "btn"
