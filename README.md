@@ -2,7 +2,6 @@ TODO
 ====
 
 * Make it easier to remove mention marks
-* Allow "closing" narrations (marking as finished or abandoned)
 * Fix separators in Firefox (maybe turn into an image?)
 * Be able to create novels
 * Really wait until everything is loaded before showing the "Start" button
