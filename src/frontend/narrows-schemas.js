@@ -27,13 +27,16 @@ const chapterMarkSpec = baseSchema.spec.marks.append({mention: {
     }
 }});
 
+const nodeSpecWithLists = addListNodes(baseSchema.spec.nodes,
+                                       "paragraph block*",
+                                       "block");
 const chapterSchema = new Schema({
-  nodes: addListNodes(baseSchema.spec.nodes, "paragraph block*", "block"),
+  nodes: nodeSpecWithLists,
   marks: chapterMarkSpec
 });
 
 const descriptionSchema = new Schema({
-  nodes: addListNodes(baseSchema.spec.nodes, "paragraph block*", "block"),
+  nodes: nodeSpecWithLists.remove("image"),
   marks: baseSchema.spec.marks
 });
 
