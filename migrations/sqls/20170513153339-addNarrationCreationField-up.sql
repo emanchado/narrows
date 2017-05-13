@@ -1,0 +1,1 @@
+ALTER TABLE narrations ADD created timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP;

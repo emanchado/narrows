@@ -332,7 +332,8 @@ class NarrowsStore {
             `SELECT id, title, default_audio AS defaultAudio,
                     default_background_image AS defaultBackgroundImage
                FROM narrations
-              WHERE narrator_id = ?`,
+              WHERE narrator_id = ?
+           ORDER BY created DESC`,
             userId
         ).then(rows => (
             Q.all([
