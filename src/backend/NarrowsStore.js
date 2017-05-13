@@ -10,6 +10,7 @@ import merge from "./merge";
 const JSON_TO_DB = {
     id: "id",
     title: "title",
+    status: "status",
     audio: "audio",
     backgroundImage: "background_image",
     text: "main_text",
@@ -23,6 +24,8 @@ const JSON_TO_DB = {
 };
 
 const AUDIO_REGEXP = new RegExp("\.mp3$", "i");
+
+const VALID_NARRATION_STATUSES = ['active', 'finished', 'abandoned'];
 
 function convertToDb(fieldName) {
     if (!(fieldName in JSON_TO_DB)) {
@@ -157,6 +160,30 @@ class NarrowsStore {
         return deferred.promise;
     }
 
+    updateNarration(narrationId, newProps) {
+        if ("status" in newProps &&
+                VALID_NARRATION_STATUSES.indexOf(newProps.status) === -1) {
+            return Q.reject(new Error("Invalid status '" + newProps.status + "'"));
+        }
+
+        const propNames = Object.keys(newProps).map(convertToDb),
+              propNameStrings = propNames.map(p => `${p} = ?`);
+        const propValues = Object.keys(newProps).map(p => newProps[p]);
+
+        if (!propValues.length) {
+            return this.getNarration(narrationId);
+        }
+
+        return Q.ninvoke(
+            this.db,
+            "run",
+            `UPDATE narrations SET ${ propNameStrings.join(", ") } WHERE id = ?`,
+            propValues.concat(narrationId)
+        ).then(
+            () => this.getNarration(narrationId)
+        );
+    }
+
     _getNarrationCharacters(narrationId) {
         return Q.ninvoke(
             this.db,
@@ -201,9 +228,9 @@ class NarrowsStore {
         return Q.ninvoke(
             this.db,
             "get",
-            `SELECT id, title, default_audio AS defaultAudio,
-                    default_background_image AS defaultBackgroundImage,
-                    narrator_id AS narratorId
+            `SELECT id, title, status, narrator_id AS narratorId,
+                    default_audio AS defaultAudio,
+                    default_background_image AS defaultBackgroundImage
                FROM narrations WHERE id = ?`,
             id
         ).then(narrationInfo => {
@@ -329,10 +356,11 @@ class NarrowsStore {
         return Q.ninvoke(
             this.db,
             "all",
-            `SELECT id, title, default_audio AS defaultAudio,
+            `SELECT id, title, status, default_audio AS defaultAudio,
                     default_background_image AS defaultBackgroundImage
                FROM narrations
               WHERE narrator_id = ?
+                AND status = 'active'
            ORDER BY created DESC`,
             userId
         ).then(rows => (

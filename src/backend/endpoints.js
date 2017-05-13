@@ -83,6 +83,27 @@ export function getNarration(req, res) {
     });
 }
 
+export function putNarration(req, res) {
+    const narrationId = parseInt(req.params.narrId, 10);
+    const newProps = req.body;
+
+    store.getNarration(narrationId).then(narrationData => (
+        userStore.canActAs(
+            req.session.userId,
+            narrationData.narratorId
+        ).then(() => (
+            store.updateNarration(narrationId, newProps)
+        ))
+    )).then(narrationData => {
+        res.json(narrationData);
+    }).catch(err => {
+        res.status(404).json({
+            errorMessage: `Cannot update narration ${ narrationId } as ` +
+                `this user: ${ err }`
+        });
+    });
+}
+
 export function postNarration(req, res) {
     const narratorId = req.session.userId;
 

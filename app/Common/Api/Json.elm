@@ -1,7 +1,7 @@
 module Common.Api.Json exposing (..)
 
 import Json.Decode as Json exposing (..)
-import Common.Models exposing (Character, FullCharacter, Narration, Chapter, FileSet, ChapterMessages, MessageThread, Message, Reaction, ChapterOverview, NarrationOverview, UserInfo)
+import Common.Models exposing (Character, FullCharacter, Narration, NarrationStatus(..), Chapter, FileSet, ChapterMessages, MessageThread, Message, Reaction, ChapterOverview, NarrationOverview, UserInfo)
 
 
 parseUserInfo : Json.Decoder UserInfo
@@ -27,11 +27,26 @@ parseFileSet =
         (field "images" <| list string)
 
 
+parseNarrationStatus : Json.Decoder NarrationStatus
+parseNarrationStatus =
+  let
+    convert : String -> Decoder NarrationStatus
+    convert raw =
+      case raw of
+        "active" -> succeed Active
+        "finished" -> succeed Finished
+        "abandoned" -> succeed Abandoned
+        _ -> fail <| "Unknown narration status " ++ raw
+  in
+    string |> andThen convert
+
+
 parseNarration : Json.Decoder Narration
 parseNarration =
-    Json.map6 Narration
+    Json.map7 Narration
         (field "id" int)
         (field "title" string)
+        (field "status" parseNarrationStatus)
         (field "characters" <| list parseFullCharacter)
         (maybe (field "defaultAudio" string))
         (maybe (field "defaultBackgroundImage" string))

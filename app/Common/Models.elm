@@ -21,14 +21,14 @@ loadingPlaceholderNarration : Narration
 loadingPlaceholderNarration =
     { id = 0
     , title = "…"
+    , status = Active
     , characters = []
     , defaultAudio = Nothing
     , defaultBackgroundImage = Nothing
-    , files =
-        { audio = []
-        , backgroundImages = []
-        , images = []
-        }
+    , files = { audio = []
+              , backgroundImages = []
+              , images = []
+              }
     }
 
 
@@ -46,6 +46,14 @@ successBanner errorMessage =
         { text = errorMessage
         , type_ = "success"
         }
+
+
+narrationStatusString : NarrationStatus -> String
+narrationStatusString status =
+  case status of
+    Active -> "active"
+    Finished -> "finished"
+    Abandoned -> "abandoned"
 
 
 type alias Banner =
@@ -74,9 +82,16 @@ type alias FileSet =
     }
 
 
+type NarrationStatus
+  = Active
+  | Finished
+  | Abandoned
+
+
 type alias Narration =
     { id : Int
     , title : String
+    , status : NarrationStatus
     , characters : List FullCharacter
     , defaultAudio : Maybe String
     , defaultBackgroundImage : Maybe String

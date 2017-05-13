@@ -4,6 +4,7 @@ import Http
 import Navigation
 
 import Core.Routes exposing (Route(..))
+import Common.Models exposing (errorBanner)
 import NarrationOverviewApp.Api
 import NarrationOverviewApp.Messages exposing (..)
 import NarrationOverviewApp.Models exposing (..)
@@ -11,104 +12,100 @@ import NarrationOverviewApp.Models exposing (..)
 
 urlUpdate : Route -> Model -> ( Model, Cmd Msg )
 urlUpdate route model =
-    case route of
-        NarrationPage narrationId ->
-            ( model
-            , Cmd.batch
-                [ NarrationOverviewApp.Api.fetchNarrationOverview narrationId
-                , NarrationOverviewApp.Api.fetchNarrationNovels narrationId
-                ]
-            )
+  case route of
+    NarrationPage narrationId ->
+      ( model
+      , Cmd.batch
+        [ NarrationOverviewApp.Api.fetchNarrationOverview narrationId
+        , NarrationOverviewApp.Api.fetchNarrationNovels narrationId
+        ]
+      )
 
-        _ ->
-            ( model, Cmd.none )
+    _ ->
+      ( model, Cmd.none )
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
-    case msg of
-        NoOp ->
-            ( model, Cmd.none )
+  case msg of
+    NoOp ->
+      (model, Cmd.none)
 
-        NavigateTo url ->
-            ( model, Navigation.newUrl url )
+    NavigateTo url ->
+      (model, Navigation.newUrl url)
 
-        NarrationOverviewFetchResult (Err error) ->
-            case error of
-                Http.BadPayload parserError resp ->
-                    ( { model
-                        | banner =
-                            Just
-                                { text = "Error! " ++ parserError
-                                , type_ = "error"
-                                }
-                      }
-                    , Cmd.none
-                    )
+    NarrationOverviewFetchResult (Err error) ->
+      case error of
+        Http.BadPayload parserError resp ->
+          ( { model | banner = errorBanner <| "Error! " ++ parserError }
+          , Cmd.none
+          )
 
-                Http.BadStatus resp ->
-                    ( { model
-                        | banner =
-                            Just
-                                { text = "Error! Body: " ++ resp.body
-                                , type_ = "error"
-                                }
-                      }
-                    , Cmd.none
-                    )
+        Http.BadStatus resp ->
+          ( { model | banner = errorBanner <| "Error! Body: " ++ resp.body }
+          , Cmd.none
+          )
 
-                _ ->
-                    ( { model
-                        | banner =
-                            Just
-                                { text = "Unknown error!"
-                                , type_ = "error"
-                                }
-                      }
-                    , Cmd.none
-                    )
+        _ ->
+          ( { model | banner = errorBanner "Unknown error!" }
+          , Cmd.none
+          )
 
-        NarrationOverviewFetchResult (Ok narrationOverview) ->
-            ( { model | narrationOverview = Just narrationOverview }
-            , Cmd.none
+    NarrationOverviewFetchResult (Ok narrationOverview) ->
+      ( { model | narrationOverview = Just narrationOverview }
+      , Cmd.none
+      )
+
+    NarrationNovelsFetchResult (Err error) ->
+      case error of
+        Http.BadPayload parserError resp ->
+          ( { model | banner = errorBanner <| "Error! " ++ parserError }
+          , Cmd.none
+          )
+
+        Http.BadStatus resp ->
+          ( { model | banner = errorBanner <| "Error! Body: " ++ resp.body }
+          , Cmd.none
+          )
+
+        _ ->
+          ( { model | banner = errorBanner "Unknown error!" }
+          , Cmd.none
+          )
+
+    NarrationNovelsFetchResult (Ok narrationNovels) ->
+      ( { model | narrationNovels = Just narrationNovels.novels }
+      , Cmd.none
+      )
+
+    MarkNarration status ->
+      case model.narrationOverview of
+        Just overview ->
+          let
+            narration = overview.narration
+            updatedNarration = { narration | status = status }
+            updatedOverview = { overview | narration = updatedNarration }
+          in
+            ( { model | narrationOverview = Just updatedOverview }
+            , NarrationOverviewApp.Api.markNarration narration.id status
             )
+        Nothing ->
+          (model, Cmd.none)
+    MarkNarrationResult (Err error) ->
+      case error of
+        Http.BadPayload parserError resp ->
+          ( { model | banner = errorBanner <| "Error! " ++ parserError }
+          , Cmd.none
+          )
 
-        NarrationNovelsFetchResult (Err error) ->
-            case error of
-                Http.BadPayload parserError resp ->
-                    ( { model
-                        | banner =
-                            Just
-                                { text = "Error! " ++ parserError
-                                , type_ = "error"
-                                }
-                      }
-                    , Cmd.none
-                    )
+        Http.BadStatus resp ->
+          ( { model | banner = errorBanner <| "Error! Body: " ++ resp.body }
+          , Cmd.none
+          )
 
-                Http.BadStatus resp ->
-                    ( { model
-                        | banner =
-                            Just
-                                { text = "Error! Body: " ++ resp.body
-                                , type_ = "error"
-                                }
-                      }
-                    , Cmd.none
-                    )
-
-                _ ->
-                    ( { model
-                        | banner =
-                            Just
-                                { text = "Unknown error!"
-                                , type_ = "error"
-                                }
-                      }
-                    , Cmd.none
-                    )
-
-        NarrationNovelsFetchResult (Ok narrationNovels) ->
-            ( { model | narrationNovels = Just narrationNovels.novels }
-            , Cmd.none
-            )
+        _ ->
+          ( { model | banner = errorBanner "Unknown error!" }
+          , Cmd.none
+          )
+    MarkNarrationResult (Ok _) ->
+      (model, Cmd.none)

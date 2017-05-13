@@ -3,7 +3,7 @@ module ChapterControlApp.Views exposing (..)
 import Html exposing (Html, main_, h1, h2, nav, section, div, ul, li, textarea, input, button, label, a, strong, em, text)
 import Html.Attributes exposing (id, class, href, type_, value, disabled, checked, rows, cols)
 import Html.Events exposing (onInput, onClick, onCheck)
-import Common.Models exposing (Character, FullCharacter, Narration, Reaction, loadingPlaceholderChapter)
+import Common.Models exposing (Character, FullCharacter, Narration, NarrationStatus(..), Reaction, loadingPlaceholderChapter)
 import Common.Views exposing (threadView, breadcrumbNavView)
 import ChapterControlApp.Messages exposing (..)
 import ChapterControlApp.Models exposing (Model, ChapterInteractions)
@@ -80,6 +80,7 @@ mainView model =
                 Nothing ->
                     { id = 0
                     , title = "…"
+                    , status = Active
                     , characters = []
                     , defaultAudio = Nothing
                     , defaultBackgroundImage = Nothing

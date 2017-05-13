@@ -4,7 +4,7 @@ import List
 import Html exposing (Html, main_, h1, h2, section, div, ul, li, button, a, em, text)
 import Html.Attributes exposing (id, class, href)
 import Html.Events exposing (onClick)
-import Common.Models exposing (Narration, ChapterOverview, NarrationOverview, FullCharacter)
+import Common.Models exposing (Narration, NarrationStatus(..), ChapterOverview, NarrationOverview, FullCharacter, narrationStatusString)
 import Common.Views exposing (linkTo, breadcrumbNavView)
 import NarrationOverviewApp.Messages exposing (..)
 import NarrationOverviewApp.Models exposing (Model, NarrationNovel)
@@ -138,6 +138,23 @@ overviewView overview novels =
                     [ text "New character" ]
                 , ul [ class "character-list" ]
                     (List.map narrationCharacterView overview.narration.characters)
+                , h2 [] [ text "Status" ]
+                , text "This narration is "
+                , em [] [ text <| narrationStatusString overview.narration.status ]
+                , text "."
+                , div []
+                    [ case overview.narration.status of
+                        Active ->
+                          button [ class "btn"
+                                 , onClick <| MarkNarration Finished
+                                 ]
+                            [ text "Mark as finished" ]
+                        _ ->
+                          button [ class "btn"
+                                 , onClick <| MarkNarration Active
+                                 ]
+                            [ text "Mark as active" ]
+                    ]
                 , h2 [] [ text "Novels" ]
                 , ul [ class "novel-list" ]
                     (List.map (narrationNovelView overview.narration) novels)

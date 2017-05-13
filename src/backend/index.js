@@ -40,9 +40,10 @@ app.get("/feeds/:charToken", endpoints.getFeedsCharacter);
 app.get("/api/session", endpoints.getSession);
 app.post("/api/session", endpoints.postSession);
 
-app.get("/api/narrations", middlewares.apiAuth, endpoints.getNarrationOverview);
+app.get("/api/narrations/overview", middlewares.apiAuth, endpoints.getNarrationOverview);
 app.post("/api/narrations", middlewares.apiAuth, endpoints.postNarration);
 app.get("/api/narrations/:narrId", middlewares.apiAuth, endpoints.getNarration);
+app.put("/api/narrations/:narrId", middlewares.apiAuth, endpoints.putNarration);
 app.get("/api/narrations/:narrId/chapters", middlewares.apiAuth, endpoints.getNarrationChapters);
 app.post("/api/narrations/:narrId/chapters", middlewares.apiAuth, endpoints.postNewChapter);
 app.post("/api/narrations/:narrId/files", middlewares.apiAuth, endpoints.postNarrationFiles);

@@ -3,19 +3,11 @@ module ChapterControlApp.Update exposing (..)
 import Http
 import Navigation
 import Core.Routes exposing (Route(..))
-import Common.Models exposing (Banner, Character)
+import Common.Models exposing (Banner, Character, errorBanner)
 import Common.Ports exposing (renderText)
 import ChapterControlApp.Api
 import ChapterControlApp.Messages exposing (..)
 import ChapterControlApp.Models exposing (..)
-
-
-errorBanner : String -> Maybe Banner
-errorBanner errorMessage =
-    Just
-        { text = errorMessage
-        , type_ = "error"
-        }
 
 
 urlUpdate : Route -> Model -> ( Model, Cmd Msg )
