@@ -3,7 +3,7 @@ const {wrapItem, blockTypeItem, Dropdown, DropdownSubmenu, joinUpItem, liftItem,
 const {toggleMark} = require("prosemirror-commands")
 const {wrapInList} = require("prosemirror-schema-list")
 const {TextField, SelectField, openPrompt} = require("./prompt")
-const {FileUploaderField, MultiSelectField} = require("./prompt-extra")
+const {ImageSelectorField, MultiSelectField} = require("./prompt-extra")
 
 // Helpers to create specific types of items
 
@@ -29,24 +29,22 @@ function insertImageItem(nodeType) {
             openPrompt({
                 title: "Choose an image",
                 fields: {
-                    src: new SelectField({label: "Image",
-                                          required: false,
-                                          selected: attrs && attrs.src,
-                                          options: view.props.images.map(img => ({value: img, label: img}))}),
-                    uploader: new FileUploaderField({required: false,
-                                                     addImageCallback: name => {
-                                                         view.props.images.push(name);
-                                                     },
-                                                     url: uploadUrl})
+                    image: new ImageSelectorField({
+                        label: "Image",
+                        required: true,
+                        selected: attrs && attrs.src,
+                        images: view.props.images,
+                        uploadUrl: uploadUrl,
+                        addImageCallback: name => {
+                            view.props.images.push(name);
+                        }
+                    })
                 },
                 // FIXME this (and similar uses) won't have the current state
                 // when it runs, leading to problems in, for example, a
                 // collaborative setup
                 callback(attrs) {
-                    const imageName = attrs.uploader || attrs.src;
-                    if (!imageName) {
-                        return;
-                    }
+                    const imageName = attrs.image;
                     const imageUrl = `/static/narrations/${view.props.narrationId}/images/${imageName}`;
                     view.dispatch(view.state.tr.replaceSelectionWith(nodeType.createAndFill({src: imageUrl})));
                     view.focus();

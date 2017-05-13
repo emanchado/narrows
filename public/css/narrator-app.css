@@ -185,3 +185,27 @@ form.create-form {
 form.create-form h2 {
     margin-top: 0;
 }
+
+/* ProseMirror dialogs */
+.ProseMirror-prompt form {
+    margin: 10px;
+}
+.ProseMirror-prompt form h5 {
+    margin-left: -15px;
+    margin-right: -15px;
+    border-bottom: 1px solid black;
+    padding: 0 15px 5px 15px;
+
+    font-size: 18px;
+    font-weight: bold;
+}
+.ProseMirror-prompt .ProseMirror-prompt-buttons {
+    margin-top: 10px;
+    text-align: right;
+}
+.ProseMirror-prompt .control-line {
+    margin-top: 10px;
+}
+.ProseMirror-prompt .control-line select {
+    margin-right: 5px;
+}

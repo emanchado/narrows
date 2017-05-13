@@ -1,20 +1,43 @@
 const {Field} = require("./prompt");
 
-class FileUploaderField extends Field {
+class ImageSelectorField extends Field {
     render() {
-        const url = this.options.url;
-        const addImageCallback = this.options.addImageCallback;
+        // This is the main component, the one to be returned.
+        const container = document.createElement("div");
+        container.className = "control-line";
 
+        // Select component for the already-uploaded images.
+        const select = document.createElement("select");
+        this.options.images.forEach(imageName => {
+            const opt = select.appendChild(document.createElement("option"));
+            opt.value = imageName;
+            opt.selected = imageName == this.options.value;
+            opt.textContent = imageName;
+        });
+
+        const addImageCallback = name => {
+            const options = select.querySelectorAll("option");
+            options.forEach(opt => opt.selected = false);
+
+            const opt = select.appendChild(document.createElement("option"));
+            opt.value = name;
+            opt.selected = true;
+            opt.textContent = name;
+
+            container.value = name;
+            this.options.addImageCallback(name);
+        };
+
+        // File upload handling (file element and upload button)
         const fileInput = document.createElement("input");
         fileInput.type = "file";
         fileInput.style.display = "none";
         fileInput.addEventListener("change", () => {
             let xhr = new XMLHttpRequest();
-            xhr.open("POST", url);
+            xhr.open("POST", this.options.uploadUrl);
             xhr.addEventListener("load", function() {
                 if (this.status >= 200 && this.status < 400) {
                     const res = JSON.parse(this.responseText);
-                    addButton.value = res.name;
                     addImageCallback(res.name);
                 } else {
                     console.error("Error uploading file: " + this.status);
@@ -24,17 +47,20 @@ class FileUploaderField extends Field {
             formData.append("file", fileInput.files[0]);
             xhr.send(formData);
         }, false);
-
-        const addButton = document.createElement("button");
-        addButton.textContent = "Upload image";
-        addButton.addEventListener("click", e => {
+        // Upload button
+        const uploadButton = document.createElement("button");
+        uploadButton.textContent = "Upload image";
+        uploadButton.addEventListener("click", e => {
             e.preventDefault();
             fileInput.click();
         }, false);
-        return addButton;
+
+        container.appendChild(select);
+        container.appendChild(uploadButton);
+        return container;
     }
 }
-exports.FileUploaderField = FileUploaderField;
+exports.ImageSelectorField = ImageSelectorField;
 
 function updateMultiValue(el) {
     const options = el.querySelectorAll("input");

@@ -1,8 +1,6 @@
 TODO
 ====
 
-* Rewrite the image uploader so it's a single, special component that
-  updates the dropdown as soon as an image is uploaded
 * Make it easier to remove mention marks
 * Really wait until everything is loaded before showing the "Start" button
 * Delete characters from a narration?
