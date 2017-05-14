@@ -14,6 +14,10 @@ class ImageSelectorField extends Field {
             opt.selected = imageName == this.options.value;
             opt.textContent = imageName;
         });
+        container.value = select.selectedOptions.item(0) && select.selectedOptions.item(0).value;
+        select.addEventListener("change", evt => {
+            container.value = select.selectedOptions.item(0) && select.selectedOptions.item(0).value;
+        }, false);
 
         const addImageCallback = name => {
             const options = select.querySelectorAll("option");
