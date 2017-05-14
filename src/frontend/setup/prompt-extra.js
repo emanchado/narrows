@@ -92,12 +92,14 @@ class MultiSelectField extends Field {
             const checkboxEl = document.createElement("input");
             checkboxEl.type = "checkbox";
             checkboxEl.value = opt.value;
+            checkboxEl.checked = (selected.indexOf(opt.value) !== -1);
             checkboxEl.addEventListener("change", () => updateMultiValue(container), false);
             labelEl.appendChild(checkboxEl);
             labelEl.appendChild(new Text(" " + opt.label));
 
             container.appendChild(labelEl);
         });
+        updateMultiValue(container);
         return container;
     }
 }

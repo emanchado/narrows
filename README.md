@@ -1,7 +1,6 @@
 TODO
 ====
 
-* Make it easier to remove mention marks
 * Be able to create novels
 * Really wait until everything is loaded before showing the "Start" button
 * Delete characters from a narration?

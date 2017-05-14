@@ -122,12 +122,61 @@ function fetchCharacter(characterList, cId) {
     return matches.length ? matches[0] : null;
 }
 
+/* Copied from prosemirror-commands because it's not exported */
+function markApplies(doc, ranges, type) {
+  for (let i = 0; i < ranges.length; i++) {
+    let {$from, $to} = ranges[i]
+    let can = $from.depth == 0 ? doc.contentMatchAt(0).allowsMark(type) : false
+    doc.nodesBetween($from.pos, $to.pos, node => {
+      if (can) return false
+      can = node.inlineContent && node.contentMatchAt(0).allowsMark(type)
+    })
+    if (can) return true
+  }
+  return false
+}
+
+function updateMentionMark(markType, targetCharacters, state, dispatch) {
+    const {empty, $cursor, ranges} = state.selection;
+    const attrs = {mentionTargets: targetCharacters};
+    if ((empty && !$cursor) || !markApplies(state.doc, ranges, markType)) return false;
+    if (dispatch) {
+        if ($cursor) {
+            if (markType.isInSet(state.storedMarks || $cursor.marks())) {
+                state.tr.removeStoredMark(markType);
+                dispatch(state.tr.addStoredMark(markType.create(attrs)));
+            } else {
+                dispatch(state.tr.addStoredMark(markType.create(attrs)));
+            }
+        } else {
+            let has = false, tr = state.tr;
+            for (let i = 0; !has && i < ranges.length; i++) {
+                let {$from, $to} = ranges[i];
+                has = state.doc.rangeHasMark($from.pos, $to.pos, markType);
+            }
+            for (let i = 0; i < ranges.length; i++) {
+                let {$from, $to} = ranges[i];
+                if (has) {
+                    tr.removeMark($from.pos, $to.pos, markType);
+                    tr.addMark($from.pos, $to.pos, markType.create(attrs));
+                } else {
+                    tr.addMark($from.pos, $to.pos, markType.create(attrs));
+                }
+            }
+            dispatch(tr.scrollIntoView());
+        }
+    }
+    return true;
+}
+
 function markItemPrivate(markType) {
     return markItem(markType, {
         title: "Private text",
         run(state, onAction, view) {
-            let {node} = state.selection, attrs = markType && node &&
-                    node.type == markType && node.attrs;
+            let {from, $from, to, empty} = state.selection;
+            const activeMark = markType.isInSet(state.storedMarks || $from.marks());
+            const markAttrs = activeMark && activeMark.attrs ||
+                  {mentionTargets: []};
 
             openPrompt({
                 title: "Choose the characters who will read the private text",
@@ -135,7 +184,7 @@ function markItemPrivate(markType) {
                     targetCharacters: new MultiSelectField({
                         label: "Targets",
                         required: true,
-                        selected: (attrs && attrs.mentionTargets) || [],
+                        selected: markAttrs.mentionTargets.map(t => t.id),
                         options: view.props.participants.map(c => ({value: c.id,
                                                                     label: c.name}))
                     })
@@ -144,13 +193,11 @@ function markItemPrivate(markType) {
                 // when it runs, leading to problems in, for example, a
                 // collaborative setup
                 callback(attrs) {
-                    if (markActive(state, markType)) {
-                        toggleMark(markType)(state, onAction);
-                        return;
-                    }
-                    const targetCharacters =
-                              attrs.targetCharacters.map(c => fetchCharacter(view.props.participants, c));
-                    toggleMark(markType, {mentionTargets: targetCharacters})(state, onAction);
+                    const targetCharacters = attrs.targetCharacters.map(
+                        c => fetchCharacter(view.props.participants, c)
+                    );
+
+                    updateMentionMark(markType, targetCharacters, state, onAction);
                 }
             });
         }
