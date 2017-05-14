@@ -39,8 +39,27 @@ function exportText(editor) {
     return editor.state.doc.toJSON();
 }
 
+function promoteBlockImages(block) {
+    if (block.type === "paragraph" &&
+            block.content && block.content.length === 1 &&
+            block.content[0].type === "image") {
+        return block.content[0];
+    }
+
+    return block;
+}
+
+function fixBlockImages(jsonDoc) {
+    if (!jsonDoc || !jsonDoc.content) {
+        return jsonDoc;
+    }
+
+    jsonDoc.content = jsonDoc.content.map(promoteBlockImages);
+    return jsonDoc;
+}
+
 function exportTextToDOM(text, schema) {
-    const importedText = _importText(text, schema);
+    const importedText = _importText(fixBlockImages(text), schema);
     const serializer = DOMSerializer.fromSchema(schema);
     return importedText ?
         serializer.serializeFragment(importedText.content) :

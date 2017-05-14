@@ -35,25 +35,6 @@ function convertToDb(fieldName) {
     return JSON_TO_DB[fieldName];
 }
 
-function promoteBlockImages(block) {
-    if (block.type === "paragraph" &&
-        block.content && block.content.length === 1 &&
-        block.content[0].type === "image") {
-        return block.content[0];
-    }
-
-    return block;
-}
-
-function fixBlockImages(jsonDoc) {
-    if (!jsonDoc || !jsonDoc.content) {
-        return jsonDoc;
-    }
-
-    jsonDoc.content = jsonDoc.content.map(promoteBlockImages);
-    return jsonDoc;
-}
-
 /**
  * Return a promise that returns the files in a directory. If the
  * directory doesn't exist, simply return an empty array.
@@ -532,7 +513,6 @@ class NarrowsStore {
             }
 
             chapterData.text = JSON.parse(chapterData.text.replace(/\r/g, ""));
-            chapterData.text = fixBlockImages(chapterData.text);
 
             return this.getChapterParticipants(id, opts).then(participants => {
                 chapterData.participants = participants;
@@ -961,7 +941,6 @@ class NarrowsStore {
         ).then(reactions => {
             reactions.forEach(reaction => {
                 reaction.chapterText = JSON.parse(reaction.chapterText.replace(/\r/g, ""));
-                reaction.chapterText = fixBlockImages(reaction.chapterText);
             });
 
             return reactions;
@@ -997,7 +976,6 @@ class NarrowsStore {
         ).then(chapters => {
             chapters.forEach(c => {
                 c.text = JSON.parse(c.text.replace(/\r/g, ""));
-                c.text = fixBlockImages(c.text);
             });
 
             return chapters;
