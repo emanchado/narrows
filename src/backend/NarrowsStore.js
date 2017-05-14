@@ -601,7 +601,7 @@ class NarrowsStore {
         delete props.participants;
 
         let updatePromise;
-        if (Object.keys(participants).length === 0) {
+        if (Object.keys(props).length === 0) {
             // No regular fields to update, avoid SQL error
             updatePromise = Q(true);
         } else {
