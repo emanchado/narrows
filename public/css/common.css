@@ -194,13 +194,17 @@ ul.thread-list li .btn-bar {
     width: 100%;
 }
 
-.ProseMirror hr {
-    min-height: 20px;
+.ProseMirror .separator, .chapter .separator {
+    height: 20px;
     border: none;
     margin: 0 auto;
     padding: 10px 20px;
 
     background: url(/img/separator.png) no-repeat center;
+}
+.chapter .separator {
+    max-width: 50em;
+    background-color:  #e5e5e5;
 }
 
 .dialog-overlay {

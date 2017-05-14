@@ -27,9 +27,18 @@ const chapterMarkSpec = baseSchema.spec.marks.append({mention: {
     }
 }});
 
-const nodeSpecWithLists = addListNodes(baseSchema.spec.nodes,
-                                       "paragraph block*",
-                                       "block");
+const nodeSpecWithLists = addListNodes(
+    baseSchema.spec.nodes,
+    "paragraph block*",
+    "block"
+).addToEnd(
+    "horizontal_rule",
+    {
+        group: "block",
+        parseDOM: [{tag: "hr"}, {tag: "div[class='separator']"}],
+        toDOM() { return ["div", {class: "separator"}]; }
+    }
+);
 const chapterSchema = new Schema({
   nodes: nodeSpecWithLists,
   marks: chapterMarkSpec

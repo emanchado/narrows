@@ -2,7 +2,6 @@ TODO
 ====
 
 * Make it easier to remove mention marks
-* Fix separators in Firefox (maybe turn into an image?)
 * Be able to create novels
 * Really wait until everything is loaded before showing the "Start" button
 * Delete characters from a narration?
