@@ -1,10 +1,9 @@
 TODO
 ====
 
-* Really wait until everything is loaded before showing the "Start" button
+* First-time configuration without assuming admin@example.com?
 * Delete characters from a narration?
 * Allow narrators to update which player plays a character
-* First-time configuration without assuming admin@example.com?
 
 Initial narrator
 ----------------

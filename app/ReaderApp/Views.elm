@@ -39,18 +39,18 @@ loadedView model =
 mainView : Model -> Html Msg
 mainView model =
     div [ id "reader-app" ]
-        [ case model.state of
-            ReaderApp.Models.Loader ->
-                div [ id "loader" ]
-                    [ case model.chapter of
-                        Just data ->
-                            loadedView model
+      [ case model.state of
+          ReaderApp.Models.Loader ->
+              div [ id "loader" ]
+                [ case model.chapter of
+                    Just data ->
+                        loadedView model
 
-                        Nothing ->
-                            loadingView model.banner
-                    ]
+                    Nothing ->
+                        loadingView model.banner
+                ]
 
-            _ ->
-                text ""
-        , ReaderApp.Views.Narration.view model
-        ]
+          _ ->
+              text ""
+      , ReaderApp.Views.Narration.view model
+      ]
