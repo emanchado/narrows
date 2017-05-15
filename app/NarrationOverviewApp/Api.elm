@@ -61,3 +61,14 @@ markNarration narrationId status =
                  , timeout = Nothing
                  , withCredentials = False
                  }
+
+createNovel : Int -> Cmd Msg
+createNovel characterId =
+  let
+    createNovelUrl = "/api/characters/" ++ (toString characterId) ++ "/novels"
+  in
+    Http.send CreateNovelResult <|
+      Http.post
+        createNovelUrl
+        Http.emptyBody
+        parseNarrationNovel

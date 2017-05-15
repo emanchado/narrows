@@ -76,11 +76,10 @@ function mysqlTimestamp(dateString) {
         `${pad(hour)}:${pad(minutes)}:${pad(seconds)}`;
 }
 
-function generateCharacterToken(a) {
+function generateToken(a) {
     return a ?
         (a^Math.random()*16>>a/4).toString(16) :
-        ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g,
-                                             generateCharacterToken);
+        ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, generateToken);
 }
 
 class NarrowsStore {
@@ -617,11 +616,17 @@ class NarrowsStore {
         );
     }
 
-    getCharacterInfo(characterToken) {
+    getCharacterInfo(characterToken, extraFields) {
+        extraFields = extraFields || [];
+        const extraFieldString = extraFields.length !== 0 ?
+              `, ${ extraFields.join(", ") }` :
+              "";
+
         return Q.ninvoke(
             this.db,
             "get",
-            "SELECT id, name, token, notes FROM characters WHERE token = ?",
+            `SELECT id, name, token, notes${ extraFieldString }
+               FROM characters WHERE token = ?`,
             characterToken
         );
     }
@@ -665,7 +670,7 @@ class NarrowsStore {
     addCharacter(name, userId, narrationId) {
         const deferred = Q.defer();
 
-        const newToken = generateCharacterToken();
+        const newToken = generateToken();
 
         return Q.ninvoke(
             this.db,
@@ -1059,7 +1064,8 @@ class NarrowsStore {
         return Q.ninvoke(
             this.db,
             "query",
-            `SELECT NE.character_id AS characterId,
+            `SELECT NE.id, NE.token, NE.created,
+                    NE.character_id AS characterId,
                     C.narration_id AS narrationId
                FROM narration_exports NE
                JOIN characters C ON NE.character_id = C.id
@@ -1072,7 +1078,7 @@ class NarrowsStore {
                 );
             }
 
-            return [results[0].narrationId, results[0].characterId];
+            return results[0];
         });
     }
 
@@ -1088,6 +1094,19 @@ class NarrowsStore {
             narrationId
         ).spread(results => (
             results
+        ));
+    }
+
+    createNovel(characterId) {
+        const novelToken = generateToken();
+
+        return Q.ninvoke(
+            this.db,
+            "query",
+            `INSERT INTO narration_exports (character_id, token) VALUES (?, ?)`,
+            [characterId, novelToken]
+        ).then(() => (
+            this.getNovelInfo(novelToken)
         ));
     }
 }
