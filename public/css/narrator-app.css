@@ -1,8 +1,3 @@
-@font-face {
-  font-family: "StoryFont";
-  src: url("../fonts/OldstyHPLHS.otf");
-}
-
 .two-column {
     display: flex;
     margin-top: 20px;
@@ -23,7 +18,7 @@
     opacity: 0.7;
 }
 
-input, .ProseMirror-content {
+input, .ProseMirror, .last-reaction-text {
     font-family: StoryFont;
 }
 
@@ -208,4 +203,28 @@ form.create-form h2 {
 }
 .ProseMirror-prompt .control-line select {
     margin-right: 5px;
+}
+
+.narration-list {
+    display: flex;
+    flex-wrap: wrap;
+}
+.narration-container {
+    width: 500px;
+    margin: 10px;
+    border: 1px solid #aaa;
+    padding: 10px;
+}
+.narration-header {
+    display: flex;
+    justify-content: space-between;
+}
+.narration-header h2 {
+    margin: auto 0;
+}
+.narration-header > * {
+    align-items: baseline;
+}
+.narration-header a {
+    text-decoration: none;
 }

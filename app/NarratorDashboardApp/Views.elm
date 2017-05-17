@@ -84,21 +84,22 @@ chapterOverviewView chapterOverview =
 
 narrationView : NarrationOverview -> Html Msg
 narrationView overview =
-    div []
-        [ h2 []
-            [ a
-                (linkTo
-                    NavigateTo
-                    ("/narrations/" ++ (toString overview.narration.id))
-                )
-                [ text overview.narration.title
+    div [ class "narration-container" ]
+        [ div [ class "narration-header" ]
+            [ h2 []
+                [ a
+                    (linkTo
+                        NavigateTo
+                        ("/narrations/" ++ (toString overview.narration.id))
+                    )
+                    [ text overview.narration.title ]
                 ]
+            , button
+                [ class "btn btn-add"
+                , onClick (NavigateTo <| "/narrations/" ++ (toString overview.narration.id) ++ "/new")
+                ]
+                [ text "New chapter" ]
             ]
-        , button
-            [ class "btn btn-add"
-            , onClick (NavigateTo <| "/narrations/" ++ (toString overview.narration.id) ++ "/new")
-            ]
-            [ text "New chapter" ]
         , ul [ class "chapter-list" ]
             (List.map chapterOverviewView overview.chapters)
         ]
@@ -113,14 +114,14 @@ mainView model =
         [ h1 [] [ text "Narrations" ]
         , case model.narrations of
             Just narrations ->
-                div []
+                div [ class "narration-list" ]
                     (List.map narrationView narrations)
 
             Nothing ->
                 loadingView model
         , div [ class "btn-bar" ]
             [ button
-                [ class "btn"
+                [ class "btn btn-add"
                 , onClick NewNarration
                 ]
                 [ text "New narration" ]

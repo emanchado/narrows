@@ -3,9 +3,15 @@
   src: url("../fonts/OldstyHPLHS.otf");
 }
 
+@font-face {
+  font-family: "Roboto";
+  src: url("../fonts/Roboto-Regular.ttf");
+}
+
 body {
     margin: 0;
     background-color: #eee;
+    font-family: Roboto;
 }
 
 h1 {
@@ -44,15 +50,6 @@ ul li {
 .app-container {
     padding: 30px;
     padding-top: 0;
-}
-/* Unfortunately need this hack because reader app has black
-   background and having something at the top with margin-top (like
-   the "h2" title in the character app) leaves an ugly, white top
-   bar. Apparently it's enough to make it non-zero to make it work
-   properly. */
-#reader-app.app-container {
-    padding-top: 1px;
-    min-height: 100%
 }
 .app-container-simple {
     max-width: 50em;
