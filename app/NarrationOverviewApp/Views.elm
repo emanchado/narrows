@@ -5,55 +5,9 @@ import Html exposing (Html, main_, h1, h2, section, div, ul, li, button, img, a,
 import Html.Attributes exposing (id, class, href, src)
 import Html.Events exposing (onClick)
 import Common.Models exposing (Narration, NarrationStatus(..), ChapterOverview, NarrationOverview, FullCharacter, narrationStatusString)
-import Common.Views exposing (linkTo, breadcrumbNavView)
+import Common.Views exposing (linkTo, breadcrumbNavView, narrationOverviewView)
 import NarrationOverviewApp.Messages exposing (..)
 import NarrationOverviewApp.Models exposing (Model, NarrationNovel)
-
-
-unpublishedChapterView : ChapterOverview -> Html Msg
-unpublishedChapterView chapterOverview =
-  li []
-    [ a (linkTo
-           NavigateTo
-           ("/chapters/" ++ (toString chapterOverview.id) ++ "/edit"))
-        [ text chapterOverview.title ]
-    , text (" - " ++ (toString <| List.length chapterOverview.reactions) ++
-              " participants")
-    ]
-
-
-publishedChapterView : ChapterOverview -> Html Msg
-publishedChapterView chapterOverview =
-  let
-    sentReactions = List.filter
-                      (\r -> case r.text of
-                               Nothing -> False
-                               _ -> True)
-                      chapterOverview.reactions
-  in
-    li []
-      [ a (linkTo
-             NavigateTo
-             ("/chapters/" ++ (toString chapterOverview.id)))
-          [ text chapterOverview.title ]
-      , text (" - "
-                ++ (toString <| List.length sentReactions)
-                ++ " / "
-                ++ (toString <| List.length chapterOverview.reactions)
-                ++ " reactions ("
-                ++ (toString chapterOverview.numberMessages)
-                ++ " messages)")
-      ]
-
-
-chapterOverviewView : ChapterOverview -> Html Msg
-chapterOverviewView chapterOverview =
-  case chapterOverview.published of
-    Just published ->
-      publishedChapterView chapterOverview
-
-    Nothing ->
-      unpublishedChapterView chapterOverview
 
 
 narrationCharacterView : FullCharacter -> Html Msg
@@ -113,8 +67,8 @@ overviewView overview novels =
                      , onClick (NavigateTo <| "/narrations/" ++ (toString overview.narration.id) ++ "/new")
                      ]
                 [ text "New chapter" ]
-            , ul [ class "chapter-list" ]
-                (List.map chapterOverviewView overview.chapters)
+            , ul [ class "chapter-list" ] <|
+                narrationOverviewView NavigateTo overview
             ]
         , section [ class "page-aside" ]
             [ h2 [] [ text "Characters" ]

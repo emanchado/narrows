@@ -2,10 +2,10 @@ module Common.Views exposing (..)
 
 import String
 import Json.Decode
-import Html exposing (Html, div, nav, textarea, button, span, li, a, strong, text)
-import Html.Attributes exposing (class, rows, value, href)
+import Html exposing (Html, div, nav, textarea, button, span, li, img, a, em, strong, text)
+import Html.Attributes exposing (class, rows, value, href, src)
 import Html.Events exposing (defaultOptions, onWithOptions, onClick, onInput)
-import Common.Models exposing (MessageThread, Message, Banner, ReplyInformation, Breadcrumb)
+import Common.Models exposing (MessageThread, Message, Banner, ReplyInformation, Breadcrumb, ChapterOverview, Narration, NarrationOverview)
 
 
 onPreventDefaultClick : msg -> Html.Attribute msg
@@ -184,3 +184,80 @@ breadcrumbNavView messageConstructor links pageTitle =
                 (text " ⇢ ")
                 parts
             )
+
+
+unpublishedChapterView : (String -> msg) -> Narration -> ChapterOverview -> Html msg
+unpublishedChapterView navigationMessage narration chapterOverview =
+  let
+    numberChapterParticipants = List.length chapterOverview.reactions
+    numberNarrationCharacters = List.length narration.characters
+  in
+    li []
+      [ a (linkTo
+             navigationMessage
+             ("/chapters/" ++ (toString chapterOverview.id) ++ "/edit"))
+          [ text chapterOverview.title
+          ]
+      , text " — "
+      , em [] [ text "Draft" ]
+      , if numberNarrationCharacters /= numberChapterParticipants then
+          text (" — only " ++ (toString numberChapterParticipants) ++
+                " participants")
+        else
+          text ""
+      ]
+
+
+publishedChapterView : (String -> msg) -> Narration -> ChapterOverview -> Html msg
+publishedChapterView navigationMessage narration chapterOverview =
+  let
+    numberSentReactions = List.length <|
+                          List.filter
+                            (\r -> case r.text of
+                                     Nothing -> False
+                                     _ -> True)
+                            chapterOverview.reactions
+    numberChapterParticipants = List.length chapterOverview.reactions
+    numberNarrationCharacters = List.length narration.characters
+  in
+    li []
+      [ a (linkTo
+             navigationMessage
+             ("/chapters/" ++ (toString chapterOverview.id)))
+          [ text chapterOverview.title ]
+      , if numberSentReactions /= numberChapterParticipants then
+          text (" — "
+                ++ (toString <| numberChapterParticipants - numberSentReactions)
+                ++ " reaction(s) pending")
+        else
+          text ""
+      , if numberNarrationCharacters /= numberChapterParticipants then
+          text (" — only " ++ (toString numberChapterParticipants) ++
+                " participant(s)")
+        else
+          text ""
+      , if chapterOverview.numberMessages > 0 then
+          span []
+            [ text " ("
+            , img [ src "/img/envelope.png" ] []
+            , text <| (toString chapterOverview.numberMessages) ++ ")"
+            ]
+        else
+          text ""
+      ]
+
+
+chapterOverviewView : (String -> msg) -> Narration -> ChapterOverview -> Html msg
+chapterOverviewView navigationMessage narration chapterOverview =
+  case chapterOverview.published of
+    Just published ->
+      publishedChapterView navigationMessage narration chapterOverview
+    Nothing ->
+      unpublishedChapterView navigationMessage narration chapterOverview
+
+
+narrationOverviewView : (String -> msg) -> NarrationOverview -> List (Html msg)
+narrationOverviewView navigationMessage narrationOverview =
+  (List.map
+     (chapterOverviewView navigationMessage narrationOverview.narration)
+     narrationOverview.chapters)

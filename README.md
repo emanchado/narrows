@@ -2,6 +2,7 @@ TODO
 ====
 
 * First-time configuration without assuming admin@example.com?
+* Make setup instructions, including creating the DB and whatnot
 * Delete characters from a narration?
 * Allow narrators to update which player plays a character
 
