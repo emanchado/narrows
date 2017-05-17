@@ -77,7 +77,7 @@ app.get("/api/novels/:novelToken", endpoints.getNovel);
 
 app.use("/static/narrations", express.static(config.files.path));
 
-app.use(function(req, res) {
+app.use(middlewares.firstTimeSetup, function(req, res) {
     res.sendFile(path.resolve(path.join(STATIC_HTML_FILES, "index.html")));
 });
 

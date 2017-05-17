@@ -1,0 +1,38 @@
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>NARROWS</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/css/common.css" />
+    <link rel="stylesheet" href="/css/first-time-setup.css" />
+  </head>
+
+  <body>
+    <div id="first-time-app" class="app-container">
+      <h1>First time setup process</h1>
+
+      <p>This seems to be the first time you run this application (or
+        maybe you have somehow removed all admin users). In any case,
+        you need to setup an admin user to continue:</p>
+
+      <form id="setup-form" method="post" action="" class="small-form">
+        <div class="form-line">
+          <label for="email">E-mail:</label>
+        </div>
+        <div class="form-line">
+          <input type="email" name="email" placeholder="user@example.com" />
+        </div>
+        <div class="form-line">
+          <label for="password">Password:</label>
+        </div>
+        <div class="form-line">
+          <input type="password" name="password" />
+        </div>
+
+        <div class="btn-bar">
+          <button class="btn btn-default">Create</button>
+        </div>
+      </form>
+    </div>
+  </body>
+</html>

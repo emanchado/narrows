@@ -9,26 +9,29 @@ const STATIC_HTML_FILES = path.join(__dirname, "..", "html");
 const userStore = new UserStore(config.db);
 userStore.connect();
 
-export function auth(req, res, next) {
-    let promise = Q(true);
-
-    if (req.body && req.body.username) {
-        const { username, password } = req.body;
-        promise = userStore.authenticate(username, password).then(userId => {
-            req.session.userId = userId;
-        });
-    }
-
-    return promise.then(() => {
-        if (req.session.userId) {
+// Generic handler needed for the first-time setup
+export function firstTimeSetup(req, res, next) {
+    userStore.hasAnyAdmins().then(hasAdmin => {
+        if (hasAdmin) {
             next();
         } else {
-            res.statusCode = 401;
-            res.sendFile(path.resolve(path.join(STATIC_HTML_FILES, "login.html")));
+            if (req.body && req.body.email && req.body.password) {
+                userStore.createUser({
+                    email: req.body.email,
+                    password: req.body.password,
+                    role: "admin"
+                }).then(newUser => {
+                    req.session.userId = newUser.id;
+
+                    next();
+                });
+
+                return;
+            }
+
+            res.sendFile(path.resolve(path.join(STATIC_HTML_FILES,
+                                                "first-time-setup.html")));
         }
-    }).catch(err => {
-        res.statusCode = 500;
-        res.sendFile(path.resolve(path.join(STATIC_HTML_FILES, "login.html")));
     });
 }
 

@@ -188,6 +188,16 @@ class UserStore {
             return userId;
         });
     }
+
+    hasAnyAdmins() {
+        return Q.ninvoke(
+            this.db,
+            "query",
+            "SELECT COUNT(*) AS adminCount FROM users WHERE role = 'admin'"
+        ).spread(rows => {
+            return rows[0].adminCount > 0;
+        });
+    }
 }
 
 export default UserStore;
