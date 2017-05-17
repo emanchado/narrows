@@ -52,7 +52,7 @@ ul li {
    properly. */
 #reader-app.app-container {
     padding-top: 1px;
-    height: 100%
+    min-height: 100%
 }
 .app-container-simple {
     max-width: 50em;
