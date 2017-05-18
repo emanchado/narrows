@@ -9,3 +9,4 @@ public/js/main.js
 public/app.js
 public/app.js.map
 database.json
+config/local-*.js
