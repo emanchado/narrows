@@ -2,10 +2,10 @@ module Common.Views exposing (..)
 
 import String
 import Json.Decode
-import Html exposing (Html, div, nav, textarea, button, span, li, img, a, em, strong, text)
+import Html exposing (Html, h2, div, nav, textarea, button, span, ul, li, img, a, em, strong, text)
 import Html.Attributes exposing (class, rows, value, href, src)
 import Html.Events exposing (defaultOptions, onWithOptions, onClick, onInput)
-import Common.Models exposing (MessageThread, Message, Banner, ReplyInformation, Breadcrumb, ChapterOverview, Narration, NarrationOverview)
+import Common.Models exposing (MessageThread, Message, Banner, ReplyInformation, Breadcrumb, ChapterOverview, Narration, NarrationOverview, NarrationStatus(..))
 
 
 onPreventDefaultClick : msg -> Html.Attribute msg
@@ -261,3 +261,32 @@ narrationOverviewView navigationMessage narrationOverview =
   (List.map
      (chapterOverviewView navigationMessage narrationOverview.narration)
      narrationOverview.chapters)
+
+
+compactNarrationView : (String -> msg) -> NarrationOverview -> Html msg
+compactNarrationView navigationMessage overview =
+  let
+    buttonBar = case overview.narration.status of
+                  Active ->
+                    button [ class "btn btn-add"
+                           , onClick (navigationMessage <| "/narrations/" ++ (toString overview.narration.id) ++ "/new")
+                           ]
+                      [ text "New chapter" ]
+                  _ ->
+                    text ""
+  in
+    div [ class "narration-container" ]
+      [ div [ class "narration-header" ]
+          [ h2 []
+            [ a
+                (linkTo
+                  navigationMessage
+                  ("/narrations/" ++ (toString overview.narration.id))
+                )
+                [ text overview.narration.title ]
+            ]
+          , buttonBar
+          ]
+      , ul [ class "chapter-list" ] <|
+          narrationOverviewView navigationMessage overview
+      ]

@@ -54,8 +54,22 @@ export function postSession(req, res) {
     });
 }
 
+export function getNarrationArchive(req, res) {
+    store.getNarrationOverview(req.session.userId).then(narrationOverviewData => {
+        res.json(narrationOverviewData);
+    }).catch(err => {
+        res.status(500).json({
+            errorMessage: `Cannot get narration overview for ` +
+                `this user: ${ err }`
+        });
+    });
+}
+
 export function getNarrationOverview(req, res) {
-    store.getNarrationOverview(req.session.userId, 5).then(narrationOverviewData => {
+    store.getNarrationOverview(
+        req.session.userId,
+        { status: "active" }
+    ).then(narrationOverviewData => {
         res.json(narrationOverviewData);
     }).catch(err => {
         res.status(500).json({

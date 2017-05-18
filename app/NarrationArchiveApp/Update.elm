@@ -1,20 +1,20 @@
-module NarratorDashboardApp.Update exposing (..)
+module NarrationArchiveApp.Update exposing (..)
 
 import Http
 import Navigation
 
 import Core.Routes exposing (Route(..))
 import Common.Models exposing (errorBanner)
-import NarratorDashboardApp.Api
-import NarratorDashboardApp.Messages exposing (..)
-import NarratorDashboardApp.Models exposing (..)
+import NarrationArchiveApp.Api
+import NarrationArchiveApp.Messages exposing (..)
+import NarrationArchiveApp.Models exposing (..)
 
 
 urlUpdate : Route -> Model -> (Model, Cmd Msg)
 urlUpdate route model =
   case route of
-    NarratorIndex ->
-      (model, NarratorDashboardApp.Api.fetchNarratorOverview)
+    NarrationArchivePage ->
+      (model, NarrationArchiveApp.Api.fetchAllNarrations)
 
     _ ->
       (model, Cmd.none)
@@ -29,7 +29,7 @@ update msg model =
     NavigateTo url ->
       (model, Navigation.newUrl url)
 
-    NarratorOverviewFetchResult (Err error) ->
+    NarrationArchiveFetchResult (Err error) ->
       case error of
         Http.BadPayload parserError _ ->
           ( { model | banner = errorBanner <| "Error! " ++ parserError }
@@ -46,13 +46,7 @@ update msg model =
           , Cmd.none
           )
 
-    NarratorOverviewFetchResult (Ok narratorOverview) ->
+    NarrationArchiveFetchResult (Ok narratorOverview) ->
       ( { model | narrations = Just narratorOverview.narrations }
       , Cmd.none
       )
-
-    NarrationArchive ->
-      (model, Navigation.newUrl "/narrations")
-
-    NewNarration ->
-      (model, Navigation.newUrl "/narrations/new")

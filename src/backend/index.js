@@ -41,6 +41,7 @@ app.get("/api/session", endpoints.getSession);
 app.post("/api/session", endpoints.postSession);
 
 app.get("/api/narrations/overview", middlewares.apiAuth, endpoints.getNarrationOverview);
+app.get("/api/narrations", middlewares.apiAuth, endpoints.getNarrationArchive);
 app.post("/api/narrations", middlewares.apiAuth, endpoints.postNarration);
 app.get("/api/narrations/:narrId", middlewares.apiAuth, endpoints.getNarration);
 app.put("/api/narrations/:narrId", middlewares.apiAuth, endpoints.putNarration);

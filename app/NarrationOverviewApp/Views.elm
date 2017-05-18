@@ -51,58 +51,69 @@ narrationNovelView narrationTitle novels character =
 
 overviewView : NarrationOverview -> List NarrationNovel -> Html Msg
 overviewView overview novels =
-  main_ [ id "narrator-app", class "app-container" ]
-    [ breadcrumbNavView
-        NavigateTo
-        [ { title = "Home"
-          , url = "/"
-          }
-        ]
-        (text overview.narration.title)
-    , h1 [] [ text <| "Narration " ++ overview.narration.title ]
-    , div [ class "two-column" ]
-        [ section []
-            [ h2 [] [ text "Chapters" ]
-            , button [ class "btn btn-add"
-                     , onClick (NavigateTo <| "/narrations/" ++ (toString overview.narration.id) ++ "/new")
-                     ]
-                [ text "New chapter" ]
-            , ul [ class "chapter-list" ] <|
-                narrationOverviewView NavigateTo overview
-            ]
-        , section [ class "page-aside" ]
-            [ h2 [] [ text "Characters" ]
-            , button [ class "btn btn-add"
-                     , onClick (NavigateTo <| "/narrations/" ++ (toString overview.narration.id) ++ "/characters/new")
-                     ]
-                [ text "New character" ]
-            , ul [ class "character-list" ]
-                (List.map narrationCharacterView overview.narration.characters)
-            , h2 [] [ text "Status" ]
-            , text "This narration is "
-            , em [] [ text <| narrationStatusString overview.narration.status ]
-            , text "."
-            , div []
-                [ case overview.narration.status of
-                    Active ->
-                      button [ class "btn"
-                             , onClick <| MarkNarration Finished
-                             ]
-                        [ text "Mark as finished" ]
-                    _ ->
-                      button [ class "btn"
-                             , onClick <| MarkNarration Active
-                             ]
-                        [ text "Mark as active" ]
-                ]
-            , h2 [] [ text "Novels" ]
-            , ul [ class "novel-list" ]
-                (List.map
-                   (narrationNovelView overview.narration.title novels)
-                   overview.narration.characters)
-            ]
-        ]
-    ]
+  let
+    isActive = overview.narration.status == Active
+    chapterOptions = if isActive then
+                       button [ class "btn btn-add"
+                              , onClick (NavigateTo <| "/narrations/" ++ (toString overview.narration.id) ++ "/new")
+                              ]
+                         [ text "New chapter" ]
+                     else
+                       text ""
+    characterOptions = if isActive then
+                         button [ class "btn btn-add"
+                                , onClick (NavigateTo <| "/narrations/" ++ (toString overview.narration.id) ++ "/characters/new")
+                                ]
+                           [ text "New character" ]
+                       else
+                         text ""
+  in
+    main_ [ id "narrator-app", class "app-container" ]
+      [ breadcrumbNavView
+          NavigateTo
+          [ { title = "Home"
+            , url = "/"
+            }
+          ]
+          (text overview.narration.title)
+      , h1 [] [ text <| "Narration " ++ overview.narration.title ]
+      , div [ class "two-column" ]
+          [ section []
+              [ h2 [] [ text "Chapters" ]
+              , chapterOptions
+              , ul [ class "chapter-list" ] <|
+                  narrationOverviewView NavigateTo overview
+              ]
+          , section [ class "page-aside" ]
+              [ h2 [] [ text "Characters" ]
+              , characterOptions
+              , ul [ class "character-list" ]
+                  (List.map narrationCharacterView overview.narration.characters)
+              , h2 [] [ text "Status" ]
+              , text "This narration is "
+              , em [] [ text <| narrationStatusString overview.narration.status ]
+              , text "."
+              , div []
+                  [ case overview.narration.status of
+                      Active ->
+                        button [ class "btn"
+                               , onClick <| MarkNarration Finished
+                               ]
+                          [ text "Mark as finished" ]
+                      _ ->
+                        button [ class "btn"
+                               , onClick <| MarkNarration Active
+                               ]
+                          [ text "Mark as active" ]
+                  ]
+              , h2 [] [ text "Novels" ]
+              , ul [ class "novel-list" ]
+                  (List.map
+                     (narrationNovelView overview.narration.title novels)
+                     overview.narration.characters)
+              ]
+          ]
+      ]
 
 
 mainView : Model -> Html Msg

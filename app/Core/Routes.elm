@@ -5,6 +5,7 @@ type Route
     = ChapterReaderPage Int String
     | CharacterPage String
     | NarratorIndex
+    | NarrationArchivePage
     | NarrationCreationPage
     | ChapterEditNarratorPage Int
     | ChapterControlPage Int

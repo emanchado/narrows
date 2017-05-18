@@ -12,6 +12,7 @@ matchers =
         [ map ChapterReaderPage (s "read" </> int </> string)
         , map CharacterPage (s "characters" </> string)
         , map NarratorIndex (s "")
+        , map NarrationArchivePage (s "narrations")
         , map NarrationCreationPage (s "narrations" </> s "new")
         , map ChapterEditNarratorPage (s "chapters" </> int </> s "edit")
         , map ChapterControlPage (s "chapters" </> int)

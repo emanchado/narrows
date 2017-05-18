@@ -332,7 +332,16 @@ class NarrowsStore {
         });
     }
 
-    getNarrationOverview(userId) {
+    getNarrationOverview(userId, opts) {
+        const userOpts = Object.assign({ status: null }, opts);
+        let extraConditions = "";
+        const binds = [userId];
+
+        if (userOpts.status) {
+            extraConditions = " AND status = ?";
+            binds.push(userOpts.status);
+        }
+
         return Q.ninvoke(
             this.db,
             "all",
@@ -340,9 +349,9 @@ class NarrowsStore {
                     default_background_image AS defaultBackgroundImage
                FROM narrations
               WHERE narrator_id = ?
-                AND status = 'active'
+                    ${ extraConditions }
            ORDER BY created DESC`,
-            userId
+            binds
         ).then(rows => (
             Q.all([
                 Q.all(rows.map(row => (

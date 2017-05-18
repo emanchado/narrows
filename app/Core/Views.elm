@@ -13,6 +13,7 @@ import Common.Views
 import ReaderApp
 import CharacterApp
 import NarratorDashboardApp
+import NarrationArchiveApp
 import NarrationCreationApp
 import NarrationOverviewApp
 import ChapterEditApp
@@ -84,6 +85,9 @@ dispatchProtectedPage model =
     case model.route of
         NarratorIndex ->
             Html.map NarratorDashboardMsg (NarratorDashboardApp.view model.narratorDashboardApp)
+
+        NarrationArchivePage ->
+            Html.map NarrationArchiveMsg (NarrationArchiveApp.view model.narrationArchiveApp)
 
         NarrationCreationPage ->
             Html.map NarrationCreationMsg (NarrationCreationApp.view model.narrationCreationApp)

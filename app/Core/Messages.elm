@@ -7,6 +7,7 @@ import Core.Models
 import ReaderApp
 import CharacterApp
 import NarratorDashboardApp
+import NarrationArchiveApp
 import NarrationCreationApp
 import NarrationOverviewApp
 import ChapterEditApp
@@ -28,6 +29,7 @@ type Msg
     | ReaderMsg ReaderApp.Msg
     | CharacterMsg CharacterApp.Msg
     | NarratorDashboardMsg NarratorDashboardApp.Msg
+    | NarrationArchiveMsg NarrationArchiveApp.Msg
     | NarrationCreationMsg NarrationCreationApp.Msg
     | NarrationOverviewMsg NarrationOverviewApp.Msg
     | ChapterEditMsg ChapterEditApp.Msg

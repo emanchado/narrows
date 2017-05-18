@@ -8,4 +8,5 @@ type Msg
     = NoOp
     | NavigateTo String
     | NarratorOverviewFetchResult (Result Http.Error NarratorOverview)
+    | NarrationArchive
     | NewNarration

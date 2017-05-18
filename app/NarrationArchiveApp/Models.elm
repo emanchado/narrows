@@ -1,10 +1,10 @@
-module NarratorDashboardApp.Models exposing (..)
+module NarrationArchiveApp.Models exposing (..)
 
 import Common.Models exposing (Banner, NarrationOverview)
 
 
 -- Just to parse the response
-type alias NarratorOverview =
+type alias NarrationArchive =
     { narrations : List NarrationOverview
     }
 
