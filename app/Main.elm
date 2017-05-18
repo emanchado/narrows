@@ -140,17 +140,23 @@ combinedUpdate msg model =
       dispatchEnterLocation { model | session = Just <| LoggedInSession session }
 
     UpdateEmail newEmail ->
-      ( { model | email = newEmail }, Cmd.none )
+      ( { model | email = newEmail
+                , banner = Nothing
+        }
+      , Cmd.none )
 
     UpdatePassword newPassword ->
-      ( { model | password = newPassword }, Cmd.none )
+      ( { model | password = newPassword
+                , banner = Nothing
+        }
+      , Cmd.none )
 
     Login ->
       ( model, Core.Api.login model.email model.password )
 
     LoginResult (Err err) ->
       ( { model | session = Just AnonymousSession
-            , banner = errorBanner "Invalid credentials"
+                , banner = errorBanner "Invalid credentials"
         }
       , Cmd.none
       )
