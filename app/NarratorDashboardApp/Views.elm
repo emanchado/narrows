@@ -5,20 +5,9 @@ import Html exposing (Html, main_, h1, h2, div, button, ul, li, a, text)
 import Html.Attributes exposing (id, class, href)
 import Html.Events exposing (onClick)
 import Common.Models exposing (NarrationOverview, ChapterOverview)
-import Common.Views exposing (linkTo, narrationOverviewView)
+import Common.Views exposing (linkTo, narrationOverviewView, loadingView)
 import NarratorDashboardApp.Messages exposing (..)
 import NarratorDashboardApp.Models exposing (..)
-
-
-loadingView : Model -> Html Msg
-loadingView model =
-    case model.banner of
-        Just banner ->
-            div [ class ("banner banner-" ++ banner.type_) ]
-                [ text banner.text ]
-
-        Nothing ->
-            div [] [ text "Loading" ]
 
 
 narrationView : NarrationOverview -> Html Msg
@@ -57,7 +46,7 @@ mainView model =
                     (List.map narrationView narrations)
 
             Nothing ->
-                loadingView model
+                loadingView model.banner
         , div [ class "btn-bar" ]
             [ button
                 [ class "btn btn-add"

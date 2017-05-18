@@ -3,18 +3,10 @@ module ReaderApp.Views exposing (mainView)
 import Html exposing (Html, div, span, a, input, text, img, label, button, br)
 import Html.Attributes exposing (id, class, for, src, href, type_, checked)
 import Html.Events exposing (onClick)
-import Common.Views exposing (bannerView)
+import Common.Views exposing (bannerView, loadingView)
 import ReaderApp.Models exposing (Model, Banner)
 import ReaderApp.Messages exposing (..)
 import ReaderApp.Views.Narration
-
-
-loadingView : Maybe Banner -> Html Msg
-loadingView maybeBanner =
-    div [ id "loader-contents" ]
-        [ div [ id "spinner" ] [ text "Loading…" ]
-        , bannerView maybeBanner
-        ]
 
 
 loadedView : Model -> Html Msg
@@ -47,7 +39,9 @@ mainView model =
                         loadedView model
 
                     Nothing ->
-                        loadingView model.banner
+                        div [ id "loader-contents" ]
+                          [ loadingView model.banner
+                          ]
                 ]
 
           _ ->

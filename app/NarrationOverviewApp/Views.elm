@@ -5,7 +5,7 @@ import Html exposing (Html, main_, h1, h2, section, div, ul, li, button, img, a,
 import Html.Attributes exposing (id, class, href, src)
 import Html.Events exposing (onClick)
 import Common.Models exposing (Narration, NarrationStatus(..), ChapterOverview, NarrationOverview, FullCharacter, narrationStatusString)
-import Common.Views exposing (linkTo, breadcrumbNavView, narrationOverviewView)
+import Common.Views exposing (linkTo, breadcrumbNavView, narrationOverviewView, loadingView)
 import NarrationOverviewApp.Messages exposing (..)
 import NarrationOverviewApp.Models exposing (Model, NarrationNovel)
 
@@ -105,17 +105,6 @@ overviewView overview novels =
     ]
 
 
-loadingView : Model -> Html Msg
-loadingView model =
-  case model.banner of
-    Just banner ->
-      div [ class ("banner banner-" ++ banner.type_) ]
-        [ text banner.text ]
-
-    Nothing ->
-      div [] [ text "Loading" ]
-
-
 mainView : Model -> Html Msg
 mainView model =
   case model.narrationOverview of
@@ -124,7 +113,7 @@ mainView model =
         Just novels ->
           overviewView overview novels
         Nothing ->
-          loadingView model
+          loadingView model.banner
 
     Nothing ->
-      loadingView model
+      loadingView model.banner

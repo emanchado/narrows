@@ -24,17 +24,6 @@ reactionView reaction =
         ]
 
 
-loadingView : Model -> Html Msg
-loadingView model =
-    case model.banner of
-        Just banner ->
-            div [ class ("banner banner-" ++ banner.type_) ]
-                [ text banner.text ]
-
-        Nothing ->
-            div [] [ text "Loading" ]
-
-
 recipientView : List Int -> FullCharacter -> Html Msg
 recipientView currentRecipients character =
     label []

@@ -9,14 +9,6 @@ import NovelReaderApp.Messages exposing (..)
 import NovelReaderApp.Views.Novel
 
 
-loadingView : Maybe Banner -> Html Msg
-loadingView maybeBanner =
-    div [ id "loader-contents" ]
-        [ div [ id "spinner" ] [ text "Loading…" ]
-        , bannerView maybeBanner
-        ]
-
-
 loadedView : Model -> Html Msg
 loadedView model =
     div [ id "loader-contents" ]
@@ -47,7 +39,9 @@ mainView model =
                             loadedView model
 
                         Nothing ->
-                            loadingView model.banner
+                            div [ id "loader-contents" ]
+                              [ loadingView model.banner
+                              ]
                     ]
 
             _ ->
