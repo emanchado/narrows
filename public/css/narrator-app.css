@@ -214,6 +214,10 @@ form.create-form h2 {
     margin: 10px;
     border: 1px solid #aaa;
     padding: 10px;
+
+    /* For the ribbon */
+    position: relative;
+    overflow: hidden;
 }
 .narration-header {
     display: flex;
@@ -227,4 +231,31 @@ form.create-form h2 {
 }
 .narration-header a {
     text-decoration: none;
+}
+
+
+.corner-ribbon {
+    position: absolute;
+    top: 25px;
+    left: -50px;
+
+    width: 200px;
+    color: #f0f0f0;
+    background: #006;
+    box-shadow: 0 0 3px rgba(0,0,0,.3);
+    transform: rotate(-45deg);
+    -webkit-transform: rotate(-45deg);
+
+    text-align: center;
+    line-height: 50px;
+    letter-spacing: 1px;
+    text-transform: capitalize;
+}
+
+.corner-ribbon.top-right {
+    top: 25px;
+    right: -50px;
+    left: auto;
+    transform: rotate(45deg);
+    -webkit-transform: rotate(45deg);
 }
