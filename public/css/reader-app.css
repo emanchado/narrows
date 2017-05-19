@@ -197,8 +197,8 @@ ul.thread-list.reader li .btn-bar {
 }
 .dramatis-personae > li img {
     margin-right: 10px;
-    max-width: 100px;
-    max-height: 100px;
+    width: 100px;
+    height: 100px;
 }
 
 #description-editor .ProseMirror {
@@ -218,8 +218,8 @@ ul.thread-list.reader li .btn-bar {
     margin-bottom: 15px;
 }
 .avatars img {
-    max-width: 100px;
-    max-height: 100px;
+    width: 100px;
+    height: 100px;
 }
 .upload-new-avatar {
     display: flex;
