@@ -73,7 +73,7 @@
 .chapter > p, .chapter > blockquote {
     max-width: 50em;
     font-size: 16px;
-    line-height: 18px;
+    line-height: 20px;
     text-align: justify;
 
     margin: 0 auto;
@@ -88,7 +88,7 @@
 .chapter > p:first-child::first-letter {
     float: left;
     
-    font-size: 60px;
+    font-size: 70px;
     line-height: 54px;
     margin-right: 3px;
 }
