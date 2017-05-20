@@ -231,9 +231,9 @@ publishedChapterView navigationMessage narration chapterOverview =
           text ""
       , if chapterOverview.numberMessages > 0 then
           span []
-            [ text " ("
+            [ text " — "
             , img [ src "/img/envelope.png" ] []
-            , text <| (toString chapterOverview.numberMessages) ++ ")"
+            , text <| toString chapterOverview.numberMessages
             ]
         else
           text ""
