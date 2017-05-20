@@ -64,6 +64,8 @@ Then you will have to recompile the frontend and backend code with:
 
 * Delete characters from a narration?
 * Allow narrators to update which player plays a character
+* Allow narrators to reset character tokens (in case they get "compromised")
+* Allow narrators to mark narrations as abandoned (as opposed to finished)
 
 
 # Credits
