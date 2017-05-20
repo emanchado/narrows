@@ -3,7 +3,7 @@ module Common.Views exposing (..)
 import String
 import Json.Decode
 import Html exposing (Html, h2, div, nav, textarea, button, span, ul, li, img, a, em, strong, text)
-import Html.Attributes exposing (class, rows, value, href, src)
+import Html.Attributes exposing (class, rows, value, href, src, title)
 import Html.Events exposing (defaultOptions, onWithOptions, onClick, onInput)
 import Common.Models exposing (MessageThread, Message, Banner, ReplyInformation, Breadcrumb, ChapterOverview, Narration, NarrationOverview, NarrationStatus(..), narrationStatusString)
 
@@ -204,6 +204,11 @@ publishedChapterView navigationMessage narration chapterOverview =
                             chapterOverview.reactions
     numberChapterParticipants = List.length chapterOverview.reactions
     numberNarrationCharacters = List.length narration.characters
+    participantNames =
+      String.join ", " <|
+        List.map
+          (\r -> r.character.name)
+          chapterOverview.reactions
   in
     li []
       [ a (linkTo
@@ -217,8 +222,11 @@ publishedChapterView navigationMessage narration chapterOverview =
         else
           text ""
       , if numberNarrationCharacters /= numberChapterParticipants then
-          text (" — only " ++ (toString numberChapterParticipants) ++
-                " participant(s)")
+          span [ title <| "Only for " ++ participantNames ]
+            [ text " — "
+            , img [ src "/img/character.png" ] []
+            , text <| toString numberChapterParticipants
+            ]
         else
           text ""
       , if chapterOverview.numberMessages > 0 then
