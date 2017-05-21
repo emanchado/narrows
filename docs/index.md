@@ -29,6 +29,69 @@ instructions, please have a look at the `README.md` file in the [GitHub
 repo](https://github.com/emanchado/narrows/blob/master/README.md#installation).
 
 
+# How does it work?
+
+A specific telling of a story to a specific group of people is called
+a _narration_ in NARROWS. A narration has a group of protagonists
+called _characters_ (Player Characters in regular RPG parlance) which
+are played by one user each. A narration contains _chapters_, which is
+a body of text with a background image and a soundtrack. Each player
+submits a character _action_ for every chapter. Once every player has
+replied, the narrator can read all actions and write the next chapter.
+
+To avoid players having to create accounts, when a chapter is
+published a special URL is built for every character, and sent via
+e-mail to the appropriate player. Thus, players simply wait for an
+e-mail for every chapter, then click a link and they are ready to
+read.
+
+
+# How does it look?
+
+This is the narrator's dashboard:
+
+![Narrator Dashboard](screenshots/1-dashboard.png)
+
+---------------------
+
+This is a narration's overview page:
+
+![Narration Overview](screenshots/2-narration_overview.png)
+
+---------------------
+
+This is a chapter's creation/edit page (first chapter of the
+narration, so no previous chapter to refer to):
+
+![Narration Overview](screenshots/3-chapter_authoring.png)
+
+---------------------
+
+This is a chapter's creation/edit page showing the previous chapter's
+reactions and text:
+
+![Narration Overview](screenshots/4-chapter_authoring2.png)
+
+---------------------
+
+This is a (published) chapter's control panel:
+
+![Narration Overview](screenshots/5-chapter_control.png)
+
+---------------------
+
+This is how a chapter looks for a player:
+
+![Narration Overview](screenshots/6-chapter_read.png)
+
+---------------------
+
+This is how a chapter looks for a player when you scroll past the
+chapter text itself to see the messages and action box:
+
+![Narration Overview](screenshots/7-chapter_react.png)
+
+
 # Credits
 
 * Speaker/mute icons made by
