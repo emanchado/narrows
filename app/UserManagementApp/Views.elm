@@ -112,6 +112,7 @@ mainView model =
                 [ label [ for "new-user-email" ] [ text "E-mail: " ]
                 , input
                     [ id "new-user-email"
+                    , type_ "email"
                     , placeholder "user@example.com"
                     , value model.newUserEmail
                     , onInput UpdateNewUserEmail
