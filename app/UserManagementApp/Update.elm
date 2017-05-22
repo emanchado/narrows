@@ -31,7 +31,7 @@ update msg model =
             ( model, Cmd.none )
 
         UsersFetchResult (Err error) ->
-            ( { model | banner = errorBanner "Error fetching users" }
+            ( { model | banner = errorBanner <| "Error fetching users: " ++ (toString error) }
             , Cmd.none
             )
 

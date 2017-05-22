@@ -56,7 +56,7 @@ class UserStore {
         return Q.ninvoke(
             this.db,
             "query",
-            "SELECT id, email, role FROM users"
+            "SELECT id, email, COALESCE(role, '') AS role FROM users"
         ).spread(userRows => (
             userRows
         ));
