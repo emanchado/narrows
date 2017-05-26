@@ -36,6 +36,7 @@ nav.breadcrumbs {
 label {
     margin-top: 10px;
     font-weight: bold;
+    font-size: 14px;
 }
 
 input[type="file"] {
@@ -129,11 +130,14 @@ ul li {
 }
 
 .large-text-input {
-    font-size: 200%;
+    font-size: 150%;
 }
 
 .btn-bar {
     text-align: right;
+}
+.btn-bar-extra {
+    margin-top: 10px;
 }
 
 .btn {
@@ -143,6 +147,11 @@ ul li {
 
     font-size: 18px;
     background-color: whitesmoke;
+}
+a.btn {
+    display: inline-block;
+    text-decoration: none;
+    color: inherit;
 }
 
 .btn-default {

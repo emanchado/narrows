@@ -10,7 +10,7 @@ import Common.Views exposing (bannerView, breadcrumbNavView, onStopPropagationCl
 import ChapterEditApp.Models exposing (Model, LastReactions, LastChapter, LastReaction)
 import ChapterEditApp.Messages exposing (..)
 import ChapterEditApp.Views.FileSelector exposing (fileSelector)
-import ChapterEditApp.Views.Participants exposing (participantListView)
+import ChapterEditApp.Views.Participants exposing (participantListView, participantPreviewsView)
 
 
 chapterMediaView : Chapter -> Narration -> Html Msg
@@ -132,6 +132,7 @@ chapterView chapter narration =
                    ]
               [ text "Publish" ]
           ]
+      , participantPreviewsView chapter.id chapter.participants
       ]
 
 
