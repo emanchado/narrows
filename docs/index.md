@@ -54,7 +54,7 @@ read.
 If you prefer a short video (7:40), see here. If not, scroll under the
 video to see screenshots.
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/cWLBTT1g8eM" frameborder="0" allowfullscreen></iframe>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/uIW4wgrTQ68" frameborder="0" allowfullscreen></iframe>
 
 ## Screenshots
 
