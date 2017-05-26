@@ -23,7 +23,8 @@ type alias AddMentionInfo =
 
 
 type alias FileUploadInfo =
-    { fileInputId : String
+    { type_ : String
+    , fileInputId : String
     , narrationId : Int
     }
 

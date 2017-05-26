@@ -315,31 +315,6 @@ export function postNewChapter(req, res) {
     });
 }
 
-export function postNarrationFiles(req, res) {
-    const narrationId = parseInt(req.params.narrId, 10);
-
-    const form = new formidable.IncomingForm();
-    form.uploadDir = config.files.tmpPath;
-
-    store.getNarration(narrationId).then(narrationData => (
-        userStore.canActAs(req.session.userId, narrationData.narratorId)
-    )).then(() => (
-        Q.ninvoke(form, "parse", req)
-    )).spread(function(fields, files) {
-        const uploadedFileInfo = files.file,
-              filename = path.basename(uploadedFileInfo.name),
-              tmpPath = uploadedFileInfo.path;
-
-        return store.addMediaFile(narrationId, filename, tmpPath);
-    }).then(fileInfo => (
-        res.json(fileInfo)
-    )).catch(err => {
-        res.status(500).json({
-            errorMessage: `Cannot add new media file: ${ err }`
-        });
-    });
-}
-
 function uploadFile(req, res, type) {
     const narrationId = parseInt(req.params.narrId, 10);
 
@@ -367,6 +342,14 @@ function uploadFile(req, res, type) {
 
 export function postNarrationImages(req, res) {
     uploadFile(req, res, "images");
+}
+
+export function postNarrationBackgroundImages(req, res) {
+    uploadFile(req, res, "backgroundImages");
+}
+
+export function postNarrationAudio(req, res) {
+    uploadFile(req, res, "audio");
 }
 
 export function postNarrationCharacters(req, res) {

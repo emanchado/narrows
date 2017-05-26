@@ -153,7 +153,7 @@ app.ports.openFileInput.subscribe(fileInputId => {
 });
 app.ports.uploadFile.subscribe(evt => {
     const fileInput = document.getElementById(evt.fileInputId);
-    const url = "/api/narrations/" + evt.narrationId + "/files";
+    const url = "/api/narrations/" + evt.narrationId + "/" + evt.type_;
 
     const xhr = new XMLHttpRequest();
     xhr.open("POST", url);

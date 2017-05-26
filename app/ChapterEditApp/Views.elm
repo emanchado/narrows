@@ -18,14 +18,27 @@ chapterMediaView chapter narration =
   div [ class "chapter-media" ]
     [ div [ class "image-selector" ]
         [ label [] [ text "Background image:" ]
-        , fileSelector
-            UpdateSelectedBackgroundImage
-            (case chapter.backgroundImage of
-              Just image -> image
-              Nothing -> "")
-            (List.map
-              (\file -> (file, file))
-              narration.files.backgroundImages)
+        , div []
+            [ fileSelector
+                UpdateSelectedBackgroundImage
+                (case chapter.backgroundImage of
+                   Just image -> image
+                   Nothing -> "")
+                (List.map
+                   (\file -> (file, file))
+                   narration.files.backgroundImages)
+            , button [ class "btn btn-small btn-add"
+                     , onClick (OpenMediaFileSelector "new-bg-image-file")
+                     ]
+                [ text "Upload" ]
+            , input [ type_ "file"
+                    , id "new-bg-image-file"
+                    , class "invisible"
+                    , name "file"
+                    , on "change" (Json.Decode.succeed <| AddMediaFile "new-bg-image-file" "background-images")
+                    ]
+                []
+            ]
         , img [ class "tiny-image-preview"
               , src (case chapter.backgroundImage of
                        Just image -> "/static/narrations/"
@@ -38,14 +51,27 @@ chapterMediaView chapter narration =
         ]
     , div [ class "audio-selector" ]
         [ label [] [ text "Background audio:" ]
-        , fileSelector
-            UpdateSelectedAudio
-            (case chapter.audio of
-               Just audio -> audio
-               Nothing -> "")
-            (List.map
-               (\file -> (file, file))
-               narration.files.audio)
+        , div []
+            [ fileSelector
+                UpdateSelectedAudio
+                (case chapter.audio of
+                   Just audio -> audio
+                   Nothing -> "")
+                (List.map
+                   (\file -> (file, file))
+                   narration.files.audio)
+            , button [ class "btn btn-small btn-add"
+                     , onClick (OpenMediaFileSelector "new-audio-file")
+                     ]
+                [ text "Upload" ]
+            , input [ type_ "file"
+                    , id "new-audio-file"
+                    , class "invisible"
+                    , name "file"
+                    , on "change" (Json.Decode.succeed <| AddMediaFile "new-audio-file" "audio")
+                    ]
+                []
+            ]
         , button [ class "btn btn-small"
                  , onClick PlayPauseAudioPreview
                  ]
@@ -63,16 +89,6 @@ chapterMediaView chapter narration =
                 []
             Nothing ->
               text ""
-        , button [ class "btn btn-small btn-default"
-                 , onClick (OpenMediaFileSelector "new-media-file")
-                 ]
-            [ text "Add files" ]
-        , input [ type_ "file"
-                , id "new-media-file"
-                , name "file"
-                , on "change" (Json.Decode.succeed <| AddMediaFile "new-media-file")
-                ]
-            []
         ]
     ]
 

@@ -309,11 +309,12 @@ update msg model =
     OpenMediaFileSelector fileInputId ->
       ( model, openFileInput fileInputId )
 
-    AddMediaFile fileInputId ->
+    AddMediaFile fileInputId mediaType ->
       case model.chapter of
         Just chapter ->
           ( model
-          , uploadFile { fileInputId = fileInputId
+          , uploadFile { type_ = mediaType
+                       , fileInputId = fileInputId
                        , narrationId = chapter.narrationId
                        }
           )

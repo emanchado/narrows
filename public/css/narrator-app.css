@@ -93,7 +93,6 @@ ul.participant-list li {
 }
 
 .audio-selector select {
-    display: block;
     margin-bottom: 0.5ex;
 }
 
@@ -101,12 +100,7 @@ ul.participant-list li {
     font-size: 150%;
 }
 
-#new-media-file {
-    display: none;
-}
-
 .image-selector select {
-    display: block;
     margin-bottom: 0.5ex;
 }
 

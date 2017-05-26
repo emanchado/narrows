@@ -25,7 +25,7 @@ type Msg
     | UpdateSelectedBackgroundImage String
     | UpdateSelectedAudio String
     | OpenMediaFileSelector String
-    | AddMediaFile String
+    | AddMediaFile String String
     | AddMediaFileError ChapterEditApp.Ports.FileUploadError
     | AddMediaFileSuccess ChapterEditApp.Ports.FileUploadSuccess
     | PlayPauseAudioPreview
