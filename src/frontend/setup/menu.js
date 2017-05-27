@@ -144,10 +144,13 @@ function updateMentionMark(markType, targetCharacters, state, dispatch) {
         if ($cursor) {
             if (markType.isInSet(state.storedMarks || $cursor.marks())) {
                 state.tr.removeStoredMark(markType);
-                dispatch(state.tr.addStoredMark(markType.create(attrs)));
-            } else {
-                dispatch(state.tr.addStoredMark(markType.create(attrs)));
             }
+
+            if (targetCharacters.length) {
+                state.tr.addStoredMark(markType.create(attrs));
+            }
+
+            dispatch(state.tr.scrollIntoView());
         } else {
             let has = false, tr = state.tr;
             for (let i = 0; !has && i < ranges.length; i++) {
@@ -158,8 +161,9 @@ function updateMentionMark(markType, targetCharacters, state, dispatch) {
                 let {$from, $to} = ranges[i];
                 if (has) {
                     tr.removeMark($from.pos, $to.pos, markType);
-                    tr.addMark($from.pos, $to.pos, markType.create(attrs));
-                } else {
+                }
+
+                if (targetCharacters.length) {
                     tr.addMark($from.pos, $to.pos, markType.create(attrs));
                 }
             }
