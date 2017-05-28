@@ -256,23 +256,29 @@ narrationOverviewView navigationMessage narrationOverview =
      narrationOverview.chapters)
 
 
+ribbonForNarrationStatus : NarrationStatus -> Html msg
+ribbonForNarrationStatus status =
+  case status of
+    Active ->
+      text ""
+    _ ->
+      div [ class "corner-ribbon top-right" ]
+        [ text <| narrationStatusString status ]
+
+
 compactNarrationView : (String -> msg) -> NarrationOverview -> Html msg
 compactNarrationView navigationMessage overview =
   let
-    (ribbon, buttonBar) =
+    ribbon = ribbonForNarrationStatus overview.narration.status
+    buttonBar =
       case overview.narration.status of
         Active ->
-          ( text ""
-          , button [ class "btn btn-add"
-                   , onClick (navigationMessage <| "/narrations/" ++ (toString overview.narration.id) ++ "/new")
-                   ]
-              [ text "New chapter" ]
-          )
+          button [ class "btn btn-add"
+                 , onClick (navigationMessage <| "/narrations/" ++ (toString overview.narration.id) ++ "/new")
+                 ]
+            [ text "New chapter" ]
         _ ->
-          ( div [ class "corner-ribbon top-right" ]
-              [ text <| narrationStatusString overview.narration.status ]
-          , text ""
-          )
+          text ""
   in
     div [ class "narration-container" ]
       [ ribbon

@@ -5,7 +5,7 @@ import Html exposing (Html, main_, h1, h2, section, div, ul, li, button, img, a,
 import Html.Attributes exposing (id, class, href, src)
 import Html.Events exposing (onClick)
 import Common.Models exposing (Narration, NarrationStatus(..), ChapterOverview, NarrationOverview, FullCharacter, narrationStatusString)
-import Common.Views exposing (linkTo, breadcrumbNavView, narrationOverviewView, loadingView)
+import Common.Views exposing (linkTo, breadcrumbNavView, narrationOverviewView, loadingView, ribbonForNarrationStatus)
 import NarrationOverviewApp.Messages exposing (..)
 import NarrationOverviewApp.Models exposing (Model, NarrationNovel)
 
@@ -77,8 +77,9 @@ overviewView overview novels =
           ]
           (text overview.narration.title)
       , h1 [] [ text <| "Narration " ++ overview.narration.title ]
-      , div [ class "two-column" ]
-          [ section []
+      , div [ class <| "two-column narration-" ++ (narrationStatusString overview.narration.status) ]
+          [ ribbonForNarrationStatus overview.narration.status
+          , section []
               [ h2 [] [ text "Chapters" ]
               , chapterOptions
               , ul [ class "chapter-list" ] <|
@@ -96,10 +97,16 @@ overviewView overview novels =
               , div []
                   [ case overview.narration.status of
                       Active ->
-                        button [ class "btn"
-                               , onClick <| MarkNarration Finished
-                               ]
-                          [ text "Mark as finished" ]
+                        div []
+                          [ button [ class "btn"
+                                   , onClick <| MarkNarration Finished
+                                   ]
+                              [ text "Mark as finished" ]
+                          , button [ class "btn"
+                                   , onClick <| MarkNarration Abandoned
+                                   ]
+                              [ text "Mark as abandoned" ]
+                          ]
                       _ ->
                         button [ class "btn"
                                , onClick <| MarkNarration Active

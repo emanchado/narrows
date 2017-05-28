@@ -1,6 +1,7 @@
 .two-column {
     display: flex;
-    margin-top: 20px;
+    margin-top: 10px;
+    padding-top: 10px;
 }
 .two-column > section {
     width: 50%;
@@ -197,6 +198,16 @@ form.create-form h2 {
 }
 .ProseMirror-prompt .control-line select {
     margin-right: 5px;
+}
+
+.narration-finished, .narration-abandoned {
+    position: relative; /* Needed for the ribbon to work */
+    overflow: hidden; /* Needed for the ribbon to work */
+
+    border: 1px solid #006;
+    padding-right: 2px;
+
+    background-color: #ddd;
 }
 
 .narration-list {
