@@ -1,8 +1,6 @@
 <p><em><%= senderName %></em> has sent <%= recipientListString %> a message in chapter <em><%= chapterTitle %></em>.</p>
 
 <p>The mesage is:</p>
-<blockquote>
-  <%= messageText %>
-</blockquote>
+<blockquote style="white-space: pre-wrap;"><%= messageText %></blockquote>
 
 <p>You can see it in context, and reply, at <a href="<%= chapterUrl %>"><%= chapterUrl %></a>.</p>
