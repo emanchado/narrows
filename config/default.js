@@ -20,6 +20,10 @@ module.exports = {
 
     mail: {
         from: '"Narrows" <no-reply@narrows.localhost>',
+        // If set, means that e-mails will always sent to this
+        // address, regardless of the player real e-mail
+        // address. Useful for development.
+        // alwaysSendTo: 'developer@example.com',
         // This should point to the "mail-templates" in this repo. It
         // may need to be an absolute path (depends on your setup).
         templateDir: './mail-templates'

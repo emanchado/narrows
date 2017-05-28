@@ -18,12 +18,13 @@ class Mailer {
         return `${config.publicAddress}/chapters/${chapterId}`;
     }
 
-    sendMail(template, recipient, subject, stash) {
-        if (!recipient) {
+    sendMail(template, givenRecipient, subject, stash) {
+        if (!givenRecipient) {
             // Nothing to do
             return;
         }
 
+        const recipient = config.mail.alwaysSendTo || givenRecipient;
         const textTemplate = path.join(config.mail.templateDir, `${template}.txt.ejs`);
         const htmlTemplate = path.join(config.mail.templateDir, `${template}.html.ejs`);
         // Don't escape plain text
