@@ -5,7 +5,7 @@ import Json.Encode
 import Http
 import Common.Api.Json exposing (parseChapterMessages)
 import ReaderApp.Messages exposing (Msg, Msg(..))
-import ReaderApp.Models exposing (Chapter, ParticipantCharacter, OwnCharacter, ChapterMessages, MessageThread, Message)
+import ReaderApp.Models exposing (Chapter, ParticipantCharacter, OwnCharacter, ChapterMessages, MessageThread, Message, ApiErrorResponse)
 
 
 parseParticipantCharacter : Json.Decoder ParticipantCharacter
@@ -41,6 +41,11 @@ parseChapter =
       (field "text" Json.value)
       (field "participants" <| list parseParticipantCharacter)
       (maybe (field "reaction" string)))
+
+parseApiError : Json.Decoder ApiErrorResponse
+parseApiError =
+  Json.map ApiErrorResponse
+    (field "errorMessage" string)
 
 
 fetchChapterInfo : Int -> String -> Cmd Msg

@@ -616,13 +616,19 @@ class NarrowsStore {
     }
 
     updateReaction(chapterId, characterId, reactionText) {
-        return Q.ninvoke(
-            this.db,
-            "run",
-            `UPDATE reactions SET main_text = ?
-              WHERE chapter_id = ? AND character_id = ?`,
-            [reactionText, chapterId, characterId]
-        );
+        return this.getActiveChapter(characterId).then(activeChapter => {
+            if (chapterId !== activeChapter.id) {
+                throw new Error("Cannot send action for old chapters");
+            }
+
+            return Q.ninvoke(
+                this.db,
+                "run",
+                `UPDATE reactions SET main_text = ?
+                  WHERE chapter_id = ? AND character_id = ?`,
+                [reactionText, chapterId, characterId]
+            );
+        });
     }
 
     getCharacterInfo(characterToken, extraFields) {

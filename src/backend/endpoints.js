@@ -419,7 +419,7 @@ export function getStaticFile(req, res) {
 }
 
 export function putReactionCharacter(req, res) {
-    const chapterId = req.params.chptId,
+    const chapterId = parseInt(req.params.chptId, 10),
           characterToken = req.params.charToken,
           reactionText = req.body.text;
 
@@ -428,10 +428,14 @@ export function putReactionCharacter(req, res) {
             res.json({ chapterId, characterId, reactionText });
 
             mailer.reactionPosted(chapterId, characterToken, reactionText);
+        }).catch(err => {
+            res.status(400).json({
+                errorMessage: `Cannot not save action: ${ err }`
+            });
         });
     }).catch(err => {
         res.status(500).json({
-            errorMessage: `Could not save reaction: ${ err }`
+            errorMessage: `Could not save action: ${ err }`
         });
     });
 }

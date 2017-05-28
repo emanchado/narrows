@@ -3,6 +3,8 @@ module ReaderApp.Update exposing (..)
 import String
 import Http
 import Navigation
+import Json.Decode exposing (decodeString)
+
 import Core.Routes exposing (Route(..))
 import Common.Ports exposing (renderText, startNarration, playPauseNarrationMusic, flashElement)
 import Common.Models exposing (Character, errorBanner, successBanner)
@@ -42,6 +44,17 @@ descriptionRenderCommand character =
         , text = character.description
         , proseMirrorType = "description"
         }
+
+
+formatError : Http.Error -> String
+formatError httpError =
+  case httpError of
+    Http.BadStatus response ->
+      case decodeString ReaderApp.Api.parseApiError response.body of
+        Ok value -> value.errorMessage
+        Err error -> "Cannot parse server error: " ++ error
+    _ ->
+      "Unknown network error"
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -198,7 +211,8 @@ update msg model =
                     ( model, Cmd.none )
 
         SendNotesResult (Err error) ->
-            ( { model | banner = errorBanner "Error sending notes" }
+            ( { model | banner = errorBanner <| formatError error
+              }
             , Cmd.none
             )
 
@@ -332,7 +346,8 @@ update msg model =
               )
 
         SendReactionResult (Err error) ->
-            ( { model | banner = errorBanner "Error sending reaction" }
+          ( { model | banner = errorBanner <| formatError error
+            }
             , Cmd.none
             )
 
