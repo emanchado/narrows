@@ -13,8 +13,6 @@ const STATIC_HTML_FILES = path.join(__dirname, "..", "html");
 
 const app = express();
 const MySQLStore = mysqlSession(expressSession);
-const dbDirname = path.dirname(config.db.path),
-      dbBasename = path.basename(config.db.path);
 
 app.use(express.static('public'));
 app.use(bodyParser.urlencoded({extended: false}));
