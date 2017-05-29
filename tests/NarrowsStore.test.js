@@ -18,7 +18,7 @@ const CHAR3_NAME = "Bilbo";
 const CHAR3_TOKEN = "62963d86-a9cf-11e6-8fbb-f717783bbfc5";
 
 // Cannot set t.context from "before", so just use global variables
-let store, userStore, userId1, userId2, userId3;
+let store, userStore, narratorUserId, userId1, userId2, userId3;
 
 // Because recreating the database is heavy, we do it only once for
 // all tests, and then create a new narration for every test we run.
@@ -32,10 +32,12 @@ test.before(t => {
         fs.removeSync(TEST_FILES);
         fs.mkdirpSync(TEST_FILES);
 
-        return Q.all([userStore.createUser({ email: "test1@example.com" }),
+        return Q.all([userStore.createUser({ email: "narrator@example.com" }),
+                      userStore.createUser({ email: "test1@example.com" }),
                       userStore.createUser({ email: "test2@example.com" }),
                       userStore.createUser({ email: "test3@example.com" })]);
-    }).spread((user1, user2, user3) => {
+    }).spread((narrator, user1, user2, user3) => {
+        narratorUserId = narrator.id;
         userId1 = user1.id;
         userId2 = user2.id;
         userId3 = user3.id;
@@ -44,7 +46,7 @@ test.before(t => {
 
 test.beforeEach(t => {
     return store.createNarration({
-        narratorId: 1,
+        narratorId: narratorUserId,
         title: "Basic Test Narration",
         defaultAudio: DEFAULT_AUDIO,
         defaultBackgroundImage: DEFAULT_BACKGROUND
