@@ -37,7 +37,7 @@ test.serial("can create users with a given password", t => {
         password: password
     }).then(user => (
         t.context.store.authenticate(email, password).then(userId => (
-            t.ok(user.id, userId)
+            t.truthy(user.id, userId)
         ))
     ));
 });
@@ -51,7 +51,7 @@ test.serial("can change a user's password", t => {
     }).then(user => (
         t.context.store.updateUser(user.id, { password: "foo" }).then(() => (
             t.context.store.authenticate(email, "foo").then(userId => (
-                t.ok(user.id, userId)
+                t.truthy(user.id, userId)
             ))
         ))
     ));
@@ -66,7 +66,7 @@ test.serial("setting empty password doesn't change it", t => {
     }).then(user => (
         t.context.store.updateUser(user.id, { password: "" }).then(() => (
             t.context.store.authenticate(email, password).then(userId => (
-                t.ok(user.id, userId)
+                t.truthy(user.id, userId)
             ))
         ))
     ));

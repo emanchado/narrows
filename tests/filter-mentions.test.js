@@ -66,7 +66,7 @@ test("leaves alone mention text even when they include other characters", t => {
     const orig = doc([
         para(["This is ",
               mentioned("INDEED ", [CHARACTER1, CHARACTER2]),
-             "for me"])
+              "for me"])
     ]);
     const expected = doc([ para(["This is ", "INDEED ", "for me"]) ]);
 
@@ -137,4 +137,40 @@ test("doesn't freak out with non-array block content", t => {
     const orig = doc([ {type: "image", content: "/images/logo.png"} ]);
 
     t.deepEqual(mentionFilter.filter(orig, CHARACTER1.id), orig);
+});
+
+test("can filter text in blockquotes", t => {
+    const orig = doc([
+        para(["This is ",
+              mentioned("INDEED ", [CHARACTER1, CHARACTER2]),
+              "for me"]),
+        {type: "blockquote",
+         content: [
+             para([
+                 mentioned("Some of the quote is private", [CHARACTER2]),
+                 "Some of it is public"
+             ]),
+         ]}
+    ]);
+    const expected = doc([
+        para(["This is ", "INDEED ", "for me"]),
+        {type: "blockquote",
+         content: [
+             para(["Some of it is public"])
+         ]}
+    ]);
+
+    t.deepEqual(mentionFilter.filter(orig, CHARACTER1.id), expected);
+});
+
+test("removes empty blockquotes", t => {
+    const orig = doc([
+        {type: "blockquote",
+         content: [
+             para([mentioned("Blockquote for Character 1", [CHARACTER1])])
+         ]}
+    ]);
+    const expected = doc([]);
+
+    t.deepEqual(mentionFilter.filter(orig, CHARACTER2.id), expected);
 });

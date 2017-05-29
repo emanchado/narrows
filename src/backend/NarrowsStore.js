@@ -5,8 +5,6 @@ import config from "config";
 import mysql from "mysql";
 import Q from "q";
 
-import merge from "./merge";
-
 const JSON_TO_DB = {
     id: "id",
     title: "title",
@@ -131,8 +129,8 @@ class NarrowsStore {
                     return;
                 }
 
-                const finalNarration = merge({ id: result.insertId },
-                                             props);
+                const finalNarration = Object.assign({ id: result.insertId },
+                                                     props);
                 deferred.resolve(finalNarration);
             }
         );

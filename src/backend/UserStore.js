@@ -2,8 +2,6 @@ import mysql from "mysql";
 import Q from "q";
 import bcrypt from "bcrypt";
 
-import merge from "./merge";
-
 const PASSWORD_SALT_ROUNDS = 10;
 const JSON_TO_DB = {
     id: "id",
@@ -148,7 +146,8 @@ class UserStore {
                     return;
                 }
 
-                const finalUser = merge({ id: result.insertId }, props);
+                const finalUser = Object.assign({ id: result.insertId },
+                                                props);
                 deferred.resolve(finalUser);
             }
         );
