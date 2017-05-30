@@ -202,19 +202,17 @@ view model =
     case model.chapter of
         Just chapter ->
             div [ id "chapter-container", class (chapterContainerClass model) ]
-                [ div
-                    [ id "top-image"
+              [ div [ id "top-image"
                     , style (backgroundImageStyle chapter model.backgroundBlurriness)
                     ]
-                    [ text
-                        (if (String.isEmpty chapter.title) then
-                            "Untitled"
-                         else
-                            chapter.title
-                        )
-                    ]
-                , img
-                    [ id "play-icon"
+                  [ text
+                      (if (String.isEmpty chapter.title) then
+                          "Untitled"
+                       else
+                          chapter.title
+                      )
+                  ]
+              , img [ id "play-icon"
                     , src
                         ("/img/"
                             ++ (if model.musicPlaying then
@@ -232,28 +230,23 @@ view model =
                         )
                     , onClick PlayPauseMusic
                     ]
-                    []
-                , audio
-                    [ id "background-music"
-                    , src
-                        ("/static/narrations/"
-                            ++ (toString chapter.narrationId)
-                            ++ "/audio/"
-                            ++ chapter.audio
-                        )
-                    , loop True
-                    , preload
-                        (if model.backgroundMusic then
-                            "auto"
-                         else
-                            "none"
-                        )
-                    ]
-                    []
-                , div [ id "chapter-text", class "chapter" ]
-                    [ text "Chapter contents go here" ]
-                , reactionView model
-                ]
+                  []
+              , audio [ id "background-music"
+                      , src ("/static/narrations/"
+                               ++ (toString chapter.narrationId)
+                               ++ "/audio/"
+                               ++ chapter.audio)
+                      , loop True
+                      , preload (if model.backgroundMusic then
+                                   "auto"
+                                 else
+                                   "none")
+                      ]
+                  []
+              , div [ id "chapter-text", class "chapter" ]
+                  [ text "Chapter contents go here" ]
+              , reactionView model
+              ]
 
         Nothing ->
             div [ id "chapter-container", class (chapterContainerClass model) ]
