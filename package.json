@@ -42,7 +42,8 @@
     "buildfe": "brunch build",
     "watchfe": "brunch watch",
     "test": "NODE_ENV=test NODE_CONFIG_DIR=../config ava",
-    "watchtest": "NODE_ENV=test NODE_CONFIG_DIR=../config ava --watch"
+    "watchtest": "NODE_ENV=test NODE_CONFIG_DIR=../config ava --watch",
+    "dbmigrate": "db-migrate up"
   },
   "devDependencies": {
     "ava": "^0.16.0",

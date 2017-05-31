@@ -38,7 +38,7 @@ run the following steps:
    sure the new user has all privileges to that database.
 1. Copy `config/default.js` to `config/local-production.js` and modify
    any values you need.
-1. Run `db-migrate up`
+1. Run `npm run dbmigrate`
 1. Run `NODE_ENV=production node build/index.js`
 
 If all this works you will have to find a way to keep the server
