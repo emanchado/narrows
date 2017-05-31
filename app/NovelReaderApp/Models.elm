@@ -30,8 +30,8 @@ type alias ParticipantCharacter =
 type alias Chapter =
     { id : Int
     , title : String
-    , audio : String
-    , backgroundImage : String
+    , audio : Maybe String
+    , backgroundImage : Maybe String
     , text : Json.Decode.Value
     }
 

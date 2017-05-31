@@ -22,23 +22,27 @@ chapterContainerClass model =
             ""
 
 
-backgroundImageStyle : Int -> Chapter -> Int -> List ( String, String )
-backgroundImageStyle narrationId chapter backgroundBlurriness =
-    let
-        imageUrl =
-            "/static/narrations/"
-                ++ (toString narrationId)
-                ++ "/background-images/"
-                ++ (encodeUri chapter.backgroundImage)
+backgroundImageStyle : Int -> Maybe String -> Int -> List ( String, String )
+backgroundImageStyle narrationId maybeBgImage backgroundBlurriness =
+  case maybeBgImage of
+    Just backgroundImage ->
+      let
+          imageUrl =
+              "/static/narrations/"
+                  ++ (toString narrationId)
+                  ++ "/background-images/"
+                  ++ (encodeUri backgroundImage)
 
-        filter =
-            "blur(" ++ (toString backgroundBlurriness) ++ "px)"
-    in
-        [ ( "background-image", "url(" ++ imageUrl ++ ")" )
-        , ( "-webkit-filter", filter )
-        , ( "-moz-filter", filter )
-        , ( "filter", filter )
-        ]
+          filter =
+              "blur(" ++ (toString backgroundBlurriness) ++ "px)"
+      in
+          [ ( "background-image", "url(" ++ imageUrl ++ ")" )
+          , ( "-webkit-filter", filter )
+          , ( "-moz-filter", filter )
+          , ( "filter", filter )
+          ]
+    Nothing ->
+      []
 
 
 characterView : Int -> ParticipantCharacter -> Html Msg
@@ -99,7 +103,7 @@ view model =
                             ]
                         , div
                             [ id "top-image"
-                            , style (backgroundImageStyle novel.narration.id chapter model.backgroundBlurriness)
+                            , style (backgroundImageStyle novel.narration.id chapter.backgroundImage model.backgroundBlurriness)
                             ]
                             [ text
                                 (if (String.isEmpty chapter.title) then
@@ -128,23 +132,22 @@ view model =
                             , onClick PlayPauseMusic
                             ]
                             []
-                        , audio
-                            [ id "background-music"
-                            , src
-                                ("/static/narrations/"
-                                    ++ (toString novel.narration.id)
-                                    ++ "/audio/"
-                                    ++ chapter.audio
-                                )
-                            , loop True
-                            , preload
-                                (if model.backgroundMusic then
-                                    "auto"
-                                 else
-                                    "none"
-                                )
-                            ]
-                            []
+                        , case chapter.audio of
+                            Just audioUrl ->
+                              audio [ id "background-music"
+                                    , src ("/static/narrations/" ++
+                                             (toString novel.narration.id) ++
+                                             "/audio/" ++
+                                             audioUrl)
+                                    , loop True
+                                    , preload (if model.backgroundMusic then
+                                                 "auto"
+                                               else
+                                                 "none")
+                                    ]
+                                []
+                            Nothing ->
+                              text ""
                         , div [ id "chapter-text", class "chapter" ]
                             [ text "Chapter contents go here" ]
                         , div [ class "interaction" ]

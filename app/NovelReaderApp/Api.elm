@@ -20,8 +20,8 @@ parseChapter =
     Json.map5 Chapter
         (field "id" int)
         (field "title" string)
-        (field "audio" string)
-        (field "backgroundImage" string)
+        (maybe (field "audio" string))
+        (maybe (field "backgroundImage" string))
         (field "text" Json.value)
 
 

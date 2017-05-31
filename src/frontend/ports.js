@@ -32,17 +32,18 @@ app.ports.renderText.subscribe(evt => {
 });
 
 app.ports.startNarration.subscribe(evt => {
-    // Fade audio in
-    if (!evt.audioElemId) {
-        return;
+    // Fade audio in right away: we cannot wait for this because
+    // Blink-based mobile browsers don't allow starting audio without
+    // direct user interaction, and using setTimeout makes the browser
+    // think that it didn't start with a button click.
+    if (evt.audioElemId) {
+        const audioEl = document.getElementById(evt.audioElemId);
+        if (audioEl) {
+            audioEl.volume = 0.1;
+            audioEl.play();
+            bumpVolume(audioEl);
+        }
     }
-    const audioEl = document.getElementById(evt.audioElemId);
-    if (!audioEl) {
-        return;
-    }
-    audioEl.volume = 0.1;
-    audioEl.play();
-    bumpVolume(audioEl);
 
     // Make chapter text fade-in after a short pause
     const breathHoldingTime = 700;
