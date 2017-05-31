@@ -38,6 +38,8 @@ run the following steps:
    sure the new user has all privileges to that database.
 1. Copy `config/default.js` to `config/local-production.js` and modify
    any values you need.
+1. Copy `database-sample.json` to `database.json` and modify
+   any values you need (they need to match the configuration above!).
 1. Run `npm run dbmigrate`
 1. Run `NODE_ENV=production node build/index.js`
 
