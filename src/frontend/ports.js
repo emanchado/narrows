@@ -42,6 +42,8 @@ app.ports.startNarration.subscribe(evt => {
             audioEl.volume = 0.1;
             audioEl.play();
             bumpVolume(audioEl);
+        } else {
+            console.warn("Audio element", evt.audioElemId, "not found");
         }
     }
 
