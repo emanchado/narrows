@@ -12,12 +12,9 @@ import NovelReaderApp.Messages exposing (..)
 chapterContainerClass : Model -> String
 chapterContainerClass model =
   case model.state of
-    NovelReaderApp.Models.Loader ->
-      "invisible transparent"
-    NovelReaderApp.Models.StartingNarration ->
-      "transparent"
-    NovelReaderApp.Models.Narrating ->
-      ""
+    NovelReaderApp.Models.Loader -> "invisible transparent"
+    NovelReaderApp.Models.StartingNarration -> "transparent"
+    NovelReaderApp.Models.Narrating -> "fade-in"
 
 
 backgroundImageStyle : Int -> Maybe String -> Int -> List ( String, String )
@@ -109,22 +106,6 @@ view model =
                   , onClick PlayPauseMusic
                   ]
                 []
-            , case chapter.audio of
-                Just audioUrl ->
-                  audio [ id "background-music"
-                        , src ("/static/narrations/" ++
-                             (toString novel.narration.id) ++
-                             "/audio/" ++
-                             audioUrl)
-                        , loop True
-                        , preload (if model.backgroundMusic then
-                               "auto"
-                               else
-                               "none")
-                        ]
-                    []
-                Nothing ->
-                  text ""
             , div [ id "chapter-text", class "chapter" ]
                 [ text "Chapter contents go here" ]
             , div [ class "interaction" ]
@@ -134,11 +115,31 @@ view model =
                       (characterView novel.narration.id)
                       novel.narration.characters)
                 ]
+            , div []
+                (List.indexedMap
+                   (\i chapter ->
+                      case chapter.audio of
+                        Just audioUrl ->
+                          audio [ id <| "background-music-chapter-" ++ (toString i)
+                                , src ("/static/narrations/" ++
+                                         (toString novel.narration.id) ++
+                                         "/audio/" ++ audioUrl)
+                                , loop True
+                                , preload (if model.backgroundMusic then
+                                             "auto"
+                                           else
+                                             "none")
+                                ]
+                            []
+                        Nothing ->
+                          text "")
+                   novel.chapters)
             ]
 
         Nothing ->
           div [ id "chapter-container", class (chapterContainerClass model) ]
-            [ text <| "Internal Error: no such chapter " ++ (toString model.currentChapterIndex) ]
+            [ text <| "Internal Error: no such chapter " ++ (toString model.currentChapterIndex)
+            ]
 
     Nothing ->
       div [ id "chapter-container", class (chapterContainerClass model) ]

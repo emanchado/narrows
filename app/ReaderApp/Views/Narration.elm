@@ -16,7 +16,7 @@ chapterContainerClass model =
   case model.state of
     ReaderApp.Models.Loader -> "invisible transparent"
     ReaderApp.Models.StartingNarration -> "transparent"
-    ReaderApp.Models.Narrating -> ""
+    ReaderApp.Models.Narrating -> "fade-in"
 
 
 backgroundImageStyle : Chapter -> Int -> List ( String, String )

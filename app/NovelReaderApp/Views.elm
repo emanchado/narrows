@@ -16,12 +16,11 @@ loadedView model =
             [ button [ onClick StartNarration ]
                 [ text "Start" ]
             , br [] []
-            , input
-                [ id "music"
-                , type_ "checkbox"
-                , checked model.backgroundMusic
-                , onClick ToggleBackgroundMusic
-                ]
+            , input [ id "music"
+                    , type_ "checkbox"
+                    , checked model.backgroundMusic
+                    , onClick ToggleBackgroundMusic
+                    ]
                 []
             , label [ for "music" ] [ text "Background music" ]
             ]
@@ -31,20 +30,18 @@ loadedView model =
 mainView : Model -> Html Msg
 mainView model =
     div [ id "reader-app" ]
-        [ case model.state of
-            NovelReaderApp.Models.Loader ->
-                div [ id "loader" ]
-                    [ case model.novel of
-                        Just _ ->
-                            loadedView model
+      [ case model.state of
+          NovelReaderApp.Models.Loader ->
+            div [ id "loader" ]
+              [ case model.novel of
+                  Just _ ->
+                      loadedView model
+                  Nothing ->
+                      div [ id "loader-contents" ]
+                        [ loadingView model.banner ]
+              ]
 
-                        Nothing ->
-                            div [ id "loader-contents" ]
-                              [ loadingView model.banner
-                              ]
-                    ]
-
-            _ ->
-                text ""
-        , NovelReaderApp.Views.Novel.view model
-        ]
+          _ ->
+            text ""
+      , NovelReaderApp.Views.Novel.view model
+      ]

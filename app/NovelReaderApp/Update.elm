@@ -4,7 +4,7 @@ import Http
 import Navigation
 import Task
 import Core.Routes exposing (Route(..))
-import Common.Ports exposing (renderText, startNarration, playPauseNarrationMusic, flashElement)
+import Common.Ports exposing (renderText, startNarration, pauseNarrationMusic, playPauseNarrationMusic, flashElement)
 import Common.Models exposing (Character, errorBanner)
 import NovelReaderApp.Api
 import NovelReaderApp.Messages exposing (..)
@@ -97,7 +97,11 @@ update msg model =
 
     StartNarration ->
       let
-        audioElemId = Debug.log "audio elm" <| if model.musicPlaying then "background-music" else ""
+        audioElemId =
+          if model.musicPlaying then
+            "background-music-chapter-" ++ (toString model.currentChapterIndex)
+          else
+            ""
       in
         case model.novel of
           Just novel ->
@@ -139,9 +143,13 @@ update msg model =
         )
 
     PlayPauseMusic ->
-      ( { model | musicPlaying = not model.musicPlaying }
-      , playPauseNarrationMusic { audioElemId = "background-music" }
-      )
+      let
+        audioElemId = "background-music-chapter-" ++
+                        (toString model.currentChapterIndex)
+      in
+        ( { model | musicPlaying = not model.musicPlaying }
+        , playPauseNarrationMusic { audioElemId = audioElemId }
+        )
 
     PageScroll scrollAmount ->
       let
@@ -153,11 +161,15 @@ update msg model =
     PreviousChapter ->
       let
         newChapterIndex = max 0 (model.currentChapterIndex - 1)
+        audioElemId = "background-music-chapter-" ++
+                        (toString model.currentChapterIndex)
       in
         case model.novel of
           Just novel ->
             ( model
-            , Navigation.newUrl <| "/novels/" ++ novel.token ++ "/chapters/" ++ (toString newChapterIndex)
+            , Cmd.batch [ Navigation.newUrl <| "/novels/" ++ novel.token ++ "/chapters/" ++ (toString newChapterIndex)
+                        , pauseNarrationMusic { audioElemId = audioElemId }
+                        ]
             )
 
           Nothing ->
@@ -169,11 +181,15 @@ update msg model =
                         Just novel -> (List.length novel.chapters) - 1
                         Nothing -> 0
         newChapterIndex = min lastChapter (model.currentChapterIndex + 1)
+        audioElemId = "background-music-chapter-" ++
+                        (toString model.currentChapterIndex)
       in
         case model.novel of
           Just novel ->
             ( model
-            , Navigation.newUrl <| "/novels/" ++ novel.token ++ "/chapters/" ++ (toString newChapterIndex)
+            , Cmd.batch [ Navigation.newUrl <| "/novels/" ++ novel.token ++ "/chapters/" ++ (toString newChapterIndex)
+                        , pauseNarrationMusic { audioElemId = audioElemId }
+                        ]
             )
 
           Nothing ->

@@ -114,6 +114,10 @@ ul li {
     opacity: 0;
 }
 
+.fade-in {
+    transition: opacity 7s;
+}
+
 .banner {
     max-width: 50em;
 
