@@ -33,14 +33,12 @@ run the following steps:
 1. Run `npm install`
 1. Run `npm install -g elm@0.18`
 1. Run `elm-package install`
-1. Run `npm run buildfe` and `npm run buildbe`
+1. Run `npm run build`
 1. Install MySQL, create a new user and an empty MySQL database. Make
    sure the new user has all privileges to that database.
 1. Copy `config/default.js` to `config/local-production.js` and modify
    any values you need.
-1. Copy `database-sample.json` to `database.json` and modify
-   any values you need (they need to match the configuration above!).
-1. Run `npm run dbmigrate`
+1. Run `NODE_ENV=production npm run dbmigrate`
 1. Run `NODE_ENV=production node build/index.js`
 
 If all this works you will have to find a way to keep the server
@@ -53,13 +51,15 @@ dependencies with:
 
     npm install
 
-And run any new migrations with:
+And run any new migrations with the following command. Note that you
+might need to pass the `NODE_ENV` variable as in the installation
+instructions above:
 
-    db-migrate up
+    npm run dbmigrate
 
 Then you will have to recompile the frontend and backend code with:
 
-    npm run buildfe && npm run buildbe
+    npm run build
 
 
 # Credits

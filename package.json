@@ -41,9 +41,11 @@
     "watchbe": "babel -w --modules common -d build/ src/backend",
     "buildfe": "brunch build",
     "watchfe": "brunch watch",
+    "build": "npm run buildbe && npm run buildfe",
     "test": "NODE_ENV=test NODE_CONFIG_DIR=../config ava",
     "watchtest": "NODE_ENV=test NODE_CONFIG_DIR=../config ava --watch",
-    "dbmigrate": "db-migrate up"
+    "updatedbmigrateconf": "node update-db-migrate-conf.js",
+    "dbmigrate": "npm run updatedbmigrateconf && db-migrate up"
   },
   "devDependencies": {
     "ava": "^0.16.0",
