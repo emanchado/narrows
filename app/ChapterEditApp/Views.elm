@@ -6,21 +6,28 @@ import Html exposing (Html, h2, h3, div, main_, nav, section, ul, li, img, a, in
 import Html.Attributes exposing (id, name, class, href, src, target, type_, value, placeholder, checked, disabled)
 import Html.Events exposing (onClick, onInput, on)
 import Common.Models exposing (FullCharacter, Narration, Chapter)
-import Common.Views exposing (bannerView, breadcrumbNavView, onStopPropagationClick)
+import Common.Views exposing (bannerView, breadcrumbNavView, onStopPropagationClick, horizontalSpinner)
 import ChapterEditApp.Models exposing (Model, LastReactions, LastChapter, LastReaction)
 import ChapterEditApp.Messages exposing (..)
 import ChapterEditApp.Views.FileSelector exposing (fileSelector)
 import ChapterEditApp.Views.Participants exposing (participantListView, participantPreviewsView)
 
 
-chapterMediaView : Chapter -> Narration -> Html Msg
-chapterMediaView chapter narration =
+chapterMediaView : Chapter -> Narration -> Bool -> Bool -> Html Msg
+chapterMediaView chapter narration uploadingAudio uploadingBackgroundImage =
   div [ class "chapter-media" ]
     [ div [ class "image-selector" ]
-        [ label [] [ text "Background image:" ]
+        [ label []
+            [ text "Background image:"
+            , if uploadingBackgroundImage then
+                horizontalSpinner
+              else
+                text ""
+            ]
         , div []
             [ fileSelector
                 UpdateSelectedBackgroundImage
+                uploadingBackgroundImage
                 (case chapter.backgroundImage of
                    Just image -> image
                    Nothing -> "")
@@ -35,7 +42,7 @@ chapterMediaView chapter narration =
                     , id "new-bg-image-file"
                     , class "invisible"
                     , name "file"
-                    , on "change" (Json.Decode.succeed <| AddMediaFile "new-bg-image-file" "background-images")
+                    , on "change" (Json.Decode.succeed <| AddMediaFile BackgroundImage "new-bg-image-file")
                     ]
                 []
             ]
@@ -50,10 +57,17 @@ chapterMediaView chapter narration =
             []
         ]
     , div [ class "audio-selector" ]
-        [ label [] [ text "Background audio:" ]
+        [ label []
+            [ text "Background audio:"
+            , if uploadingAudio then
+                horizontalSpinner
+              else
+                text ""
+            ]
         , div []
             [ fileSelector
                 UpdateSelectedAudio
+                uploadingAudio
                 (case chapter.audio of
                    Just audio -> audio
                    Nothing -> "")
@@ -68,7 +82,7 @@ chapterMediaView chapter narration =
                     , id "new-audio-file"
                     , class "invisible"
                     , name "file"
-                    , on "change" (Json.Decode.succeed <| AddMediaFile "new-audio-file" "audio")
+                    , on "change" (Json.Decode.succeed <| AddMediaFile Audio "new-audio-file")
                     ]
                 []
             ]
@@ -93,8 +107,8 @@ chapterMediaView chapter narration =
     ]
 
 
-chapterView : Chapter -> Narration -> Html Msg
-chapterView chapter narration =
+chapterView : Chapter -> Narration -> Bool -> Bool -> Html Msg
+chapterView chapter narration uploadingAudio uploadingBackgroundImage =
   let
     (saveAction, publishAction) =
       if chapter.id == 0 then
@@ -116,7 +130,7 @@ chapterView chapter narration =
               , participantListView chapter.id narration.characters chapter.participants
               ]
           ]
-      , chapterMediaView chapter narration
+      , chapterMediaView chapter narration uploadingAudio uploadingBackgroundImage
       , label [] [ text "Text:" ]
       , div [ id "editor-container"
             , class "editor-container"
@@ -268,7 +282,7 @@ mainView model =
               Just lastReactions -> lastReactionListView lastReactions chapter
               Nothing -> section [] [ text "Loading reactions…" ]
           , section []
-              [ chapterView chapter narration
+              [ chapterView chapter narration model.uploadingAudio model.uploadingBackgroundImage
               , bannerView model.flash
               , if model.showPublishChapterDialog then
                   showDialog

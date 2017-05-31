@@ -111,6 +111,13 @@ showFlashMessage maybeBanner =
     ]
 
 
+mediaTypeString : MediaType -> String
+mediaTypeString mediaType =
+  case mediaType of
+    Audio -> "audio"
+    BackgroundImage -> "background-images"
+
+
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
   case msg of
@@ -309,23 +316,37 @@ update msg model =
     OpenMediaFileSelector fileInputId ->
       ( model, openFileInput fileInputId )
 
-    AddMediaFile fileInputId mediaType ->
+    AddMediaFile mediaType fileInputId ->
       case model.chapter of
         Just chapter ->
-          ( model
-          , uploadFile { type_ = mediaType
-                       , fileInputId = fileInputId
-                       , narrationId = chapter.narrationId
-                       }
-          )
+          let
+            modelWithUploadFlag =
+              case mediaType of
+                Audio -> { model | uploadingAudio = True }
+                BackgroundImage -> { model | uploadingBackgroundImage = True }
+          in
+            ( modelWithUploadFlag
+            , uploadFile { type_ = mediaTypeString mediaType
+                         , fileInputId = fileInputId
+                         , narrationId = chapter.narrationId
+                         }
+            )
 
         Nothing ->
           ( model, Cmd.none )
 
     AddMediaFileError error ->
-      ( { model | banner = errorBanner <| "Error upload media file: " ++ error.message }
-      , Cmd.none
-      )
+      let
+        newBanner = errorBanner <| "Error upload media file: " ++ error.message
+      in
+        -- Bah. We don't know which type was uploaded, so we assume we
+        -- can safely turn off both spinners. Sigh.
+        ( { model | banner = newBanner
+                  , uploadingAudio = False
+                  , uploadingBackgroundImage = False
+          }
+        , Cmd.none
+        )
 
     AddMediaFileSuccess resp ->
       case model.narration of
@@ -336,9 +357,14 @@ update msg model =
                 updatedFiles = updateNarrationFiles narration.files resp
                 updatedNarration = { narration | files = updatedFiles }
                 updatedChapter = updateChapter chapter resp
+                modelWithoutUploadFlag =
+                  if resp.type_ == "audio" then
+                    { model | uploadingAudio = False }
+                  else
+                    { model | uploadingBackgroundImage = False }
               in
-                ( { model | narration = Just updatedNarration
-                          , chapter = Just updatedChapter
+                ( { modelWithoutUploadFlag | narration = Just updatedNarration
+                                           , chapter = Just updatedChapter
                   }
                 , Cmd.none
                 )

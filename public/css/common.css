@@ -276,3 +276,42 @@ ul.thread-list li .btn-bar {
 .editor-container .ProseMirror {
     min-height: 200px;
 }
+
+/* CSS Spinner rules (from http://tobiasahlin.com/spinkit/) */
+.spinner {
+  display: inline-block;
+  width: 70px;
+  text-align: center;
+}
+.spinner > div {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+
+  background-color: #333;
+  border-radius: 100%;
+  -webkit-animation: sk-bouncedelay 1.4s infinite ease-in-out both;
+  animation: sk-bouncedelay 1.4s infinite ease-in-out both;
+}
+.spinner .bounce1 {
+  -webkit-animation-delay: -0.32s;
+  animation-delay: -0.32s;
+}
+.spinner .bounce2 {
+  -webkit-animation-delay: -0.16s;
+  animation-delay: -0.16s;
+}
+@-webkit-keyframes sk-bouncedelay {
+  0%, 80%, 100% { -webkit-transform: scale(0) }
+  40% { -webkit-transform: scale(1.0) }
+}
+@keyframes sk-bouncedelay {
+  0%, 80%, 100% {
+    -webkit-transform: scale(0);
+    transform: scale(0);
+  } 40% {
+    -webkit-transform: scale(1.0);
+    transform: scale(1.0);
+  }
+}
+/* End of the CSS spinner rules */

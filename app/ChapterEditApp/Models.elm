@@ -52,4 +52,6 @@ type alias Model =
     , banner : Maybe Banner
     , flash : Maybe Banner
     , showPublishChapterDialog : Bool
+    , uploadingAudio : Bool
+    , uploadingBackgroundImage : Bool
     }

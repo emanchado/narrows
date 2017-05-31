@@ -8,6 +8,11 @@ import ChapterEditApp.Models exposing (LastReactions)
 import ChapterEditApp.Ports
 
 
+type MediaType
+  = Audio
+  | BackgroundImage
+
+
 type Msg
     = NoOp
     | NavigateTo String
@@ -25,7 +30,7 @@ type Msg
     | UpdateSelectedBackgroundImage String
     | UpdateSelectedAudio String
     | OpenMediaFileSelector String
-    | AddMediaFile String String
+    | AddMediaFile MediaType String
     | AddMediaFileError ChapterEditApp.Ports.FileUploadError
     | AddMediaFileSuccess ChapterEditApp.Ports.FileUploadSuccess
     | PlayPauseAudioPreview

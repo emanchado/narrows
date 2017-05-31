@@ -3,7 +3,7 @@ module ChapterEditApp.Views.FileSelector exposing (..)
 import String
 import Json.Decode
 import Html exposing (Html, select, option, text)
-import Html.Attributes exposing (selected, value)
+import Html.Attributes exposing (selected, value, disabled)
 import Html.Events exposing (on)
 import ChapterEditApp.Messages exposing (Msg)
 
@@ -13,8 +13,8 @@ targetSelectedValue =
   Json.Decode.at [ "target", "value" ] Json.Decode.string
 
 
-fileSelector : (String -> Msg) -> String -> List (String, String) -> Html Msg
-fileSelector msg selectedOption options =
+fileSelector : (String -> Msg) -> Bool -> String -> List (String, String) -> Html Msg
+fileSelector msg isUploading selectedOption options =
   let
     optionLabel =
       \label ->
@@ -33,6 +33,8 @@ fileSelector msg selectedOption options =
                ]
           [ text <| optionLabel optLabel ]
   in
-    select [ on "change" (Json.Decode.map msg targetSelectedValue) ]
+    select [ on "change" (Json.Decode.map msg targetSelectedValue)
+           , disabled isUploading
+           ]
       (option [ value "" ] [ text "Select…" ]
         :: (List.map optionRenderer options))
