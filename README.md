@@ -2,8 +2,9 @@
 
 NARROWS is an online storytelling system. The name stands for
 NARRation On Web System. The easiest way to explain it is to
-imagine an online [gamebook](https://en.wikipedia.org/wiki/Gamebook)
-with the following differences:
+imagine an online
+[Choose Your Own Adventure](https://en.wikipedia.org/wiki/Choose_Your_Own_Adventure)
+book with the following differences:
 
 1. Instead of having a single reader, there are as many readers as
    protagonists in the story (it could be one, but also four or five).
