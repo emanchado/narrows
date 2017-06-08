@@ -37,6 +37,7 @@ app.get("/feeds/:charToken", endpoints.getFeedsCharacter);
 
 app.get("/api/session", endpoints.getSession);
 app.post("/api/session", endpoints.postSession);
+app.delete("/api/session", endpoints.deleteSession);
 
 app.get("/api/narrations/overview", middlewares.apiAuth, endpoints.getNarrationOverview);
 app.get("/api/narrations", middlewares.apiAuth, endpoints.getNarrationArchive);

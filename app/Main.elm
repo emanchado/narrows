@@ -148,13 +148,15 @@ combinedUpdate msg model =
       ( { model | email = newEmail
                 , banner = Nothing
         }
-      , Cmd.none )
+      , Cmd.none
+      )
 
     UpdatePassword newPassword ->
       ( { model | password = newPassword
                 , banner = Nothing
         }
-      , Cmd.none )
+      , Cmd.none
+      )
 
     Login ->
       ( model, Core.Api.login model.email model.password )
@@ -168,6 +170,11 @@ combinedUpdate msg model =
 
     LoginResult (Ok resp) ->
       dispatchEnterLocation { model | session = Just <| LoggedInSession resp }
+
+    Logout ->
+      ( { model | session = Just AnonymousSession }
+      , Core.Api.logout
+      )
 
     ReaderMsg readerMsg ->
       let

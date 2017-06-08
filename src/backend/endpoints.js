@@ -54,6 +54,11 @@ export function postSession(req, res) {
     });
 }
 
+export function deleteSession(req, res) {
+    req.session.userId = null;
+    res.status(204).json({});
+}
+
 export function getNarrationArchive(req, res) {
     store.getNarrationOverview(req.session.userId).then(narrationOverviewData => {
         res.json(narrationOverviewData);

@@ -147,36 +147,47 @@ appContentView model =
                     Common.Views.loadingView Nothing
 
 
-adminLinks : Maybe UserSession -> List (Html Msg)
-adminLinks maybeSession =
-    case maybeSession of
-        Just session ->
-            case session of
-                AnonymousSession ->
-                    []
+actionLinks : Maybe UserSession -> List (Html Msg)
+actionLinks maybeSession =
+  let
+    adminLinks =
+      case maybeSession of
+          Just session ->
+              case session of
+                  AnonymousSession ->
+                      []
 
-                LoggedInSession userInfo ->
-                    if userInfo.role == "admin" then
-                        [ a (Common.Views.linkTo NavigateTo "/users")
-                            [ text "Manage users" ]
-                        ]
-                    else
-                        []
+                  LoggedInSession userInfo ->
+                      if userInfo.role == "admin" then
+                          [ a (Common.Views.linkTo NavigateTo "/users")
+                              [ text "Manage users" ]
+                          , text " | "
+                          ]
+                      else
+                          []
 
-        Nothing ->
-            []
+          Nothing ->
+              []
+  in
+    List.append
+      adminLinks
+      [ a [ href "#"
+          , onClick Logout
+          ]
+          [ text "Log out" ]
+      ]
 
 
 mainView : Model -> Html Msg
 mainView model =
     let
-        baseLinks =
+        homeLink =
             [ a (Common.Views.linkTo NavigateTo "/")
                 [ div [ class "logo" ] [ text "NARROWS" ] ]
             ]
 
         finalLinks =
-            List.concat [ baseLinks, adminLinks model.session ]
+            List.concat [ homeLink, [ div [] <| actionLinks model.session ] ]
     in
         case model.session of
             Just session ->

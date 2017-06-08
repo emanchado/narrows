@@ -31,3 +31,16 @@ login email password =
   in
     Http.send LoginResult <|
       Http.post "/api/session" (Http.jsonBody jsonEncodedBody) parseSession
+
+
+logout : Cmd Msg
+logout =
+  Http.send LogoutResult <|
+      Http.request { method = "DELETE"
+                   , url = "/api/session"
+                   , headers = []
+                   , body = Http.emptyBody
+                   , expect = Http.expectString
+                   , timeout = Nothing
+                   , withCredentials = False
+                   }

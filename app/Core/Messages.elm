@@ -26,6 +26,8 @@ type Msg
     | UpdatePassword String
     | Login
     | LoginResult (Result Http.Error Core.Models.UserInfo)
+    | Logout
+    | LogoutResult (Result Http.Error String)
     | ReaderMsg ReaderApp.Msg
     | CharacterMsg CharacterApp.Msg
     | NarratorDashboardMsg NarratorDashboardApp.Msg
