@@ -3,7 +3,6 @@ module ProfileApp.Api exposing (..)
 import Http
 import Json.Decode as Json exposing (..)
 import Json.Encode
-import Common.Models exposing (UserInfo)
 import Common.Api.Json exposing (parseUserInfo)
 import ProfileApp.Messages exposing (Msg, Msg(..))
 
