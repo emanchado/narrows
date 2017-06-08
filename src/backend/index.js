@@ -60,10 +60,11 @@ app.get("/api/chapters/:chptId/interactions", middlewares.apiAuth, endpoints.get
 app.post("/api/chapters/:chptId/messages", middlewares.apiAuth, endpoints.postChapterMessages);
 app.get("/api/chapters/:chptId/last-reactions", middlewares.apiAuth, endpoints.getChapterLastReactions);
 
+app.put("/api/users/:userId", endpoints.putUser);
+
 // These endpoints are only for admins!
 app.get("/api/users", middlewares.apiAdminAuth, endpoints.getUsers);
 app.post("/api/users", middlewares.apiAdminAuth, endpoints.postUser);
-app.put("/api/users/:userId", middlewares.apiAdminAuth, endpoints.putUser);
 
 // Public endpoints, only protected by an unguessable string
 app.get("/api/chapters/:chptId/:charToken", endpoints.getChapterCharacter);

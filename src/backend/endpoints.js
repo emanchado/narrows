@@ -24,7 +24,7 @@ const transporter = nodemailer.createTransport(sendmailTransport());
 const mailer = new Mailer(store, transporter);
 
 export function getSession(req, res) {
-    const userId = req.session.userId;
+    const userId = parseInt(req.session.userId, 10);
 
     if (userId) {
         userStore.getUser(userId).then(info => (
@@ -627,14 +627,20 @@ export function postUser(req, res) {
 }
 
 export function putUser(req, res) {
-    const userId = req.params.userId;
+    const userId = parseInt(req.params.userId, 10);
     const newProps = req.body;
 
-    userStore.updateUser(userId, newProps).then(user => {
-        res.json(user);
+    userStore.canActAs(req.session.userId, userId).then(() => {
+        userStore.updateUser(userId, newProps).then(user => {
+            res.json(user);
+        }).catch(err => {
+            res.status(500).json({
+                errorMessage: `There was a problem updating: ${ err }`
+            });
+        });
     }).catch(err => {
-        res.status(500).json({
-            errorMessage: `There was a problem updating: ${ err }`
+        res.status(403).json({
+            errorMessage: `Cannot modify user ${ userId }`
         });
     });
 }

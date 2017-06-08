@@ -2,20 +2,18 @@ module UserManagementApp.Update exposing (..)
 
 import Http
 import Core.Routes exposing (Route(..))
+import Common.Models exposing (errorBanner)
 import UserManagementApp.Api
 import UserManagementApp.Messages exposing (..)
-import Common.Models exposing (errorBanner)
 import UserManagementApp.Models exposing (..)
-import UserManagementApp.Api
 
 
 urlUpdate : Route -> Model -> ( Model, Cmd Msg )
 urlUpdate route model =
     case route of
         UserManagementPage ->
-            ( { model
-                | banner = Nothing
-                , users = Nothing
+            ( { model | banner = Nothing
+                      , users = Nothing
               }
             , UserManagementApp.Api.fetchUsers
             )

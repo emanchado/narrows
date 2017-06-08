@@ -1,7 +1,7 @@
 module Core.Models exposing (..)
 
 import Core.Routes exposing (Route(..))
-import Common.Models exposing (Banner)
+import Common.Models exposing (Banner, UserInfo)
 import ReaderApp
 import CharacterApp
 import NarratorDashboardApp
@@ -13,15 +13,9 @@ import ChapterControlApp
 import CharacterCreationApp
 import UserManagementApp
 import NovelReaderApp
+import ProfileApp
 
 
-
-
-type alias UserInfo =
-    { id : Int
-    , email : String
-    , role : String
-    }
 
 
 type UserSession
@@ -46,4 +40,5 @@ type alias Model =
     , characterCreationApp : CharacterCreationApp.Model
     , userManagementApp : UserManagementApp.Model
     , novelReaderApp : NovelReaderApp.Model
+    , profileApp : ProfileApp.Model
     }

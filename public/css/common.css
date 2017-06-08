@@ -67,14 +67,17 @@ ul li {
 .login-form {
     width: 100%;
 }
-.login-form .form-line label {
+.login-form .form-actions {
+    margin-top: 5px;
+}
+.form-line label {
     display: inline-block;
     min-width: 100px;
     text-align: right;
     margin-right: 10px;
 }
-.login-form .form-actions {
-    margin-top: 5px;
+.narrow-form {
+    max-width: 500px;
 }
 
 #loader {

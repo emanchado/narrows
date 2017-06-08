@@ -21,6 +21,7 @@ import ChapterControlApp
 import CharacterCreationApp
 import UserManagementApp
 import NovelReaderApp
+import ProfileApp
 
 
 initialState : Navigation.Location -> (Model, Cmd Msg)
@@ -41,6 +42,7 @@ initialState location =
     , characterCreationApp = CharacterCreationApp.initialState
     , userManagementApp = UserManagementApp.initialState
     , novelReaderApp = NovelReaderApp.initialState
+    , profileApp = ProfileApp.initialState
     }
   , Core.Api.refreshSession
   )
@@ -93,6 +95,7 @@ dispatchEnterLocation model =
     chapterControlApp = ChapterControlApp.urlUpdate currentRoute model.chapterControlApp
     characterCreationApp = CharacterCreationApp.urlUpdate currentRoute model.characterCreationApp
     userManagementApp = UserManagementApp.urlUpdate currentRoute model.userManagementApp
+    profileApp = ProfileApp.urlUpdate currentRoute model.profileApp
   in
     ( { model | route = currentRoute
               , readerApp = first readerApp
@@ -106,6 +109,7 @@ dispatchEnterLocation model =
               , characterCreationApp = first characterCreationApp
               , userManagementApp = first userManagementApp
               , novelReaderApp = first novelReaderApp
+              , profileApp = first profileApp
       }
     , Cmd.batch <|
       List.append
@@ -123,6 +127,7 @@ dispatchEnterLocation model =
           , Cmd.map ChapterControlMsg <| second chapterControlApp
           , Cmd.map CharacterCreationMsg <| second characterCreationApp
           , Cmd.map UserManagementMsg <| second userManagementApp
+          , Cmd.map ProfileMsg <| second profileApp
           ])
     )
 
@@ -269,6 +274,15 @@ combinedUpdate msg model =
         , protectedCmd model.session <| Cmd.map UserManagementMsg cmd
         )
 
+    ProfileMsg profileMsg ->
+      let
+        ( newProfileModel, cmd ) =
+          ProfileApp.update profileMsg model.profileApp
+      in
+        ( { model | profileApp = newProfileModel }
+        , protectedCmd model.session <| Cmd.map ProfileMsg cmd
+        )
+
     _ ->
       ( model, Cmd.none )
 
@@ -287,6 +301,7 @@ subscriptions model =
         , Sub.map CharacterCreationMsg (CharacterCreationApp.subscriptions model.characterCreationApp)
         , Sub.map UserManagementMsg (UserManagementApp.subscriptions model.userManagementApp)
         , Sub.map NovelReaderMsg (NovelReaderApp.subscriptions model.novelReaderApp)
+        , Sub.map ProfileMsg (ProfileApp.subscriptions model.profileApp)
         ]
 
 

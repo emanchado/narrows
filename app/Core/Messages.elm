@@ -3,7 +3,7 @@ module Core.Messages exposing (..)
 import Http
 import Navigation
 
-import Core.Models
+import Common.Models exposing (UserInfo)
 import ReaderApp
 import CharacterApp
 import NarratorDashboardApp
@@ -15,17 +15,18 @@ import ChapterControlApp
 import CharacterCreationApp
 import UserManagementApp
 import NovelReaderApp
+import ProfileApp
 
 
 type Msg
     = NoOp
     | NavigateTo String
     | UpdateLocation Navigation.Location
-    | SessionFetchResult (Result Http.Error Core.Models.UserInfo)
+    | SessionFetchResult (Result Http.Error UserInfo)
     | UpdateEmail String
     | UpdatePassword String
     | Login
-    | LoginResult (Result Http.Error Core.Models.UserInfo)
+    | LoginResult (Result Http.Error UserInfo)
     | Logout
     | LogoutResult (Result Http.Error String)
     | ReaderMsg ReaderApp.Msg
@@ -39,3 +40,4 @@ type Msg
     | CharacterCreationMsg CharacterCreationApp.Msg
     | UserManagementMsg UserManagementApp.Msg
     | NovelReaderMsg NovelReaderApp.Msg
+    | ProfileMsg ProfileApp.Msg

@@ -21,6 +21,7 @@ import ChapterControlApp
 import CharacterCreationApp
 import UserManagementApp
 import NovelReaderApp
+import ProfileApp
 
 
 notFoundView : Html Msg
@@ -46,10 +47,9 @@ loginView model =
     div [ class "login-page" ]
         [ div [ class "site-title" ]
             [ text "Narrows - NARRation On Web System" ]
-        , form
-            [ class "login-form"
-            , onSubmit Login
-            ]
+        , form [ class "login-form"
+               , onSubmit Login
+               ]
             [ div [ class "form-line" ]
                 [ label [] [ text "E-mail:" ]
                 , input
@@ -110,6 +110,9 @@ dispatchProtectedPage model =
         UserManagementPage ->
             Html.map UserManagementMsg (UserManagementApp.view model.userManagementApp)
 
+        ProfilePage ->
+            Html.map ProfileMsg (ProfileApp.view model.profileApp)
+
         _ ->
             -- Something went wrong, eg. forgot to register the new page
             unregisteredPageView
@@ -169,13 +172,17 @@ actionLinks maybeSession =
           Nothing ->
               []
   in
-    List.append
-      adminLinks
-      [ a [ href "#"
-          , onClick Logout
-          ]
-          [ text "Log out" ]
-      ]
+    List.concat [ [ a (Common.Views.linkTo NavigateTo "/profile")
+                      [ text "Profile" ]
+                  , text " | "
+                  ]
+                , adminLinks
+                , [ a [ href "#"
+                      , onClick Logout
+                      ]
+                      [ text "Log out" ]
+                  ]
+                ]
 
 
 mainView : Model -> Html Msg

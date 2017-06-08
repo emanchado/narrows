@@ -3,13 +3,13 @@ module Core.Api exposing (..)
 import Http
 import Json.Decode as Json exposing (..)
 import Json.Encode
-import Core.Models
 import Core.Messages exposing (..)
+import Common.Models exposing (UserInfo)
 
 
-parseSession : Json.Decoder Core.Models.UserInfo
+parseSession : Json.Decoder UserInfo
 parseSession =
-    Json.map3 Core.Models.UserInfo
+    Json.map3 UserInfo
         (field "id" int)
         (field "email" string)
         (field "role" string)

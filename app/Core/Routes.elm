@@ -15,4 +15,5 @@ type Route
     | UserManagementPage
     | NovelReaderPage String
     | NovelReaderChapterPage String Int
+    | ProfilePage
     | NotFoundRoute

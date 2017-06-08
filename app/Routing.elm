@@ -22,6 +22,7 @@ matchers =
         , map UserManagementPage (s "users")
         , map NovelReaderChapterPage (s "novels" </> string </> s "chapters" </> int)
         , map NovelReaderPage (s "novels" </> string)
+        , map ProfilePage (s "profile")
         ]
 
 
