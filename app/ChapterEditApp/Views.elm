@@ -36,6 +36,7 @@ chapterMediaView chapter narration uploadingAudio uploadingBackgroundImage =
                    narration.files.backgroundImages)
             , button [ class "btn btn-small btn-add"
                      , onClick (OpenMediaFileSelector "new-bg-image-file")
+                     , disabled uploadingBackgroundImage
                      ]
                 [ text "Upload" ]
             , input [ type_ "file"
@@ -76,6 +77,7 @@ chapterMediaView chapter narration uploadingAudio uploadingBackgroundImage =
                    narration.files.audio)
             , button [ class "btn btn-small btn-add"
                      , onClick (OpenMediaFileSelector "new-audio-file")
+                     , disabled uploadingAudio
                      ]
                 [ text "Upload" ]
             , input [ type_ "file"
