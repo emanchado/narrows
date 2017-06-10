@@ -5,6 +5,8 @@ import config from "config";
 import mysql from "mysql";
 import Q from "q";
 
+import generateToken from "./token-generator";
+
 const JSON_TO_DB = {
     id: "id",
     title: "title",
@@ -72,12 +74,6 @@ function mysqlTimestamp(dateString) {
 
     return `${year}-${pad(month)}-${pad(day)} ` +
         `${pad(hour)}:${pad(minutes)}:${pad(seconds)}`;
-}
-
-function generateToken(a) {
-    return a ?
-        (a^Math.random()*16>>a/4).toString(16) :
-        ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, generateToken);
 }
 
 class NarrowsStore {

@@ -4,7 +4,7 @@ import Navigation
 import Tuple exposing (first, second)
 
 import Routing
-import Common.Models exposing (errorBanner)
+import Common.Models exposing (errorBanner, successBanner)
 import Core.Api
 import Core.Views
 import Core.Models exposing (Model, UserSession(..))
@@ -31,6 +31,7 @@ initialState location =
     , banner = Nothing
     , email = ""
     , password = ""
+    , forgotPasswordUi = False
     , readerApp = ReaderApp.initialState
     , characterApp = CharacterApp.initialState
     , narratorDashboardApp = NarratorDashboardApp.initialState
@@ -135,6 +136,8 @@ dispatchEnterLocation model =
 combinedUpdate : Msg -> Model -> ( Model, Cmd Msg )
 combinedUpdate msg model =
   case msg of
+    NoOp ->
+      ( model, Cmd.none )
     NavigateTo url ->
       ( model, Navigation.newUrl url )
     UpdateLocation newLocation ->
@@ -176,10 +179,37 @@ combinedUpdate msg model =
     LoginResult (Ok resp) ->
       dispatchEnterLocation { model | session = Just <| LoggedInSession resp }
 
+    ForgotPassword ->
+      ( { model | forgotPasswordUi = True }, Cmd.none )
+
+    BackToLogin ->
+      ( { model | forgotPasswordUi = False }, Cmd.none )
+
+    ResetPassword ->
+      if model.email == "" then
+        ( model, Cmd.none )
+      else
+        ( model, Core.Api.resetPassword model.email )
+
+    ResetPasswordResult (Err err) ->
+      ( { model | banner = errorBanner <| "Cannot contact the server: " ++ (toString err) }
+      , Cmd.none
+      )
+
+    ResetPasswordResult (Ok resp) ->
+      ( { model | forgotPasswordUi = False
+                , banner = successBanner <| "A password reset link was sent to " ++ model.email
+        }
+      , Cmd.none
+      )
+
     Logout ->
       ( { model | session = Just AnonymousSession }
       , Core.Api.logout
       )
+
+    LogoutResult _ ->
+      (  model, Cmd.none )
 
     ReaderMsg readerMsg ->
       let
@@ -282,9 +312,6 @@ combinedUpdate msg model =
         ( { model | profileApp = newProfileModel }
         , protectedCmd model.session <| Cmd.map ProfileMsg cmd
         )
-
-    _ ->
-      ( model, Cmd.none )
 
 
 subscriptions : Model -> Sub Msg

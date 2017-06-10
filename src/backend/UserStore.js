@@ -2,7 +2,10 @@ import mysql from "mysql";
 import Q from "q";
 import bcrypt from "bcrypt";
 
+import generateToken from "./token-generator";
+
 const PASSWORD_SALT_ROUNDS = 10;
+const PASSWORD_RESET_TOKEN_TTL = 60 * 60; // One hour
 const JSON_TO_DB = {
     id: "id",
     email: "email",
@@ -195,6 +198,65 @@ class UserStore {
             "SELECT COUNT(*) AS adminCount FROM users WHERE role = 'admin'"
         ).spread(rows => {
             return rows[0].adminCount > 0;
+        });
+    }
+
+    _deletePasswordResetToken(token) {
+        return Q.ninvoke(
+            this.db,
+            "query",
+            `DELETE FROM password_reset_tokens WHERE token = ?`,
+            token
+        );
+    }
+
+    _deleteOldPasswordResetTokens() {
+        return Q.ninvoke(
+            this.db,
+            "query",
+            `DELETE FROM password_reset_tokens
+              WHERE TIME_TO_SEC(TIMEDIFF(CURRENT_TIMESTAMP, created)) > ?`,
+            PASSWORD_RESET_TOKEN_TTL
+        );
+    }
+
+    makePasswordResetLink(email) {
+        return this._deleteOldPasswordResetTokens().then(() => (
+            this.getUserByEmail(email)
+        )).then(user => {
+            const passwordResetCode = generateToken();
+
+            return Q.ninvoke(
+                this.db,
+                "query",
+                `INSERT INTO password_reset_tokens (user_id, token)
+                      VALUES (?, ?)`,
+                [user.id, passwordResetCode]
+            ).then(() => (
+                passwordResetCode
+            ));
+        });
+    }
+
+    getPasswordResetUserId(token) {
+        return this._deleteOldPasswordResetTokens().then(() => (
+            Q.ninvoke(
+                this.db,
+                "query",
+                `SELECT user_id AS userId
+                   FROM password_reset_tokens WHERE token = ?`,
+                token
+            )
+        )).spread(rows => {
+            if (rows.length) {
+                return rows[0].userId;
+            }
+
+            throw new Error(`Cannot find password reset token ${ token }`);
+        }).then(userId => {
+            return this._deletePasswordResetToken(token).then(() => (
+                userId
+            ));
         });
     }
 }

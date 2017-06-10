@@ -710,3 +710,15 @@ export function postCharacterNovel(req, res) {
         });
     });
 }
+
+export function postPasswordReset(req, res) {
+    const email = req.body.email;
+
+    userStore.makePasswordResetLink(email).then(passwordResetLink => {
+        mailer.passwordReset(email, passwordResetLink);
+    }).catch(err => {
+        // We shouldn't say whether or not an e-mail is registered
+    }).then(() => {
+        res.json({ email: email });
+    });
+}

@@ -35,6 +35,17 @@ export function firstTimeSetup(req, res, next) {
     });
 }
 
+export function getPasswordReset(req, res, next) {
+    const token = req.params.token;
+
+    userStore.getPasswordResetUserId(token).then(userId => {
+        req.session.userId = userId;
+        res.redirect("/profile");
+    }).catch(err => {
+        next();
+    });
+}
+
 export function apiAuth(req, res, next) {
     if (req.session.userId) {
         next();

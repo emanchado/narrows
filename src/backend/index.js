@@ -25,15 +25,9 @@ app.use(expressSession({
     cookie: { maxAge: 7 * 24 * 60 * 60 * 1000 }
 }));
 
-// These static file endpoints also accept POST because that's how the
-// login system works
-app.all("/read/:chptId/:characterId", function(req, res) {
-    res.sendFile(path.resolve(path.join(STATIC_HTML_FILES, "index.html")));
-});
-app.all("/characters/:characterId", function(req, res) {
-    res.sendFile(path.resolve(path.join(STATIC_HTML_FILES, "index.html")));
-});
 app.get("/feeds/:charToken", endpoints.getFeedsCharacter);
+// Note that this is just a "middleware"
+app.get("/password-reset/:token", middlewares.getPasswordReset);
 
 app.get("/api/session", endpoints.getSession);
 app.post("/api/session", endpoints.postSession);
@@ -76,6 +70,12 @@ app.get("/api/characters/:charToken", endpoints.getCharacter);
 app.put("/api/characters/:charToken", endpoints.putCharacter);
 app.put("/api/characters/:charToken/avatar", endpoints.putCharacterAvatar);
 app.get("/api/novels/:novelToken", endpoints.getNovel);
+app.post("/api/password-reset", endpoints.postPasswordReset);
+
+// Catch-all for non-existent API paths
+app.use("/api", function(req, res) {
+    res.status(404).send("Not Found");
+});
 
 app.use("/static/narrations", express.static(config.files.path));
 

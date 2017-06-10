@@ -3,6 +3,7 @@ module Core.Messages exposing (..)
 import Http
 import Navigation
 
+import Core.Models exposing (ResetPasswordResponse)
 import Common.Models exposing (UserInfo)
 import ReaderApp
 import CharacterApp
@@ -27,6 +28,10 @@ type Msg
     | UpdatePassword String
     | Login
     | LoginResult (Result Http.Error UserInfo)
+    | ForgotPassword
+    | BackToLogin
+    | ResetPassword
+    | ResetPasswordResult (Result Http.Error ResetPasswordResponse)
     | Logout
     | LogoutResult (Result Http.Error String)
     | ReaderMsg ReaderApp.Msg

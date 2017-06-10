@@ -19,26 +19,30 @@ import ProfileApp
 
 
 type UserSession
-    = AnonymousSession
-    | LoggedInSession UserInfo
+  = AnonymousSession
+  | LoggedInSession UserInfo
 
+
+type alias ResetPasswordResponse =
+  { id : String }
 
 type alias Model =
-    { route : Route
-    , session : Maybe UserSession
-    , banner : Maybe Banner
-    , email : String
-    , password : String
-    , readerApp : ReaderApp.Model
-    , characterApp : CharacterApp.Model
-    , narratorDashboardApp : NarratorDashboardApp.Model
-    , narrationArchiveApp : NarrationArchiveApp.Model
-    , narrationCreationApp : NarrationCreationApp.Model
-    , narrationOverviewApp : NarrationOverviewApp.Model
-    , chapterEditApp : ChapterEditApp.Model
-    , chapterControlApp : ChapterControlApp.Model
-    , characterCreationApp : CharacterCreationApp.Model
-    , userManagementApp : UserManagementApp.Model
-    , novelReaderApp : NovelReaderApp.Model
-    , profileApp : ProfileApp.Model
-    }
+  { route : Route
+  , session : Maybe UserSession
+  , banner : Maybe Banner
+  , email : String
+  , password : String
+  , forgotPasswordUi : Bool
+  , readerApp : ReaderApp.Model
+  , characterApp : CharacterApp.Model
+  , narratorDashboardApp : NarratorDashboardApp.Model
+  , narrationArchiveApp : NarrationArchiveApp.Model
+  , narrationCreationApp : NarrationCreationApp.Model
+  , narrationOverviewApp : NarrationOverviewApp.Model
+  , chapterEditApp : ChapterEditApp.Model
+  , chapterControlApp : ChapterControlApp.Model
+  , characterCreationApp : CharacterCreationApp.Model
+  , userManagementApp : UserManagementApp.Model
+  , novelReaderApp : NovelReaderApp.Model
+  , profileApp : ProfileApp.Model
+  }

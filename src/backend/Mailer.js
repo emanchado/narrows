@@ -18,6 +18,10 @@ class Mailer {
         return `${config.publicAddress}/chapters/${chapterId}`;
     }
 
+    passwordResetLink(passwordResetToken) {
+        return `${config.publicAddress}/password-reset/${passwordResetToken}`;
+    }
+
     sendMail(template, givenRecipient, subject, stash) {
         if (!givenRecipient) {
             // Nothing to do
@@ -144,6 +148,16 @@ class Mailer {
                 )
             ));
         }).catch(console.error);
+    }
+
+    passwordReset(email, passwordResetToken) {
+        this.sendMail(
+            "passwordReset",
+            email,
+            `NARROWS password reset`,
+            {email: email,
+             passwordResetLink: this.passwordResetLink(passwordResetToken)}
+        );
     }
 };
 
