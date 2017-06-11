@@ -329,6 +329,7 @@ update msg model =
         SendMessageResult (Ok result) ->
             ( { model | messageThreads = Just result.messages
                       , newMessageText = ""
+                      , banner = Nothing
               }
             , Cmd.none
             )

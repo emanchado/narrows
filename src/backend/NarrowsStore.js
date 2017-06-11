@@ -501,6 +501,21 @@ class NarrowsStore {
         ));
     }
 
+    isCharacterParticipant(characterId, chapterId) {
+        return Q.ninvoke(
+            this.db,
+            "query",
+            `SELECT COUNT(*) AS cnt
+               FROM reactions
+              WHERE character_id = ? AND chapter_id = ?`,
+            [characterId, chapterId]
+        ).spread(rows => (
+            rows[0].cnt > 0
+        )).catch(err => (
+            false
+        ));
+    }
+
     getChapter(id, opts) {
         return Q.ninvoke(
             this.db,

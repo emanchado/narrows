@@ -469,15 +469,19 @@ export function postMessageCharacter(req, res) {
           messageText = req.body.text,
           messageRecipients = req.body.recipients || [];
 
-    // TODO: Check that the character really belongs to this narration
+    store.getCharacterInfo(characterToken).then(characterInfo => (
+        store.isCharacterParticipant(characterInfo.id, chapterId).then(isParticipant => {
+            if (!isParticipant) {
+                throw new Error("Character does not participate in chapter");
+            }
 
-    store.getCharacterInfo(characterToken).then(characterInfo => {
-        return store.addMessage(
-            chapterId,
-            characterInfo.id,
-            messageText,
-            messageRecipients
-        ).then(() => {
+            return store.addMessage(
+                chapterId,
+                characterInfo.id,
+                messageText,
+                messageRecipients
+            );
+        }).then(() => {
             return store.getChapterMessages(chapterId, characterInfo.id);
         }).then(messages => {
             res.json({
@@ -489,8 +493,8 @@ export function postMessageCharacter(req, res) {
                                   sender: characterInfo,
                                   text: messageText,
                                   recipients: messageRecipients});
-        });
-    }).catch(err => {
+        })
+    )).catch(err => {
         res.status(500).json({
             errorMessage: `Could not post message: ${ err }`
         });
