@@ -50,7 +50,7 @@ export default function testcases(test, stash) {
                 t.is(sendMailCalls[0].stash.chapterUrl,
                      `${config.publicAddress}/read/${chapter.id}/${charToken2}`);
                 t.is(sendMailCalls[0].stash.recipientListString,
-                     `${stash.characterName3} and you`);
+                     `${stash.characterName3}, the narrator, and you`);
 
                 t.is(sendMailCalls[1].recipient, stash.userEmail3);
                 t.is(sendMailCalls[1].subject, expectedSubject);
@@ -58,7 +58,7 @@ export default function testcases(test, stash) {
                 t.is(sendMailCalls[1].stash.chapterUrl,
                      `${config.publicAddress}/read/${chapter.id}/${charToken3}`);
                 t.is(sendMailCalls[1].stash.recipientListString,
-                     `${stash.characterName2} and you`);
+                     `${stash.characterName2}, the narrator, and you`);
 
                 t.is(sendMailCalls[2].recipient, stash.narratorEmail);
                 t.is(sendMailCalls[2].subject, expectedSubject);
@@ -101,6 +101,46 @@ export default function testcases(test, stash) {
                 t.is(sendMailCalls[0].recipient, stash.narratorEmail);
                 t.is(sendMailCalls[0].subject, expectedSubject);
                 t.is(sendMailCalls[0].stash.recipientListString, "you");
+            });
+        });
+    });
+
+    test.serial("can send a message from character to one character", t => {
+        const narrationId = t.context.testNarration.id;
+        const props = {
+            title: "Intro",
+            text: [],
+            participants: [{id: t.context.characterId1},
+                           {id: t.context.characterId2}]
+        };
+
+        return stash.store.createChapter(narrationId, props).then(chapter => {
+            const mailer = new Mailer(stash.store, null);
+            const sendMailCalls = [];
+            mailer.sendMail = (template, recipient, subject, stash) => {
+                sendMailCalls.push({template, recipient, subject, stash});
+            };
+
+            return mailer.messagePosted({
+                chapterId: chapter.id,
+                recipients: [t.context.characterId2],
+                sender: {id: t.context.characterId1,
+                         name: stash.characterName1},
+                text: "First message"
+            }).then(() => {
+                const expectedSubject =
+                      `${stash.characterName1} sent a message in "Intro"`;
+                t.is(sendMailCalls.length, 2);
+
+                t.is(sendMailCalls[0].recipient, stash.userEmail2);
+                t.is(sendMailCalls[0].subject, expectedSubject);
+                t.is(sendMailCalls[0].stash.recipientListString,
+                     "the narrator and you");
+
+                t.is(sendMailCalls[1].recipient, stash.narratorEmail);
+                t.is(sendMailCalls[1].subject, expectedSubject);
+                t.is(sendMailCalls[1].stash.recipientListString,
+                     `${stash.characterName2} and you`);
             });
         });
     });

@@ -94,8 +94,11 @@ class Mailer {
                 const otherRecipientIds = Object.keys(info).filter(
                     id => parseInt(id, 10) !== recipientId
                 );
-                const baseRecipients =
+                let baseRecipients =
                       otherRecipientIds.map(id => info[id].name);
+                if (message.sender.id) {
+                    baseRecipients = baseRecipients.concat("the narrator");
+                }
                 const recipients =
                       humanReadableList(baseRecipients.concat("you"));
 
