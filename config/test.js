@@ -10,5 +10,9 @@ module.exports = {
     files: {
         path: 'testfiles/',
         tmpPath: '/tmp/'
+    },
+
+    mail: {
+        alwaysSendTo: 'emanchado@demiurgo.org'
     }
 };

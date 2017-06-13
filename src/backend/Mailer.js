@@ -4,6 +4,19 @@ import config from "config";
 import ejs from "ejs";
 import Q from "q";
 
+function humanReadableList(list) {
+    if (list.length < 2) {
+        return list[0];
+    }
+
+    if (list.length === 2) {
+        return `${list[0]} and ${list[1]}`;
+    }
+
+    const allButLast = list.slice(0, list.length - 1);
+    return allButLast.join(", ") + ", and " + list[list.length - 1];
+}
+
 class Mailer {
     constructor(store, transport) {
         this.store = store;
@@ -77,22 +90,20 @@ class Mailer {
             this.store.getChapter(message.chapterId),
             this.store.getCharacterInfoBulk(message.recipients)
         ]).spread((chapter, info) => {
-            message.recipients.forEach(recipientId => {
+            const promises = message.recipients.map(recipientId => {
                 const otherRecipientIds = Object.keys(info).filter(
                     id => parseInt(id, 10) !== recipientId
                 );
                 const baseRecipients =
-                      otherRecipientIds.map(id => info[id].name).join(", ");
+                      otherRecipientIds.map(id => info[id].name);
                 const recipients =
-                      baseRecipients + (otherRecipientIds.length ?
-                                        ", the narrator, and you" :
-                                        "the narrator and you");
+                      humanReadableList(baseRecipients.concat("you"));
 
-                this.store.getCharacterTokenById(recipientId).then(token => (
+                return this.store.getCharacterTokenById(recipientId).then(token => (
                     this.sendMail(
                         "messagePosted",
                         info[recipientId].email,
-                        `New message in "${chapter.title}"`,
+                        `${message.sender.name} sent a message in "${chapter.title}"`,
                         {senderName: message.sender.name,
                          recipientListString: recipients,
                          messageText: message.text,
@@ -104,25 +115,26 @@ class Mailer {
 
             // If this was sent by a player, send a copy to the narrator
             if (message.sender.id) {
-                const baseRecipients =
-                      Object.keys(info).map(id => info[id].name).join(", ");
+                const recipientNames =
+                      Object.keys(info).map(id => info[id].name);
                 const recipients =
-                      baseRecipients + (Object.keys(info).length > 1 ?
-                                        ", and you" : " and you");
+                      humanReadableList(recipientNames.concat("you"));
 
-                this.store.getNarratorEmail(chapter.narrationId).then(email => (
+                promises.push(this.store.getNarratorEmail(chapter.narrationId).then(email => (
                     this.sendMail(
                         "messagePosted",
                         email,
-                        `New message in "${chapter.title}"`,
+                        `${message.sender.name} sent a message in "${chapter.title}"`,
                         {senderName: message.sender.name,
                          recipientListString: recipients,
                          messageText: message.text,
                          chapterTitle: chapter.title,
                          chapterUrl: this.chapterNarratorUrlFor(chapter.id)}
                     )
-                ));
+                )));
             }
+
+            return Q.all(promises);
         }).catch(console.error);
     }
 
