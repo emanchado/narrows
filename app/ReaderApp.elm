@@ -29,6 +29,7 @@ initialState =
     , showNewMessageUi = False
     , newMessageText = ""
     , newMessageRecipients = []
+    , showReactionTip = False
     , reactionSent = False
     , reaction = ""
     , banner = Nothing

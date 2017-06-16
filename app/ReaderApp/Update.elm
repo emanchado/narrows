@@ -334,6 +334,11 @@ update msg model =
             , Cmd.none
             )
 
+        ToggleReactionTip ->
+            ( { model | showReactionTip = not model.showReactionTip }
+            , Cmd.none
+            )
+
         UpdateReactionText newText ->
             ( { model | reaction = newText }, Cmd.none )
 

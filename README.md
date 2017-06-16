@@ -72,7 +72,7 @@ Then you will have to recompile the frontend and backend code with:
 * Trash icon by [Freepik](http://www.flaticon.com/authors/freepik),
   from [Flaticon](http://www.flaticon.com). Licensed under Creative
   Commons BY 3.0.
-* Add/plus icon, message icon and user icon by
+* Add/plus icon, message icon, user icon and info icon by
   [Lucy G](http://www.flaticon.com/authors/lucy-g), from
   [Flaticon](http://www.flaticon.com). Licensed under Creative Commons
   BY 3.0.

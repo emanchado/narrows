@@ -98,7 +98,7 @@ listView model =
                     ]
               else
                 div [ class "btn-bar" ]
-                    [ button [ class "btn btn-small", onClick ShowNewMessageUi ]
+                    [ button [ class "btn btn-add btn-small", onClick ShowNewMessageUi ]
                         [ text "New message" ]
                     ]
             ]

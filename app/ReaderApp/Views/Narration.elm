@@ -1,7 +1,7 @@
 module ReaderApp.Views.Narration exposing (view)
 
 import String
-import Html exposing (Html, h2, div, span, a, input, textarea, strong, text, img, label, button, br, audio, ul, li)
+import Html exposing (Html, h2, h3, div, span, a, input, textarea, em, strong, text, img, label, button, br, audio, ul, li, blockquote, p)
 import Html.Attributes exposing (id, class, style, for, src, href, target, type_, checked, preload, loop, alt, defaultValue, rows, placeholder)
 import Html.Events exposing (onClick, onInput)
 import Http exposing (encodeUri)
@@ -140,17 +140,68 @@ reactionView model =
           div [ class "arrow arrow-down", onClick ShowReferenceInformation ] []
         else
           text ""
-      , h2 []
-          [ text "Discussion "
-          , a [ target "_blank"
-              , href ("/feeds/" ++ character.token)
-              ]
-              [ img [ src "/img/rss.png" ] [] ]
-          ]
       , div [ class "messages" ]
-          [ ReaderApp.Views.MessageThreads.listView model
+          [ h2 []
+            [ text "Discussion "
+            , a [ target "_blank"
+                , href ("/feeds/" ++ character.token)
+                ]
+                [ img [ src "/img/rss.png" ] [] ]
+            ]
+          , ReaderApp.Views.MessageThreads.listView model
           ]
-      , h2 [] [ text "Action" ]
+      , h2 [] [ text "Action "
+              , img [ src "/img/info.png"
+                    , onClick ToggleReactionTip
+                    ]
+                  []
+              , if model.showReactionTip then
+                  div [ class "floating-tip" ]
+                    [ h3 [] [ text "Tips" ]
+                    , p []
+                        [ text <| "The most important things to convey " ++
+                            "are what your character "
+                        , strong [] [ text "does" ]
+                        , text <| " and what they "
+                        , strong [] [ text "think" ]
+                        , text " or "
+                        , strong [] [ text "feel" ]
+                        , text ", eg:"
+                        ]
+                    , blockquote []
+                        [ text <| "I’ll go up the ladder and search the " ++
+                            "attic, listening for any signs of activity " ++
+                            "up there as I climb. I don’t like this place " ++
+                            "one bit so I’ll try to find the chest or any " ++
+                            "clue, and leave as soon as I can."
+                        ]
+                    , p []
+                        [ text <| "Often they include possibilities or " ++
+                            "plans for the near future:"
+                        ]
+                    , blockquote []
+                        [ text <| "I ask what’s the deal with the victim’s " ++
+                            "tattoo and if she has seen it before. She " ++
+                            "must be hiding something so if she doesn’t " ++
+                            "speak up I will wait outside and follow her " ++
+                            "to see if the meets anyone or goes back to " ++
+                            "the club."
+                        ]
+                    , p []
+                        [ text <| "Including direct quotes is a good way " ++
+                            "to describe your character’s mood, too:"
+                        ]
+                    , blockquote []
+                        [ text <| "“This is awful. We need to contact him " ++
+                            "and make him stop.” I call Robert: “Hi… you " ++
+                            "need to stop that. I *will* kick you out if " ++
+                            "you don’t stop. She is *not* ready. Do you " ++
+                            "hear me?”"
+                        ]
+                    ]
+                else
+                  text ""
+              ]
       , bannerView model.banner
       , div [ class <| "player-reply" ++ (if model.reactionSent then
                                             " invisible"

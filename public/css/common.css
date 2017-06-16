@@ -177,19 +177,19 @@ a.btn {
     vertical-align: middle;
 }
 
+.btn-add {
+    padding-left: 30px;
+    background-image: url("/img/add.png");
+    background-repeat: no-repeat;
+    background-position: 8px 50%;
+}
+
 .btn-inline.btn-add {
     min-width: 18px;
     min-height: 18px;
     padding-left: 0;
 
     background-position: 0 50%;
-}
-
-.btn-add {
-    padding-left: 30px;
-    background-image: url("/img/add.png");
-    background-repeat: no-repeat;
-    background-position: 8px 50%;
 }
 
 ul.thread-list {

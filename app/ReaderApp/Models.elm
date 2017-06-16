@@ -81,6 +81,7 @@ type alias Model =
   , showNewMessageUi : Bool
   , newMessageText : String
   , newMessageRecipients : List Int
+  , showReactionTip : Bool
   , reactionSent : Bool
   , reaction : String
   , banner : Maybe Banner

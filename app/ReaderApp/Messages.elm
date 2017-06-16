@@ -29,6 +29,7 @@ type Msg
     | UpdateNewMessageRecipient Int Bool
     | SendMessage
     | SendMessageResult (Result Http.Error ChapterMessages)
+    | ToggleReactionTip
     | UpdateReactionText String
     | SendReaction
     | SendReactionResult (Result Http.Error (Http.Response String))
