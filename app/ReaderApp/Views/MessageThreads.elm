@@ -1,7 +1,7 @@
 module ReaderApp.Views.MessageThreads exposing (..)
 
 import Html exposing (Html, div, text, textarea, input, button, ul, li, strong, span, label)
-import Html.Attributes exposing (id, class, value, rows, type_, checked, disabled)
+import Html.Attributes exposing (id, class, defaultValue, value, rows, type_, checked, disabled)
 import Html.Events exposing (onClick, onInput, onCheck)
 import Common.Views exposing (threadView)
 import ReaderApp.Models exposing (Model, ParticipantCharacter)
@@ -76,11 +76,10 @@ listView model =
                 )
             , if model.showNewMessageUi then
                 div [ class "new-message" ]
-                    [ textarea
-                        [ rows 4
-                        , onInput UpdateNewMessageText
-                        , value model.newMessageText
-                        ]
+                    [ textarea [ rows 4
+                               , onInput UpdateNewMessageText
+                               , defaultValue model.newMessageText
+                               ]
                         [ text model.newMessageText ]
                     , recipientListView otherParticipants model.newMessageRecipients
                     , div [ class "btn-bar" ]
