@@ -1,11 +1,11 @@
 module NovelReaderApp.Views.Novel exposing (view)
 
 import String
-import Html exposing (Html, h2, div, span, a, input, textarea, strong, text, img, label, button, br, audio, ul, li)
-import Html.Attributes exposing (id, class, style, for, src, href, target, checked, preload, loop, alt, defaultValue, rows, placeholder)
-import Html.Events exposing (onClick, onInput)
+import Html exposing (Html, h2, div, a, strong, text, img, br, audio, ul, li)
+import Html.Attributes exposing (id, class, style, src, preload, loop, alt)
+import Html.Events exposing (onClick)
 import Http exposing (encodeUri)
-import NovelReaderApp.Models exposing (Model, Chapter, ParticipantCharacter, Novel, findChapter)
+import NovelReaderApp.Models exposing (Model, ParticipantCharacter, findChapter)
 import NovelReaderApp.Messages exposing (..)
 
 
