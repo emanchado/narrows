@@ -226,8 +226,20 @@ ul.thread-list li .btn-bar {
     margin-bottom: 0;
 }
 
-.ProseMirror img {
+.ProseMirror img, .chapter img {
     width: 100%;
+}
+span.mention {
+}
+span.mention img {
+    /* This is so that the mentioned images get the color in the border */
+    box-sizing: border-box;
+    padding: 10px;
+}
+.chapter span.mention img {
+    /* This is specifically for images with a single mention: otherwise the
+       gradient will fade to the wrong colour */
+    background-color: #e5e5e5;
 }
 
 .ProseMirror .separator, .chapter .separator {
