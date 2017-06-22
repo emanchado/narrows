@@ -152,6 +152,7 @@ reactionView model =
           ]
       , h2 [] [ text "Action "
               , img [ src "/img/info.png"
+                    , class "help"
                     , onClick ToggleReactionTip
                     ]
                   []

@@ -294,6 +294,10 @@ span.mention img {
     min-height: 200px;
 }
 
+.help {
+    cursor: help;
+}
+
 /* CSS Spinner rules (from http://tobiasahlin.com/spinkit/) */
 .spinner {
   display: inline-block;
