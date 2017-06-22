@@ -176,6 +176,8 @@ function updateMentionMark(markType, targetCharacters, state, dispatch) {
 function markItemPrivate(markType) {
     return markItem(markType, {
         title: "Private text",
+        icon: {css: "background-image: url('/img/private.png'); " +
+                        "height: 16px; width: 16px; display: inline-block"},
         run(state, onAction, view) {
             let {from, $from, to, empty} = state.selection;
             const activeMark = markType.isInSet(state.storedMarks || $from.marks());
@@ -290,7 +292,7 @@ function buildMenuItems(schema) {
   if (type = schema.nodes.image)
     r.insertImage = insertImageItem(type)
   if (type = schema.marks.mention)
-    r.togglePrivate = markItemPrivate(type, {title: "Mark text as private", icon: 'Private text'})
+    r.togglePrivate = markItemPrivate(type)
   if (type = schema.nodes.bullet_list)
     r.wrapBulletList = wrapListItem(type, {
       title: "Wrap in bullet list",
