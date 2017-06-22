@@ -62,7 +62,7 @@ function removeMentionsFromBit(bit) {
 function chunkEmpty(chunk) {
     return (
         (chunk.type === "paragraph" || chunk.type === "blockquote") &&
-            chunk.content.length === 0
+            (!chunk.content || chunk.content.length === 0)
     );
 }
 

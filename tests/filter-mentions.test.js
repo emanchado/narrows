@@ -174,3 +174,21 @@ test("removes empty blockquotes", t => {
 
     t.deepEqual(mentionFilter.filter(orig, CHARACTER2.id), expected);
 });
+
+test("doesn't choke on empty paragraphs", t => {
+    const orig = doc([
+        {type: "paragraph",
+         content: [
+             para(["Some random text"])
+         ]},
+        {type: "paragraph"}
+    ]);
+    const expected = doc([
+        {type: "paragraph",
+         content: [
+             para(["Some random text"])
+         ]}
+    ]);
+
+    t.deepEqual(mentionFilter.filter(orig, CHARACTER2.id), expected);
+});
