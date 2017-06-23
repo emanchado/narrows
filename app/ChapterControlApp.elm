@@ -22,8 +22,10 @@ initialState =
     , interactions = Nothing
     , banner = Nothing
     , reply = Nothing
+    , replySending = False
     , newMessageText = ""
     , newMessageRecipients = []
+    , newMessageSending = False
     }
 
 

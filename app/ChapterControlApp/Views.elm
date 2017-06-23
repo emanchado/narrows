@@ -117,24 +117,22 @@ mainView model =
                                     SendReply
                                     CloseReply
                                     model.reply
-                                    mt
-                            )
-                            messageThreads
-                        )
+                                    model.replySending
+                                    mt)
+                            messageThreads)
                     , div [ class "new-message" ]
-                        [ textarea
-                            [ rows 3
-                            , onInput UpdateNewMessageText
-                            , value model.newMessageText
-                            ]
+                        [ textarea [ rows 3
+                                   , onInput UpdateNewMessageText
+                                   , value model.newMessageText
+                                   ]
                             [ text model.newMessageText ]
                         ]
                     , recipientListView chapter.participants model.newMessageRecipients
                     , div [ class "btn-bar" ]
-                        [ button
-                            [ class "btn"
-                            , onClick SendMessage
-                            ]
+                        [ button [ class "btn"
+                                 , onClick SendMessage
+                                 , disabled model.newMessageSending
+                                 ]
                             [ text "Send" ]
                         ]
                     , h2 []

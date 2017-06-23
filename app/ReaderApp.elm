@@ -26,6 +26,7 @@ initialState =
     , musicPlaying = True
     , backgroundBlurriness = 0
     , reply = Nothing
+    , replySending = False
     , showNewMessageUi = False
     , newMessageText = ""
     , newMessageRecipients = []

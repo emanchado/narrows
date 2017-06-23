@@ -3,7 +3,7 @@ module Common.Views exposing (..)
 import String
 import Json.Decode
 import Html exposing (Html, h2, div, nav, textarea, button, span, ul, li, img, a, em, strong, text)
-import Html.Attributes exposing (class, rows, value, href, src, title)
+import Html.Attributes exposing (class, rows, value, disabled, href, src, title)
 import Html.Events exposing (defaultOptions, onWithOptions, onClick, onInput)
 import Common.Models exposing (MessageThread, Message, Banner, ReplyInformation, Breadcrumb, ChapterOverview, Narration, NarrationOverview, NarrationStatus(..), narrationStatusString)
 
@@ -41,8 +41,8 @@ messageView message =
     ]
 
 
-threadView : Maybe Int -> msg -> (String -> msg) -> msg -> msg -> Maybe ReplyInformation -> MessageThread -> Html msg
-threadView maybeCharacterId showReplyMessage updateReplyMessage sendReplyMessage closeReplyMessage maybeReply thread =
+threadView : Maybe Int -> msg -> (String -> msg) -> msg -> msg -> Maybe ReplyInformation -> Bool -> MessageThread -> Html msg
+threadView maybeCharacterId showReplyMessage updateReplyMessage sendReplyMessage closeReplyMessage maybeReply replyButtonDisabled thread =
   let
     participants =
       List.map
@@ -98,16 +98,15 @@ threadView maybeCharacterId showReplyMessage updateReplyMessage sendReplyMessage
                          ]
                   [ text reply.body ]
               , div [ class "btn-bar" ]
-                  [ button
-                    [ class "btn btn-default btn-small"
-                    , onClick sendReplyMessage
-                    ]
-                    [ text "Send" ]
-                  , button
-                    [ class "btn btn-small"
-                    , onClick closeReplyMessage
-                    ]
-                    [ text "Close" ]
+                  [ button [ class "btn btn-default btn-small"
+                           , onClick sendReplyMessage
+                           , disabled replyButtonDisabled
+                           ]
+                      [ text "Send" ]
+                  , button [ class "btn btn-small"
+                           , onClick closeReplyMessage
+                           ]
+                      [ text "Close" ]
                   ]
               ]
           else

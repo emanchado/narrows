@@ -255,7 +255,7 @@ update msg model =
                     else
                         case model.chapter of
                             Just chapter ->
-                                ( model
+                                ( { model | replySending = True }
                                 , ReaderApp.Api.sendReply
                                     chapter.id
                                     chapter.character.token
@@ -270,13 +270,16 @@ update msg model =
                     ( model, Cmd.none )
 
         SendReplyResult (Err error) ->
-            ( { model | banner = errorBanner "Error sending reply" }
+            ( { model | banner = errorBanner "Error sending reply"
+                      , replySending = False
+              }
             , Cmd.none
             )
 
         SendReplyResult (Ok result) ->
           ( { model | messageThreads = Just result.messages
                     , reply = Nothing
+                    , replySending = False
             }
           , Cmd.none
           )

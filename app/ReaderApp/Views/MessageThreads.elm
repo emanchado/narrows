@@ -67,8 +67,8 @@ listView model =
                                     SendReply
                                     CloseReply
                                     model.reply
-                                    t
-                            )
+                                    model.replySending
+                                    t)
                             threads
 
                     Nothing ->

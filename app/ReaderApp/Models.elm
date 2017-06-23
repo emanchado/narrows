@@ -78,6 +78,7 @@ type alias Model =
   , musicPlaying : Bool
   , backgroundBlurriness : Int
   , reply : Maybe ReplyInformation
+  , replySending : Bool
   , showNewMessageUi : Bool
   , newMessageText : String
   , newMessageRecipients : List Int

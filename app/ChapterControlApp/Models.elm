@@ -15,6 +15,8 @@ type alias Model =
     , interactions : Maybe ChapterInteractions
     , banner : Maybe Banner
     , reply : Maybe ReplyInformation
+    , replySending : Bool
     , newMessageText : String
     , newMessageRecipients : List Int
+    , newMessageSending : Bool
     }

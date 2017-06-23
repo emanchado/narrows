@@ -125,7 +125,7 @@ update msg model =
                 Just interactions ->
                     case model.reply of
                         Just reply ->
-                            ( model
+                            ( { model | replySending = True }
                             , ChapterControlApp.Api.sendReply
                                 interactions.chapter.id
                                 reply.body
@@ -139,12 +139,10 @@ update msg model =
                     ( model, Cmd.none )
 
         SendReplyResult (Err error) ->
-            ( { model
-                | banner =
-                    Just
-                        { text = "Error sending reply"
-                        , type_ = "error"
-                        }
+            ( { model | banner = Just { text = "Error sending reply"
+                                      , type_ = "error"
+                                      }
+                      , replySending = False
               }
             , Cmd.none
             )
@@ -160,6 +158,7 @@ update msg model =
           in
             ( { model | interactions = updatedInteractions
                       , reply = Nothing
+                      , replySending = False
               }
             , Cmd.none
             )
@@ -188,7 +187,7 @@ update msg model =
         SendMessage ->
             case model.interactions of
                 Just interactions ->
-                    ( model
+                    ( { model | newMessageSending = True }
                     , ChapterControlApp.Api.sendMessage interactions.chapter.id model.newMessageText model.newMessageRecipients
                     )
 
@@ -196,7 +195,9 @@ update msg model =
                     ( model, Cmd.none )
 
         SendMessageResult (Err error) ->
-            ( { model | banner = errorBanner "Error sending message" }
+            ( { model | banner = errorBanner "Error sending message"
+                      , newMessageSending = False
+              }
             , Cmd.none
             )
 
@@ -211,6 +212,7 @@ update msg model =
             in
               ( { model | interactions = updatedInteractions
                         , newMessageText = ""
+                        , newMessageSending = False
                 }
               , Cmd.none
               )
