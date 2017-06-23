@@ -1,7 +1,7 @@
 module ChapterControlApp.Views exposing (..)
 
 import Html exposing (Html, main_, h1, h2, nav, section, div, ul, li, textarea, input, button, label, a, strong, em, text)
-import Html.Attributes exposing (id, class, href, type_, defaultValue, value, disabled, checked, rows, cols)
+import Html.Attributes exposing (id, class, href, type_, value, disabled, checked, rows, cols)
 import Html.Events exposing (onInput, onClick, onCheck)
 import Common.Models exposing (Character, FullCharacter, Narration, NarrationStatus(..), Reaction, loadingPlaceholderChapter)
 import Common.Views exposing (threadView, breadcrumbNavView)
@@ -122,10 +122,11 @@ mainView model =
                             messageThreads
                         )
                     , div [ class "new-message" ]
-                        [ textarea [ rows 3
-                                   , onInput UpdateNewMessageText
-                                   , defaultValue model.newMessageText
-                                   ]
+                        [ textarea
+                            [ rows 3
+                            , onInput UpdateNewMessageText
+                            , value model.newMessageText
+                            ]
                             [ text model.newMessageText ]
                         ]
                     , recipientListView chapter.participants model.newMessageRecipients

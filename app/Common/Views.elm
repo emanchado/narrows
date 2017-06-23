@@ -3,7 +3,7 @@ module Common.Views exposing (..)
 import String
 import Json.Decode
 import Html exposing (Html, h2, div, nav, textarea, button, span, ul, li, img, a, em, strong, text)
-import Html.Attributes exposing (class, rows, defaultValue, href, src, title)
+import Html.Attributes exposing (class, rows, value, href, src, title)
 import Html.Events exposing (defaultOptions, onWithOptions, onClick, onInput)
 import Common.Models exposing (MessageThread, Message, Banner, ReplyInformation, Breadcrumb, ChapterOverview, Narration, NarrationOverview, NarrationStatus(..), narrationStatusString)
 
@@ -93,7 +93,7 @@ threadView maybeCharacterId showReplyMessage updateReplyMessage sendReplyMessage
           if reply.recipients == thread.participants then
             div []
               [ textarea [ rows 4
-                         , defaultValue reply.body
+                         , value reply.body
                          , onInput updateReplyMessage
                          ]
                   [ text reply.body ]
