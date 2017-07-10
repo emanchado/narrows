@@ -14,6 +14,7 @@ matchers =
         , map NarratorIndex (s "")
         , map NarrationArchivePage (s "narrations")
         , map NarrationCreationPage (s "narrations" </> s "new")
+        , map NarrationEditPage (s "narrations" </> int </> s "edit")
         , map ChapterEditNarratorPage (s "chapters" </> int </> s "edit")
         , map ChapterControlPage (s "chapters" </> int)
         , map CreateChapterPage (s "narrations" </> int </> s "new")

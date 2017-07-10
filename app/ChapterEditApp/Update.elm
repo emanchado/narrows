@@ -8,25 +8,12 @@ import Process
 import Time exposing (Time)
 import Time.DateTime as DateTime exposing (DateTime, fromTimestamp)
 import Core.Routes exposing (Route(..))
-import Common.Models exposing (Banner, Narration, Chapter, FileSet, errorBanner, successBanner)
-import Common.Ports exposing (initEditor, renderText)
+import Common.Models exposing (Banner, Narration, Chapter, FileSet, FileUploadError, FileUploadSuccess, MediaType(..), errorBanner, successBanner, mediaTypeString, updateNarrationFiles)
+import Common.Ports exposing (initEditor, renderText, openFileInput, uploadFile)
 import ChapterEditApp.Api
 import ChapterEditApp.Messages exposing (..)
 import ChapterEditApp.Models exposing (..)
-import ChapterEditApp.Ports exposing (updateParticipants, playPauseAudioPreview, openFileInput, uploadFile)
-
-
-updateNarrationFiles : FileSet -> ChapterEditApp.Ports.FileUploadSuccess -> FileSet
-updateNarrationFiles fileSet uploadResponse =
-  case uploadResponse.type_ of
-    "audio" ->
-      { fileSet | audio = uploadResponse.name :: fileSet.audio }
-
-    "backgroundImages" ->
-      { fileSet | backgroundImages = uploadResponse.name :: fileSet.backgroundImages }
-
-    _ ->
-      fileSet
+import ChapterEditApp.Ports exposing (updateParticipants, playPauseAudioPreview)
 
 
 initNewChapterCmd : Narration -> Cmd Msg
@@ -34,7 +21,7 @@ initNewChapterCmd narration =
   Task.perform (\_ -> InitNewChapter narration) (Task.succeed 1)
 
 
-updateChapter : Chapter -> ChapterEditApp.Ports.FileUploadSuccess -> Chapter
+updateChapter : Chapter -> FileUploadSuccess -> Chapter
 updateChapter chapter uploadResponse =
   case uploadResponse.type_ of
     "audio" ->
@@ -109,13 +96,6 @@ showFlashMessage maybeBanner =
     , Process.sleep (Time.second * 2)
       |> Task.perform (\_ -> RemoveFlashMessage)
     ]
-
-
-mediaTypeString : MediaType -> String
-mediaTypeString mediaType =
-  case mediaType of
-    Audio -> "audio"
-    BackgroundImage -> "background-images"
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -327,6 +307,7 @@ update msg model =
           in
             ( modelWithUploadFlag
             , uploadFile { type_ = mediaTypeString mediaType
+                         , portType = "chapterEdit"
                          , fileInputId = fileInputId
                          , narrationId = chapter.narrationId
                          }

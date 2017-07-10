@@ -1,7 +1,7 @@
 port module ChapterEditApp.Ports exposing (..)
 
 import Json.Encode
-import Common.Models exposing (FullCharacter)
+import Common.Models exposing (FullCharacter, FileUploadError, FileUploadSuccess)
 
 
 type alias AddImageInfo =
@@ -22,41 +22,9 @@ type alias AddMentionInfo =
     }
 
 
-type alias FileUploadInfo =
-    { type_ : String
-    , fileInputId : String
-    , narrationId : Int
-    }
-
-
-type alias FileUploadError =
-    { status : Int
-    , message : String
-    }
-
-
-type alias FileUploadSuccess =
-    { name : String
-    , type_ : String
-    }
-
-
 port updateParticipants : UpdateParticipantsInfo -> Cmd msg
-
-
 port playPauseAudioPreview : String -> Cmd msg
-
-
-port openFileInput : String -> Cmd msg
-
-
-port uploadFile : FileUploadInfo -> Cmd msg
-
-
 port editorContentChanged : (Json.Encode.Value -> msg) -> Sub msg
 
-
-port uploadFileError : (FileUploadError -> msg) -> Sub msg
-
-
-port uploadFileSuccess : (FileUploadSuccess -> msg) -> Sub msg
+port chapterEditUploadFileError : (FileUploadError -> msg) -> Sub msg
+port chapterEditUploadFileSuccess : (FileUploadSuccess -> msg) -> Sub msg

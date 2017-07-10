@@ -3,14 +3,8 @@ module ChapterEditApp.Messages exposing (..)
 import Http
 import Json.Encode
 import Time exposing (Time)
-import Common.Models exposing (FullCharacter, Narration, Chapter, Banner)
+import Common.Models exposing (FullCharacter, Narration, Chapter, Banner, MediaType, FileUploadError, FileUploadSuccess)
 import ChapterEditApp.Models exposing (LastReactions)
-import ChapterEditApp.Ports
-
-
-type MediaType
-  = Audio
-  | BackgroundImage
 
 
 type Msg
@@ -31,8 +25,8 @@ type Msg
     | UpdateSelectedAudio String
     | OpenMediaFileSelector String
     | AddMediaFile MediaType String
-    | AddMediaFileError ChapterEditApp.Ports.FileUploadError
-    | AddMediaFileSuccess ChapterEditApp.Ports.FileUploadSuccess
+    | AddMediaFileError FileUploadError
+    | AddMediaFileSuccess FileUploadSuccess
     | PlayPauseAudioPreview
     | SaveChapter
     | SaveChapterResult (Result Http.Error (Http.Response String))

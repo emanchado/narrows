@@ -191,13 +191,15 @@ app.ports.uploadFile.subscribe(evt => {
         const resp = JSON.parse(this.responseText);
 
         if (this.status < 200 || this.status >= 400) {
-            app.ports.uploadFileError.send({ status: this.status,
-                                             message: resp.errorMessage });
+            const errorPortName = `${evt.portType}UploadFileError`;
+            app.ports[errorPortName].send({ status: this.status,
+                                            message: resp.errorMessage });
             return;
         }
 
-        app.ports.uploadFileSuccess.send({ name: resp.name,
-                                           type_: resp.type });
+        const successPortName = `${evt.portType}UploadFileSuccess`;
+        app.ports[successPortName].send({ name: resp.name,
+                                          type_: resp.type });
     });
 
     const formData = new FormData();

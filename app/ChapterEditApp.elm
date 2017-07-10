@@ -50,6 +50,6 @@ subscriptions : Model -> Sub Msg
 subscriptions model =
     Sub.batch
         [ ChapterEditApp.Ports.editorContentChanged UpdateEditorContent
-        , ChapterEditApp.Ports.uploadFileError AddMediaFileError
-        , ChapterEditApp.Ports.uploadFileSuccess AddMediaFileSuccess
+        , ChapterEditApp.Ports.chapterEditUploadFileError AddMediaFileError
+        , ChapterEditApp.Ports.chapterEditUploadFileSuccess AddMediaFileSuccess
         ]

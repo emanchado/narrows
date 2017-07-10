@@ -6,6 +6,7 @@ import NarrationCreationApp.Messages exposing (..)
 import NarrationCreationApp.Models exposing (..)
 import NarrationCreationApp.Update
 import NarrationCreationApp.Views
+import NarrationCreationApp.Ports
 
 
 type alias Model =
@@ -20,6 +21,12 @@ initialState : Model
 initialState =
     { banner = Nothing
     , title = ""
+    , narrationId = Nothing
+    , files = Nothing
+    , defaultAudio = Nothing
+    , defaultBackgroundImage = Nothing
+    , uploadingAudio = False
+    , uploadingBackgroundImage = False
     }
 
 
@@ -40,4 +47,6 @@ view =
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    Sub.none
+    Sub.batch [ NarrationCreationApp.Ports.narrationEditUploadFileError AddMediaFileError
+              , NarrationCreationApp.Ports.narrationEditUploadFileSuccess AddMediaFileSuccess
+              ]

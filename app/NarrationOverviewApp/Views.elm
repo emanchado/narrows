@@ -76,7 +76,12 @@ overviewView overview novels =
             }
           ]
           (text overview.narration.title)
-      , h1 [] [ text <| "Narration " ++ overview.narration.title ]
+      , h1 []
+          [ text <| "Narration " ++ overview.narration.title ++ " "
+          , a [ class "btn btn-edit"
+              , href <| "/narrations/" ++ (toString overview.narration.id) ++ "/edit" ]
+              [ text "Edit" ]
+          ]
       , div [ class <| "two-column narration-" ++ (narrationStatusString overview.narration.status) ]
           [ ribbonForNarrationStatus overview.narration.status
           , section []

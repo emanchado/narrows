@@ -128,8 +128,6 @@ type alias MessageThread =
 
 
 -- Only used for JSON response decoding
-
-
 type alias ChapterMessages =
     { messages : List MessageThread
     , characterId : Maybe Int
@@ -174,3 +172,40 @@ type alias Breadcrumb =
     { title : String
     , url : String
     }
+
+
+type MediaType
+  = Audio
+  | BackgroundImage
+
+
+mediaTypeString : MediaType -> String
+mediaTypeString mediaType =
+  case mediaType of
+    Audio -> "audio"
+    BackgroundImage -> "background-images"
+
+
+type alias FileUploadError =
+    { status : Int
+    , message : String
+    }
+
+
+type alias FileUploadSuccess =
+    { name : String
+    , type_ : String
+    }
+
+
+updateNarrationFiles : FileSet -> FileUploadSuccess -> FileSet
+updateNarrationFiles fileSet uploadResponse =
+  case uploadResponse.type_ of
+    "audio" ->
+      { fileSet | audio = uploadResponse.name :: fileSet.audio }
+
+    "backgroundImages" ->
+      { fileSet | backgroundImages = uploadResponse.name :: fileSet.backgroundImages }
+
+    _ ->
+      fileSet

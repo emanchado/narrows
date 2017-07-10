@@ -1,15 +1,14 @@
 module ChapterEditApp.Views exposing (mainView)
 
 import String
-import Json.Decode
 import Html exposing (Html, h2, h3, div, main_, nav, section, ul, li, img, a, input, button, audio, br, span, label, strong, em, text)
 import Html.Attributes exposing (id, name, class, href, src, target, type_, value, placeholder, checked, disabled)
 import Html.Events exposing (onClick, onInput, on)
-import Common.Models exposing (FullCharacter, Narration, Chapter)
+import Common.Models exposing (FullCharacter, Narration, Chapter, MediaType(..))
 import Common.Views exposing (bannerView, breadcrumbNavView, onStopPropagationClick, horizontalSpinner)
+import Common.Views.FileSelector exposing (fileSelector)
 import ChapterEditApp.Models exposing (Model, LastReactions, LastChapter, LastReaction)
 import ChapterEditApp.Messages exposing (..)
-import ChapterEditApp.Views.FileSelector exposing (fileSelector)
 import ChapterEditApp.Views.Participants exposing (participantListView, participantPreviewsView)
 
 
@@ -27,6 +26,9 @@ chapterMediaView chapter narration uploadingAudio uploadingBackgroundImage =
         , div []
             [ fileSelector
                 UpdateSelectedBackgroundImage
+                OpenMediaFileSelector
+                (AddMediaFile BackgroundImage)
+                "new-bg-image-file"
                 uploadingBackgroundImage
                 (case chapter.backgroundImage of
                    Just image -> image
@@ -34,18 +36,6 @@ chapterMediaView chapter narration uploadingAudio uploadingBackgroundImage =
                 (List.map
                    (\file -> (file, file))
                    narration.files.backgroundImages)
-            , button [ class "btn btn-small btn-add"
-                     , onClick (OpenMediaFileSelector "new-bg-image-file")
-                     , disabled uploadingBackgroundImage
-                     ]
-                [ text "Upload" ]
-            , input [ type_ "file"
-                    , id "new-bg-image-file"
-                    , class "invisible"
-                    , name "file"
-                    , on "change" (Json.Decode.succeed <| AddMediaFile BackgroundImage "new-bg-image-file")
-                    ]
-                []
             ]
         , img [ class "tiny-image-preview"
               , src (case chapter.backgroundImage of
@@ -68,6 +58,9 @@ chapterMediaView chapter narration uploadingAudio uploadingBackgroundImage =
         , div []
             [ fileSelector
                 UpdateSelectedAudio
+                OpenMediaFileSelector
+                (AddMediaFile Audio)
+                "new-audio-file"
                 uploadingAudio
                 (case chapter.audio of
                    Just audio -> audio
@@ -75,18 +68,6 @@ chapterMediaView chapter narration uploadingAudio uploadingBackgroundImage =
                 (List.map
                    (\file -> (file, file))
                    narration.files.audio)
-            , button [ class "btn btn-small btn-add"
-                     , onClick (OpenMediaFileSelector "new-audio-file")
-                     , disabled uploadingAudio
-                     ]
-                [ text "Upload" ]
-            , input [ type_ "file"
-                    , id "new-audio-file"
-                    , class "invisible"
-                    , name "file"
-                    , on "change" (Json.Decode.succeed <| AddMediaFile Audio "new-audio-file")
-                    ]
-                []
             ]
         , button [ class "btn btn-small"
                  , onClick PlayPauseAudioPreview

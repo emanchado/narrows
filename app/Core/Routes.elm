@@ -7,6 +7,7 @@ type Route
     | NarratorIndex
     | NarrationArchivePage
     | NarrationCreationPage
+    | NarrationEditPage Int
     | ChapterEditNarratorPage Int
     | ChapterControlPage Int
     | CreateChapterPage Int

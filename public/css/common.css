@@ -14,6 +14,10 @@ body {
     font-family: Roboto;
 }
 
+button {
+    font-family: Roboto;
+}
+
 h1 {
     margin-bottom: 10px;
 }
@@ -78,6 +82,10 @@ ul li {
 }
 .narrow-form {
     max-width: 500px;
+}
+.vertical-form {
+    display: flex;
+    flex-direction: column;
 }
 
 #loader {
@@ -153,6 +161,7 @@ ul li {
     padding: 5px 10px;
 
     font-size: 18px;
+    font-weight: normal;
     background-color: whitesmoke;
 }
 a.btn {
@@ -180,6 +189,13 @@ a.btn {
 .btn-add {
     padding-left: 30px;
     background-image: url("/img/add.png");
+    background-repeat: no-repeat;
+    background-position: 8px 50%;
+}
+
+.btn-edit {
+    padding-left: 30px;
+    background-image: url("/img/edit.png");
     background-repeat: no-repeat;
     background-position: 8px 50%;
 }

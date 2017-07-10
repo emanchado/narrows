@@ -27,6 +27,14 @@ type alias NarrationMediaInfo =
     }
 
 
+type alias FileUploadInfo =
+    { type_ : String
+    , portType : String
+    , fileInputId : String
+    , narrationId : Int
+    }
+
+
 port renderText : RenderTextInfo -> Cmd msg
 port initEditor : InitEditorInfo -> Cmd msg
 port startNarration : NarrationMediaInfo -> Cmd msg
@@ -37,3 +45,7 @@ port flashElement : String -> Cmd msg
 
 port pageScrollListener : (Int -> msg) -> Sub msg
 port markNarrationAsStarted : (Int -> msg) -> Sub msg
+
+
+port openFileInput : String -> Cmd msg
+port uploadFile : FileUploadInfo -> Cmd msg

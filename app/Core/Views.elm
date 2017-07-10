@@ -143,6 +143,9 @@ dispatchProtectedPage model =
     NarrationCreationPage ->
       Html.map NarrationCreationMsg (NarrationCreationApp.view model.narrationCreationApp)
 
+    NarrationEditPage narrationId ->
+      Html.map NarrationCreationMsg (NarrationCreationApp.view model.narrationCreationApp)
+
     NarrationPage narrationId ->
       Html.map NarrationOverviewMsg (NarrationOverviewApp.view model.narrationOverviewApp)
 
