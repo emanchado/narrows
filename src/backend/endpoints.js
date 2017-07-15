@@ -3,7 +3,6 @@ import config from "config";
 import Q from "q";
 import formidable from "formidable";
 import nodemailer from "nodemailer";
-import sendmailTransport from "nodemailer-sendmail-transport";
 import sharp from "sharp";
 
 import NarrowsStore from "./NarrowsStore";
@@ -20,7 +19,7 @@ store.connect();
 const userStore = new UserStore(config.db);
 userStore.connect();
 
-const transporter = nodemailer.createTransport(sendmailTransport());
+const transporter = nodemailer.createTransport(config.mail.options);
 const mailer = new Mailer(store, transporter);
 
 export function getSession(req, res) {
