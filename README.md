@@ -62,6 +62,19 @@ Then you will have to recompile the frontend and backend code with:
 
     npm run build
 
+# Docker
+
+This repo includes a Dockerfile for building a depoyable image. It also
+contains a docker-compose suitable for quickly getting a local copy running.
+In there present forms, neither is suitable for a "production" game but
+great if you want to explore what Narrows is capable of.
+
+To get going with docker-compose:
+
+`docker-compose create && docker-compose up -d`
+
+You may need to run `docker-compose start narrows` the first time, as mysql
+sometimes takes a little time to init and causes the narrows process to abort.
 
 # Credits
 

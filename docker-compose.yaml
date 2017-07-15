@@ -1,0 +1,26 @@
+version: '2'
+
+services:
+  narrows:
+    build: .
+    links:
+      - mysql
+    depends_on:
+      - mysql
+    ports:
+      - "3333:3333"
+    volumes:
+      - narrows_data:/opt/narrows/files
+  mysql:
+    image: mysql:5.7
+    environment:
+      MYSQL_DATABASE: narrows
+      MYSQL_USER: narrows
+      MYSQL_PASSWORD: narrowsnarrows
+      MYSQL_ROOT_PASSWORD: narrowsnarrows
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+volumes:
+  mysql_data:
+  narrows_data:
