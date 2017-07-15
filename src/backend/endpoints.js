@@ -20,7 +20,7 @@ store.connect();
 const userStore = new UserStore(config.db);
 userStore.connect();
 
-const transporter = nodemailer.createTransport(sendmailTransport());
+const transporter = nodemailer.createTransport(config.mail.options);
 const mailer = new Mailer(store, transporter);
 
 export function getSession(req, res) {

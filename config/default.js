@@ -20,6 +20,7 @@ module.exports = {
 
     mail: {
         from: '"Narrows" <no-reply@narrows.localhost>',
+        options: process.env.NODEMAILER || 'direct://?sendmail=true',
         // If set, means that e-mails will always sent to this
         // address, regardless of the player real e-mail
         // address. Useful for development.

@@ -21,11 +21,9 @@ module.exports = {
 
     mail: {
         from: process.env.FROM_EMAIL || '"Narrows" <no-reply@narrows.localhost>',
+        options: process.env.NODEMAILER || 'direct://?sendmail=true',
         // If set, means that e-mails will always sent to this
-        // address,     // ost: 'localhost',
-    // user: 'narrows',
-    // password: 'narratornarrows',
-    // database: 'narrows'regardless of the player real e-mail
+        // address,regardless of the player real e-mail
         // address. Useful for development.
         // alwaysSendTo: 'developer@example.com',
         // This should point to the "mail-templates" in this repo. It
