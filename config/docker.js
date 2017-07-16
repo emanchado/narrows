@@ -1,7 +1,7 @@
 const port = process.env.PORT || 3333;
 module.exports = {
     port: port,
-    publicAddress: `http://localhost:${port}`,
+    publicAddress: process.env.PUBLIC_ADDRESS || `http://localhost:${port}`,
 
     db: {
         host: process.env.DB_HOST || 'mysql',

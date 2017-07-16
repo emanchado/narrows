@@ -3,7 +3,6 @@ import config from "config";
 import Q from "q";
 import formidable from "formidable";
 import nodemailer from "nodemailer";
-import sendmailTransport from "nodemailer-sendmail-transport";
 import sharp from "sharp";
 
 import NarrowsStore from "./NarrowsStore";

@@ -76,6 +76,19 @@ To get going with docker-compose:
 You may need to run `docker-compose start narrows` the first time, as mysql
 sometimes takes a little time to init and causes the narrows process to abort.
 
+Docker environment variables:
+- PORT - port to listen to
+- PUBLIC_ADDRESS - used to generate urls in emails
+- DB_HOST - hostname/ip
+- DB_USER - mysql username
+- DB_PASSWORD - mysql password
+- DB_NAME - database name
+- FROM_EMAIL - email address to send from. e.g. "Narrows" <no-reply@domain.com>
+- NODEMAILER - a nodemailer URI configuration string. e.g. smtps://user:pasword@smtp.host.com/?secure=true
+
+__Note__ NODEMAILER URI strings need to URI escape special characters within
+username/password. SES loves to give passwords that contain "/" for example.
+
 # Credits
 
 * Speaker/mute icons made by
