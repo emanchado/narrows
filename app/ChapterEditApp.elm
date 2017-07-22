@@ -25,6 +25,7 @@ initialState =
     , banner = Nothing
     , flash = Nothing
     , showPublishChapterDialog = False
+    , savingChapter = False
     , uploadingAudio = False
     , uploadingBackgroundImage = False
     }

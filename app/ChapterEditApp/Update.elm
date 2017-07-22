@@ -445,14 +445,22 @@ update msg model =
     SaveNewChapter ->
       case model.chapter of
         Just chapter ->
-          ( model, ChapterEditApp.Api.createChapter chapter )
+          ( { model | savingChapter = True }
+          , if model.savingChapter then
+              Cmd.none
+            else
+              ChapterEditApp.Api.createChapter chapter
+          )
 
         Nothing ->
           ( model, Cmd.none )
 
     PublishNewChapter ->
-      ( model
-      , Task.perform PublishNewChapterWithTime Time.now
+      ( { model | savingChapter = True }
+      , if model.savingChapter then
+          Cmd.none
+        else
+          Task.perform PublishNewChapterWithTime Time.now
       )
 
     PublishNewChapterWithTime time ->
@@ -470,9 +478,15 @@ update msg model =
           ( model, Cmd.none )
 
     SaveNewChapterResult (Err error) ->
-      ( { model | banner = errorBanner "Error saving chapter" }, Cmd.none )
+      ( { model | banner = errorBanner "Error saving chapter"
+                , savingChapter = False
+        }
+      , Cmd.none
+      )
 
     SaveNewChapterResult (Ok chapter) ->
-      ( { model | banner = Nothing }
+      ( { model | banner = Nothing
+                , savingChapter = False
+        }
       , Navigation.newUrl <| "/chapters/" ++ (toString chapter.id) ++ "/edit"
       )

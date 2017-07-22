@@ -109,8 +109,8 @@ chapterMediaView chapter narration uploadingAudio uploadingBackgroundImage =
     ]
 
 
-chapterView : Chapter -> Narration -> Bool -> Bool -> Html Msg
-chapterView chapter narration uploadingAudio uploadingBackgroundImage =
+chapterView : Chapter -> Narration -> Bool -> Bool -> Bool -> Html Msg
+chapterView chapter narration savingChapter uploadingAudio uploadingBackgroundImage =
   let
     (saveAction, publishAction) =
       if chapter.id == 0 then
@@ -141,12 +141,21 @@ chapterView chapter narration uploadingAudio uploadingBackgroundImage =
       , div [ class "btn-bar" ]
           [ button [ class "btn"
                    , onClick saveAction
+                   , disabled savingChapter
                    ]
-              [ text "Save" ]
+              [ text <| if savingChapter then
+                          "Saving…"
+                        else
+                          "Save" ]
           , button [ class "btn btn-default"
                    , onClick publishAction
+                   , disabled savingChapter
                    ]
-              [ text "Publish" ]
+              [ text <| if savingChapter then
+                          "Publishing…"
+                        else
+                          "Publish"
+              ]
           ]
       , participantPreviewsView chapter.id chapter.participants
       ]
@@ -284,7 +293,7 @@ mainView model =
               Just lastReactions -> lastReactionListView lastReactions chapter
               Nothing -> section [] [ text "Loading reactions…" ]
           , section []
-              [ chapterView chapter narration model.uploadingAudio model.uploadingBackgroundImage
+              [ chapterView chapter narration model.savingChapter model.uploadingAudio model.uploadingBackgroundImage
               , bannerView model.flash
               , if model.showPublishChapterDialog then
                   showDialog
