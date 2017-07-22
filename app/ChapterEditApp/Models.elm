@@ -12,7 +12,9 @@ newEmptyChapter narration =
     , title = ""
     , audio = narration.defaultAudio
     , backgroundImage = narration.defaultBackgroundImage
-    , text = Json.Encode.list []
+    , text = Json.Encode.object [ ("type", Json.Encode.string "doc")
+                                , ("content", Json.Encode.list [])
+                                ]
     , participants = narration.characters
     , published = Nothing
     }
