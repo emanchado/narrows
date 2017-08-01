@@ -2,7 +2,6 @@ module NarrationCreationApp.Api.Json exposing (..)
 
 import Json.Decode as Json exposing (..)
 import Json.Encode
-import Common.Models exposing (Narration)
 import NarrationCreationApp.Models exposing (NewNarrationProperties, NarrationUpdateProperties, CreateNarrationResponse)
 
 
