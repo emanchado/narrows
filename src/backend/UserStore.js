@@ -27,7 +27,7 @@ class UserStore {
     }
 
     connect() {
-        this.db = new mysql.createConnection(this.connConfig);
+        this.db = new mysql.createPool(this.connConfig);
     }
 
     authenticate(email, password) {

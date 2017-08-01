@@ -18,7 +18,7 @@ app.use(express.static('public'));
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 app.use(expressSession({
-    store: new MySQLStore({}, mysql.createConnection(config.db)),
+    store: new MySQLStore({}, mysql.createPool(config.db)),
     resave: false,
     saveUninitialized: false,
     secret: "b7404074-874d-11e6-855e-031b367b72bb",
@@ -81,6 +81,12 @@ app.use("/static/narrations", express.static(config.files.path));
 
 app.use(middlewares.firstTimeSetup, function(req, res) {
     res.sendFile(path.resolve(path.join(STATIC_HTML_FILES, "index.html")));
+});
+
+app.use(function(err, req, res, next) {
+    res.status(500).sendFile(
+        path.resolve(path.join(STATIC_HTML_FILES, "error.html"))
+    );
 });
 
 app.listen(config.port, function () {

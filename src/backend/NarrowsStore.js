@@ -83,7 +83,7 @@ class NarrowsStore {
     }
 
     connect() {
-        this.db = new mysql.createConnection(this.connConfig);
+        this.db = new mysql.createPool(this.connConfig);
         // Temporary extra methods for compatibility with the sqlite API
         this.db.run = function(stmt, binds, cb) {
             this.query(stmt, binds, function(err, results, fields) {

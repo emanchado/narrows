@@ -28,6 +28,34 @@ const CHAR2_NAME = "Sam";
 const CHAR3_NAME = "Bilbo";
 const CHAR4_NAME = "Pippin";
 
+function createUsers(userStore, emailList) {
+    let promise = Q([]);
+
+    emailList.forEach(email => {
+        promise = promise.then(partialRes => (
+            userStore.createUser({ email: email }).then(user => (
+                partialRes.concat(user)
+            ))
+        ));
+    });
+
+    return promise;
+}
+
+function createCharacters(store, characters) {
+    let promise = Q([]);
+
+    characters.forEach(characterParams => {
+        promise = promise.then(partialRes => (
+            store.addCharacter.apply(store, characterParams).then(char => (
+                partialRes.concat(char)
+            ))
+        ));
+    });
+
+    return promise;
+}
+
 // Because recreating the database is heavy, we do it only once for
 // all tests, and then create a new narration for every test we run.
 test.before(t => {
@@ -39,11 +67,11 @@ test.before(t => {
         fs.removeSync(TEST_FILES);
         fs.mkdirpSync(TEST_FILES);
 
-        return Q.all([userStore.createUser({ email: NARRATOR_EMAIL }),
-                      userStore.createUser({ email: USER1_EMAIL }),
-                      userStore.createUser({ email: USER2_EMAIL }),
-                      userStore.createUser({ email: USER3_EMAIL }),
-                      userStore.createUser({ email: USER4_EMAIL })]);
+        return createUsers(userStore, [NARRATOR_EMAIL,
+                                       USER1_EMAIL,
+                                       USER2_EMAIL,
+                                       USER3_EMAIL,
+                                       USER4_EMAIL]);
     }).spread((narrator, user1, user2, user3, user4) => {
         narratorUserId = narrator.id;
         userId1 = user1.id;
@@ -62,12 +90,11 @@ test.beforeEach(t => {
     }).then(narration => {
         t.context.testNarration = narration;
 
-        return Q.all([
-            store.addCharacter(CHAR1_NAME, userId1, narration.id),
-            store.addCharacter(CHAR2_NAME, userId2, narration.id),
-            store.addCharacter(CHAR3_NAME, userId3, narration.id),
-            store.addCharacter(CHAR4_NAME, userId4, narration.id)
-        ]);
+        return createCharacters(store,
+                                [ [CHAR1_NAME, userId1, narration.id],
+                                  [CHAR2_NAME, userId2, narration.id],
+                                  [CHAR3_NAME, userId3, narration.id],
+                                  [CHAR4_NAME, userId4, narration.id] ]);
     }).spread((char1, char2, char3, char4) => {
         t.context.characterId1 = char1.id;
         t.context.characterId2 = char2.id;
