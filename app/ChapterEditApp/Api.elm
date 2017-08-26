@@ -4,8 +4,8 @@ import Http
 
 import ChapterEditApp.Messages exposing (Msg, Msg(..))
 import Common.Models exposing (Chapter)
-import Common.Api.Json exposing (parseNarration)
-import ChapterEditApp.Api.Json exposing (parseChapter, parseLastReactions, encodeChapter, encodeCharacter)
+import Common.Api.Json exposing (parseChapter, parseNarration)
+import ChapterEditApp.Api.Json exposing (parseLastReactions, encodeChapter, encodeCharacter)
 
 
 fetchChapterInfo : Int -> Cmd Msg

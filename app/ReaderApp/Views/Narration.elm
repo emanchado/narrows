@@ -6,7 +6,8 @@ import Html.Attributes exposing (id, class, style, for, src, href, target, type_
 import Html.Events exposing (onClick, onInput)
 import Http exposing (encodeUri)
 import Common.Views exposing (bannerView, linkTo)
-import ReaderApp.Models exposing (Model, Chapter, OwnCharacter, ParticipantCharacter, Banner)
+import Common.Models exposing (ParticipantCharacter)
+import ReaderApp.Models exposing (Model, Chapter, OwnCharacter, Banner)
 import ReaderApp.Messages exposing (..)
 import ReaderApp.Views.MessageThreads
 

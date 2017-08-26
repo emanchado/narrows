@@ -3,26 +3,8 @@ module ChapterEditApp.Api.Json exposing (..)
 import Json.Decode as Json exposing (..)
 import Json.Encode
 import Common.Models exposing (FullCharacter, Narration, Chapter, FileSet)
-import Common.Api.Json exposing (parseCharacter)
+import Common.Api.Json exposing (parseCharacter, parseFullCharacter, parseChapter)
 import ChapterEditApp.Models exposing (LastReactions, LastChapter, LastReaction, LastReactionChapter)
-
-
-parseFullCharacter : Json.Decoder FullCharacter
-parseFullCharacter =
-    Json.map3 FullCharacter (field "id" int) (field "name" string) (field "token" string)
-
-
-parseChapter : Json.Decoder Chapter
-parseChapter =
-    Json.map8 Chapter
-        (field "id" int)
-        (field "narrationId" int)
-        (field "title" string)
-        (maybe (field "audio" string))
-        (maybe (field "backgroundImage" string))
-        (field "text" Json.value)
-        (field "participants" <| list parseFullCharacter)
-        (maybe (field "published" string))
 
 
 parseFileSet : Json.Decoder FileSet

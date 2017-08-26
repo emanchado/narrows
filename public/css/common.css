@@ -314,6 +314,28 @@ span.mention img {
     cursor: help;
 }
 
+.dramatis-personae {
+    display: block;
+    padding-left: 0;
+}
+.dramatis-personae > li {
+    display: flex;
+    margin: 10px 0;
+}
+.dramatis-personae > li img {
+    margin-right: 10px;
+    width: 100px;
+    height: 100px;
+}
+.dramatis-personae.compact > li {
+    align-items: center;
+}
+.dramatis-personae.compact > li img {
+    margin-right: 10px;
+    width: 50px;
+    height: 50px;
+}
+
 /* CSS Spinner rules (from http://tobiasahlin.com/spinkit/) */
 .spinner {
   display: inline-block;

@@ -10,14 +10,27 @@ import NarrationOverviewApp.Messages exposing (..)
 import NarrationOverviewApp.Models exposing (Model, NarrationNovel)
 
 
-narrationCharacterView : FullCharacter -> Html Msg
-narrationCharacterView character =
-  li []
-    [ a (linkTo
-           NavigateTo
-           ("/characters/" ++ character.token))
-        [ text character.name ]
-    ]
+narrationCharacterView : Int -> FullCharacter -> Html Msg
+narrationCharacterView narrationId character =
+  let
+    avatarUrl =
+      case character.avatar of
+        Just avatar ->
+          "/static/narrations/" ++ (toString narrationId) ++ "/avatars/" ++ avatar
+
+        Nothing ->
+          "/img/default-avatar.png"
+  in
+    li []
+      [ img [ class "avatar"
+            , src avatarUrl
+            ]
+          []
+      , a (linkTo
+             NavigateTo
+             ("/characters/" ++ character.token))
+          [ text character.name ]
+      ]
 
 
 narrationNovelView : String -> List NarrationNovel -> FullCharacter -> Html Msg
@@ -93,8 +106,8 @@ overviewView overview novels =
           , section [ class "page-aside" ]
               [ h2 [] [ text "Characters" ]
               , characterOptions
-              , ul [ class "character-list" ]
-                  (List.map narrationCharacterView overview.narration.characters)
+              , ul [ class "dramatis-personae compact" ]
+                  (List.map (narrationCharacterView overview.narration.id) overview.narration.characters)
               , h2 [] [ text "Status" ]
               , text "This narration is "
               , em [] [ text <| narrationStatusString overview.narration.status ]

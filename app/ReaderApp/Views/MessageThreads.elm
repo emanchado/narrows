@@ -4,7 +4,8 @@ import Html exposing (Html, div, text, textarea, input, button, ul, li, strong, 
 import Html.Attributes exposing (id, class, value, rows, type_, checked, disabled)
 import Html.Events exposing (onClick, onInput, onCheck)
 import Common.Views exposing (threadView)
-import ReaderApp.Models exposing (Model, ParticipantCharacter)
+import Common.Models exposing (ParticipantCharacter)
+import ReaderApp.Models exposing (Model)
 import ReaderApp.Messages exposing (..)
 
 

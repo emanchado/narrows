@@ -39,8 +39,8 @@ fetchNarrationOverview narrationId =
       "/api/narrations/" ++ (toString narrationId) ++ "/chapters"
   in
     Http.send NarrationOverviewFetchResult (Http.get narrationApiUrl parseNarrationOverview)
-        
-        
+
+
 fetchNarrationNovels : Int -> Cmd Msg
 fetchNarrationNovels narrationId =
   let

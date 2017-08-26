@@ -1,7 +1,7 @@
 module ReaderApp.Models exposing (..)
 
 import Json.Decode
-import Common.Models exposing (Character, ReplyInformation)
+import Common.Models exposing (Character, ReplyInformation, ParticipantCharacter)
 
 
 type alias Banner =
@@ -12,14 +12,6 @@ type PageState
   = Loader
   | StartingNarration
   | Narrating
-
-
-type alias ParticipantCharacter =
-  { id : Int
-  , name : String
-  , avatar : Maybe String
-  , description : Json.Decode.Value
-  }
 
 
 type alias OwnCharacter =

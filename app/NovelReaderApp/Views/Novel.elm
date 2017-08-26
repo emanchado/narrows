@@ -5,7 +5,8 @@ import Html exposing (Html, h2, div, a, strong, text, img, br, audio, ul, li)
 import Html.Attributes exposing (id, class, style, src, preload, loop, alt)
 import Html.Events exposing (onClick)
 import Http exposing (encodeUri)
-import NovelReaderApp.Models exposing (Model, ParticipantCharacter, findChapter)
+import Common.Models exposing (ParticipantCharacter)
+import NovelReaderApp.Models exposing (Model, findChapter)
 import NovelReaderApp.Messages exposing (..)
 
 

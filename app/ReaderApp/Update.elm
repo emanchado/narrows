@@ -7,7 +7,7 @@ import Json.Decode exposing (decodeString)
 
 import Core.Routes exposing (Route(..))
 import Common.Ports exposing (renderText, startNarration, playPauseNarrationMusic, flashElement)
-import Common.Models exposing (Character, errorBanner, successBanner)
+import Common.Models exposing (Character, ParticipantCharacter, errorBanner, successBanner)
 import ReaderApp.Api
 import ReaderApp.Messages exposing (..)
 import ReaderApp.Models exposing (..)

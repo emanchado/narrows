@@ -191,20 +191,6 @@ ul.thread-list.reader li .btn-bar {
     border-top-color: white;
 }
 
-.dramatis-personae {
-    display: block;
-    padding-left: 0;
-}
-.dramatis-personae > li {
-    display: flex;
-    margin: 10px 0;
-}
-.dramatis-personae > li img {
-    margin-right: 10px;
-    width: 100px;
-    height: 100px;
-}
-
 #description-editor .ProseMirror {
     min-height: 100px;
 }

@@ -5,7 +5,8 @@ import Json.Encode
 import Http
 import Common.Api.Json exposing (parseChapterMessages)
 import ReaderApp.Messages exposing (Msg, Msg(..))
-import ReaderApp.Models exposing (Chapter, ParticipantCharacter, OwnCharacter, ChapterMessages, MessageThread, Message, ApiErrorResponse)
+import Common.Models exposing (ParticipantCharacter)
+import ReaderApp.Models exposing (Chapter, OwnCharacter, ChapterMessages, MessageThread, Message, ApiErrorResponse)
 
 
 parseParticipantCharacter : Json.Decoder ParticipantCharacter
