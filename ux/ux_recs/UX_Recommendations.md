@@ -31,7 +31,7 @@
 
 
 # Character Pages
-* \*\*\* Make clear what information other characters will see, and what is for reference for the character only. I.e. Is there a difference between Description and Backstory?
+* \*\*\* ~Make clear what information other characters will see, and what is for reference for the character only. I.e. Is there a difference between Description and Backstory?~
 
 # Things I Really Liked
 

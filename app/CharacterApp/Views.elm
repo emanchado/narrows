@@ -85,11 +85,11 @@ mainView model =
 
               Nothing ->
                 text "Loading…"
-            , label [] [ text "Description" ]
+            , label [] [ text "Description (public)" ]
             , div [ id "description-editor"
                   , class "editor-container"
                   ] []
-            , label [] [ text "Backstory" ]
+            , label [] [ text "Backstory (private)" ]
             , div [ id "backstory-editor"
                   , class "editor-container"
                   ] []
