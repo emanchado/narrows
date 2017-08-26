@@ -1,8 +1,8 @@
 module NarrationOverviewApp.Views exposing (..)
 
 import List
-import Html exposing (Html, main_, h1, h2, section, div, ul, li, button, img, a, em, text)
-import Html.Attributes exposing (id, class, href, src)
+import Html exposing (Html, main_, h1, h2, section, div, ul, li, button, img, input, label, a, em, text)
+import Html.Attributes exposing (id, class, for, checked, name, type_, href, src)
 import Html.Events exposing (onClick)
 import Common.Models exposing (Narration, NarrationStatus(..), ChapterOverview, NarrationOverview, FullCharacter, narrationStatusString)
 import Common.Views exposing (linkTo, breadcrumbNavView, narrationOverviewView, loadingView, ribbonForNarrationStatus)
@@ -109,27 +109,38 @@ overviewView overview novels =
               , ul [ class "dramatis-personae compact" ]
                   (List.map (narrationCharacterView overview.narration.id) overview.narration.characters)
               , h2 [] [ text "Status" ]
-              , text "This narration is "
-              , em [] [ text <| narrationStatusString overview.narration.status ]
-              , text "."
-              , div []
-                  [ case overview.narration.status of
-                      Active ->
-                        div []
-                          [ button [ class "btn"
-                                   , onClick <| MarkNarration Finished
-                                   ]
-                              [ text "Mark as finished" ]
-                          , button [ class "btn"
-                                   , onClick <| MarkNarration Abandoned
-                                   ]
-                              [ text "Mark as abandoned" ]
+              , div [ class "narration-status" ]
+                  [ input [ type_ "radio"
+                          , id "narration-status-active"
+                          , name "narration-status"
+                          , onClick <| MarkNarration Active
+                          , checked (overview.narration.status == Active)
                           ]
-                      _ ->
-                        button [ class "btn"
-                               , onClick <| MarkNarration Active
-                               ]
-                          [ text "Mark as active" ]
+                      []
+                  , label [ for "narration-status-active" ]
+                      [ text "Active" ]
+                  ]
+              , div [ class "narration-status" ]
+                  [ input [ type_ "radio"
+                            , id "narration-status-finished"
+                            , name "narration-status"
+                            , onClick <| MarkNarration Finished
+                            , checked (overview.narration.status == Finished)
+                            ]
+                        []
+                  , label [ for "narration-status-finished" ]
+                      [ text "Finished" ]
+                  ]
+              , div [ class "narration-status" ]
+                  [ input [ type_ "radio"
+                            , id "narration-status-abandoned"
+                            , name "narration-status"
+                            , onClick <| MarkNarration Abandoned
+                            , checked (overview.narration.status == Abandoned)
+                            ]
+                        []
+                  , label [ for "narration-status-abandoned" ]
+                      [ text "Abandoned" ]
                   ]
               , h2 [] [ text "Novels" ]
               , ul [ class "novel-list" ]
