@@ -56,7 +56,9 @@ update msg model =
                 List.filter (\i -> i == newBgImage) files.backgroundImages
             Nothing -> Nothing
       in
-        ( { model | defaultBackgroundImage = newValue }
+        ( { model | defaultBackgroundImage = newValue
+                  , banner = Nothing
+          }
         , Cmd.none
         )
 
@@ -69,7 +71,9 @@ update msg model =
                 List.filter (\i -> i == newAudio) files.audio
             Nothing -> Nothing
       in
-        ( { model | defaultAudio = newValue }
+        ( { model | defaultAudio = newValue
+                  , banner = Nothing
+          }
         , Cmd.none
         )
 
@@ -97,17 +101,14 @@ update msg model =
           ( model, Cmd.none )
 
     AddMediaFileError error ->
-      let
-        newBanner = errorBanner <| "Error upload media file: " ++ error.message
-      in
-        -- Bah. We don't know which type was uploaded, so we assume we
-        -- can safely turn off both spinners. Sigh.
-        ( { model | banner = newBanner
-                  , uploadingAudio = False
-                  , uploadingBackgroundImage = False
-          }
-        , Cmd.none
-        )
+      -- Bah. We don't know which type was uploaded, so we assume we
+      -- can safely turn off both spinners. Sigh.
+      ( { model | banner = errorBanner error.message
+                , uploadingAudio = False
+                , uploadingBackgroundImage = False
+        }
+      , Cmd.none
+      )
 
     AddMediaFileSuccess resp ->
       let

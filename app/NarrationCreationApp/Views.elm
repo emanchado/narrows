@@ -5,7 +5,7 @@ import Html.Attributes exposing (id, class, href, type_, name, placeholder, valu
 import Html.Events exposing (onInput, onClick, on)
 
 import Common.Models exposing (MediaType(..))
-import Common.Views exposing (onPreventDefaultClick)
+import Common.Views exposing (onPreventDefaultClick, bannerView)
 import Common.Views.FileSelector exposing (fileSelector)
 import NarrationCreationApp.Messages exposing (..)
 import NarrationCreationApp.Models exposing (..)
@@ -24,6 +24,7 @@ mainView model =
           , class "app-container app-container-simple"
           ]
       [ h1 [] [ text pageTitle ]
+      , bannerView model.banner
       , form [ class "vertical-form" ]
           [ label [] [ text "Title:" ]
           , div []

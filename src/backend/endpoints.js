@@ -331,8 +331,13 @@ function uploadFile(req, res, type) {
     )).then(() => (
         Q.ninvoke(form, "parse", req)
     )).spread(function(fields, files) {
-        const uploadedFileInfo = files.file,
-              filename = path.basename(uploadedFileInfo.name),
+        const uploadedFileInfo = files.file;
+
+        if (!uploadedFileInfo) {
+            throw new Error("No file given");
+        }
+
+        const filename = path.basename(uploadedFileInfo.name),
               tmpPath = uploadedFileInfo.path;
 
         return store.addMediaFile(narrationId, filename, tmpPath, type);
