@@ -41,7 +41,9 @@ recipientView currentRecipients character =
 recipientListView : List FullCharacter -> List Int -> Html Msg
 recipientListView possibleRecipients currentRecipients =
     div [ class "recipients" ]
-        (List.map (recipientView currentRecipients) possibleRecipients)
+      (List.append
+         [ label [] [ text "Recipients:" ] ]
+         (List.map (recipientView currentRecipients) possibleRecipients))
 
 
 mainView : Model -> Html Msg

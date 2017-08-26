@@ -22,7 +22,7 @@
 
 # Chapter Page
 * \*\*\* Upon clicking Publish, good if there is some result. E.g. Give option to view the story
-* \*\* Under Conversation, between the text box and "Send" button, add the word "Include:" next to check boxes. Otherwise, it isn't immediately clear how the set of character check boxes in between relates to the message you are sending.
+* \*\* ~Under Conversation, between the text box and "Send" button, add the word "Include:" next to check boxes. Otherwise, it isn't immediately clear how the set of character check boxes in between relates to the message you are sending.~
 * \* For Actions, think about changing "Not submitted yet." to "Nothing has happened yet."  or "None."
 * \* Ran into some weird delays when trying to add a new background image. (Error submitted via Github.)
 * \* Not sure what "Control" means in this context:
