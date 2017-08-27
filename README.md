@@ -29,7 +29,7 @@ server connected to the internet to be used. To install you need to
 run the following steps:
 
 1. Clone the code somewhere.
-1. Make sure you have Node.js (at least version 4) and NPM (at least
+1. Make sure you have Node.js (at least version 6) and NPM (at least
    version 4).
 1. Run `npm install`
 1. Run `npm install -g elm@0.18`
@@ -77,17 +77,18 @@ If you want to setup email and use as a publicly hosted site, add the
 appropriate environment variables from below.
 
 Docker environment variables:
-- PORT - port to listen to
-- PUBLIC_ADDRESS - used to generate urls in emails
-- DB_HOST - hostname/ip
-- DB_USER - mysql username
-- DB_PASSWORD - mysql password
-- DB_NAME - database name
-- FROM_EMAIL - email address to send from. e.g. "Narrows" <no-reply@domain.com>
-- NODEMAILER - a nodemailer URI configuration string. e.g. smtps://user:pasword@smtp.host.com/?secure=true
+* `PORT`: port to listen to.
+* `PUBLIC_ADDRESS`: used to generate URLs in emails.
+* `DB_HOST`: hostname/IP.
+* `DB_USER`: MySQL username.
+* `DB_PASSWORD`: MySQL password.
+* `DB_NAME`: database name.
+* `FROM_EMAIL`: email address to send from. e.g. `"Narrows" <no-reply@domain.com>`.
+* `NODEMAILER`: a nodemailer URI configuration string, e.g. `smtps://user:pasword@smtp.host.com/?secure=true`.
 
-__Note__ NODEMAILER URI strings need to URI escape special characters within
-username/password. SES loves to give passwords that contain "/" for example.
+__Note:__ `NODEMAILER` URI strings need to URI escape special
+characters within username/password. SES loves to give passwords that
+contain "/" for example.
 
 # Credits
 
