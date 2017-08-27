@@ -65,6 +65,8 @@ Then you will have to recompile the frontend and backend code with:
 
 # Credits
 
+## Icons/graphics
+
 * Speaker/mute icons made by
   [Madebyoliver](http://www.flaticon.com/authors/madebyoliver), from
   [Flaticon](http://www.flaticon.com). They are licensed under
@@ -82,3 +84,7 @@ Then you will have to recompile the frontend and backend code with:
 * Vintage divider by
   [Web Design Hot](http://www.webdesignhot.com/free-vector-%20graphics/vector-set-of-vintage-design-divider-elements/). Licensed
   under Creative Commons BY 3.0.
+
+## Contributors
+
+* Tess Gadwa: UX help and recommendations.
