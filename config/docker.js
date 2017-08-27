@@ -1,13 +1,14 @@
-const port = process.env.PORT || 3333;
+var defer = require('config/defer').deferConfig;
+
 module.exports = {
-    port: port,
-    publicAddress: process.env.PUBLIC_ADDRESS || `http://localhost:${port}`,
+    port: 3333,
+    publicAddress: defer(function(cfg) { return "http://localhost:" +  cfg.port; }),
 
     db: {
-        host: process.env.DB_HOST || 'mysql',
-        user: process.env.DB_USER || 'narrows',
-        password: process.env.DB_PASSWORD || 'narrowsnarrows',
-        database: process.env.DB_NAME || 'narrows'
+        host: 'mysql',
+        user: 'narrows',
+        password: 'narrowsnarrows',
+        database: 'narrows'
     },
 
     files: {
@@ -20,8 +21,8 @@ module.exports = {
     },
 
     mail: {
-        from: process.env.FROM_EMAIL || '"Narrows" <no-reply@narrows.localhost>',
-        options: process.env.NODEMAILER || 'direct://?sendmail=true',
+        from: '"Narrows" <no-reply@narrows.localhost>',
+        options: 'direct://?sendmail=true',
         // If set, means that e-mails will always sent to this
         // address,regardless of the player real e-mail
         // address. Useful for development.
