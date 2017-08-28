@@ -1,11 +1,13 @@
+var defer = require('config/defer').deferConfig;
+
 module.exports = {
-    port: 3000,
-    publicAddress: 'http://localhost:3000',
+    port: 3333,
+    publicAddress: defer(function(cfg) { return "http://localhost:" +  cfg.port; }),
 
     db: {
-        host: 'localhost',
+        host: 'mysql',
         user: 'narrows',
-        password: 'narratornarrows',
+        password: 'narrowsnarrows',
         database: 'narrows'
     },
 
@@ -22,7 +24,7 @@ module.exports = {
         from: '"Narrows" <no-reply@narrows.localhost>',
         options: 'direct://?sendmail=true',
         // If set, means that e-mails will always sent to this
-        // address, regardless of the player real e-mail
+        // address,regardless of the player real e-mail
         // address. Useful for development.
         // alwaysSendTo: 'developer@example.com',
         // This should point to the "mail-templates" in this repo. It

@@ -29,7 +29,7 @@ server connected to the internet to be used. To install you need to
 run the following steps:
 
 1. Clone the code somewhere.
-1. Make sure you have Node.js (at least version 4) and NPM (at least
+1. Make sure you have Node.js (at least version 6) and NPM (at least
    version 4).
 1. Run `npm install`
 1. Run `npm install -g elm@0.18`
@@ -62,6 +62,33 @@ Then you will have to recompile the frontend and backend code with:
 
     npm run build
 
+# Docker
+
+This repo includes a Dockerfile for building a depoyable image. It also
+contains a docker-compose suitable for quickly getting a local copy running.
+The Dockerfile and compose file have been used (with modification) to host
+a production version of the app.
+
+To get going with docker-compose:
+
+`docker-compose create && docker-compose up -d`
+
+If you want to setup email and use as a publicly hosted site, add the
+appropriate environment variables from below.
+
+Docker environment variables:
+* `PORT`: port to listen to.
+* `PUBLIC_ADDRESS`: used to generate URLs in emails.
+* `DB_HOST`: hostname/IP.
+* `DB_USER`: MySQL username.
+* `DB_PASSWORD`: MySQL password.
+* `DB_NAME`: database name.
+* `FROM_EMAIL`: email address to send from. e.g. `"Narrows" <no-reply@domain.com>`.
+* `NODEMAILER`: a nodemailer URI configuration string, e.g. `smtps://user:pasword@smtp.host.com/?secure=true`.
+
+__Note:__ `NODEMAILER` URI strings need to URI escape special
+characters within username/password. SES loves to give passwords that
+contain "/" for example.
 
 # Credits
 
