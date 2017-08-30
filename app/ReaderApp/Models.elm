@@ -57,7 +57,6 @@ type alias Chapter =
   , backgroundImage : Maybe String
   , text : Json.Decode.Value
   , participants : List ParticipantCharacter
-  , reaction : Maybe String
   , character : OwnCharacter
   }
 
@@ -71,12 +70,9 @@ type alias Model =
   , backgroundBlurriness : Int
   , reply : Maybe ReplyInformation
   , replySending : Bool
-  , showNewMessageUi : Bool
   , newMessageText : String
   , newMessageRecipients : List Int
   , showReactionTip : Bool
-  , reactionSent : Bool
-  , reaction : String
   , banner : Maybe Banner
   , referenceInformationVisible : Bool
   }

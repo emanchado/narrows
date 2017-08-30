@@ -3,9 +3,6 @@ module CharacterCreationApp.Api exposing (..)
 import Http
 import Json.Encode
 
-
--- import Common.Api.Json exposing (parseChapter, parseReaction, parseMessageThread)
-
 import CharacterCreationApp.Messages exposing (Msg, Msg(..))
 
 

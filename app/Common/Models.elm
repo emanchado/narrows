@@ -135,12 +135,6 @@ type alias ChapterMessages =
     }
 
 
-type alias Reaction =
-    { character : Character
-    , text : Maybe String
-    }
-
-
 type alias ReplyInformation =
     { recipients : List Character
     , body : String
@@ -150,9 +144,10 @@ type alias ReplyInformation =
 type alias ChapterOverview =
     { id : Int
     , title : String
-    , numberMessages : Int
     , published : Maybe String
-    , reactions : List Reaction
+    , participants : List Character
+    , activeUsers : List Character
+    , numberMessages : Int
     }
 
 

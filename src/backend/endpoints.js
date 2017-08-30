@@ -63,7 +63,7 @@ export function getNarrationArchive(req, res) {
         res.json(narrationOverviewData);
     }).catch(err => {
         res.status(500).json({
-            errorMessage: `Cannot get narration overview for ` +
+            errorMessage: `Cannot get narration archive for ` +
                 `this user: ${ err }`
         });
     });
@@ -181,10 +181,7 @@ export function getChapterCharacter(req, res) {
             chapterData.text =
                 mentionFilter.filter(chapterData.text, charInfo.id);
 
-            store.getChapterReaction(chapterId, charInfo.id).then(reaction => {
-                chapterData.reaction = reaction;
-                res.json(chapterData);
-            });
+            res.json(chapterData);
         });
     }).catch(err => {
         res.status(404).json({
@@ -246,16 +243,14 @@ export function getChapterInteractions(req, res) {
 
     return Q.all([
         store.getChapter(chapterId, { includePrivateFields: true }),
-        store.getAllChapterMessages(chapterId),
-        store.getChapterReactions(chapterId)
-    ]).spread((chapter, messages, reactions) => (
+        store.getAllChapterMessages(chapterId)
+    ]).spread((chapter, messages) => (
         store.getNarration(chapter.narrationId).then(narrationData => (
             userStore.canActAs(req.session.userId, narrationData.narratorId)
         )).then(() => (
             res.json({
                 chapter: chapter,
-                messageThreads: messageUtils.threadMessages(messages),
-                reactions: reactions
+                messageThreads: messageUtils.threadMessages(messages)
             })
         ))
     )).catch(err => {
@@ -395,8 +390,8 @@ export function getNarrationLastReactions(req, res) {
         userStore.canActAs(req.session.userId, narrationData.narratorId)
     )).then(() => (
         store.getNarrationLastReactions(narrationId)
-    )).then(lastReactions => {
-        res.json(apiFormatter.formatLastReactions(narrationId, lastReactions));
+    )).then(lastChapters => {
+        res.json(apiFormatter.formatLastReactions(lastChapters));
     }).catch(err => {
         res.status(500).json({
             errorMessage: `Cannot get last reactions: ${ err }`
@@ -413,8 +408,8 @@ export function getChapterLastReactions(req, res) {
         userStore.canActAs(req.session.userId, narrationData.narratorId)
     )).then(() => (
         store.getChapterLastReactions(chapterId)
-    )).then(lastReactions => {
-        res.json(apiFormatter.formatLastReactions(chapterId, lastReactions));
+    )).then(lastChapters => {
+        res.json(apiFormatter.formatLastReactions(lastChapters));
     }).catch(err => {
         res.status(500).json({
             errorMessage: `Cannot get last reactions: ${ err }`
@@ -425,28 +420,6 @@ export function getChapterLastReactions(req, res) {
 export function getStaticFile(req, res) {
     res.sendFile(path.join(req.params.narrId, req.params.filename),
                  { root: config.files.path });
-}
-
-export function putReactionCharacter(req, res) {
-    const chapterId = parseInt(req.params.chptId, 10),
-          characterToken = req.params.charToken,
-          reactionText = req.body.text;
-
-    store.getCharacterInfo(characterToken).then(({ id: characterId }) => {
-        return store.updateReaction(chapterId, characterId, reactionText).then(() => {
-            res.json({ chapterId, characterId, reactionText });
-
-            mailer.reactionPosted(chapterId, characterToken, reactionText);
-        }).catch(err => {
-            res.status(400).json({
-                errorMessage: `Cannot not save action: ${ err }`
-            });
-        });
-    }).catch(err => {
-        res.status(500).json({
-            errorMessage: `Could not save action: ${ err }`
-        });
-    });
 }
 
 export function getMessagesCharacter(req, res) {

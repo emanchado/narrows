@@ -3,8 +3,8 @@ module ChapterEditApp.Api.Json exposing (..)
 import Json.Decode as Json exposing (..)
 import Json.Encode
 import Common.Models exposing (FullCharacter, Narration, Chapter, FileSet)
-import Common.Api.Json exposing (parseCharacter, parseFullCharacter, parseChapter)
-import ChapterEditApp.Models exposing (LastReactions, LastChapter, LastReaction, LastReactionChapter)
+import Common.Api.Json exposing (parseCharacter, parseFullCharacter, parseChapter, parseMessageThread)
+import ChapterEditApp.Models exposing (LastReactionsResponse, LastChapter)
 
 
 parseFileSet : Json.Decoder FileSet
@@ -15,35 +15,20 @@ parseFileSet =
         (field "images" <| list string)
 
 
-parseLastReactionChapter : Json.Decoder LastReactionChapter
-parseLastReactionChapter =
-    Json.map2 LastReactionChapter
-        (field "id" int)
-        (field "title" string)
-
-
-parseLastReaction : Json.Decoder LastReaction
-parseLastReaction =
-    Json.map3 LastReaction
-        (field "chapter" parseLastReactionChapter)
-        (field "character" parseCharacter)
-        (maybe (field "text" string))
+parseLastReactionResponse : Json.Decoder LastReactionsResponse
+parseLastReactionResponse =
+    Json.map LastReactionsResponse
+        (field "lastChapters" <| list parseLastChapter)
 
 
 parseLastChapter : Json.Decoder LastChapter
 parseLastChapter =
-    Json.map3 LastChapter
+    Json.map5 LastChapter
         (field "id" int)
         (field "title" string)
         (field "text" Json.value)
-
-
-parseLastReactions : Json.Decoder LastReactions
-parseLastReactions =
-    Json.map3 LastReactions
-        (field "chapterId" int)
-        (field "lastReactions" <| list parseLastReaction)
-        (field "lastChapters" <| list parseLastChapter)
+        (field "participants" <| list parseCharacter)
+        (field "messageThreads" <| list parseMessageThread)
 
 
 encodeCharacter : FullCharacter -> Json.Encode.Value

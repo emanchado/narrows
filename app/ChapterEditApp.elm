@@ -21,7 +21,7 @@ initialState : Model
 initialState =
     { chapter = Nothing
     , narration = Nothing
-    , lastReactions = Nothing
+    , lastChapters = Nothing
     , banner = Nothing
     , flash = Nothing
     , showPublishChapterDialog = False

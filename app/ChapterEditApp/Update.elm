@@ -59,7 +59,7 @@ urlUpdate route model =
               ChapterEditApp.Api.fetchNarrationInfo narrationId
       in
         ( { model | chapter = Nothing
-                  , lastReactions = Nothing
+                  , lastChapters = Nothing
           }
         , Cmd.batch
           [ command
@@ -168,28 +168,28 @@ update msg model =
       genericHttpErrorHandler model error
 
     NarrationLastReactionsFetchResult (Ok lastReactions) ->
-      ( { model | lastReactions = Just lastReactions }
+      ( { model | lastChapters = Just lastReactions.lastChapters }
       , Cmd.batch <|
           List.map
             (\c -> renderText { elemId = "chapter-text-" ++ (toString c.id)
                               , text = c.text
                               , proseMirrorType = "chapter"
                               })
-            lastReactions.chapters
+            lastReactions.lastChapters
       )
 
     LastReactionsFetchResult (Err error) ->
       genericHttpErrorHandler model error
 
     LastReactionsFetchResult (Ok lastReactions) ->
-      ( { model | lastReactions = Just lastReactions }
+      ( { model | lastChapters = Just lastReactions.lastChapters }
       , Cmd.batch <|
           (List.map
              (\c -> renderText { elemId = "chapter-text-" ++ (toString c.id)
                                , text = c.text
                                , proseMirrorType = "chapter"
                                })
-             lastReactions.chapters)
+             lastReactions.lastChapters)
       )
 
     UpdateChapterTitle newTitle ->

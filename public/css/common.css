@@ -18,8 +18,13 @@ button {
     font-family: Roboto;
 }
 
-h1 {
+h1, h2 {
     margin-bottom: 10px;
+    margin-top: 20px;
+}
+h3 {
+    margin-top: 5px;
+    margin-bottom: 5px;
 }
 
 nav.top-bar {
@@ -216,6 +221,7 @@ ul.thread-list {
 ul.thread-list li {
     display: block;
     margin-bottom: 15px;
+    padding: 10px;
 }
 ul.thread-list li span.narrator {
     font-style: italic;

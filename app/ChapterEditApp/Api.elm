@@ -5,7 +5,7 @@ import Http
 import ChapterEditApp.Messages exposing (Msg, Msg(..))
 import Common.Models exposing (Chapter)
 import Common.Api.Json exposing (parseChapter, parseNarration)
-import ChapterEditApp.Api.Json exposing (parseLastReactions, encodeChapter, encodeCharacter)
+import ChapterEditApp.Api.Json exposing (parseLastReactionResponse, encodeChapter, encodeCharacter)
 
 
 fetchChapterInfo : Int -> Cmd Msg
@@ -33,7 +33,7 @@ fetchLastReactions chapterId =
       "/api/chapters/" ++ (toString chapterId) ++ "/last-reactions"
   in
     Http.send LastReactionsFetchResult <|
-      Http.get lastReactionsApiUrl parseLastReactions
+      Http.get lastReactionsApiUrl parseLastReactionResponse
 
 
 fetchNarrationLastReactions : Int -> Cmd Msg
@@ -43,7 +43,7 @@ fetchNarrationLastReactions narrationId =
       "/api/narrations/" ++ (toString narrationId) ++ "/last-reactions"
   in
     Http.send NarrationLastReactionsFetchResult <|
-      Http.get lastReactionsApiUrl parseLastReactions
+      Http.get lastReactionsApiUrl parseLastReactionResponse
 
 
 saveChapter : Chapter -> Cmd Msg

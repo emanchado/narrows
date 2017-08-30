@@ -151,78 +151,7 @@ reactionView model =
             ]
           , ReaderApp.Views.MessageThreads.listView model
           ]
-      , h2 [] [ text "Action "
-              , img [ src "/img/info.png"
-                    , class "help"
-                    , onClick ToggleReactionTip
-                    ]
-                  []
-              , if model.showReactionTip then
-                  div [ class "floating-tip" ]
-                    [ h3 [] [ text "Tips" ]
-                    , p []
-                        [ text <| "The most important things to convey " ++
-                            "are what your character "
-                        , strong [] [ text "does" ]
-                        , text <| " and what they "
-                        , strong [] [ text "think" ]
-                        , text " or "
-                        , strong [] [ text "feel" ]
-                        , text ", eg:"
-                        ]
-                    , blockquote []
-                        [ text <| "I’ll go up the ladder and search the " ++
-                            "attic, listening for any signs of activity " ++
-                            "up there as I climb. I don’t like this place " ++
-                            "one bit so I’ll try to find the chest or any " ++
-                            "clue, and leave as soon as I can."
-                        ]
-                    , p []
-                        [ text <| "Often they include possibilities or " ++
-                            "plans for the near future:"
-                        ]
-                    , blockquote []
-                        [ text <| "I ask what’s the deal with the victim’s " ++
-                            "tattoo and if she has seen it before. She " ++
-                            "must be hiding something so if she doesn’t " ++
-                            "speak up I will wait outside and follow her " ++
-                            "to see if the meets anyone or goes back to " ++
-                            "the club."
-                        ]
-                    , p []
-                        [ text <| "Including direct quotes is a good way " ++
-                            "to describe your character’s mood, too:"
-                        ]
-                    , blockquote []
-                        [ text <| "“This is awful. We need to contact him " ++
-                            "and make him stop.” I call Robert: “Hi… you " ++
-                            "need to stop that. I *will* kick you out if " ++
-                            "you don’t stop. She is *not* ready. Do you " ++
-                            "hear me?”"
-                        ]
-                    ]
-                else
-                  text ""
-              ]
       , bannerView model.banner
-      , div [ class <| "player-reply" ++ (if model.reactionSent then
-                                            " invisible"
-                                          else
-                                            "")
-            ]
-          [ textarea [ placeholder "What do you do? Try to consider several possibilities…"
-                     , rows 10
-                     , defaultValue model.reaction
-                     , onInput UpdateReactionText
-                     ]
-              []
-          , div [ class "btn-bar" ]
-              [ button [ class "btn btn-default"
-                       , onClick SendReaction
-                       ]
-                  [ text "Send" ]
-              ]
-          ]
       ]
 
 

@@ -1,11 +1,10 @@
 module ChapterControlApp.Models exposing (..)
 
-import Common.Models exposing (Narration, Chapter, Banner, Character, MessageThread, Reaction, ReplyInformation)
+import Common.Models exposing (Narration, Chapter, Banner, Character, MessageThread, ReplyInformation)
 
 
 type alias ChapterInteractions =
     { chapter : Chapter
-    , reactions : List Reaction
     , messageThreads : List MessageThread
     }
 

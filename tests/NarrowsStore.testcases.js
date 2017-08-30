@@ -179,8 +179,8 @@ export default function testcases(test, stash) {
             chapterId3 = chapter3.id;
 
             return Q.all([
-                stash.store.updateReaction(chapter1.id, ctx.characterId1, "Reaction 1"),
-                stash.store.updateReaction(chapter2.id, ctx.characterId2, "Reaction 2")
+                stash.store.addMessage(chapter1.id, ctx.characterId1, "Reaction 1", []),
+                stash.store.addMessage(chapter2.id, ctx.characterId2, "Reaction 2", [])
             ]);
         }).then(() => (
             stash.store.getChapterLastReactions(chapterId3)
@@ -220,15 +220,15 @@ export default function testcases(test, stash) {
             chapterId3 = chapter3.id;
 
             return Q.all([
-                stash.store.updateReaction(chapterId1, ctx.characterId1, "Reaction 1"),
-                stash.store.updateReaction(chapterId2, ctx.characterId2, "Reaction 2"),
-                stash.store.updateReaction(chapterId2, ctx.characterId3, "Reaction 3"),
+                stash.store.addMessage(chapterId1, ctx.characterId1, "Reaction 1", []),
+                stash.store.addMessage(chapterId2, ctx.characterId2, "Reaction 2", []),
+                stash.store.addMessage(chapterId2, ctx.characterId3, "Reaction 3", []),
             ]);
         }).then(() => (
             stash.store.getChapterLastReactions(chapterId3)
         )).then(reactions => {
             const formattedResponse =
-                  apiFormatter.formatLastReactions(chapterId3, reactions);
+                  apiFormatter.formatLastReactions(reactions);
 
             t.is(formattedResponse.lastChapters.length, 2);
         });

@@ -1,13 +1,15 @@
 module ChapterEditApp.Views exposing (mainView)
 
 import String
+import Set
 import Html exposing (Html, h2, h3, div, main_, nav, section, ul, li, img, a, input, button, audio, br, span, label, strong, em, text)
 import Html.Attributes exposing (id, name, class, href, src, target, type_, value, placeholder, checked, disabled)
 import Html.Events exposing (onClick, onInput, on)
+
 import Common.Models exposing (FullCharacter, Narration, Chapter, MediaType(..))
-import Common.Views exposing (bannerView, breadcrumbNavView, onStopPropagationClick, horizontalSpinner)
+import Common.Views exposing (bannerView, breadcrumbNavView, onStopPropagationClick, horizontalSpinner, messageThreadView)
 import Common.Views.FileSelector exposing (fileSelector)
-import ChapterEditApp.Models exposing (Model, LastReactions, LastChapter, LastReaction)
+import ChapterEditApp.Models exposing (Model, LastChapter)
 import ChapterEditApp.Messages exposing (..)
 import ChapterEditApp.Views.Participants exposing (participantListView, participantPreviewsView)
 
@@ -142,22 +144,6 @@ chapterView chapter narration savingChapter uploadingAudio uploadingBackgroundIm
       ]
 
 
-reactionView : LastReaction -> Html Msg
-reactionView reaction =
-  li []
-    [ strong [] [ text reaction.character.name ]
-    , text ", in chapter "
-    , strong [] [ text reaction.chapterInfo.title ]
-    , text ":"
-    , div [ class "last-reaction-text" ]
-        [ case reaction.text of
-            Just reactionText -> text reactionText
-            Nothing -> em [ class "no-content" ]
-                         [ text "Has not reacted yet." ]
-        ]
-    ]
-
-
 -- Need to always produce the placeholder markup for the text, but may
 -- mark as "invisible" so that the chapter is not actually rendered by
 -- the browser. This will make it possible to show/hide dynamically on
@@ -172,7 +158,7 @@ lastChapterView participantChapterIds chapter =
         " invisible"
   in
     li []
-      [ h3 [] [ text chapter.title ]
+      [ h3 [ class extraClass ] [ text chapter.title ]
       , div [ id <| "chapter-text-" ++ (toString chapter.id)
             , class <| "chapter" ++ extraClass
             ]
@@ -180,43 +166,51 @@ lastChapterView participantChapterIds chapter =
       ]
 
 
-findLastChapter : List LastChapter -> Int -> Maybe LastChapter
-findLastChapter chapterList chapterId =
-  List.head <|
-    List.filter (\c -> c.id == chapterId) chapterList
-
-
-lastReactionListView : LastReactions -> Chapter -> Html Msg
-lastReactionListView lastReactions chapter =
+lastReactionListView : List LastChapter -> Chapter -> Html Msg
+lastReactionListView lastChapters chapter =
   let
     participantIds =
       List.map (\p -> p.id) chapter.participants
+    participantIdSet =
+      Set.fromList participantIds
     participantChapterIds =
-      List.filter
-        (\chapterId -> chapterId > 0)
-        (List.map
-           (\r ->
-              if List.member r.character.id participantIds then
-                r.chapterInfo.id
-              else
-                -1)
-           lastReactions.reactions)
+      List.foldl
+        (\react idList ->
+           let
+             chapterParticipantIdSet =
+               Set.fromList <| List.map (\p -> p.id) react.participants
+           in
+             if Set.isEmpty (Set.intersect participantIdSet chapterParticipantIdSet) then
+               idList
+             else
+               react.id :: idList)
+        []
+        lastChapters
   in
     section []
       [ h2 [] [ text "Last reactions" ]
-      , ul [ class "last-reactions narrator" ]
+      , div []
           (List.map
-            (\r ->
-              if List.member r.character.id participantIds then
-                reactionView r
+            (\chapter ->
+              if List.member chapter.id participantChapterIds then
+                div []
+                  [ h3 [] [ text chapter.title ]
+                  , if List.isEmpty chapter.messageThreads then
+                      em [] [ text "No messages." ]
+                    else
+                      ul [ class "thread-list narrator" ]
+                        (List.map
+                           (messageThreadView Nothing [])
+                           chapter.messageThreads)
+                  ]
               else
                 text "")
-            lastReactions.reactions)
+            lastChapters)
       , h2 [] [ text "Last chapters" ]
       , ul [ class "last-chapters narrator" ]
           (List.map
              (lastChapterView participantChapterIds)
-             lastReactions.chapters)
+             lastChapters)
       ]
 
 
@@ -270,7 +264,7 @@ mainView model =
             text chapter.title)
       , bannerView model.banner
       , div [ class "two-column" ]
-          [ case model.lastReactions of
+          [ case model.lastChapters of
               Just lastReactions -> lastReactionListView lastReactions chapter
               Nothing -> section [] [ text "Loading reactions…" ]
           , section []

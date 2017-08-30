@@ -110,7 +110,11 @@ ul.participant-list li {
 }
 
 .thread-list.narrator > li {
-    margin-bottom: 30px;
+    margin-bottom: 20px;
+    background-color: #e5e5e5;
+}
+.thread-list.narrator li .btn-bar {
+    padding: 10px 0 0 0;
 }
 .thread-list.narrator textarea {
     width: 100%;
@@ -132,20 +136,14 @@ ul.participant-list li {
     white-space: pre-wrap;
 }
 
-.last-reactions.narrator, .last-chapters.narrator {
+.last-chapters.narrator {
     display: block;
+    margin-top: 0;
     padding-left: 0;
 }
-.last-reactions.narrator li, .last-chapters.narrator li {
+.last-chapters.narrator li {
     display: block;
     margin-bottom: 20px;
-}
-.last-reactions.narrator li .last-reaction-text {
-    margin-top: 3px;
-    padding: 5px;
-
-    background: #ddd;
-    white-space: pre-wrap;
 }
 
 ul.user-list {

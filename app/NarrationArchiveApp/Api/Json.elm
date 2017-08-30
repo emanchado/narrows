@@ -1,7 +1,7 @@
 module NarrationArchiveApp.Api.Json exposing (..)
 
 import Json.Decode as Json exposing (..)
-import Common.Api.Json exposing (parseReaction, parseNarrationOverview)
+import Common.Api.Json exposing (parseNarrationOverview)
 import NarrationArchiveApp.Models exposing (NarrationArchive)
 
 

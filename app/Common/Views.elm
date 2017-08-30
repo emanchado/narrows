@@ -41,44 +41,9 @@ messageView message =
     ]
 
 
-threadView : Maybe Int -> msg -> (String -> msg) -> msg -> msg -> Maybe ReplyInformation -> Bool -> MessageThread -> Html msg
-threadView maybeCharacterId showReplyMessage updateReplyMessage sendReplyMessage closeReplyMessage maybeReply replyButtonDisabled thread =
+messageThreadInteractionView : Maybe Int -> msg -> (String -> msg) -> msg -> msg -> Maybe ReplyInformation -> Bool -> MessageThread -> Html msg
+messageThreadInteractionView maybeCharacterId showReplyMessage updateReplyMessage sendReplyMessage closeReplyMessage maybeReply replyButtonDisabled thread =
   let
-    participants =
-      List.map
-        (\c -> c.name)
-        (case maybeCharacterId of
-          Just characterId ->
-            (List.filter
-              (\c -> c.id /= characterId)
-              thread.participants
-            )
-
-          Nothing ->
-            thread.participants
-        )
-
-    participantString =
-      String.join ", " participants
-
-    participantStringEnd =
-      case maybeCharacterId of
-        Nothing ->
-          if List.length participants > 1 then
-            ", and you"
-          else
-            " and you"
-
-        Just _ ->
-          if List.length participants > 0 then
-            ", the narrator, and you"
-          else
-            "the narrator and you"
-
-    participantsDiv =
-      div [ class "thread-participants" ]
-        [ text ("Between " ++ participantString ++ participantStringEnd) ]
-
     replyButtonDiv =
       div [ class "btn-bar" ]
         [ button [ class "btn btn-small"
@@ -115,11 +80,47 @@ threadView maybeCharacterId showReplyMessage updateReplyMessage sendReplyMessage
         Nothing ->
           replyButtonDiv
   in
+    messageThreadView maybeCharacterId [ replyBoxDiv ] thread
+
+
+messageThreadView : Maybe Int -> List (Html msg) -> MessageThread -> Html msg
+messageThreadView maybeCharacterId extraUi thread =
+  let
+    participants =
+      List.map
+        (\c -> c.name)
+        (case maybeCharacterId of
+          Just characterId ->
+            List.filter (\c -> c.id /= characterId) thread.participants
+          Nothing ->
+            thread.participants)
+
+    participantString =
+      String.join ", " participants
+
+    participantStringEnd =
+      case maybeCharacterId of
+        Nothing ->
+          if List.length participants > 1 then
+            ", and you"
+          else
+            " and you"
+
+        Just _ ->
+          if List.length participants > 0 then
+            ", the narrator, and you"
+          else
+            "the narrator and you"
+
+    participantsDiv =
+      div [ class "thread-participants" ]
+        [ text ("Between " ++ participantString ++ participantStringEnd) ]
+  in
     li []
       (List.concat
         [ [ participantsDiv ]
         , List.map messageView thread.messages
-        , [ replyBoxDiv ]
+        , extraUi
         ])
 
 
@@ -173,7 +174,7 @@ breadcrumbNavView messageConstructor links pageTitle =
 unpublishedChapterView : (String -> msg) -> Narration -> ChapterOverview -> Html msg
 unpublishedChapterView navigationMessage narration chapterOverview =
   let
-    numberChapterParticipants = List.length chapterOverview.reactions
+    numberChapterParticipants = List.length chapterOverview.participants
     numberNarrationCharacters = List.length narration.characters
   in
     li []
@@ -195,19 +196,13 @@ unpublishedChapterView navigationMessage narration chapterOverview =
 publishedChapterView : (String -> msg) -> Narration -> ChapterOverview -> Html msg
 publishedChapterView navigationMessage narration chapterOverview =
   let
-    numberSentReactions = List.length <|
-                          List.filter
-                            (\r -> case r.text of
-                                     Nothing -> False
-                                     _ -> True)
-                            chapterOverview.reactions
-    numberChapterParticipants = List.length chapterOverview.reactions
+    numberSentReactions = List.length chapterOverview.activeUsers
+    numberChapterParticipants = List.length chapterOverview.participants
     numberNarrationCharacters = List.length narration.characters
-    participantNames =
-      String.join ", " <|
+    participantNames = String.join ", " <|
         List.map
-          (\r -> r.character.name)
-          chapterOverview.reactions
+          (\r -> r.name)
+          chapterOverview.participants
   in
     li []
       [ a (linkTo

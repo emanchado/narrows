@@ -4,7 +4,7 @@ import Http
 import Json.Encode
 import Time exposing (Time)
 import Common.Models exposing (FullCharacter, Narration, Chapter, Banner, MediaType, FileUploadError, FileUploadSuccess)
-import ChapterEditApp.Models exposing (LastReactions)
+import ChapterEditApp.Models exposing (LastReactionsResponse)
 
 
 type Msg
@@ -15,8 +15,8 @@ type Msg
     | ChapterFetchResult (Result Http.Error Chapter)
     | InitNewChapter Narration
     | NarrationFetchResult (Result Http.Error Narration)
-    | NarrationLastReactionsFetchResult (Result Http.Error LastReactions)
-    | LastReactionsFetchResult (Result Http.Error LastReactions)
+    | NarrationLastReactionsFetchResult (Result Http.Error LastReactionsResponse)
+    | LastReactionsFetchResult (Result Http.Error LastReactionsResponse)
     | UpdateChapterTitle String
     | UpdateEditorContent Json.Encode.Value
     | AddParticipant FullCharacter

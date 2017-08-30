@@ -81,14 +81,9 @@ update msg model =
                 )
 
         ChapterFetchResult (Ok chapterData) ->
-            let
-                reactionText = case chapterData.reaction of
-                                 Just reaction -> reaction
-                                 Nothing -> ""
-            in
-                ( { model | chapter = Just chapterData, reaction = reactionText }
-                , ReaderApp.Api.fetchChapterMessages chapterData.id chapterData.character.token
-                )
+            ( { model | chapter = Just chapterData }
+            , ReaderApp.Api.fetchChapterMessages chapterData.id chapterData.character.token
+            )
 
         ChapterMessagesFetchResult (Err error) ->
             ( { model
@@ -287,12 +282,6 @@ update msg model =
         CloseReply ->
             ( { model | reply = Nothing }, Cmd.none )
 
-        ShowNewMessageUi ->
-            ( { model | showNewMessageUi = True }, Cmd.none )
-
-        HideNewMessageUi ->
-            ( { model | showNewMessageUi = False }, Cmd.none )
-
         UpdateNewMessageText newText ->
             ( { model | newMessageText = newText }, Cmd.none )
 
@@ -339,31 +328,6 @@ update msg model =
 
         ToggleReactionTip ->
             ( { model | showReactionTip = not model.showReactionTip }
-            , Cmd.none
-            )
-
-        UpdateReactionText newText ->
-            ( { model | reaction = newText }, Cmd.none )
-
-        SendReaction ->
-          case model.chapter of
-            Just chapter ->
-              ( model, ReaderApp.Api.sendReaction chapter.id chapter.character.token model.reaction )
-            Nothing ->
-              ( { model | banner = errorBanner "No chapter to send reaction to" }
-              , Cmd.none
-              )
-
-        SendReactionResult (Err error) ->
-          ( { model | banner = errorBanner <| formatError error
-            }
-            , Cmd.none
-            )
-
-        SendReactionResult (Ok resp) ->
-            ( { model | reactionSent = True
-                      , banner = successBanner "Action registered"
-              }
             , Cmd.none
             )
 

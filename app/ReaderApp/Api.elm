@@ -29,10 +29,6 @@ parseOwnCharacter =
 
 parseChapter : Json.Decoder Chapter
 parseChapter =
-  Json.andThen
-   (\f ->
-       Json.map f
-           (field "character" parseOwnCharacter))
    (Json.map8 Chapter
       (field "id" int)
       (field "narrationId" int)
@@ -41,7 +37,7 @@ parseChapter =
       (maybe (field "backgroundImage" string))
       (field "text" Json.value)
       (field "participants" <| list parseParticipantCharacter)
-      (maybe (field "reaction" string)))
+      (field "character" parseOwnCharacter))
 
 parseApiError : Json.Decoder ApiErrorResponse
 parseApiError =
@@ -105,26 +101,6 @@ sendReply chapterId characterToken messageText messageRecipients =
         sendMessageApiUrl
         (Http.jsonBody jsonEncodedBody)
         parseChapterMessages
-
-
-sendReaction : Int -> String -> String -> Cmd Msg
-sendReaction chapterId characterToken reactionText =
-  let
-    sendReactionApiUrl =
-      "/api/reactions/" ++ (toString chapterId) ++ "/" ++ characterToken
-
-    jsonEncodedBody =
-      (Json.Encode.object [ ( "text", Json.Encode.string reactionText ) ])
-  in
-    Http.send SendReactionResult <|
-      Http.request { method = "PUT"
-                   , url = sendReactionApiUrl
-                   , headers = []
-                   , body = Http.jsonBody jsonEncodedBody
-                   , expect = Http.expectStringResponse Ok
-                   , timeout = Nothing
-                   , withCredentials = False
-                   }
 
 
 sendNotes : String -> String -> Cmd Msg

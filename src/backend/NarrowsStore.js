@@ -266,51 +266,24 @@ class NarrowsStore {
             const chapterMap = {};
             chapters.forEach(chapter => {
                 chapterMap[chapter.id] = chapter;
-                chapter.reactions = [];
+                chapter.participants = [];
+                chapter.activeUsers = [];
                 chapter.numberMessages = 0;
             });
 
-            let placeholders = [];
-            for (let i = 0; i < chapters.length; i++) {
-                placeholders.push("?");
-            }
-
-            return Q.ninvoke(
-                this.db,
-                "all",
-                `SELECT R.chapter_id AS chapterId,
-                        R.character_id AS characterId,
-                        C.name AS characterName,
-                        R.main_text AS text
-                   FROM reactions R
-                   JOIN characters C ON R.character_id = C.id
-                  WHERE chapter_id IN (${ placeholders.join(", ") })`,
-                chapters.map(f => f.id)
-            ).then(reactions => {
-                reactions.forEach(reaction => {
-                    const chapter = chapterMap[reaction.chapterId];
-                    chapter.reactions.push({
-                        character: { id: reaction.characterId,
-                                     name: reaction.characterName },
-                        text: reaction.text
-                    });
-                });
-                return [chapters, chapterMap];
-            });
+            return [chapters, chapterMap];
         }).spread((chapters, chapterMap) => {
             if (chapters.length === 0) {
                 return [];
             }
 
-            let placeholders = [];
-            for (let i = 0; i < chapters.length; i++) {
-                placeholders.push("?");
-            }
+            const placeholders = chapters.map(_ => "?");
 
             return Q.ninvoke(
                 this.db,
                 "all",
-                `SELECT chapter_id AS chapterId, COUNT(*) AS numberMessages
+                `SELECT chapter_id AS chapterId,
+                        COUNT(*) AS numberMessages
                    FROM messages
                   WHERE chapter_id IN (${ placeholders.join(", ") })
                GROUP BY chapter_id`,
@@ -319,6 +292,46 @@ class NarrowsStore {
                 numberMessagesPerChapter.forEach(numberAndChapter => {
                     chapterMap[numberAndChapter.chapterId].numberMessages =
                         numberAndChapter.numberMessages;
+                });
+
+                return Q.ninvoke(
+                    this.db,
+                    "all",
+                    `SELECT DISTINCT chapter_id AS chapterId,
+                            CH.id, CH.name, CH.avatar
+                       FROM messages M
+                       JOIN characters CH
+                         ON M.sender_id = CH.id
+                      WHERE chapter_id IN (${ placeholders.join(", ") })`,
+                    chapters.map(f => f.id)
+                );
+            }).then(activeUsers => {
+                activeUsers.forEach(({ chapterId, name, avatar }) => {
+                    chapterMap[chapterId].activeUsers.push({
+                        id: id,
+                        name: name,
+                        avatar: avatar
+                    });
+                });
+
+                return Q.ninvoke(
+                    this.db,
+                    "all",
+                    `SELECT chapter_id AS chapterId,
+                            CH.id, CH.name, CH.avatar
+                       FROM chapter_participants CP
+                       JOIN characters CH
+                         ON CP.character_id = CH.id
+                      WHERE chapter_id IN (${ placeholders.join(", ") })`,
+                    chapters.map(f => f.id)
+                );
+            }).then(participants => {
+                participants.forEach(({ chapterId, id, name, avatar }) => {
+                    chapterMap[chapterId].participants.push({
+                        id: id,
+                        name: name,
+                        avatar: avatar
+                    });
                 });
 
                 return chapters;
@@ -381,7 +394,7 @@ class NarrowsStore {
                 return Q.ninvoke(
                     this.db,
                     "run",
-                    `INSERT INTO reactions (chapter_id, character_id)
+                    `INSERT INTO chapter_participants (chapter_id, character_id)
                             VALUES (?, ?)`,
                     [id, participant.id]
                 );
@@ -428,7 +441,7 @@ class NarrowsStore {
         const deferred = Q.defer();
         const fields = Object.keys(basicProps).map(convertToDb),
               fieldString = fields.join(", "),
-              placeholderString = fields.map(f => "?").join(", "),
+              placeholderString = fields.map(_ => "?").join(", "),
               values = Object.keys(basicProps).map(f => (
                   f === "published" ?
                       mysqlTimestamp(basicProps[f]) : basicProps[f]
@@ -488,7 +501,8 @@ class NarrowsStore {
             this.db,
             "all",
             `SELECT C.id, C.name, C.avatar, C.description ${ extraFields }
-               FROM characters C JOIN reactions R ON C.id = R.character_id
+               FROM characters C
+               JOIN chapter_participants CP ON C.id = CP.character_id
               WHERE chapter_id = ?`,
             chapterId
         ).then(participants => (
@@ -506,7 +520,7 @@ class NarrowsStore {
             this.db,
             "query",
             `SELECT COUNT(*) AS cnt
-               FROM reactions
+               FROM chapter_participants
               WHERE character_id = ? AND chapter_id = ?`,
             [characterId, chapterId]
         ).spread(rows => (
@@ -536,37 +550,6 @@ class NarrowsStore {
                 return chapterData;
             });
         });
-    }
-
-    getChapterReaction(id, characterId) {
-        return Q.ninvoke(
-            this.db,
-            "get",
-            `SELECT main_text AS text FROM reactions
-              WHERE chapter_id = ? AND character_id = ?`,
-            [id, characterId]
-        ).then(
-            row => row ? row.text : null
-        );
-    }
-
-    getChapterReactions(id) {
-        return Q.ninvoke(
-            this.db,
-            "all",
-            `SELECT main_text AS text,
-                    C.id AS characterId, C.name AS characterName
-               FROM reactions R
-               JOIN characters C
-                 ON R.character_id = C.id
-              WHERE chapter_id = ?`,
-            id
-        ).then(rows => (
-            rows.map(row => ({
-                character: { id: row.characterId, name: row.characterName },
-                text: row.text
-            }))
-        ));
     }
 
     updateChapterParticipants(id, newParticipantList) {
@@ -622,22 +605,6 @@ class NarrowsStore {
         ).then(
             () => this.getChapter(id, { includePrivateFields: true })
         );
-    }
-
-    updateReaction(chapterId, characterId, reactionText) {
-        return this.getActiveChapter(characterId).then(activeChapter => {
-            if (chapterId !== activeChapter.id) {
-                throw new Error("Cannot send action for old chapters");
-            }
-
-            return Q.ninvoke(
-                this.db,
-                "run",
-                `UPDATE reactions SET main_text = ?
-                  WHERE chapter_id = ? AND character_id = ?`,
-                [reactionText, chapterId, characterId]
-            );
-        });
     }
 
     getCharacterInfo(characterToken, extraFields) {
@@ -719,7 +686,7 @@ class NarrowsStore {
             return Q.ninvoke(
                 this.db,
                 "run",
-                `INSERT INTO reactions (chapter_id, character_id)
+                `INSERT INTO chapter_participants (chapter_id, character_id)
                     VALUES (?, ?)`,
                 [chapterId, characterId]
             );
@@ -730,7 +697,7 @@ class NarrowsStore {
         return Q.ninvoke(
             this.db,
             "run",
-            `DELETE FROM reactions
+            `DELETE FROM chapter_participants
                   WHERE chapter_id = ? AND character_id = ?`,
             [chapterId, characterId]
         ).then(() => (
@@ -763,7 +730,7 @@ class NarrowsStore {
         }
 
         const messageIds = messages.map(m => m.id);
-        const placeholders = messageIds.map(() => "?").join(", ");
+        const placeholders = messageIds.map(_ => "?").join(", ");
 
         return Q.ninvoke(
             this.db,
@@ -789,7 +756,7 @@ class NarrowsStore {
 
             return messages;
         }).then(messages => {
-            const placeholders = messages.map(() => "?");
+            const placeholders = messages.map(_ => "?");
 
             return Q.ninvoke(
                 this.db,
@@ -899,9 +866,9 @@ class NarrowsStore {
                FROM chapters CHPT
                JOIN characters CHR
                  ON CHPT.narration_id = CHR.narration_id
-               JOIN reactions REACT
-                 ON (REACT.chapter_id = CHPT.id AND
-                     REACT.character_id = CHR.id)
+               JOIN chapter_participants CP
+                 ON (CP.chapter_id = CHPT.id AND
+                     CP.character_id = CHR.id)
               WHERE CHR.id = ? AND published IS NOT NULL
            ORDER BY published DESC
               LIMIT 1`,
@@ -943,34 +910,44 @@ class NarrowsStore {
         return Q.ninvoke(
             this.db,
             "all",
-            `SELECT CHPT.published AS chapterPublished,
-                    CHPT.id AS chapterId, CHPT.title AS chapterTitle,
-                    CHPT.main_text AS chapterText,
-                    CHR.id AS characterId, CHR.name AS characterName,
-                    R.main_text AS text
+            `SELECT CHPT.id, CHPT.title,
+                    CHPT.main_text AS text
                FROM chapters CHPT
                JOIN characters CHR
                  ON CHPT.narration_id = CHR.narration_id
-               JOIN reactions R
-                 ON (R.chapter_id = CHPT.id AND R.character_id = CHR.id),
-                     (SELECT MAX(CHAP.published) AS published, character_id
-                        FROM reactions R
-                        JOIN chapters CHAP
-                          ON R.chapter_id = CHAP.id
-                       WHERE narration_id = ?
-                             ${ extraWhereClause }
-                    GROUP BY character_id) AS reaction_per_character
-              WHERE reaction_per_character.published = CHPT.published
+               JOIN (SELECT MAX(CHAP.published) AS published, character_id
+                       FROM chapter_participants CP
+                       JOIN chapters CHAP
+                         ON CP.chapter_id = CHAP.id
+                      WHERE narration_id = ?
+                            ${ extraWhereClause }
+                   GROUP BY character_id) AS reaction_per_character
+                 ON reaction_per_character.published = CHPT.published
                 AND reaction_per_character.character_id = CHR.id
-                AND CHR.narration_id = ?
-                AND CHPT.published IS NOT NULL`,
+              WHERE CHR.narration_id = ?
+                AND CHPT.published IS NOT NULL
+           GROUP BY CHPT.id`,
             binds
-        ).then(reactions => {
-            reactions.forEach(reaction => {
-                reaction.chapterText = JSON.parse(reaction.chapterText.replace(/\r/g, ""));
-            });
+        ).then(lastChapters => {
+            const chapterIds = lastChapters.map(c => c.id);
 
-            return reactions;
+            return Q.all(
+                chapterIds.map(id => this.getAllChapterMessages(id))
+            ).then(lastChapterMessages => {
+                lastChapterMessages.forEach((messages, i) => {
+                    lastChapters[i].messages = messages;
+                });
+
+                return Q.all(
+                    chapterIds.map(id => this.getChapterParticipants(id))
+                );
+            }).then(lastChapterParticipants => {
+                lastChapterParticipants.forEach((participants, i) => {
+                    lastChapters[i].participants = participants;
+                });
+
+                return lastChapters;
+            });
         });
     }
 
@@ -980,10 +957,10 @@ class NarrowsStore {
             "all",
             `SELECT C.id, C.title
                    FROM chapters C
-                   JOIN reactions R
-                     ON C.id = R.chapter_id
+                   JOIN chapter_participants CP
+                     ON C.id = CP.chapter_id
                   WHERE published IS NOT NULL
-                    AND R.character_id = ?`,
+                    AND CP.character_id = ?`,
             characterId
         );
     }
@@ -995,10 +972,10 @@ class NarrowsStore {
             `SELECT C.id, C.title, C.main_text AS text,
                     C.audio, C.background_image AS backgroundImage
                FROM chapters C
-               JOIN reactions R
-                 ON C.id = R.chapter_id
+               JOIN chapter_participants CP
+                 ON C.id = CP.chapter_id
               WHERE published IS NOT NULL
-                AND R.character_id = ?`,
+                AND CP.character_id = ?`,
             characterId
         ).then(chapters => {
             chapters.forEach(c => {

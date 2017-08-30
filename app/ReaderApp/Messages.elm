@@ -23,15 +23,10 @@ type Msg
     | SendReply
     | SendReplyResult (Result Http.Error ChapterMessages)
     | CloseReply
-    | ShowNewMessageUi
-    | HideNewMessageUi
     | UpdateNewMessageText String
     | UpdateNewMessageRecipient Int Bool
     | SendMessage
     | SendMessageResult (Result Http.Error ChapterMessages)
     | ToggleReactionTip
-    | UpdateReactionText String
-    | SendReaction
-    | SendReactionResult (Result Http.Error (Http.Response String))
     | ShowReferenceInformation
     | HideReferenceInformation

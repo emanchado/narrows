@@ -27,12 +27,9 @@ initialState =
     , backgroundBlurriness = 0
     , reply = Nothing
     , replySending = False
-    , showNewMessageUi = False
     , newMessageText = ""
     , newMessageRecipients = []
     , showReactionTip = False
-    , reactionSent = False
-    , reaction = ""
     , banner = Nothing
     , referenceInformationVisible = False
     }

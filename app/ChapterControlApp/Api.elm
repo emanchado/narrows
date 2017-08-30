@@ -3,16 +3,15 @@ module ChapterControlApp.Api exposing (..)
 import Http
 import Json.Decode as Json exposing (..)
 import Json.Encode
-import Common.Api.Json exposing (parseChapter, parseReaction, parseMessageThread, parseNarration, parseChapterMessages)
+import Common.Api.Json exposing (parseChapter, parseMessageThread, parseNarration, parseChapterMessages)
 import ChapterControlApp.Messages exposing (Msg, Msg(..))
 import ChapterControlApp.Models exposing (ChapterInteractions)
 
 
 parseChapterInteractions : Json.Decoder ChapterInteractions
 parseChapterInteractions =
-    Json.map3 ChapterInteractions
+    Json.map2 ChapterInteractions
         (field "chapter" parseChapter)
-        (field "reactions" <| list parseReaction)
         (field "messageThreads" <| list parseMessageThread)
 
 
