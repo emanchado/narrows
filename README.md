@@ -113,5 +113,5 @@ contain `@`, and AWS SES passwords often contain `/`.
 
 ## Contributors
 
-* Tess Gadwa: UX help and recommendations.
+* Tess Gadwa ([`tessgadwa`](https://github.com/tessgadwa)): UX help and recommendations.
 * James Sapara ([`interlock`](https://github.com/interlock)): Docker setup.
