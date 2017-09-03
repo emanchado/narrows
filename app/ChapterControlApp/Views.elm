@@ -1,7 +1,7 @@
 module ChapterControlApp.Views exposing (..)
 
-import Html exposing (Html, main_, h1, h2, h3, nav, section, div, ul, li, textarea, input, button, label, a, strong, em, text)
-import Html.Attributes exposing (id, class, href, type_, value, disabled, checked, rows, cols)
+import Html exposing (Html, main_, h1, h2, h3, nav, section, img, div, ul, li, textarea, input, button, label, a, strong, em, text)
+import Html.Attributes exposing (id, class, href, type_, value, disabled, checked, rows, cols, src)
 import Html.Events exposing (onInput, onClick, onCheck)
 import Common.Models exposing (Character, FullCharacter, Narration, NarrationStatus(..), loadingPlaceholderChapter)
 import Common.Views exposing (messageThreadInteractionView, breadcrumbNavView, bannerView)
@@ -58,21 +58,35 @@ mainView model =
                    }
   in
     main_ [ id "narrator-app", class "app-container" ]
-      [ h1 []
-          [ text <| chapter.title ]
-      , breadcrumbNavView
-          NavigateTo
-          [ { title = "Home"
-            , url = "/"
-            }
-          , { title = narration.title
-            , url = "/narrations/" ++ (toString chapter.narrationId)
-            }
-          , { title = chapter.title
-            , url = "/chapters/" ++ (toString chapter.id) ++ "/edit"
-            }
+      [ div [ class "reaction-header" ]
+          [ div []
+              [ h1 [] [ text <| chapter.title ]
+              , breadcrumbNavView
+                  NavigateTo
+                  [ { title = "Home"
+                    , url = "/"
+                    }
+                  , { title = narration.title
+                    , url = "/narrations/" ++ (toString chapter.narrationId)
+                    }
+                  , { title = chapter.title
+                    , url = "/chapters/" ++ (toString chapter.id) ++ "/edit"
+                    }
+                  ]
+                  (text "Reaction")
+              ]
+          , div []
+              [ img [ class "tiny-image-preview"
+                    , src (case chapter.backgroundImage of
+                             Just image -> "/static/narrations/"
+                             ++ (toString chapter.narrationId)
+                             ++ "/background-images/"
+                             ++ image
+                             Nothing -> "/img/no-preview.png")
+                    ]
+                  []
+              ]
           ]
-          (text "Reaction")
       , bannerView model.banner
       , div [ class "two-column" ]
           [ section []

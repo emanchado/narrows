@@ -265,3 +265,11 @@ form.create-form h2 {
 .narration-status label {
     font-weight: normal;
 }
+
+.reaction-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    margin-top: 5px;
+}
