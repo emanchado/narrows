@@ -15,10 +15,7 @@ urlUpdate route model =
   case route of
     NarrationPage narrationId ->
       ( model
-      , Cmd.batch
-        [ NarrationOverviewApp.Api.fetchNarrationOverview narrationId
-        , NarrationOverviewApp.Api.fetchNarrationNovels narrationId
-        ]
+      , NarrationOverviewApp.Api.fetchNarrationOverview narrationId
       )
 
     _ ->
@@ -56,28 +53,6 @@ update msg model =
       , Cmd.none
       )
 
-    NarrationNovelsFetchResult (Err error) ->
-      case error of
-        Http.BadPayload parserError resp ->
-          ( { model | banner = errorBanner <| "Error! " ++ parserError }
-          , Cmd.none
-          )
-
-        Http.BadStatus resp ->
-          ( { model | banner = errorBanner <| "Error! Body: " ++ resp.body }
-          , Cmd.none
-          )
-
-        _ ->
-          ( { model | banner = errorBanner "Unknown error!" }
-          , Cmd.none
-          )
-
-    NarrationNovelsFetchResult (Ok narrationNovels) ->
-      ( { model | narrationNovels = Just narrationNovels.novels }
-      , Cmd.none
-      )
-
     MarkNarration status ->
       case model.narrationOverview of
         Just overview ->
@@ -109,29 +84,3 @@ update msg model =
           )
     MarkNarrationResult (Ok _) ->
       (model, Cmd.none)
-
-    CreateNovel characterId ->
-      (model, NarrationOverviewApp.Api.createNovel characterId)
-    CreateNovelResult (Err error) ->
-      case error of
-        Http.BadPayload parserError resp ->
-          ( { model | banner = errorBanner <| "Error! " ++ parserError }
-          , Cmd.none
-          )
-
-        Http.BadStatus resp ->
-          ( { model | banner = errorBanner <| "Error! Body: " ++ resp.body }
-          , Cmd.none
-          )
-
-        _ ->
-          ( { model | banner = errorBanner "Unknown error!" }
-          , Cmd.none
-          )
-    CreateNovelResult (Ok novel) ->
-      let
-        updatedNovels = case model.narrationNovels of
-                          Just novels -> Just <| List.append novels [ novel ]
-                          Nothing -> Nothing
-      in
-        ({ model | narrationNovels = updatedNovels }, Cmd.none)

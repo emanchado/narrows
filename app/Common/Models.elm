@@ -72,6 +72,7 @@ type alias FullCharacter =
     { id : Int
     , name : String
     , token : String
+    , novelToken : String
     , avatar : Maybe String
     }
 

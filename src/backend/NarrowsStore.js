@@ -162,7 +162,7 @@ class NarrowsStore {
         return Q.ninvoke(
             this.db,
             "all",
-            `SELECT id, name, token, avatar
+            `SELECT id, name, token, novel_token AS novelToken, avatar
                FROM characters
               WHERE narration_id = ?`,
             narrationId
@@ -495,7 +495,7 @@ class NarrowsStore {
     getChapterParticipants(chapterId, userOpts) {
         const opts = userOpts || {};
         const extraFields = opts.includePrivateFields ?
-                  ", C.player_id, C.token, C.notes" : "";
+                  ", C.player_id, C.token, C.novel_token AS novelToken, C.notes" : "";
 
         return Q.ninvoke(
             this.db,
@@ -662,13 +662,14 @@ class NarrowsStore {
         const deferred = Q.defer();
 
         const newToken = generateToken();
+        const newNovelToken = generateToken();
 
         return Q.ninvoke(
             this.db,
             "run",
-            `INSERT INTO characters (name, token, player_id, narration_id)
-                             VALUES (?, ?, ?, ?)`,
-            [name, newToken, userId, narrationId]
+            `INSERT INTO characters (name, token, novel_token, player_id, narration_id)
+                             VALUES (?, ?, ?, ?, ?)`,
+            [name, newToken, newNovelToken, userId, narrationId]
         ).then(() => (
             this.getCharacterInfo(newToken)
         ));
@@ -1063,12 +1064,10 @@ class NarrowsStore {
         return Q.ninvoke(
             this.db,
             "query",
-            `SELECT NE.id, NE.token, NE.created,
-                    NE.character_id AS characterId,
+            `SELECT C.id AS characterId,
                     C.narration_id AS narrationId
-               FROM narration_exports NE
-               JOIN characters C ON NE.character_id = C.id
-              WHERE NE.token = ?`,
+               FROM characters C
+              WHERE C.novel_token = ?`,
             novelToken
         ).spread(results => {
             if (results.length !== 1) {
@@ -1079,34 +1078,6 @@ class NarrowsStore {
 
             return results[0];
         });
-    }
-
-    getNovels(narrationId) {
-        return Q.ninvoke(
-            this.db,
-            "query",
-            `SELECT NE.id, NE.token, NE.created,
-                    NE.character_id AS characterId
-               FROM narration_exports NE
-               JOIN characters C ON NE.character_id = C.id
-              WHERE C.narration_id = ?`,
-            narrationId
-        ).spread(results => (
-            results
-        ));
-    }
-
-    createNovel(characterId) {
-        const novelToken = generateToken();
-
-        return Q.ninvoke(
-            this.db,
-            "query",
-            `INSERT INTO narration_exports (character_id, token) VALUES (?, ?)`,
-            [characterId, novelToken]
-        ).then(() => (
-            this.getNovelInfo(novelToken)
-        ));
     }
 }
 

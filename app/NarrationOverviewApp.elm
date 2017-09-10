@@ -20,7 +20,6 @@ initialState : Model
 initialState =
     { narrationOverview = Nothing
     , banner = Nothing
-    , narrationNovels = Nothing
     }
 
 

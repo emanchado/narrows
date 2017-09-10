@@ -11,14 +11,7 @@ type alias NarrationNovel =
     }
 
 
-type alias NarrationNovelsResponse =
-    { narrationId : Int
-    , novels : List NarrationNovel
-    }
-
-
 type alias Model =
     { narrationOverview : Maybe NarrationOverview
     , banner : Maybe Banner
-    , narrationNovels : Maybe (List NarrationNovel)
     }

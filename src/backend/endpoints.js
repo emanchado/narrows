@@ -653,45 +653,6 @@ export function getNovel(req, res) {
     });
 }
 
-export function getNovels(req, res) {
-    const narrationId = parseInt(req.params.narrId, 10);
-
-    store.getNarration(narrationId).then(narrationData => (
-        userStore.canActAs(req.session.userId, narrationData.narratorId)
-    )).then(() => (
-        store.getNovels(narrationId)
-    )).then(novels => (
-        res.json({
-            narrationId: narrationId,
-            novels: novels
-        })
-    )).catch(err => {
-        res.status(500).json({
-            errorMessage: `Could not get novels for narration ${ narrationId }: ${ err }`
-        });
-    });
-}
-
-export function postCharacterNovel(req, res) {
-    const characterId = parseInt(req.params.charId, 10);
-
-    store.getCharacterTokenById(characterId).then(token => (
-        store.getCharacterInfo(token, ["narration_id AS narrationId"])
-    )).then(character => (
-        store.getNarration(character.narrationId)
-    )).then(narrationData => (
-        userStore.canActAs(req.session.userId, narrationData.narratorId)
-    )).then(() => (
-        store.createNovel(characterId)
-    )).then(novel => {
-        res.json(novel);
-    }).catch(err => {
-        res.status(500).json({
-            errorMessage: `Could not create a novel for character ${ characterId }: ${ err }`
-        });
-    });
-}
-
 export function postPasswordReset(req, res) {
     const email = req.body.email;
 

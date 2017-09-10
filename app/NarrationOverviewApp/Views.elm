@@ -1,8 +1,8 @@
 module NarrationOverviewApp.Views exposing (..)
 
 import List
-import Html exposing (Html, main_, h1, h2, section, div, ul, li, button, img, input, label, a, em, text)
-import Html.Attributes exposing (id, class, for, checked, name, type_, href, src)
+import Html exposing (Html, main_, h1, h2, section, div, span, ul, li, button, img, input, label, a, em, text)
+import Html.Attributes exposing (id, class, for, checked, name, title, type_, href, src)
 import Html.Events exposing (onClick)
 import Common.Models exposing (Narration, NarrationStatus(..), ChapterOverview, NarrationOverview, FullCharacter, narrationStatusString)
 import Common.Views exposing (linkTo, breadcrumbNavView, narrationOverviewView, loadingView, ribbonForNarrationStatus)
@@ -10,13 +10,13 @@ import NarrationOverviewApp.Messages exposing (..)
 import NarrationOverviewApp.Models exposing (Model, NarrationNovel)
 
 
-narrationCharacterView : Int -> FullCharacter -> Html Msg
-narrationCharacterView narrationId character =
+narrationCharacterView : Narration -> FullCharacter -> Html Msg
+narrationCharacterView narration character =
   let
     avatarUrl =
       case character.avatar of
         Just avatar ->
-          "/static/narrations/" ++ (toString narrationId) ++ "/avatars/" ++ avatar
+          "/static/narrations/" ++ (toString narration.id) ++ "/avatars/" ++ avatar
 
         Nothing ->
           "/img/default-avatar.png"
@@ -26,44 +26,24 @@ narrationCharacterView narrationId character =
             , src avatarUrl
             ]
           []
-      , a (linkTo
-             NavigateTo
-             ("/characters/" ++ character.token))
-          [ text character.name ]
+      , span []
+          [ a (linkTo
+                 NavigateTo
+                 ("/characters/" ++ character.token))
+              [ text character.name ]
+          , text " ("
+          , a [ href <| "/novels/" ++ character.novelToken
+              , title <| "“" ++ narration.title ++ "” novel from " ++
+                  character.name ++ "’s point of view"
+              ]
+              [ text "novel" ]
+          , text ")"
+          ]
       ]
 
 
-narrationNovelView : String -> List NarrationNovel -> FullCharacter -> Html Msg
-narrationNovelView narrationTitle novels character =
-  let
-    maybeNovel =
-      List.filter
-        (\n -> n.characterId == character.id)
-        novels
-        |> List.head
-  in
-    case maybeNovel of
-      Just novel ->
-        li []
-          [ a [ href <| "/novels/" ++ novel.token ]
-              [ text <| "“" ++ narrationTitle ++ "” from "
-              , em [] [ text character.name ]
-              , text "’s POV"
-              ]
-          ]
-
-      Nothing ->
-        li []
-          [ text <| "No novel for " ++ character.name
-          , button [ class "btn btn-add btn-inline"
-                   , onClick (CreateNovel character.id)
-                   ]
-              []
-          ]
-
-
-overviewView : NarrationOverview -> List NarrationNovel -> Html Msg
-overviewView overview novels =
+overviewView : NarrationOverview -> Html Msg
+overviewView overview =
   let
     isActive = overview.narration.status == Active
     chapterOptions = if isActive then
@@ -107,7 +87,7 @@ overviewView overview novels =
               [ h2 [] [ text "Characters" ]
               , characterOptions
               , ul [ class "dramatis-personae compact" ]
-                  (List.map (narrationCharacterView overview.narration.id) overview.narration.characters)
+                  (List.map (narrationCharacterView overview.narration) overview.narration.characters)
               , h2 [] [ text "Status" ]
               , div [ class "narration-status" ]
                   [ input [ type_ "radio"
@@ -142,11 +122,6 @@ overviewView overview novels =
                   , label [ for "narration-status-abandoned" ]
                       [ text "Abandoned" ]
                   ]
-              , h2 [] [ text "Novels" ]
-              , ul [ class "novel-list" ]
-                  (List.map
-                     (narrationNovelView overview.narration.title novels)
-                     overview.narration.characters)
               ]
           ]
       ]
@@ -156,11 +131,7 @@ mainView : Model -> Html Msg
 mainView model =
   case model.narrationOverview of
     Just overview ->
-      case model.narrationNovels of
-        Just novels ->
-          overviewView overview novels
-        Nothing ->
-          loadingView model.banner
+      overviewView overview
 
     Nothing ->
       loadingView model.banner
