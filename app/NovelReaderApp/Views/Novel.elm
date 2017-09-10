@@ -6,7 +6,7 @@ import Html.Attributes exposing (id, class, style, src, preload, loop, alt)
 import Html.Events exposing (onClick)
 import Http exposing (encodeUri)
 import Common.Models exposing (ParticipantCharacter)
-import NovelReaderApp.Models exposing (Model, findChapter)
+import NovelReaderApp.Models exposing (Model, findChapter, isFirstChapter, isLastChapter)
 import NovelReaderApp.Messages exposing (..)
 
 
@@ -73,22 +73,28 @@ view model =
       case findChapter novel model.currentChapterIndex of
         Just chapter ->
           div [ id "chapter-container", class (chapterContainerClass model) ]
-            [ div [ class "chapter-navigation chapter-navigation-previous"
-                  , onClick PreviousChapter
+            [ if isFirstChapter novel model.currentChapterIndex then
+                text ""
+              else
+                div [ class "chapter-navigation chapter-navigation-previous"
+                    , onClick PreviousChapter
+                    ]
+                  [ div [ id "previous-chapter-arrow"
+                        , class "chapter-navigation-arrow"
+                        ]
+                      []
                   ]
-                [ div [ id "previous-chapter-arrow"
-                      , class "chapter-navigation-arrow"
-                      ]
-                    []
-                ]
-            , div [ class "chapter-navigation chapter-navigation-next"
-                  , onClick NextChapter
+            , if isLastChapter novel model.currentChapterIndex then
+                text ""
+              else
+                div [ class "chapter-navigation chapter-navigation-next"
+                    , onClick NextChapter
+                    ]
+                  [ div [ id "next-chapter-arrow"
+                        , class "chapter-navigation-arrow"
+                        ]
+                      []
                   ]
-                [ div [ id "next-chapter-arrow"
-                      , class "chapter-navigation-arrow"
-                      ]
-                    []
-                ]
             , div [ id "top-image"
                   , style (backgroundImageStyle novel.narration.id chapter.backgroundImage model.backgroundBlurriness)
                   ]

@@ -235,10 +235,10 @@ ul.thread-list.reader li .btn-bar {
     height: 100%;
 
     background-color: #888;
-    opacity: 0.3;
+    opacity: 0.8;
 }
 .chapter-navigation:hover {
-    opacity: 0.8;
+    opacity: 1;
 }
 .chapter-navigation-previous {
     left: 0;
