@@ -130,15 +130,18 @@ chapterView chapter narration savingChapter uploadingAudio uploadingBackgroundIm
                           "Saving…"
                         else
                           "Save" ]
-          , button [ class "btn btn-default"
-                   , onClick publishAction
-                   , disabled savingChapter
-                   ]
-              [ text <| if savingChapter then
-                          "Publishing…"
-                        else
-                          "Publish"
-              ]
+          , if chapter.published == Nothing then
+              button [ class "btn btn-default"
+                     , onClick publishAction
+                     , disabled savingChapter
+                     ]
+                [ text <| if savingChapter then
+                            "Publishing…"
+                          else
+                            "Publish"
+                ]
+            else
+              text ""
           ]
       , participantPreviewsView chapter.id chapter.participants
       ]
