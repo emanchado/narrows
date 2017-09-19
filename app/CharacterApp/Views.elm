@@ -125,7 +125,7 @@ mainView model =
                           [ text "Novels don’t have any way to interact "
                           , text "and can be read like a book. You can "
                           , text "share the link with others if you want: "
-                          , text "they won't be able to post messages for "
+                          , text "they won’t be able to post messages for "
                           , text "you or change anything about your character."
                           ]
                       else
