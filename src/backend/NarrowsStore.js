@@ -993,6 +993,7 @@ class NarrowsStore {
                 this.db,
                 "get",
                 `SELECT C.id, C.name, C.avatar, C.description, C.backstory,
+                        C.novel_token AS novelToken,
                         N.id AS narrationId, N.title AS narrationTitle
                    FROM characters C
                    JOIN narrations N
@@ -1005,6 +1006,7 @@ class NarrowsStore {
                 id: basicStats.id,
                 name: basicStats.name,
                 avatar: basicStats.avatar,
+                novelToken: basicStats.novelToken,
                 description: JSON.parse(basicStats.description),
                 backstory: JSON.parse(basicStats.backstory),
                 narration: {

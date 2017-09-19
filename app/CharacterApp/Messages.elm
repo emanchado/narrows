@@ -19,3 +19,4 @@ type Msg
     | UpdateBackstoryText Json.Encode.Value
     | SaveCharacter
     | SaveCharacterResult (Result Http.Error (Http.Response String))
+    | ToggleNovelTip

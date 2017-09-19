@@ -23,6 +23,7 @@ initialState =
     , characterInfo = Nothing
     , newAvatarUrl = Nothing
     , banner = Nothing
+    , showNovelTip = False
     }
 
 

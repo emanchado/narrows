@@ -1,6 +1,6 @@
 module CharacterApp.Views exposing (mainView)
 
-import Html exposing (Html, main_, section, h2, h3, div, ul, li, img, input, button, a, label, em, text)
+import Html exposing (Html, main_, section, h2, h3, div, span, ul, li, img, input, button, a, label, em, text)
 import Html.Attributes exposing (id, class, for, src, href, type_, value, checked)
 import Html.Events exposing (onClick, onInput, on)
 
@@ -104,14 +104,36 @@ mainView model =
         , section []
             [ h3 [] [ text "Appears in these chapters:" ]
             , case model.characterInfo of
-              Just characterInfo ->
-                ul []
-                  (List.map (chapterParticipation model.characterToken)
-                    characterInfo.narration.chapters
-                  )
+                Just characterInfo ->
+                  div []
+                    [ ul []
+                        (List.map (chapterParticipation model.characterToken)
+                           characterInfo.narration.chapters)
+                    , text "Or read the "
+                    , a [ href <| "/novels/" ++ characterInfo.novelToken ]
+                        [ text characterInfo.narration.title ]
+                    , text " "
+                    , em [] [ text "novel" ]
+                    , text " from this character’s point of view. "
+                    , img [ src "/img/info.png"
+                          , class "help"
+                          , onClick ToggleNovelTip
+                          ]
+                        []
+                    , if model.showNovelTip then
+                        div [ class "floating-tip" ]
+                          [ text "Novels don’t have any way to interact "
+                          , text "and can be read like a book. You can "
+                          , text "share the link with others if you want: "
+                          , text "they won't be able to post messages for "
+                          , text "you or change anything about your character."
+                          ]
+                      else
+                        text ""
+                    ]
 
-              Nothing ->
-                em [] [ text "None." ]
+                Nothing ->
+                  em [] [ text "None." ]
             ]
         ]
     ]

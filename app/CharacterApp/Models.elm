@@ -21,6 +21,7 @@ type alias CharacterInfo =
     { id : Int
     , name : String
     , avatar : Maybe String
+    , novelToken : String
     , description : Json.Decode.Value
     , backstory : Json.Decode.Value
     , narration : NarrationSummary
@@ -32,4 +33,5 @@ type alias Model =
     , characterInfo : Maybe CharacterInfo
     , newAvatarUrl : Maybe String
     , banner : Maybe Banner
+    , showNovelTip : Bool
     }

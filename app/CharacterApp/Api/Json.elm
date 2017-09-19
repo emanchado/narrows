@@ -22,10 +22,11 @@ parseNarrationSummary =
 
 parseCharacterInfo : Json.Decoder CharacterInfo
 parseCharacterInfo =
-    Json.map6 CharacterInfo
+    Json.map7 CharacterInfo
         (field "id" int)
         (field "name" string)
         (maybe (field "avatar" string))
+        (field "novelToken" string)
         (field "description" Json.value)
         (field "backstory" Json.value)
         (field "narration" parseNarrationSummary)

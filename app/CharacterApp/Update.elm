@@ -172,3 +172,8 @@ update msg model =
           Nothing ->
             Cmd.none
       )
+
+    ToggleNovelTip ->
+      ( { model | showNovelTip = not model.showNovelTip }
+      , Cmd.none
+      )
