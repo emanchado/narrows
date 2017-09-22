@@ -1,5 +1,4 @@
-const {blockQuoteRule, orderedListRule, bulletListRule, codeBlockRule, headingRule,
-       inputRules, allInputRules} = require("prosemirror-inputrules")
+const {emDash, ellipsis, smartQuotes, inputRules} = require("prosemirror-inputrules")
 const {keymap} = require("prosemirror-keymap")
 const {history} = require("prosemirror-history")
 const {baseKeymap} = require("prosemirror-commands")
@@ -10,6 +9,9 @@ const {buildMenuItems} = require("./menu")
 exports.buildMenuItems = buildMenuItems
 const {buildKeymap} = require("./keymap")
 exports.buildKeymap = buildKeymap
+
+
+const allInputRules = smartQuotes.concat([emDash, ellipsis]);
 
 // !! This module exports helper functions for deriving a set of basic
 // menu items, input rules, or key bindings from a schema. These
@@ -37,7 +39,7 @@ exports.buildKeymap = buildKeymap
 //     Can be used to [adjust](#example-setup.buildKeymap) the key bindings created.
 function editorSetup(options) {
   let deps = [
-    inputRules({rules: allInputRules.concat(buildInputRules(options.schema))}),
+    inputRules({rules: allInputRules}),
     keymap(buildKeymap(options.schema, options.mapKeys)),
     keymap(baseKeymap)
   ]
@@ -49,17 +51,3 @@ function editorSetup(options) {
   }))
 }
 exports.editorSetup = editorSetup
-
-// :: (Schema) → [InputRule]
-// A set of input rules for creating the basic block quotes, lists,
-// code blocks, and heading.
-function buildInputRules(schema) {
-  let result = [], type
-  if (type = schema.nodes.blockquote) result.push(blockQuoteRule(type))
-  if (type = schema.nodes.ordered_list) result.push(orderedListRule(type))
-  if (type = schema.nodes.bullet_list) result.push(bulletListRule(type))
-  if (type = schema.nodes.code_block) result.push(codeBlockRule(type))
-  if (type = schema.nodes.heading) result.push(headingRule(type, 6))
-  return result
-}
-exports.buildInputRules = buildInputRules
