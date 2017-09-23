@@ -22,24 +22,24 @@ chapterContainerClass model =
 
 backgroundImageStyle : Chapter -> Int -> List ( String, String )
 backgroundImageStyle chapter backgroundBlurriness =
-  case chapter.backgroundImage of
-    Just backgroundImage ->
-      let
-        imageUrl =
+  let
+    imageUrl =
+      case chapter.backgroundImage of
+        Just backgroundImage ->
           "/static/narrations/" ++
             (toString chapter.narrationId) ++
             "/background-images/" ++
             (encodeUri <| backgroundImage)
 
-        filter = "blur(" ++ (toString backgroundBlurriness) ++ "px)"
-      in
-        [ ( "background-image", "url(" ++ imageUrl ++ ")" )
-        , ( "-webkit-filter", filter )
-        , ( "-moz-filter", filter )
-        , ( "filter", filter )
-        ]
-    Nothing ->
-      []
+        Nothing ->
+          "#"
+    filter = "blur(" ++ (toString backgroundBlurriness) ++ "px)"
+  in
+    [ ( "background-image", "url(" ++ imageUrl ++ ")" )
+    , ( "-webkit-filter", filter )
+    , ( "-moz-filter", filter )
+    , ( "filter", filter )
+    ]
 
 
 characterView : Int -> OwnCharacter -> ParticipantCharacter -> Html Msg
