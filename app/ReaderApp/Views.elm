@@ -4,6 +4,7 @@ import Html exposing (Html, div, span, a, input, text, img, label, button, br)
 import Html.Attributes exposing (id, class, for, src, href, type_, checked)
 import Html.Events exposing (onClick)
 import Common.Views exposing (bannerView, loadingView)
+import Common.Models.Reading exposing (PageState(Loader))
 import ReaderApp.Models exposing (Model, Banner, Chapter)
 import ReaderApp.Messages exposing (..)
 import ReaderApp.Views.Narration
@@ -36,7 +37,7 @@ mainView : Model -> Html Msg
 mainView model =
   div [ id "reader-app" ]
     [ case model.state of
-        ReaderApp.Models.Loader ->
+        Loader ->
           div [ id "loader" ]
             [ case model.chapter of
                 Just chapter ->

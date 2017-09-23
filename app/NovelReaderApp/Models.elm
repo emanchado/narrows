@@ -2,6 +2,7 @@ module NovelReaderApp.Models exposing (..)
 
 import Json.Decode
 import Common.Models exposing (Character, ReplyInformation, ParticipantCharacter)
+import Common.Models.Reading exposing (PageState)
 
 
 findChapter : Novel -> Int -> Maybe Chapter
@@ -21,12 +22,6 @@ isLastChapter novel chapterIndex =
 
 type alias Banner =
   Common.Models.Banner
-
-
-type PageState
-  = Loader
-  | StartingNarration
-  | Narrating
 
 
 type alias Chapter =

@@ -3,6 +3,7 @@ module NovelReaderApp exposing (..)
 import Html exposing (Html)
 import Core.Routes exposing (Route(..))
 import Common.Ports
+import Common.Models.Reading exposing (PageState(Loader))
 import NovelReaderApp.Messages exposing (..)
 import NovelReaderApp.Models exposing (..)
 import NovelReaderApp.Update

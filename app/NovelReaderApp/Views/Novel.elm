@@ -4,39 +4,10 @@ import String
 import Html exposing (Html, h2, div, a, strong, text, img, br, audio, ul, li)
 import Html.Attributes exposing (id, class, style, src, preload, loop, alt)
 import Html.Events exposing (onClick)
-import Http exposing (encodeUri)
 import Common.Models exposing (ParticipantCharacter)
+import Common.Views.Reading exposing (backgroundImageStyle, chapterContainerClass)
 import NovelReaderApp.Models exposing (Model, findChapter, isFirstChapter, isLastChapter)
 import NovelReaderApp.Messages exposing (..)
-
-
-chapterContainerClass : Model -> String
-chapterContainerClass model =
-  case model.state of
-    NovelReaderApp.Models.Loader -> "invisible transparent"
-    NovelReaderApp.Models.StartingNarration -> "transparent"
-    NovelReaderApp.Models.Narrating -> "fade-in"
-
-
-backgroundImageStyle : Int -> Maybe String -> Int -> List ( String, String )
-backgroundImageStyle narrationId maybeBgImage backgroundBlurriness =
-  case maybeBgImage of
-    Just backgroundImage ->
-      let
-        imageUrl = "/static/narrations/" ++
-                     (toString narrationId) ++
-                     "/background-images/" ++
-                     (encodeUri backgroundImage)
-
-        filter = "blur(" ++ (toString backgroundBlurriness) ++ "px)"
-      in
-        [ ( "background-image", "url(" ++ imageUrl ++ ")" )
-        , ( "-webkit-filter", filter )
-        , ( "-moz-filter", filter )
-        , ( "filter", filter )
-        ]
-    Nothing ->
-      []
 
 
 characterView : Int -> ParticipantCharacter -> Html Msg
@@ -72,7 +43,7 @@ view model =
     Just novel ->
       case findChapter novel model.currentChapterIndex of
         Just chapter ->
-          div [ id "chapter-container", class (chapterContainerClass model) ]
+          div [ id "chapter-container", class (chapterContainerClass model.state) ]
             [ if isFirstChapter novel model.currentChapterIndex then
                 text ""
               else
@@ -144,10 +115,10 @@ view model =
             ]
 
         Nothing ->
-          div [ id "chapter-container", class (chapterContainerClass model) ]
+          div [ id "chapter-container", class (chapterContainerClass model.state) ]
             [ text <| "Internal Error: no such chapter " ++ (toString model.currentChapterIndex)
             ]
 
     Nothing ->
-      div [ id "chapter-container", class (chapterContainerClass model) ]
+      div [ id "chapter-container", class (chapterContainerClass model.state) ]
         [ text "Internal Error: no novel." ]

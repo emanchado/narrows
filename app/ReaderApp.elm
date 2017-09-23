@@ -3,6 +3,7 @@ module ReaderApp exposing (..)
 import Html exposing (Html)
 import Core.Routes exposing (Route(..))
 import Common.Ports
+import Common.Models.Reading exposing (PageState(Loader))
 import ReaderApp.Messages exposing (..)
 import ReaderApp.Models exposing (..)
 import ReaderApp.Update

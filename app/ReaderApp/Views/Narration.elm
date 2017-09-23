@@ -4,42 +4,13 @@ import String
 import Html exposing (Html, h2, h3, div, span, a, input, textarea, em, strong, text, img, label, button, br, audio, ul, li, blockquote, p)
 import Html.Attributes exposing (id, class, style, for, src, href, target, type_, checked, preload, loop, alt, defaultValue, rows, placeholder)
 import Html.Events exposing (onClick, onInput)
-import Http exposing (encodeUri)
 import Common.Views exposing (bannerView, linkTo)
+import Common.Views.Reading exposing (backgroundImageStyle, chapterContainerClass)
 import Common.Models exposing (ParticipantCharacter)
+import Common.Models.Reading exposing (PageState(Loader, StartingNarration, Narrating))
 import ReaderApp.Models exposing (Model, Chapter, OwnCharacter, Banner)
 import ReaderApp.Messages exposing (..)
 import ReaderApp.Views.MessageThreads
-
-
-chapterContainerClass : Model -> String
-chapterContainerClass model =
-  case model.state of
-    ReaderApp.Models.Loader -> "invisible transparent"
-    ReaderApp.Models.StartingNarration -> "transparent"
-    ReaderApp.Models.Narrating -> "fade-in"
-
-
-backgroundImageStyle : Chapter -> Int -> List ( String, String )
-backgroundImageStyle chapter backgroundBlurriness =
-  let
-    imageUrl =
-      case chapter.backgroundImage of
-        Just backgroundImage ->
-          "/static/narrations/" ++
-            (toString chapter.narrationId) ++
-            "/background-images/" ++
-            (encodeUri <| backgroundImage)
-
-        Nothing ->
-          "#"
-    filter = "blur(" ++ (toString backgroundBlurriness) ++ "px)"
-  in
-    [ ( "background-image", "url(" ++ imageUrl ++ ")" )
-    , ( "-webkit-filter", filter )
-    , ( "-moz-filter", filter )
-    , ( "filter", filter )
-    ]
 
 
 characterView : Int -> OwnCharacter -> ParticipantCharacter -> Html Msg
@@ -160,10 +131,10 @@ view model =
   case model.chapter of
     Just chapter ->
       div [ id "chapter-container"
-          , class (chapterContainerClass model)
+          , class (chapterContainerClass model.state)
           ]
         [ div [ id "top-image"
-              , style (backgroundImageStyle chapter model.backgroundBlurriness)
+              , style (backgroundImageStyle chapter.narrationId chapter.backgroundImage model.backgroundBlurriness)
               ]
             [ text (if (String.isEmpty chapter.title) then
                       "Untitled"
@@ -205,5 +176,5 @@ view model =
         ]
 
     Nothing ->
-      div [ id "chapter-container", class (chapterContainerClass model) ]
+      div [ id "chapter-container", class (chapterContainerClass model.state) ]
         [ text "Internal Error: no chapter." ]
