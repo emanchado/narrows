@@ -7,7 +7,6 @@ import Html.Events exposing (onClick, onInput)
 import Common.Views exposing (bannerView, linkTo)
 import Common.Views.Reading exposing (backgroundImageStyle, chapterContainerClass)
 import Common.Models exposing (ParticipantCharacter)
-import Common.Models.Reading exposing (PageState(Loader, StartingNarration, Narrating))
 import ReaderApp.Models exposing (Model, Chapter, OwnCharacter, Banner)
 import ReaderApp.Messages exposing (..)
 import ReaderApp.Views.MessageThreads
