@@ -79,6 +79,9 @@
     padding: 10px 20px 10px 20px;
     background-color: #e5e5e5;
 }
+.chapter > blockquote {
+    padding: 0 20px;
+}
 
 .chapter > p:first-child {
     padding-top: 20px;
@@ -114,7 +117,7 @@
 
 .chapter > blockquote > p {
     margin: 0;
-    padding: 10px 20px;
+    padding: 3px 2em;
     font-style: italic;
 }
 
