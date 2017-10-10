@@ -70,9 +70,9 @@
 }
 
 .chapter > p, .chapter > blockquote {
-    max-width: 50em;
-    font-size: 16px;
-    line-height: 22px;
+    max-width: 40em;
+    font-size: 18px;
+    line-height: 27px;
     text-align: justify;
 
     margin: 0 auto;
@@ -86,17 +86,19 @@
 .chapter > p:first-child {
     padding-top: 20px;
 }
+.chapter > p:last-child {
+    padding-bottom: 20px;
+}
 
 .chapter > p:first-child::first-letter {
     float: left;
     
-    font-size: 80px;
-    line-height: 54px;
+    font-size: 94px;
     margin-right: 3px;
 }
 
 .chapter ul, .chapter ol {
-    max-width: 50em;
+    max-width: 40em;
     margin: 0 auto;
     padding: 10px 20px;
     background-color: #e5e5e5;
@@ -125,7 +127,7 @@
     position: relative;
     z-index: 5;
 
-    max-width: 50em;
+    max-width: 40em;
     margin: 40px auto 0 auto;
     padding: 20px;
 

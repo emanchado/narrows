@@ -271,7 +271,8 @@ span.mention img {
     background: url(/img/separator.png) no-repeat center;
 }
 .chapter .separator {
-    max-width: 50em;
+    font-size: 18px;
+    max-width: 40em;
     background-color:  #e5e5e5;
 }
 
