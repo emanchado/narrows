@@ -176,6 +176,10 @@ unpublishedChapterView navigationMessage narration chapterOverview =
   let
     numberChapterParticipants = List.length chapterOverview.participants
     numberNarrationCharacters = List.length narration.characters
+    participantNames = String.join ", " <|
+        List.map
+          (\r -> r.name)
+          chapterOverview.participants
   in
     li []
       [ a (linkTo
@@ -186,8 +190,11 @@ unpublishedChapterView navigationMessage narration chapterOverview =
       , text " — "
       , em [] [ text "Draft" ]
       , if numberNarrationCharacters /= numberChapterParticipants then
-          text (" — only " ++ (toString numberChapterParticipants) ++
-                " participants")
+          span [ title <| "Only for " ++ participantNames ]
+            [ text " — "
+            , img [ src "/img/character.png" ] []
+            , text <| toString numberChapterParticipants
+            ]
         else
           text ""
       ]
