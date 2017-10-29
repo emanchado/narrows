@@ -3,7 +3,7 @@ module NarrationArchiveApp.Views exposing (..)
 import List
 import Html exposing (Html, main_, h1, h2, div, button, ul, li, a, text)
 import Html.Attributes exposing (id, class, href)
-import Common.Views exposing (linkTo, narrationOverviewView, loadingView, compactNarrationView)
+import Common.Views exposing (linkTo, loadingView, compactNarrationView)
 import NarrationArchiveApp.Messages exposing (..)
 import NarrationArchiveApp.Models exposing (..)
 
