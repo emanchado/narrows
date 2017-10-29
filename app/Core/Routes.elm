@@ -13,6 +13,7 @@ type Route
     | CreateChapterPage Int
     | NarrationPage Int
     | CharacterCreationPage Int
+    | CharacterEditPage Int
     | UserManagementPage
     | NovelReaderPage String
     | NovelReaderChapterPage String Int

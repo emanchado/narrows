@@ -11,6 +11,7 @@ import NarrationOverviewApp
 import ChapterEditApp
 import ChapterControlApp
 import CharacterCreationApp
+import CharacterEditApp
 import UserManagementApp
 import NovelReaderApp
 import ProfileApp
@@ -42,6 +43,7 @@ type alias Model =
   , chapterEditApp : ChapterEditApp.Model
   , chapterControlApp : ChapterControlApp.Model
   , characterCreationApp : CharacterCreationApp.Model
+  , characterEditApp : CharacterEditApp.Model
   , userManagementApp : UserManagementApp.Model
   , novelReaderApp : NovelReaderApp.Model
   , profileApp : ProfileApp.Model

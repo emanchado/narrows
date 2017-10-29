@@ -219,7 +219,7 @@ app.ports.readAvatarAsUrl.subscribe(evt => {
 
     const reader = new FileReader();
     reader.addEventListener("load", function () {
-        app.ports.receiveAvatarAsUrl.send(reader.result);
+        app.ports[`${evt.type_}ReceiveAvatarAsUrl`].send(reader.result);
     }, false);
 
     reader.readAsDataURL(file);
@@ -234,14 +234,16 @@ app.ports.uploadAvatar.subscribe(evt => {
         const resp = JSON.parse(this.responseText);
 
         if (this.status < 200 || this.status >= 400) {
-            app.ports.uploadAvatarError.send({ status: this.status,
-                                               message: resp.errorMessage });
+            app.ports[`${evt.type_}UserUploadAvatarError`].send({
+                status: this.status,
+                message: resp.errorMessage
+            });
             return;
         }
 
         // Fool the browser into thinking it's a new image
         const cheekyAvatarUrl = resp.avatar + "?" + (new Date()).getTime();
-        app.ports.uploadAvatarSuccess.send(cheekyAvatarUrl);
+        app.ports[`${evt.type_}UserUploadAvatarSuccess`].send(cheekyAvatarUrl);
     });
 
     const formData = new FormData();

@@ -16,9 +16,10 @@ parseCharacter =
 
 parseFullCharacter : Json.Decoder FullCharacter
 parseFullCharacter =
-    Json.map5 FullCharacter
+    Json.map6 FullCharacter
       (field "id" int)
       (field "name" string)
+      (field "email" string)
       (field "token" string)
       (field "novelToken" string)
       (maybe (field "avatar" string))

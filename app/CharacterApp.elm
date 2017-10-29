@@ -47,7 +47,7 @@ subscriptions model =
     Sub.batch
         [ CharacterApp.Ports.descriptionContentChanged UpdateDescriptionText
         , CharacterApp.Ports.backstoryContentChanged UpdateBackstoryText
-        , CharacterApp.Ports.receiveAvatarAsUrl ReceiveAvatarAsUrl
-        , CharacterApp.Ports.uploadAvatarError UploadAvatarError
-        , CharacterApp.Ports.uploadAvatarSuccess UploadAvatarSuccess
+        , CharacterApp.Ports.userReceiveAvatarAsUrl ReceiveAvatarAsUrl
+        , CharacterApp.Ports.userUploadAvatarError UploadAvatarError
+        , CharacterApp.Ports.userUploadAvatarSuccess UploadAvatarSuccess
         ]

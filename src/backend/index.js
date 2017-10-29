@@ -53,6 +53,8 @@ app.post("/api/chapters/:chptId/messages", middlewares.apiAuth, endpoints.postCh
 app.get("/api/chapters/:chptId/last-reactions", middlewares.apiAuth, endpoints.getChapterLastReactions);
 
 app.put("/api/users/:userId", endpoints.putUser);
+app.get("/api/characters/by-id/:charId", endpoints.getCharacterById);
+app.put("/api/characters/by-id/:charId", endpoints.putCharacterById);
 
 // These endpoints are only for admins!
 app.get("/api/users", middlewares.apiAdminAuth, endpoints.getUsers);

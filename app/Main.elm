@@ -12,6 +12,7 @@ import Core.Messages exposing (Msg(..))
 
 import ReaderApp
 import CharacterApp
+import CharacterEditApp
 import NarratorDashboardApp
 import NarrationArchiveApp
 import NarrationCreationApp
@@ -40,6 +41,7 @@ initialState location =
     , narrationOverviewApp = NarrationOverviewApp.initialState
     , chapterEditApp = ChapterEditApp.initialState
     , chapterControlApp = ChapterControlApp.initialState
+    , characterEditApp = CharacterEditApp.initialState
     , characterCreationApp = CharacterCreationApp.initialState
     , userManagementApp = UserManagementApp.initialState
     , novelReaderApp = NovelReaderApp.initialState
@@ -95,6 +97,7 @@ dispatchEnterLocation model =
     narrationOverviewApp = NarrationOverviewApp.urlUpdate currentRoute model.narrationOverviewApp
     chapterControlApp = ChapterControlApp.urlUpdate currentRoute model.chapterControlApp
     characterCreationApp = CharacterCreationApp.urlUpdate currentRoute model.characterCreationApp
+    characterEditApp = CharacterEditApp.urlUpdate currentRoute model.characterEditApp
     userManagementApp = UserManagementApp.urlUpdate currentRoute model.userManagementApp
     profileApp = ProfileApp.urlUpdate currentRoute model.profileApp
   in
@@ -108,6 +111,7 @@ dispatchEnterLocation model =
               , chapterEditApp = first chapterEditApp
               , chapterControlApp = first chapterControlApp
               , characterCreationApp = first characterCreationApp
+              , characterEditApp = first characterEditApp
               , userManagementApp = first userManagementApp
               , novelReaderApp = first novelReaderApp
               , profileApp = first profileApp
@@ -127,6 +131,7 @@ dispatchEnterLocation model =
           , Cmd.map ChapterEditMsg <| second chapterEditApp
           , Cmd.map ChapterControlMsg <| second chapterControlApp
           , Cmd.map CharacterCreationMsg <| second characterCreationApp
+          , Cmd.map CharacterEditMsg <| second characterEditApp
           , Cmd.map UserManagementMsg <| second userManagementApp
           , Cmd.map ProfileMsg <| second profileApp
           ])
@@ -295,6 +300,15 @@ combinedUpdate msg model =
         , protectedCmd model.session <| Cmd.map CharacterCreationMsg cmd
         )
 
+    CharacterEditMsg characterEditMsg ->
+      let
+        ( newCharacterEditModel, cmd ) =
+          CharacterEditApp.update characterEditMsg model.characterEditApp
+      in
+        ( { model | characterEditApp = newCharacterEditModel }
+        , protectedCmd model.session <| Cmd.map CharacterEditMsg cmd
+        )
+
     UserManagementMsg userManagementMsg ->
       let
         ( newUserManagementModel, cmd ) =
@@ -326,6 +340,7 @@ subscriptions model =
         , Sub.map ChapterEditMsg (ChapterEditApp.subscriptions model.chapterEditApp)
         , Sub.map ChapterControlMsg (ChapterControlApp.subscriptions model.chapterControlApp)
         , Sub.map CharacterCreationMsg (CharacterCreationApp.subscriptions model.characterCreationApp)
+        , Sub.map CharacterEditMsg (CharacterEditApp.subscriptions model.characterEditApp)
         , Sub.map UserManagementMsg (UserManagementApp.subscriptions model.userManagementApp)
         , Sub.map NovelReaderMsg (NovelReaderApp.subscriptions model.novelReaderApp)
         , Sub.map ProfileMsg (ProfileApp.subscriptions model.profileApp)

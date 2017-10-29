@@ -35,6 +35,18 @@ type alias FileUploadInfo =
     }
 
 
+type alias AvatarElementInfo =
+  { type_ : String
+  , fileInputId : String
+  }
+
+type alias AvatarUploadInfo =
+  { type_ : String
+  , fileInputId : String
+  , characterToken : String
+  }
+
+
 port renderText : RenderTextInfo -> Cmd msg
 port initEditor : InitEditorInfo -> Cmd msg
 port startNarration : NarrationMediaInfo -> Cmd msg
@@ -49,3 +61,6 @@ port markNarrationAsStarted : (Int -> msg) -> Sub msg
 
 port openFileInput : String -> Cmd msg
 port uploadFile : FileUploadInfo -> Cmd msg
+
+port readAvatarAsUrl : AvatarElementInfo -> Cmd msg
+port uploadAvatar : AvatarUploadInfo -> Cmd msg

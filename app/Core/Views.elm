@@ -19,6 +19,7 @@ import NarrationOverviewApp
 import ChapterEditApp
 import ChapterControlApp
 import CharacterCreationApp
+import CharacterEditApp
 import UserManagementApp
 import NovelReaderApp
 import ProfileApp
@@ -160,6 +161,9 @@ dispatchProtectedPage model =
 
     CharacterCreationPage chapterId ->
       Html.map CharacterCreationMsg (CharacterCreationApp.view model.characterCreationApp)
+
+    CharacterEditPage chapterId ->
+      Html.map CharacterEditMsg (CharacterEditApp.view model.characterEditApp)
 
     UserManagementPage ->
       Html.map UserManagementMsg (UserManagementApp.view model.userManagementApp)

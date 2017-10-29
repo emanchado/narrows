@@ -92,6 +92,13 @@ ul li {
     display: flex;
     flex-direction: column;
 }
+.vertical-form label {
+    margin-top: 20px;
+    font-size: 18px;
+}
+.vertical-form label:first-child {
+    margin-top: inherit;
+}
 
 #loader {
     width: 100%;

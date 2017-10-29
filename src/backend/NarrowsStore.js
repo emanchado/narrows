@@ -20,7 +20,8 @@ const JSON_TO_DB = {
     defaultAudio: "default_audio",
     name: "name",
     description: "description",
-    backstory: "backstory"
+    backstory: "backstory",
+    playerId: "player_id"
 };
 
 const AUDIO_REGEXP = new RegExp("\.mp3$", "i");
@@ -162,8 +163,11 @@ class NarrowsStore {
         return Q.ninvoke(
             this.db,
             "all",
-            `SELECT id, name, token, novel_token AS novelToken, avatar
+            `SELECT characters.id, name, email, token,
+                    novel_token AS novelToken, avatar
                FROM characters
+               JOIN users
+                 ON characters.player_id = users.id
               WHERE narration_id = ?`,
             narrationId
         );
@@ -326,11 +330,12 @@ class NarrowsStore {
                     chapters.map(f => f.id)
                 );
             }).then(participants => {
-                participants.forEach(({ chapterId, id, name, avatar }) => {
+                participants.forEach(({ chapterId, id, name, avatar, email }) => {
                     chapterMap[chapterId].participants.push({
                         id: id,
                         name: name,
-                        avatar: avatar
+                        avatar: avatar,
+                        email: email
                     });
                 });
 
@@ -495,7 +500,7 @@ class NarrowsStore {
     getChapterParticipants(chapterId, userOpts) {
         const opts = userOpts || {};
         const extraFields = opts.includePrivateFields ?
-                  ", C.player_id, C.token, C.novel_token AS novelToken, C.notes" : "";
+                  ", C.player_id, U.email, C.token, C.novel_token AS novelToken, C.notes" : "";
 
         return Q.ninvoke(
             this.db,
@@ -503,6 +508,7 @@ class NarrowsStore {
             `SELECT C.id, C.name, C.avatar, C.description ${ extraFields }
                FROM characters C
                JOIN chapter_participants CP ON C.id = CP.character_id
+               JOIN users U ON U.id = C.player_id
               WHERE chapter_id = ?`,
             chapterId
         ).then(participants => (
@@ -992,18 +998,22 @@ class NarrowsStore {
             Q.ninvoke(
                 this.db,
                 "get",
-                `SELECT C.id, C.name, C.avatar, C.description, C.backstory,
-                        C.novel_token AS novelToken,
+                `SELECT C.id, C.name, C.token, C.avatar, C.description,
+                        C.backstory, C.novel_token AS novelToken, U.email,
                         N.id AS narrationId, N.title AS narrationTitle
                    FROM characters C
                    JOIN narrations N
                      ON C.narration_id = N.id
+                   JOIN users U
+                     ON C.player_id = U.id
                   WHERE C.id = ?`,
                 characterId
             ),
             this.getCharacterChaptersBasic(characterId)
         ]).spread((basicStats, chapters) => ({
                 id: basicStats.id,
+                token: basicStats.token,
+                email: basicStats.email,
                 name: basicStats.name,
                 avatar: basicStats.avatar,
                 novelToken: basicStats.novelToken,
@@ -1020,7 +1030,12 @@ class NarrowsStore {
     updateCharacter(characterId, props) {
         const propNames = Object.keys(props).map(convertToDb),
               propNameStrings = propNames.map(p => `${p} = ?`);
-        const propValues = Object.keys(props).map(p => props[p]);
+        const propValues = Object.keys(props).map(p => (
+            (["description", "backstory"].indexOf(p) !== -1) ?
+                ((typeof props[p] === "string") ?
+                 props[p] : JSON.stringify(props[p])) :
+                props[p]
+        ));
 
         if (!propValues.length) {
             return this.getFullCharacterStats(characterId);

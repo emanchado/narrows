@@ -19,6 +19,7 @@ matchers =
         , map ChapterControlPage (s "chapters" </> int)
         , map CreateChapterPage (s "narrations" </> int </> s "new")
         , map CharacterCreationPage (s "narrations" </> int </> s "characters" </> s "new")
+        , map CharacterEditPage (s "characters" </> int </> s "edit")
         , map NarrationPage (s "narrations" </> int)
         , map UserManagementPage (s "users")
         , map NovelReaderChapterPage (s "novels" </> string </> s "chapters" </> int)

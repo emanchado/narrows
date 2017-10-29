@@ -1,21 +1,21 @@
-module CharacterApp.Update exposing (..)
+module CharacterEditApp.Update exposing (..)
 
 import Http
 import Navigation
 import Core.Routes exposing (Route(..))
 import Common.Models exposing (errorBanner, successBanner)
 import Common.Ports exposing (initEditor, readAvatarAsUrl, uploadAvatar)
-import CharacterApp.Api
-import CharacterApp.Messages exposing (..)
-import CharacterApp.Models exposing (..)
+import CharacterEditApp.Api
+import CharacterEditApp.Messages exposing (..)
+import CharacterEditApp.Models exposing (..)
 
 
 urlUpdate : Route -> Model -> ( Model, Cmd Msg )
 urlUpdate route model =
     case route of
-        CharacterPage characterToken ->
-            ( { model | characterToken = characterToken }
-            , CharacterApp.Api.fetchCharacterInfo characterToken
+        CharacterEditPage characterId ->
+            ( { model | characterId = characterId }
+            , CharacterEditApp.Api.fetchCharacterInfo characterId
             )
 
         _ ->
@@ -57,7 +57,7 @@ update msg model =
                        , chapterParticipants = []
                        , text = character.description
                        , editorType = "description"
-                       , updatePortName = "descriptionContentChanged"
+                       , updatePortName = "narratorDescriptionContentChanged"
                        }
           , initEditor { elemId = "backstory-editor"
                        , narrationId = 0
@@ -65,7 +65,7 @@ update msg model =
                        , chapterParticipants = []
                        , text = character.backstory
                        , editorType = "description"
-                       , updatePortName = "backstoryContentChanged"
+                       , updatePortName = "narratorBackstoryContentChanged"
                        }
           ]
       )
@@ -118,7 +118,7 @@ update msg model =
 
     UpdateCharacterAvatar elementId ->
       ( model
-      , readAvatarAsUrl { type_ = "user"
+      , readAvatarAsUrl { type_ = "narrator"
                         , fileInputId = elementId
                         }
       )
@@ -148,11 +148,22 @@ update msg model =
         , Cmd.none
         )
 
+    UpdatePlayerEmail newEmail ->
+      let
+        updatedCharacter =
+          case model.characterInfo of
+            Just character -> Just { character | email = newEmail }
+            Nothing -> Nothing
+      in
+        ( { model | characterInfo = updatedCharacter }
+        , Cmd.none
+        )
+
     SaveCharacter ->
       case model.characterInfo of
         Just character ->
           ( model
-          , CharacterApp.Api.saveCharacter model.characterToken character
+          , CharacterEditApp.Api.saveCharacter character.id character
           )
 
         Nothing ->
@@ -169,15 +180,14 @@ update msg model =
         }
       , case model.newAvatarUrl of
           Just avatar ->
-            uploadAvatar { type_ = "user"
-                         , fileInputId = "new-avatar"
-                         , characterToken = model.characterToken
-                         }
+            case model.characterInfo of
+              Just info ->
+                uploadAvatar { type_ = "narrator"
+                             , fileInputId = "new-avatar"
+                             , characterToken = info.token
+                             }
+              Nothing ->
+                Cmd.none
           Nothing ->
             Cmd.none
-      )
-
-    ToggleNovelTip ->
-      ( { model | showNovelTip = not model.showNovelTip }
-      , Cmd.none
       )

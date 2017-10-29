@@ -14,6 +14,7 @@ import NarrationOverviewApp
 import ChapterEditApp
 import ChapterControlApp
 import CharacterCreationApp
+import CharacterEditApp
 import UserManagementApp
 import NovelReaderApp
 import ProfileApp
@@ -43,6 +44,7 @@ type Msg
     | ChapterEditMsg ChapterEditApp.Msg
     | ChapterControlMsg ChapterControlApp.Msg
     | CharacterCreationMsg CharacterCreationApp.Msg
+    | CharacterEditMsg CharacterEditApp.Msg
     | UserManagementMsg UserManagementApp.Msg
     | NovelReaderMsg NovelReaderApp.Msg
     | ProfileMsg ProfileApp.Msg

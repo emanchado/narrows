@@ -13,6 +13,7 @@ import apiFormatter from "./api-formatter";
 import feeds from "./feeds";
 import Mailer from "./Mailer";
 import { isValidEmail } from "./validation";
+import objectSelect from "./objectSelect";
 
 const store = new NarrowsStore(config.db, config.files.path);
 store.connect();
@@ -534,14 +535,10 @@ export function getCharacter(req, res) {
 
 export function putCharacter(req, res) {
     const characterToken = req.params.charToken;
-    const newProps = req.body;
-
-    if (newProps.description) {
-        newProps.description = JSON.stringify(newProps.description);
-    }
-    if (newProps.backstory) {
-        newProps.backstory = JSON.stringify(newProps.backstory);
-    }
+    const newProps = objectSelect(
+        req.body,
+        ["name", "description", "backstory", "notes"]
+    );
 
     return store.getCharacterInfo(characterToken).then(character => (
         store.updateCharacter(character.id, newProps).then(newCharacter => {
@@ -551,6 +548,40 @@ export function putCharacter(req, res) {
         res.status(500).json({
             errorMessage: `Could not update character with ` +
                 `id '${ characterToken }': ${ err }`
+        });
+    });
+}
+
+export function putCharacterById(req, res) {
+    const characterId = req.params.charId;
+    const newProps = objectSelect(
+        req.body,
+        ["name", "description", "backstory", "notes"]
+    );
+
+    console.log("newProps =", newProps);
+
+    return store.updateCharacter(characterId, newProps).then(newCharacter => {
+        if (!req.body.email) {
+            return newCharacter;
+        }
+
+        const email = req.body.email;
+        return userStore.getUserByEmail(email).catch(() => (
+            userStore.createUser({ email: email }).then(() => (
+                userStore.getUserByEmail(email)
+            ))
+        )).then(playerUser => (
+            store.updateCharacter(characterId, {
+                playerId: playerUser.id
+            })
+        ));
+    }).then(updatedCharacter => {
+        res.json(updatedCharacter);
+    }).catch(err => {
+        res.status(500).json({
+            errorMessage: `Could not update character with ` +
+                `id '${ characterId }': ${ err }`
         });
     });
 }
@@ -662,5 +693,18 @@ export function postPasswordReset(req, res) {
         // We shouldn't say whether or not an e-mail is registered
     }).then(() => {
         res.json({ email: email });
+    });
+}
+
+export function getCharacterById(req, res) {
+    const characterId = req.params.charId;
+
+    return store.getFullCharacterStats(characterId).then(stats => {
+        res.json(stats);
+    }).catch(err => {
+        res.status(500).json({
+            errorMessage: `Could not get full character stats for ` +
+                `character '${ characterId }': ${ err }`
+        });
     });
 }

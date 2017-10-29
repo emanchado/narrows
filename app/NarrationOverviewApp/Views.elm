@@ -27,9 +27,10 @@ narrationCharacterView narration character =
             ]
           []
       , span []
-          [ a (linkTo
-                 NavigateTo
-                 ("/characters/" ++ character.token))
+          [ a ((title <| "Played by " ++ character.email) ::
+                 (linkTo
+                    NavigateTo
+                    ("/characters/" ++ (toString character.id) ++ "/edit")))
               [ text character.name ]
           , text " ("
           , a [ href <| "/novels/" ++ character.novelToken
