@@ -2,11 +2,15 @@ module CharacterCreationApp.Messages exposing (..)
 
 import Http
 
+import Common.Models exposing (Narration, Character)
+
 
 type Msg
     = NoOp
+    | NavigateTo String
+    | FetchNarrationResult (Result Http.Error Narration)
     | UpdateName String
     | UpdateEmail String
     | CreateCharacter
-    | CreateCharacterResult (Result Http.Error (Http.Response String))
+    | CreateCharacterResult (Result Http.Error Character)
     | CancelCreateCharacter

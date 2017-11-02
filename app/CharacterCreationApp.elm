@@ -20,6 +20,7 @@ initialState : Model
 initialState =
     { banner = Nothing
     , narrationId = 0
+    , narration = Nothing
     , playerEmail = ""
     , characterName = ""
     }
