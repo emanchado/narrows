@@ -109,6 +109,15 @@ ul.participant-list li {
     max-height: 100px;
 }
 
+.image-preview {
+    display: block;
+
+    margin: 20px auto;
+
+    max-width: 200px;
+    max-height: 200px;
+}
+
 .thread-list.narrator > li {
     margin-bottom: 20px;
     background-color: #e5e5e5;

@@ -6,6 +6,10 @@ class ImageSelectorField extends Field {
         const container = document.createElement("div");
         container.className = "control-line";
 
+        // Image preview
+        const imagePreview = document.createElement("img");
+        imagePreview.className = "image-preview";
+
         // Select component for the already-uploaded images.
         const select = document.createElement("select");
         this.options.images.forEach(imageName => {
@@ -17,7 +21,13 @@ class ImageSelectorField extends Field {
         container.value = select.selectedOptions.item(0) && select.selectedOptions.item(0).value;
         select.addEventListener("change", evt => {
             container.value = select.selectedOptions.item(0) && select.selectedOptions.item(0).value;
+            imagePreview.src = select.selectedOptions.item(0) && `/static/narrations/${this.options.narrationId}/images/` + select.selectedOptions.item(0).value;
         }, false);
+        if (select.selectedOptions.item(0)) {
+            imagePreview.src = `/static/narrations/${this.options.narrationId}/images/` + select.selectedOptions.item(0).value;
+        } else {
+            imagePreview.src = "/img/no-preview.png";
+        }
 
         const addImageCallback = name => {
             const options = select.querySelectorAll("option");
@@ -29,6 +39,7 @@ class ImageSelectorField extends Field {
             opt.textContent = name;
 
             container.value = name;
+            imagePreview.src = `/static/narrations/${this.options.narrationId}/images/${name}`;
             this.options.addImageCallback(name);
         };
 
@@ -53,7 +64,8 @@ class ImageSelectorField extends Field {
         }, false);
         // Upload button
         const uploadButton = document.createElement("button");
-        uploadButton.textContent = "Upload image";
+        uploadButton.className = "btn btn-small btn-add";
+        uploadButton.textContent = "Upload";
         uploadButton.addEventListener("click", e => {
             e.preventDefault();
             fileInput.click();
@@ -61,6 +73,7 @@ class ImageSelectorField extends Field {
 
         container.appendChild(select);
         container.appendChild(uploadButton);
+        container.appendChild(imagePreview);
         return container;
     }
 }

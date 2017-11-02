@@ -34,6 +34,7 @@ function insertImageItem(nodeType) {
                         required: true,
                         selected: attrs && attrs.src,
                         images: view.props.images,
+                        narrationId: view.props.narrationId,
                         uploadUrl: uploadUrl,
                         addImageCallback: name => {
                             view.props.images.push(name);
