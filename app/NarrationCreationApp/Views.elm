@@ -1,11 +1,11 @@
 module NarrationCreationApp.Views exposing (..)
 
-import Html exposing (Html, main_, h1, h2, div, form, input, label, button, ul, li, a, text)
+import Html exposing (Html, main_, h1, div, form, input, label, button, ul, li, a, text)
 import Html.Attributes exposing (id, class, href, type_, name, placeholder, value, disabled)
 import Html.Events exposing (onInput, onClick, on)
 
 import Common.Models exposing (MediaType(..))
-import Common.Views exposing (onPreventDefaultClick, bannerView)
+import Common.Views exposing (onPreventDefaultClick, bannerView, breadcrumbNavView)
 import Common.Views.FileSelector exposing (fileSelector)
 import NarrationCreationApp.Messages exposing (..)
 import NarrationCreationApp.Models exposing (..)
@@ -23,7 +23,14 @@ mainView model =
     main_ [ id "narrator-app"
           , class "app-container app-container-simple"
           ]
-      [ h1 [] [ text pageTitle ]
+      [ breadcrumbNavView
+          NavigateTo
+          [ { title = "Home"
+            , url = "/"
+            }
+          ]
+          (text pageTitle)
+      , h1 [] [ text pageTitle ]
       , bannerView model.banner
       , form [ class "vertical-form" ]
           [ label [] [ text "Title:" ]

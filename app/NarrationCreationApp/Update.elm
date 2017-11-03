@@ -42,6 +42,9 @@ update msg model =
     NoOp ->
       ( model, Cmd.none )
 
+    NavigateTo url ->
+      ( model, Navigation.newUrl url )
+
     UpdateTitle newTitle ->
       ( { model | title = newTitle }
       , Cmd.none

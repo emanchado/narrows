@@ -60,8 +60,7 @@ mainView model =
     main_ [ id "narrator-app", class "app-container" ]
       [ div [ class "reaction-header" ]
           [ div []
-              [ h1 [] [ text <| chapter.title ]
-              , breadcrumbNavView
+              [ breadcrumbNavView
                   NavigateTo
                   [ { title = "Home"
                     , url = "/"
@@ -74,6 +73,7 @@ mainView model =
                     }
                   ]
                   (text "Reaction")
+              , h1 [] [ text <| chapter.title ]
               ]
           , div []
               [ img [ class "tiny-image-preview"

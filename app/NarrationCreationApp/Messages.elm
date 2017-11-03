@@ -8,6 +8,7 @@ import NarrationCreationApp.Models exposing (CreateNarrationResponse)
 
 type Msg
     = NoOp
+    | NavigateTo String
     | UpdateTitle String
     | UpdateSelectedBackgroundImage String
     | UpdateSelectedAudio String
