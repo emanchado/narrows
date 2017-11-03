@@ -1,9 +1,9 @@
 module CharacterCreationApp.Views exposing (..)
 
-import Html exposing (Html, main_, h1, h2, div, input, label, button, ul, li, a, text)
+import Html exposing (Html, main_, h1, h2, div, form, input, label, button, ul, li, a, text)
 import Html.Attributes exposing (id, class, href, type_, placeholder, value)
-import Html.Events exposing (onInput, onClick)
-import Common.Views exposing (linkTo, breadcrumbNavView)
+import Html.Events exposing (onInput)
+import Common.Views exposing (onPreventDefaultClick, linkTo, breadcrumbNavView)
 import CharacterCreationApp.Messages exposing (..)
 import CharacterCreationApp.Models exposing (..)
 
@@ -30,38 +30,39 @@ mainView model =
             ]
             (text "New character")
         , h1 [] [ text "New character" ]
-        , label [] [ text "Name:" ]
-        , div []
-            [ input
-                [ class "large-text-input"
-                , type_ "text"
-                , placeholder "Name"
-                , value model.characterName
-                , onInput UpdateName
+        , form [ class "vertical-form" ]
+            [ label [] [ text "Name:" ]
+            , div []
+                [ input [ class "large-text-input"
+                        , type_ "text"
+                        , placeholder "Name"
+                        , value model.characterName
+                        , onInput UpdateName
+                        ]
+                    []
                 ]
-                []
-            ]
-        , label [] [ text "Email:" ]
-        , div []
-            [ input
-                [ class "large-text-input"
-                , type_ "text"
-                , placeholder "Email"
-                , value model.playerEmail
-                , onInput UpdateEmail
+            , label [] [ text "Email:" ]
+            , div []
+                [ input
+                  [ class "large-text-input"
+                  , type_ "text"
+                  , placeholder "Email"
+                  , value model.playerEmail
+                  , onInput UpdateEmail
+                  ]
+                  []
                 ]
-                []
-            ]
-        , div [ class "btn-bar" ]
-            [ button
-                [ class "btn btn-default"
-                , onClick CreateCharacter
+            , div [ class "btn-bar" ]
+                [ button
+                    [ class "btn btn-default"
+                    , onPreventDefaultClick CreateCharacter
+                    ]
+                    [ text "Create" ]
+                , button
+                    [ class "btn"
+                    , onPreventDefaultClick CancelCreateCharacter
+                    ]
+                    [ text "Cancel" ]
                 ]
-                [ text "Create" ]
-            , button
-                [ class "btn"
-                , onClick CancelCreateCharacter
-                ]
-                [ text "Cancel" ]
             ]
         ]
