@@ -26,9 +26,9 @@ recipientView currentRecipients character =
 recipientListView : List ParticipantCharacter -> List Int -> Html Msg
 recipientListView possibleRecipients currentRecipients =
     div [ class "recipients" ]
-        ([ label [] [ text "Recipients:" ]
+        ([ text "Recipients:"
          , input [ type_ "checkbox", checked True, disabled True ] []
-         , text "Narrator"
+         , label [] [ text "Narrator" ]
          ]
             ++ List.map (recipientView currentRecipients) possibleRecipients
         )
