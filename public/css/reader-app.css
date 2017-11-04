@@ -86,7 +86,7 @@
 .chapter > p:first-child {
     padding-top: 20px;
 }
-.chapter > p:last-child {
+.chapter > p:last-child, .chapter > blockquote:last-child {
     padding-bottom: 20px;
 }
 
