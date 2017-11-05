@@ -7,7 +7,7 @@ import Html.Attributes exposing (id, name, class, href, src, target, type_, valu
 import Html.Events exposing (onClick, onInput, on)
 
 import Common.Models exposing (FullCharacter, Narration, Chapter, MediaType(..))
-import Common.Views exposing (bannerView, breadcrumbNavView, onStopPropagationClick, horizontalSpinner, messageThreadView)
+import Common.Views exposing (bannerView, breadcrumbNavView, onStopPropagationClick, horizontalSpinner, messageThreadView, showDialog)
 import Common.Views.FileSelector exposing (fileSelector)
 import ChapterEditApp.Models exposing (Model, LastChapter)
 import ChapterEditApp.Messages exposing (..)
@@ -220,30 +220,6 @@ lastReactionListView lastChapters chapter =
       ]
 
 
-showDialog : String -> String -> Msg -> String -> Msg -> Html Msg
-showDialog dialogText okText okMessage cancelText cancelMessage =
-  div [ class "dialog-overlay"
-      , onClick cancelMessage
-      ]
-    [ div [ class "dialog"
-          , onStopPropagationClick NoOp
-          ]
-        [ div [ class "dialog-text" ]
-            [ text dialogText ]
-        , div [ class "btn-bar" ]
-            [ button [ class "btn btn-small btn-default"
-                     , onClick okMessage
-                     ]
-                [ text okText ]
-            , button [ class "btn btn-small"
-                     , onClick cancelMessage
-                     ]
-                [ text cancelText ]
-            ]
-        ]
-    ]
-
-
 mainView : Model -> Html Msg
 mainView model =
   let
@@ -279,6 +255,7 @@ mainView model =
               , if model.showPublishChapterDialog then
                   showDialog
                     "Publish chapter?"
+                    NoOp
                     "Publish"
                     ConfirmPublishChapter
                     "Cancel"

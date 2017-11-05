@@ -18,5 +18,11 @@ type Msg
     | UpdateDescriptionText Json.Encode.Value
     | UpdateBackstoryText Json.Encode.Value
     | UpdatePlayerEmail String
+    | ResetCharacterToken
+    | ConfirmResetCharacterToken
+    | CancelResetCharacterToken
+    | ResetCharacterTokenResult (Result Http.Error CharacterTokenResponse)
+    | ToggleTokenInfoBox
+    | ToggleNovelTokenInfoBox
     | SaveCharacter
     | SaveCharacterResult (Result Http.Error (Http.Response String))

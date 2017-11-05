@@ -2,7 +2,7 @@ module CharacterEditApp.Api.Json exposing (..)
 
 import Json.Decode as Json exposing (..)
 import Json.Encode
-import CharacterEditApp.Models exposing (CharacterInfo, ChapterSummary, NarrationSummary)
+import CharacterEditApp.Models exposing (CharacterInfo, ChapterSummary, NarrationSummary, CharacterTokenResponse)
 
 
 parseChapterSummary : Json.Decoder ChapterSummary
@@ -34,6 +34,12 @@ parseCharacterInfo =
                     (field "description" Json.value)
                     (field "backstory" Json.value)
                     (field "narration" parseNarrationSummary))
+
+
+parseCharacterToken : Json.Decoder CharacterTokenResponse
+parseCharacterToken =
+  Json.map CharacterTokenResponse
+    (field "token" string)
 
 
 encodeCharacterUpdate : CharacterInfo -> Value

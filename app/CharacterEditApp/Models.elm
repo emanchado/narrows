@@ -30,9 +30,17 @@ type alias CharacterInfo =
     }
 
 
+type alias CharacterTokenResponse =
+    { token : String
+    }
+
+
 type alias Model =
     { characterId : Int
     , characterInfo : Maybe CharacterInfo
     , newAvatarUrl : Maybe String
+    , showResetCharacterTokenDialog : Bool
+    , showTokenInfoBox : Bool
+    , showNovelTokenInfoBox : Bool
     , banner : Maybe Banner
     }

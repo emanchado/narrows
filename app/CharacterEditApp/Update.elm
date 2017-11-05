@@ -159,6 +159,54 @@ update msg model =
         , Cmd.none
         )
 
+    ToggleTokenInfoBox ->
+      ( { model | showTokenInfoBox = not model.showTokenInfoBox }
+      , Cmd.none
+      )
+
+    ToggleNovelTokenInfoBox ->
+      ( { model | showNovelTokenInfoBox = not model.showNovelTokenInfoBox }
+      , Cmd.none
+      )
+
+    ResetCharacterToken ->
+      ( { model | showResetCharacterTokenDialog = True }
+      , Cmd.none
+      )
+
+    ConfirmResetCharacterToken ->
+      case model.characterInfo of
+        Just character ->
+          ( { model | showResetCharacterTokenDialog = False }
+          , CharacterEditApp.Api.resetCharacterToken character.id
+          )
+
+        Nothing ->
+          ( { model | showResetCharacterTokenDialog = False }, Cmd.none )
+
+    CancelResetCharacterToken ->
+      ( { model | showResetCharacterTokenDialog = False }
+      , Cmd.none
+      )
+
+    ResetCharacterTokenResult (Err error) ->
+      ( { model | banner = errorBanner "Error reset character token" }
+      , Cmd.none
+      )
+
+    ResetCharacterTokenResult (Ok newTokenResponse) ->
+      case model.characterInfo of
+        Just character ->
+          let
+            updatedCharacter = { character | token = newTokenResponse.token }
+          in
+            ( { model | characterInfo = Just updatedCharacter }
+            , Cmd.none
+            )
+
+        Nothing ->
+          ( model, Cmd.none )
+
     SaveCharacter ->
       case model.characterInfo of
         Just character ->

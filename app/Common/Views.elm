@@ -306,3 +306,27 @@ horizontalSpinner =
     , div [ class "bounce2" ] []
     , div [ class "bounce3" ] []
     ]
+
+
+showDialog : String -> msg -> String -> msg -> String -> msg -> Html msg
+showDialog dialogText noopMessage okText okMessage cancelText cancelMessage =
+  div [ class "dialog-overlay"
+      , onClick cancelMessage
+      ]
+    [ div [ class "dialog"
+          , onStopPropagationClick noopMessage
+          ]
+        [ div [ class "dialog-text" ]
+            [ text dialogText ]
+        , div [ class "btn-bar" ]
+            [ button [ class "btn btn-small btn-default"
+                     , onClick okMessage
+                     ]
+                [ text okText ]
+            , button [ class "btn btn-small"
+                     , onClick cancelMessage
+                     ]
+                [ text cancelText ]
+            ]
+        ]
+    ]

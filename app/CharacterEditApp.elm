@@ -22,6 +22,9 @@ initialState =
     { characterId = 0
     , characterInfo = Nothing
     , newAvatarUrl = Nothing
+    , showResetCharacterTokenDialog = False
+    , showTokenInfoBox = False
+    , showNovelTokenInfoBox = False
     , banner = Nothing
     }
 

@@ -1027,6 +1027,19 @@ class NarrowsStore {
         }));
     }
 
+    resetCharacterToken(characterId) {
+        const newToken = generateToken();
+
+        return Q.ninvoke(
+            this.db,
+            "run",
+            'UPDATE characters SET token = ? WHERE id = ?',
+            [newToken, characterId]
+        ).then(() => (
+            this.getCharacterInfo(newToken)
+        ));
+    }
+
     updateCharacter(characterId, props) {
         const propNames = Object.keys(props).map(convertToDb),
               propNameStrings = propNames.map(p => `${p} = ?`);

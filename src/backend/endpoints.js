@@ -708,3 +708,16 @@ export function getCharacterById(req, res) {
         });
     });
 }
+
+export function postCharacterByIdToken(req, res) {
+    const characterId = req.params.charId;
+
+    return store.resetCharacterToken(characterId).then(newCharacter => {
+        res.json(newCharacter);
+    }).catch(err => {
+        res.status(500).json({
+            errorMessage: `Could not reset character token for ` +
+                `character '${ characterId }': ${ err }`
+        });
+    });
+}

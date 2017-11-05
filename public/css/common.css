@@ -361,6 +361,27 @@ span.mention img {
     height: 50px;
 }
 
+.floating-tip {
+    margin: 5px 20px;
+    border: 2px solid #ccc;
+    padding: 10px;
+
+    font-size: 16px;
+    background-color: #ddd;
+}
+.floating-tip h3 {
+    margin: 0;
+    font-size: 18px;
+}
+.floating-tip p {
+    font-weight: normal;
+    margin-bottom: 0;
+}
+.floating-tip blockquote {
+    font-style: italic;
+    font-weight: normal;
+}
+
 /* CSS Spinner rules (from http://tobiasahlin.com/spinkit/) */
 .spinner {
   display: inline-block;

@@ -275,3 +275,8 @@ form.create-form h2 {
 
     margin-top: 5px;
 }
+
+.one-line {
+    display: flex;
+    justify-content: space-between;
+}
