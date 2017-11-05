@@ -101,26 +101,29 @@ chapterView chapter narration savingChapter uploadingAudio uploadingBackgroundIm
       else
         (SaveChapter, PublishChapter)
   in
-    section [ class "page-aside" ]
-      [ section []
-          [ input [ class "chapter-title"
-                  , type_ "text"
+    section [ class "page-aside vertical-form" ]
+      [ div [ class "form-line" ]
+          [ input [ type_ "text"
                   , placeholder "Title"
                   , value chapter.title
                   , onInput UpdateChapterTitle
                   ]
               []
-          , div [ class "participant-list" ]
-              [ label [] [ text "Participants:" ]
-              , participantListView chapter.id narration.characters chapter.participants
-              ]
           ]
-      , chapterMediaView chapter narration uploadingAudio uploadingBackgroundImage
-      , label [] [ text "Text:" ]
-      , div [ id "editor-container"
-            , class "editor-container"
-            ]
-          []
+      , div [ class "form-line participant-list" ]
+          [ label [] [ text "Participants:" ]
+          , participantListView chapter.id narration.characters chapter.participants
+          ]
+      , div [ class "form-line" ]
+        [ chapterMediaView chapter narration uploadingAudio uploadingBackgroundImage
+        ]
+      , div [ class "form-line" ]
+          [ label [] [ text "Text:" ]
+          , div [ id "editor-container"
+                , class "editor-container"
+                ]
+              []
+          ]
       , div [ class "btn-bar" ]
           [ button [ class "btn"
                    , onClick saveAction

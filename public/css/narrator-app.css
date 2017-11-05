@@ -32,15 +32,10 @@ main.page-aside section {
     flex-grow: 1;
 }
 
-.chapter-title {
-    width: 100%;
-    font-size: 20px;
-}
-
 ul.participant-list {
     display: inline-block;
 
-    margin-top: 10px;
+    margin-top: 0;
     margin-bottom: 0;
     padding-left: 0;
 
@@ -88,8 +83,6 @@ ul.participant-list li {
 .chapter-media {
     display: flex;
     justify-content: space-between;
-
-    margin: 10px 0;
 }
 
 .audio-selector select {

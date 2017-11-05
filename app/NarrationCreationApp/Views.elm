@@ -32,23 +32,22 @@ mainView model =
           (text pageTitle)
       , h1 [] [ text pageTitle ]
       , bannerView model.banner
-      , form [ class "vertical-form" ]
-          [ label [] [ text "Title:" ]
-          , div []
-              [ input
-                  [ class "large-text-input"
-                  , type_ "text"
-                  , placeholder "Title"
-                  , value model.title
-                  , onInput UpdateTitle
-                  ]
+      , form [ class "narrow-form vertical-form" ]
+          [ div [ class "form-line" ]
+              [ label [] [ text "Title:" ]
+              , input [ class "large-text-input"
+                      , type_ "text"
+                      , placeholder "Title"
+                      , value model.title
+                      , onInput UpdateTitle
+                      ]
                   []
               ]
           , case model.files of
               Just files ->
                 div []
                   [ label [] [ text "Default background image:" ]
-                  , div []
+                  , div [ class "form-line" ]
                       [ fileSelector
                           UpdateSelectedBackgroundImage
                           OpenMediaFileSelector
@@ -62,9 +61,9 @@ mainView model =
                              (\file -> (file, file))
                              files.backgroundImages)
                       ]
-                  , label [] [ text "Default audio:" ]
-                  , div []
-                      [ fileSelector
+                  , div [ class "form-line" ]
+                      [ label [] [ text "Default audio:" ]
+                      , fileSelector
                           UpdateSelectedAudio
                           OpenMediaFileSelector
                           (AddMediaFile Audio)

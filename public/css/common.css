@@ -43,7 +43,6 @@ nav.breadcrumbs {
 }
 
 label {
-    margin-top: 10px;
     font-weight: bold;
     font-size: 14px;
 }
@@ -76,14 +75,14 @@ ul li {
 .login-form {
     width: 100%;
 }
-.login-form .form-actions {
-    margin-top: 5px;
-}
-.form-line label {
+.login-form .form-line label {
     display: inline-block;
     min-width: 100px;
     text-align: right;
     margin-right: 10px;
+}
+.login-form .form-actions {
+    margin-top: 5px;
 }
 .narrow-form {
     max-width: 500px;
@@ -92,12 +91,27 @@ ul li {
     display: flex;
     flex-direction: column;
 }
+.vertical-form .form-line {
+    margin-bottom: 18px;
+}
 .vertical-form label {
-    margin-top: 20px;
     font-size: 18px;
 }
-.vertical-form label:first-child {
-    margin-top: inherit;
+.vertical-form input[type="text"], .vertical-form input[type="password"], .vertical-form input[type="email"] {
+    padding: 4px;
+    font-size: 22px;
+}
+.vertical-form input {
+    width: 100%;
+    border: 1px solid black;
+    background-color: #eee;
+}
+
+.vertical-form input[type="text"][readonly] {
+    background-color: #ddd;
+}
+.vertical-form input[type="file"] {
+    border: none;
 }
 
 #loader {
@@ -154,10 +168,6 @@ ul li {
 }
 .banner-error {
     background-color: #511;
-}
-
-.large-text-input {
-    font-size: 150%;
 }
 
 .btn-bar {
@@ -316,8 +326,9 @@ span.mention img {
 .editor-container {
     width: 100%;
     margin: 0;
-    margin-bottom: 15px;
     border: 1px solid black;
+
+    background-color: #eee;
 }
 
 .editor-container .ProseMirror {

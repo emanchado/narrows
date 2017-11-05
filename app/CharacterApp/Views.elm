@@ -75,7 +75,7 @@ mainView model =
                   , label [] [ text "Name" ]
                   , div []
                       [ input [ type_ "text"
-                              , class "character-name editor-container"
+                              , class "character-name"
                               , value characterInfo.name
                               , onInput UpdateCharacterName
                               ]

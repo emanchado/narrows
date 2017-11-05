@@ -58,7 +58,7 @@ mainView model =
                 [ case model.characterInfo of
                   Just characterInfo ->
                     div []
-                      [ div [ class "avatars" ]
+                      [ div [ class "avatars form-line" ]
                           [ div [ class "current-avatar" ]
                               [ img [ src <| avatarUrl characterInfo.narration.id characterInfo.avatar ] []
                               ]
@@ -78,10 +78,10 @@ mainView model =
                                   []
                               ]
                           ]
-                      , label [] [ text "Name" ]
-                      , div []
-                          [ input [ type_ "text"
-                                  , class "character-name editor-container"
+                      , div [ class "form-line" ]
+                          [ label [] [ text "Name" ]
+                          , input [ type_ "text"
+                                  , class "character-name"
                                   , value characterInfo.name
                                   , onInput UpdateCharacterName
                                   ]
@@ -91,14 +91,18 @@ mainView model =
 
                   Nothing ->
                     text "Loading…"
-                , label [] [ text "Description (public)" ]
-                , div [ id "description-editor"
-                      , class "editor-container"
-                      ] []
-                , label [] [ text "Backstory (private)" ]
-                , div [ id "backstory-editor"
-                      , class "editor-container"
-                      ] []
+                , div [ class "form-line" ]
+                    [ label [] [ text "Description (public)" ]
+                    , div [ id "description-editor"
+                          , class "editor-container"
+                          ] []
+                    ]
+                , div [ class "form-line" ]
+                    [ label [] [ text "Backstory (private)" ]
+                    , div [ id "backstory-editor"
+                          , class "editor-container"
+                          ] []
+                    ]
                 , div [ class "btn-bar" ]
                     [ button
                       [ class "btn btn-default"
@@ -112,9 +116,9 @@ mainView model =
             [ case model.characterInfo of
                 Just characterInfo ->
                   div [ class "vertical-form" ]
-                    [ label [] [ text "Player" ]
-                    , div []
-                        [ input [ class "large-text-input"
+                    [ div [ class "form-line" ]
+                        [ label [] [ text "Player" ]
+                        , input [ class "large-text-input"
                                 , type_ "email"
                                 , size 36
                                 , value characterInfo.email
@@ -122,37 +126,39 @@ mainView model =
                                 ]
                             []
                         ]
-                    , label [] [ text "Character token" ]
-                    , div []
-                        [ input [ readonly True
+                    , div [ class "form-line" ]
+                        [ label [] [ text "Character token" ]
+                        , input [ readonly True
                                 , class "large-text-input"
+                                , type_ "text"
                                 , size 36
                                 , value characterInfo.token
                                 ]
                             []
+                        , div []
+                            [ text "See "
+                            , a [ href <| "/characters/" ++ characterInfo.token ]
+                              [ text characterInfo.name ]
+                            , text " from the player's perspective."
+                            ]
                         ]
-                    , div []
-                        [ text "See "
-                        , a [ href <| "/characters/" ++ characterInfo.token ]
-                            [ text characterInfo.name ]
-                        , text " from the player's perspective."
-                        ]
-                    , label [] [ text "Character novel token" ]
-                    , div []
-                        [ input [ readonly True
+                    , div [ class "form-line" ]
+                        [ label [] [ text "Character novel token" ]
+                        , input [ readonly True
                                 , class "large-text-input"
+                                , type_ "text"
                                 , size 36
                                 , value characterInfo.novelToken
                                 ]
                             []
-                        ]
-                    , span []
-                        [ text "Read the "
-                        , a [ href <| "/novels/" ++ characterInfo.novelToken ]
-                            [ text characterInfo.narration.title ]
-                        , text " "
-                        , em [] [ text "novel" ]
-                        , text " from this character’s point of view. "
+                        , span []
+                            [ text "Read the "
+                            , a [ href <| "/novels/" ++ characterInfo.novelToken ]
+                              [ text characterInfo.narration.title ]
+                            , text " "
+                            , em [] [ text "novel" ]
+                            , text " from this character’s point of view. "
+                            ]
                         ]
                     ]
 

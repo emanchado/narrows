@@ -1,7 +1,7 @@
 module CharacterCreationApp.Views exposing (..)
 
 import Html exposing (Html, main_, h1, h2, div, form, input, label, button, ul, li, a, text)
-import Html.Attributes exposing (id, class, href, type_, placeholder, value)
+import Html.Attributes exposing (id, class, href, type_, placeholder, for, value)
 import Html.Events exposing (onInput)
 import Common.Views exposing (onPreventDefaultClick, linkTo, breadcrumbNavView)
 import CharacterCreationApp.Messages exposing (..)
@@ -30,27 +30,25 @@ mainView model =
             ]
             (text "New character")
         , h1 [] [ text "New character" ]
-        , form [ class "vertical-form" ]
-            [ label [] [ text "Name:" ]
-            , div []
-                [ input [ class "large-text-input"
-                        , type_ "text"
+        , form [ class "narrow-form vertical-form" ]
+            [ div [ class "form-line" ]
+                [ label [] [ text "Name:" ]
+                , input [ type_ "text"
                         , placeholder "Name"
                         , value model.characterName
                         , onInput UpdateName
                         ]
                     []
                 ]
-            , label [] [ text "Email:" ]
-            , div []
-                [ input
-                  [ class "large-text-input"
-                  , type_ "text"
-                  , placeholder "Email"
-                  , value model.playerEmail
-                  , onInput UpdateEmail
-                  ]
-                  []
+            , div [ class "form-line" ]
+                [ label [ for "email" ] [ text "Email:" ]
+                , input [ id "email"
+                        , type_ "text"
+                        , placeholder "Email"
+                        , value model.playerEmail
+                        , onInput UpdateEmail
+                        ]
+                    []
                 ]
             , div [ class "btn-bar" ]
                 [ button
