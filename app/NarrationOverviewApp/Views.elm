@@ -7,7 +7,7 @@ import Html.Events exposing (onClick)
 import Common.Models exposing (Narration, NarrationStatus(..), ChapterOverview, NarrationOverview, FullCharacter, narrationStatusString)
 import Common.Views exposing (linkTo, breadcrumbNavView, narrationOverviewView, loadingView, ribbonForNarrationStatus)
 import NarrationOverviewApp.Messages exposing (..)
-import NarrationOverviewApp.Models exposing (Model, NarrationNovel)
+import NarrationOverviewApp.Models exposing (Model)
 
 
 narrationCharacterView : Narration -> FullCharacter -> Html Msg
@@ -32,13 +32,6 @@ narrationCharacterView narration character =
                     NavigateTo
                     ("/characters/" ++ (toString character.id) ++ "/edit")))
               [ text character.name ]
-          , text " ("
-          , a [ href <| "/novels/" ++ character.novelToken
-              , title <| "“" ++ narration.title ++ "” novel from " ++
-                  character.name ++ "’s point of view"
-              ]
-              [ text "novel" ]
-          , text ")"
           ]
       ]
 
