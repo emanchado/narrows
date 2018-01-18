@@ -559,8 +559,6 @@ export function putCharacterById(req, res) {
         ["name", "description", "backstory", "notes"]
     );
 
-    console.log("newProps =", newProps);
-
     return store.updateCharacter(characterId, newProps).then(newCharacter => {
         if (!req.body.email) {
             return newCharacter;

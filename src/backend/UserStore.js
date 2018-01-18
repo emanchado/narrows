@@ -35,7 +35,7 @@ class UserStore {
             this.db,
             "query",
             "SELECT id, password FROM users WHERE email = ?",
-            email
+            email.trim()
         ).spread(userRows => {
             if (userRows.length === 0) {
                 return false;
@@ -83,7 +83,7 @@ class UserStore {
             this.db,
             "query",
             `SELECT id, email, role FROM users WHERE email = ?`,
-            email
+            email.trim()
         ).spread(userRows => {
             if (userRows.length === 0) {
                 throw new Error(`Cannot find user with e-mail ${ email }`);
@@ -138,6 +138,7 @@ class UserStore {
         }
 
         const fields = Object.keys(props).map(convertToDb);
+        props.email = props.email.trim();
 
         this.db.query(
             `INSERT INTO users (${ fields.join(", ") })

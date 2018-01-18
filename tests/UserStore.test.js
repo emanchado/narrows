@@ -37,7 +37,46 @@ test.serial("can create users with a given password", t => {
         password: password
     }).then(user => (
         t.context.store.authenticate(email, password).then(userId => (
-            t.truthy(user.id, userId)
+            t.is(user.id, userId)
+        ))
+    ));
+});
+
+test.serial("ignores spaces when creating users", t => {
+    const email = "willaddspaces@example.com", password = "whatevs";
+
+    return t.context.store.createUser({
+        email: ` ${email}`,
+        password: password
+    }).then(user => (
+        t.context.store.authenticate(email, password).then(userId => (
+            t.is(user.id, userId)
+        ))
+    ));
+});
+
+test.serial("ignores spaces when searching for users", t => {
+    const email = "ignorewhensearching@example.com", password = "whatevs";
+
+    return t.context.store.createUser({
+        email: `             ${email}         `,
+        password: password
+    }).then(user => (
+        t.context.store.getUserByEmail(` ${email}  `).then(foundUser => (
+            t.is(user.id, foundUser.id)
+        ))
+    ));
+});
+
+test.serial("ignores spaces when authenticating users", t => {
+    const email = "ignorewhenauthenticating@example.com", password = "whatevs";
+
+    return t.context.store.createUser({
+        email: email,
+        password: password
+    }).then(user => (
+        t.context.store.authenticate(` ${email}  `, password).then(userId => (
+            t.is(user.id, userId)
         ))
     ));
 });
@@ -51,7 +90,7 @@ test.serial("can change a user's password", t => {
     }).then(user => (
         t.context.store.updateUser(user.id, { password: "foo" }).then(() => (
             t.context.store.authenticate(email, "foo").then(userId => (
-                t.truthy(user.id, userId)
+                t.is(user.id, userId)
             ))
         ))
     ));
@@ -66,7 +105,7 @@ test.serial("setting empty password doesn't change it", t => {
     }).then(user => (
         t.context.store.updateUser(user.id, { password: "" }).then(() => (
             t.context.store.authenticate(email, password).then(userId => (
-                t.truthy(user.id, userId)
+                t.is(user.id, userId)
             ))
         ))
     ));
