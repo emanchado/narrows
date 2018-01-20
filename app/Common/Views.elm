@@ -1,6 +1,7 @@
 module Common.Views exposing (..)
 
 import String
+import Regex exposing (HowMany(All), regex)
 import Json.Decode
 import Html exposing (Html, h2, div, nav, textarea, button, span, ul, li, img, a, em, strong, text)
 import Html.Attributes exposing (class, rows, value, disabled, href, src, title)
@@ -24,6 +25,41 @@ onStopPropagationClick message =
     (Json.Decode.succeed message)
 
 
+-- This regex cannot have capture groups, as they trigger a very weird
+-- bug in Regex.split.
+linkRegex : Regex.Regex
+linkRegex = regex <|
+            "https?://[a-z0-9.-]+(?::[0-9]+)?" ++       -- Protocol/host
+            "(?:/(?:[,.]*[a-z0-9/&%_+-]+)*)?" ++        -- URL path
+            "(?:\\?(?:[a-z0-9]*=[a-z0-9%_-]*&?)+)?" ++  -- Query parameters
+            "(?:#[a-z0-9_-]*)?"                         -- Anchor
+
+
+interleave : List a -> List a -> List a
+interleave list1 list2 =
+  case list1 of
+    []      -> list2
+    x :: xs ->
+      case list2 of
+        []      -> list1
+        y :: ys -> y :: x :: interleave xs ys
+
+
+linkify : String -> List (Html msg)
+linkify message =
+   let
+     links =
+       List.map
+         (\{match} -> a [ href match ] [ text match ])
+         <| Regex.find All linkRegex message
+     textChunks =
+       List.map
+         text
+         <| Regex.split All linkRegex message
+   in
+     interleave links textChunks
+
+
 messageView : Message -> Html msg
 messageView message =
   div [ class "message" ]
@@ -37,7 +73,7 @@ messageView message =
                       Just sender -> ""
                       Nothing -> "narrator")
            ]
-        [ text message.body ]
+        (linkify message.body)
     ]
 
 
