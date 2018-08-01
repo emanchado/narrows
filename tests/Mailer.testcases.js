@@ -3,6 +3,18 @@ import Q from "q";
 
 import Mailer from "../src/backend/Mailer";
 
+function sendMailCallOrderer(a, b) {
+    if (a.recipient > b.recipient) {
+        return 1;
+    }
+
+    if (a.recipient < b.recipient) {
+        return -1;
+    }
+
+    return 0;
+}
+
 export default function testcases(test, stash) {
     test.serial("can send a message from character to many characters", t => {
         const narrationId = t.context.testNarration.id;
@@ -24,7 +36,6 @@ export default function testcases(test, stash) {
 
             const message = "First message";
             return Q.all([
-                stash.store.getCharacterTokenById(t.context.characterId1),
                 stash.store.getCharacterTokenById(t.context.characterId2),
                 stash.store.getCharacterTokenById(t.context.characterId3),
                 mailer.messagePosted({
@@ -35,38 +46,40 @@ export default function testcases(test, stash) {
                              name: stash.characterName1},
                     text: message
                 })
-            ]).spread((charToken1, charToken2, charToken3, _) => {
-                const expectedSubject =
-                      `${stash.characterName1} sent a message in "Intro"`;
-                t.is(sendMailCalls.length, 3);
-                t.deepEqual(
-                    sendMailCalls.map(c => c.template),
-                    ["messagePosted", "messagePosted", "messagePosted"]
-                );
+           ]).spread((charToken2, charToken3, _) => {
+               const expectedSubject =
+                     `${stash.characterName1} sent a message in "Intro"`;
+               t.is(sendMailCalls.length, 3);
+               t.deepEqual(
+                   sendMailCalls.map(c => c.template),
+                   ["messagePosted", "messagePosted", "messagePosted"]
+               );
 
-                t.is(sendMailCalls[0].recipient, stash.userEmail2);
-                t.is(sendMailCalls[0].subject, expectedSubject);
-                t.is(sendMailCalls[0].stash.messageText, message);
-                t.is(sendMailCalls[0].stash.chapterUrl,
-                     `${config.publicAddress}/read/${chapter.id}/${charToken2}`);
-                t.is(sendMailCalls[0].stash.recipientListString,
-                     `${stash.characterName3}, the narrator, and you`);
+               const orderedCalls = sendMailCalls.sort(sendMailCallOrderer);
 
-                t.is(sendMailCalls[1].recipient, stash.userEmail3);
-                t.is(sendMailCalls[1].subject, expectedSubject);
-                t.is(sendMailCalls[1].stash.messageText, message);
-                t.is(sendMailCalls[1].stash.chapterUrl,
-                     `${config.publicAddress}/read/${chapter.id}/${charToken3}`);
-                t.is(sendMailCalls[1].stash.recipientListString,
-                     `${stash.characterName2}, the narrator, and you`);
+               t.is(orderedCalls[0].recipient, stash.narratorEmail);
+               t.is(orderedCalls[0].subject, expectedSubject);
+               t.is(orderedCalls[0].stash.messageText, message);
+               t.is(orderedCalls[0].stash.chapterUrl,
+                    `${config.publicAddress}/chapters/${chapter.id}`);
+               t.is(orderedCalls[0].stash.recipientListString,
+                    `${stash.characterName2}, ${stash.characterName3}, and you`);
 
-                t.is(sendMailCalls[2].recipient, stash.narratorEmail);
-                t.is(sendMailCalls[2].subject, expectedSubject);
-                t.is(sendMailCalls[2].stash.messageText, message);
-                t.is(sendMailCalls[2].stash.chapterUrl,
-                     `${config.publicAddress}/chapters/${chapter.id}`);
-                t.is(sendMailCalls[2].stash.recipientListString,
-                     `${stash.characterName2}, ${stash.characterName3}, and you`);
+               t.is(orderedCalls[1].recipient, stash.userEmail2);
+               t.is(orderedCalls[1].subject, expectedSubject);
+               t.is(orderedCalls[1].stash.messageText, message);
+               t.is(orderedCalls[1].stash.chapterUrl,
+                    `${config.publicAddress}/read/${chapter.id}/${charToken2}`);
+               t.is(orderedCalls[1].stash.recipientListString,
+                    `${stash.characterName3}, the narrator, and you`);
+
+               t.is(orderedCalls[2].recipient, stash.userEmail3);
+               t.is(orderedCalls[2].subject, expectedSubject);
+               t.is(orderedCalls[2].stash.messageText, message);
+               t.is(orderedCalls[2].stash.chapterUrl,
+                    `${config.publicAddress}/read/${chapter.id}/${charToken3}`);
+               t.is(orderedCalls[2].stash.recipientListString,
+                    `${stash.characterName2}, the narrator, and you`);
             });
         });
     });
@@ -132,15 +145,17 @@ export default function testcases(test, stash) {
                       `${stash.characterName1} sent a message in "Intro"`;
                 t.is(sendMailCalls.length, 2);
 
-                t.is(sendMailCalls[0].recipient, stash.userEmail2);
-                t.is(sendMailCalls[0].subject, expectedSubject);
-                t.is(sendMailCalls[0].stash.recipientListString,
-                     "the narrator and you");
+                const orderedCalls = sendMailCalls.sort(sendMailCallOrderer);
 
-                t.is(sendMailCalls[1].recipient, stash.narratorEmail);
-                t.is(sendMailCalls[1].subject, expectedSubject);
-                t.is(sendMailCalls[1].stash.recipientListString,
+                t.is(orderedCalls[0].recipient, stash.narratorEmail);
+                t.is(orderedCalls[0].subject, expectedSubject);
+                t.is(orderedCalls[0].stash.recipientListString,
                      `${stash.characterName2} and you`);
+
+                t.is(orderedCalls[1].recipient, stash.userEmail2);
+                t.is(orderedCalls[1].subject, expectedSubject);
+                t.is(orderedCalls[1].stash.recipientListString,
+                     "the narrator and you");
             });
         });
     });
@@ -202,14 +217,16 @@ export default function testcases(test, stash) {
                 const expectedSubject = `Narrator sent a message in "Intro"`;
                 t.is(sendMailCalls.length, 2);
 
-                t.is(sendMailCalls[0].recipient, stash.userEmail1);
-                t.is(sendMailCalls[0].subject, expectedSubject);
-                t.is(sendMailCalls[0].stash.recipientListString,
+                const orderedCalls = sendMailCalls.sort(sendMailCallOrderer);
+
+                t.is(orderedCalls[0].recipient, stash.userEmail1);
+                t.is(orderedCalls[0].subject, expectedSubject);
+                t.is(orderedCalls[0].stash.recipientListString,
                      `${stash.characterName2} and you`);
 
-                t.is(sendMailCalls[1].recipient, stash.userEmail2);
-                t.is(sendMailCalls[1].subject, expectedSubject);
-                t.is(sendMailCalls[1].stash.recipientListString,
+                t.is(orderedCalls[1].recipient, stash.userEmail2);
+                t.is(orderedCalls[1].subject, expectedSubject);
+                t.is(orderedCalls[1].stash.recipientListString,
                      `${stash.characterName1} and you`);
             });
         });
