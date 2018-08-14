@@ -1,10 +1,11 @@
 module CharacterEditApp.Views exposing (mainView)
 
 import Html exposing (Html, main_, section, h2, h3, div, span, ul, li, img, input, button, a, label, em, text)
-import Html.Attributes exposing (id, class, for, src, href, type_, value, checked, readonly, size)
+import Html.Attributes exposing (id, class, for, src, href, type_, value, checked, readonly, size, disabled, title)
 import Html.Events exposing (onClick, onInput, on)
 
 import Json.Decode
+import ISO8601
 
 import Common.Views exposing (breadcrumbNavView, bannerView, linkTo, showDialog)
 import CharacterEditApp.Models exposing (Model, CharacterInfo, ChapterSummary)
@@ -30,6 +31,13 @@ chapterParticipation characterToken chapter =
       )
       [ text chapter.title ]
     ]
+
+
+formatDate : ISO8601.Time -> String
+formatDate time =
+  (toString <| ISO8601.day time) ++ "/" ++ (toString <| ISO8601.month time) ++
+    "/" ++ (toString <| ISO8601.year time) ++ " at " ++
+    (toString <| ISO8601.hour time) ++ ":" ++ (toString <| ISO8601.minute time)
 
 
 mainView : Model -> Html Msg
@@ -118,13 +126,31 @@ mainView model =
                   div [ class "vertical-form" ]
                     [ div [ class "form-line" ]
                         [ label [] [ text "Player" ]
-                        , input [ class "large-text-input"
-                                , type_ "email"
-                                , size 36
-                                , value characterInfo.email
-                                , onInput UpdatePlayerEmail
+                        , div [ class "one-line" ]
+                            [ input [ class "large-text-input"
+                                    , type_ "email"
+                                    , size 36
+                                    , value characterInfo.email
+                                    , onInput UpdatePlayerEmail
+                                    ]
+                                []
+                            , button [ class "btn"
+                                     , onClick (SendIntroEmail characterInfo.email)
+                                     , disabled model.sendingIntroEmail
+                                     ]
+                                [ text <| case characterInfo.introSent of
+                                            Just _ -> "Resend"
+                                            Nothing -> "Send"
                                 ]
-                            []
+                            ]
+                        , div []
+                            (case characterInfo.introSent of
+                               Just when ->
+                                 [ span [ title <| "Sent at " ++ (formatDate when) ]
+                                     [ text <| "Intro e-mail sent." ]
+                                 ]
+                               Nothing ->
+                                 [ text "Intro e-mail not sent." ])
                         ]
                     , div [ class "form-line" ]
                         [ label [] [ text "Character token" ]

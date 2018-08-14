@@ -1,7 +1,7 @@
 module CharacterEditApp.Api exposing (..)
 
 import Http
-import CharacterEditApp.Api.Json exposing (parseCharacterInfo, parseCharacterToken, encodeCharacterUpdate)
+import CharacterEditApp.Api.Json exposing (parseCharacterInfo, parseCharacterToken, parseSendIntroResponse, encodeCharacterUpdate)
 import CharacterEditApp.Messages exposing (Msg, Msg(..))
 import CharacterEditApp.Models exposing (CharacterInfo)
 
@@ -22,6 +22,15 @@ resetCharacterToken characterId =
       ("/api/characters/by-id/" ++ (toString characterId) ++ "/token")
       Http.emptyBody
       parseCharacterToken
+
+
+sendIntroEmail : Int -> Cmd Msg
+sendIntroEmail characterId =
+  Http.send SendIntroEmailResult <|
+    Http.post
+      ("/api/characters/by-id/" ++ (toString characterId) ++ "/intro-email")
+      Http.emptyBody
+      parseSendIntroResponse
 
 
 saveCharacter : Int -> CharacterInfo -> Cmd Msg

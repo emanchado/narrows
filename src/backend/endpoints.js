@@ -719,3 +719,44 @@ export function postCharacterByIdToken(req, res) {
         });
     });
 }
+
+export function postCharacterByIdIntroEmail(req, res) {
+    const characterId = req.params.charId,
+          dateNow = new Date();
+
+    return store.updateCharacter(characterId, { introSent: dateNow }).then(character => {
+        mailer.characterIntroEmail(character);
+        res.json({ sendIntroDate: character.introSent });
+    }).catch(err => {
+        res.status(500).json({
+            errorMessage: `Could not send character intro e-mail for ` +
+                `character '${ characterId }': ${ err }`
+        });
+    });
+}
+
+export function postNarrationIntroEmails(req, res) {
+    const narrationId = req.params.narrId,
+          dateNow = new Date();
+
+    return store.getUnintroducedCharacters(narrationId).then(characterIds => (
+        Q.all(
+            characterIds.map(id => store.updateCharacter(id, { introSent: dateNow }).then(character => {
+                mailer.characterIntroEmail(character);
+                return id;
+            }))
+        )
+    )).then(characterIds => {
+        const results = { characters: {} };
+        characterIds.forEach(characterId => {
+            results.characters[characterId] = { sendIntroDate: dateNow };
+        });
+
+        res.json(results);
+    }).catch(err => {
+        res.status(500).json({
+            errorMessage: `Could not send character intro e-mails for ` +
+                `narration '${ narrationId }': ${ err }`
+        });
+    });
+}

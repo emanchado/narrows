@@ -1,6 +1,7 @@
 module Common.Api.Json exposing (..)
 
 import Json.Decode as Json exposing (..)
+import ISO8601
 import Common.Models exposing (Character, FullCharacter, Narration, NarrationStatus(..), Chapter, FileSet, ChapterMessages, MessageThread, Message, ChapterOverview, NarrationOverview, UserInfo)
 
 
@@ -14,15 +15,30 @@ parseCharacter =
     Json.map2 Character (field "id" int) (field "name" string)
 
 
+parseIso8601Date : Json.Decoder ISO8601.Time
+parseIso8601Date =
+  let
+    convert : String -> Decoder ISO8601.Time
+    convert stringTimestamp =
+      case ISO8601.fromString stringTimestamp of
+        Ok iso8601Time ->
+          succeed iso8601Time
+        Err message ->
+          fail <| "Cannot parse timestamp '" ++ stringTimestamp ++ "': " ++ message
+  in
+    string |> andThen convert
+
+
 parseFullCharacter : Json.Decoder FullCharacter
 parseFullCharacter =
-    Json.map6 FullCharacter
+    Json.map7 FullCharacter
       (field "id" int)
       (field "name" string)
       (field "email" string)
       (field "token" string)
       (field "novelToken" string)
       (maybe (field "avatar" string))
+      (maybe (field "introSent" parseIso8601Date))
 
 
 parseFileSet : Json.Decoder FileSet

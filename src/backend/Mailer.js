@@ -31,6 +31,10 @@ class Mailer {
         return `${config.publicAddress}/chapters/${chapterId}`;
     }
 
+    characterUrlFor(characterToken) {
+        return `${config.publicAddress}/characters/${characterToken}`;
+    }
+
     passwordResetLink(passwordResetToken) {
         return `${config.publicAddress}/password-reset/${passwordResetToken}`;
     }
@@ -145,9 +149,20 @@ class Mailer {
         this.sendMail(
             "passwordReset",
             email,
-            `NARROWS password reset`,
+            'NARROWS password reset',
             {email: email,
              passwordResetLink: this.passwordResetLink(passwordResetToken)}
+        );
+    }
+
+    characterIntroEmail(character) {
+        this.sendMail(
+            "characterIntro",
+            character.email,
+            'Welcome to the storytelling system NARROWS',
+            {narrationTitle: character.narration.title,
+             characterName: character.name,
+             characterSheetLink: this.characterUrlFor(character.token)}
         );
     }
 };

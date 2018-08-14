@@ -2,6 +2,7 @@ module Common.Models exposing (..)
 
 import Json.Decode
 import Json.Encode
+import ISO8601
 
 
 loadingPlaceholderChapter : Chapter
@@ -75,6 +76,7 @@ type alias FullCharacter =
     , token : String
     , novelToken : String
     , avatar : Maybe String
+    , introSent : Maybe ISO8601.Time
     }
 
 

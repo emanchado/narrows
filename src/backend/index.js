@@ -45,6 +45,7 @@ app.post("/api/narrations/:narrId/background-images", middlewares.apiAuth, endpo
 app.post("/api/narrations/:narrId/audio", middlewares.apiAuth, endpoints.postNarrationAudio);
 app.post("/api/narrations/:narrId/characters", middlewares.apiAuth, endpoints.postNarrationCharacters);
 app.get("/api/narrations/:narrId/last-reactions", middlewares.apiAuth, endpoints.getNarrationLastReactions);
+app.post("/api/narrations/:narrId/intro-emails", middlewares.apiAuth, endpoints.postNarrationIntroEmails);
 
 app.get("/api/chapters/:chptId", middlewares.apiAuth, endpoints.getChapter);
 app.put("/api/chapters/:chptId", middlewares.apiAuth, endpoints.putChapter);
@@ -56,6 +57,7 @@ app.put("/api/users/:userId", endpoints.putUser);
 app.get("/api/characters/by-id/:charId", endpoints.getCharacterById);
 app.put("/api/characters/by-id/:charId", endpoints.putCharacterById);
 app.post("/api/characters/by-id/:charId/token", endpoints.postCharacterByIdToken);
+app.post("/api/characters/by-id/:charId/intro-email", endpoints.postCharacterByIdIntroEmail);
 
 // These endpoints are only for admins!
 app.get("/api/users", middlewares.apiAdminAuth, endpoints.getUsers);

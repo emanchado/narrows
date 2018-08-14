@@ -21,6 +21,7 @@ const JSON_TO_DB = {
     name: "name",
     description: "description",
     backstory: "backstory",
+    introSent: "intro_sent",
     playerId: "player_id"
 };
 
@@ -164,7 +165,8 @@ class NarrowsStore {
             this.db,
             "all",
             `SELECT characters.id, name, email, token,
-                    novel_token AS novelToken, avatar
+                    novel_token AS novelToken, intro_sent AS introSent,
+                    avatar
                FROM characters
                JOIN users
                  ON characters.player_id = users.id
@@ -999,7 +1001,8 @@ class NarrowsStore {
                 this.db,
                 "get",
                 `SELECT C.id, C.name, C.token, C.avatar, C.description,
-                        C.backstory, C.novel_token AS novelToken, U.email,
+                        C.backstory, C.novel_token AS novelToken,
+                        C.intro_sent AS introSent, U.email,
                         N.id AS narrationId, N.title AS narrationTitle
                    FROM characters C
                    JOIN narrations N
@@ -1017,6 +1020,7 @@ class NarrowsStore {
                 name: basicStats.name,
                 avatar: basicStats.avatar,
                 novelToken: basicStats.novelToken,
+                introSent: basicStats.introSent,
                 description: JSON.parse(basicStats.description),
                 backstory: JSON.parse(basicStats.backstory),
                 narration: {
@@ -1108,6 +1112,20 @@ class NarrowsStore {
 
             return results[0];
         });
+    }
+
+    getUnintroducedCharacters(narrationId) {
+        return Q.ninvoke(
+            this.db,
+            "query",
+            `SELECT id
+               FROM characters
+              WHERE narration_id = ?
+                AND intro_sent IS NULL`,
+            narrationId
+        ).spread(results => (
+            results.map(result => result.id)
+        ));
     }
 }
 

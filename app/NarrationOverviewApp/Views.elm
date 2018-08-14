@@ -32,8 +32,24 @@ narrationCharacterView narration character =
                     NavigateTo
                     ("/characters/" ++ (toString character.id) ++ "/edit")))
               [ text character.name ]
+          , case character.introSent of
+              Just _ ->
+                text ""
+              Nothing ->
+                span []
+                  [ text " — "
+                  , img [ src "/img/blocked.png"
+                        , title "Intro e-mail not sent yet to the player"
+                        ]
+                      []
+                  ]
           ]
       ]
+
+
+someIntroEmailPending : List FullCharacter -> Bool
+someIntroEmailPending characterList =
+  List.any (\c -> c.introSent == Nothing) characterList
 
 
 overviewView : NarrationOverview -> Html Msg
@@ -82,6 +98,15 @@ overviewView overview =
               , characterOptions
               , ul [ class "dramatis-personae compact" ]
                   (List.map (narrationCharacterView overview.narration) overview.narration.characters)
+              , if someIntroEmailPending overview.narration.characters then
+                  span []
+                    [ button [ class "btn"
+                             , onClick SendPendingIntroEmails
+                             ]
+                        [ text "Send pending intro e-mails" ]
+                    ]
+                else
+                  text ""
               , h2 [] [ text "Status" ]
               , div [ class "narration-status" ]
                   [ input [ type_ "radio"

@@ -1,6 +1,7 @@
 module CharacterEditApp.Models exposing (..)
 
 import Json.Decode
+import ISO8601
 import Common.Models exposing (Character, Banner)
 
 
@@ -24,6 +25,7 @@ type alias CharacterInfo =
     , name : String
     , avatar : Maybe String
     , novelToken : String
+    , introSent : Maybe ISO8601.Time
     , description : Json.Decode.Value
     , backstory : Json.Decode.Value
     , narration : NarrationSummary
@@ -35,6 +37,11 @@ type alias CharacterTokenResponse =
     }
 
 
+type alias SendIntroEmailResponse =
+    { introSentDate : ISO8601.Time
+    }
+
+
 type alias Model =
     { characterId : Int
     , characterInfo : Maybe CharacterInfo
@@ -42,5 +49,6 @@ type alias Model =
     , showResetCharacterTokenDialog : Bool
     , showTokenInfoBox : Bool
     , showNovelTokenInfoBox : Bool
+    , sendingIntroEmail : Bool
     , banner : Maybe Banner
     }

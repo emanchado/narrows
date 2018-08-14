@@ -19,6 +19,7 @@ type alias Msg =
 initialState : Model
 initialState =
     { narrationOverview = Nothing
+    , sendingPendingIntroEmails = False
     , banner = Nothing
     }
 

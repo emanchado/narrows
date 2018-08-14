@@ -2,7 +2,8 @@ module CharacterEditApp.Api.Json exposing (..)
 
 import Json.Decode as Json exposing (..)
 import Json.Encode
-import CharacterEditApp.Models exposing (CharacterInfo, ChapterSummary, NarrationSummary, CharacterTokenResponse)
+import Common.Api.Json exposing (parseIso8601Date)
+import CharacterEditApp.Models exposing (CharacterInfo, ChapterSummary, NarrationSummary, CharacterTokenResponse, SendIntroEmailResponse)
 
 
 parseChapterSummary : Json.Decoder ChapterSummary
@@ -22,15 +23,16 @@ parseNarrationSummary =
 
 parseCharacterInfo : Json.Decoder CharacterInfo
 parseCharacterInfo =
-    Json.map CharacterInfo
+    Json.map2 CharacterInfo
       (field "id" int)
+      (field "token" string)
     |> andThen (\r ->
                   Json.map8 r
-                    (field "token" string)
                     (field "email" string)
                     (field "name" string)
                     (maybe (field "avatar" string))
                     (field "novelToken" string)
+                    (maybe (field "introSent" parseIso8601Date))
                     (field "description" Json.value)
                     (field "backstory" Json.value)
                     (field "narration" parseNarrationSummary))
@@ -40,6 +42,12 @@ parseCharacterToken : Json.Decoder CharacterTokenResponse
 parseCharacterToken =
   Json.map CharacterTokenResponse
     (field "token" string)
+
+
+parseSendIntroResponse : Json.Decoder SendIntroEmailResponse
+parseSendIntroResponse =
+  Json.map SendIntroEmailResponse
+    (field "sendIntroDate" parseIso8601Date)
 
 
 encodeCharacterUpdate : CharacterInfo -> Value

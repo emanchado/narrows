@@ -5,9 +5,9 @@ import Json.Decode as Json exposing (..)
 import Json.Encode
 
 import Common.Models exposing (NarrationStatus, narrationStatusString)
-import Common.Api.Json exposing (parseNarrationOverview, parseNarration)
+import Common.Api.Json exposing (parseNarrationOverview, parseNarration, parseIso8601Date)
 import NarrationOverviewApp.Messages exposing (Msg, Msg(..))
-import NarrationOverviewApp.Models exposing (NarrationNovel)
+import NarrationOverviewApp.Models exposing (NarrationNovel, SendPendingIntroEmailsResponse, SendIntroDate)
 
 parseNarrationNovel : Json.Decoder NarrationNovel
 parseNarrationNovel =
@@ -44,3 +44,21 @@ markNarration narrationId status =
                  , timeout = Nothing
                  , withCredentials = False
                  }
+
+parseSendIntroDate : Json.Decoder SendIntroDate
+parseSendIntroDate =
+  Json.map SendIntroDate
+    (field "sendIntroDate" parseIso8601Date)
+
+parseSendPendingIntroEmailsResponse : Json.Decoder SendPendingIntroEmailsResponse
+parseSendPendingIntroEmailsResponse =
+  Json.map SendPendingIntroEmailsResponse
+    (field "characters" (dict parseSendIntroDate))
+
+sendPendingIntroEmails : Int -> Cmd Msg
+sendPendingIntroEmails narrationId =
+  Http.send SendPendingIntroEmailsResult <|
+    Http.post
+      ("/api/narrations/" ++ (toString narrationId) ++ "/intro-emails")
+      Http.emptyBody
+      parseSendPendingIntroEmailsResponse
