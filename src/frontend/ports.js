@@ -27,7 +27,8 @@ app.ports.renderText.subscribe(evt => {
             return;
         }
         elem.innerHTML = "";
-        elem.appendChild(editor.exportTextToDOM(evt.text, schemas.chapter));
+        elem.appendChild(editor.exportTextToDOM(evt.text,
+                                                schemas[evt.proseMirrorType]));
     });
 });
 
