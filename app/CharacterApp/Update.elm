@@ -4,7 +4,7 @@ import Http
 import Navigation
 import Core.Routes exposing (Route(..))
 import Common.Models exposing (errorBanner, successBanner)
-import Common.Ports exposing (initEditor, readAvatarAsUrl, uploadAvatar)
+import Common.Ports exposing (initEditor, readAvatarAsUrl, uploadAvatar, renderText)
 import CharacterApp.Api
 import CharacterApp.Messages exposing (..)
 import CharacterApp.Models exposing (..)
@@ -50,24 +50,33 @@ update msg model =
 
     CharacterFetchResult (Ok character) ->
       ( { model | characterInfo = Just character }
-      , Cmd.batch
-          [ initEditor { elemId = "description-editor"
-                       , narrationId = 0
-                       , narrationImages = []
-                       , chapterParticipants = []
-                       , text = character.description
-                       , editorType = "description"
-                       , updatePortName = "descriptionContentChanged"
-                       }
-          , initEditor { elemId = "backstory-editor"
-                       , narrationId = 0
-                       , narrationImages = []
-                       , chapterParticipants = []
-                       , text = character.backstory
-                       , editorType = "description"
-                       , updatePortName = "backstoryContentChanged"
-                       }
-          ]
+      , Cmd.batch <|
+          List.append
+            [ initEditor { elemId = "description-editor"
+                         , narrationId = 0
+                         , narrationImages = []
+                         , chapterParticipants = []
+                         , text = character.description
+                         , editorType = "description"
+                         , updatePortName = "descriptionContentChanged"
+                         }
+            , initEditor { elemId = "backstory-editor"
+                         , narrationId = 0
+                         , narrationImages = []
+                         , chapterParticipants = []
+                         , text = character.backstory
+                         , editorType = "description"
+                         , updatePortName = "backstoryContentChanged"
+                         }
+            ]
+            (List.map
+               (\character ->
+                  renderText
+                    { elemId = "description-character-" ++ (toString character.id)
+                    , text = character.description
+                    , proseMirrorType = "description"
+                    })
+               character.narration.characters)
       )
 
     UpdateDescriptionText newDescription ->

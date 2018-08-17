@@ -1013,7 +1013,8 @@ class NarrowsStore {
                 characterId
             ),
             this.getCharacterChaptersBasic(characterId)
-        ]).spread((basicStats, chapters) => ({
+        ]).spread((basicStats, chapters) => {
+            return this._getPublicNarrationCharacters(basicStats.narrationId).then(characters => ({
                 id: basicStats.id,
                 token: basicStats.token,
                 email: basicStats.email,
@@ -1026,9 +1027,13 @@ class NarrowsStore {
                 narration: {
                     id: basicStats.narrationId,
                     title: basicStats.narrationTitle,
-                    chapters: chapters
+                    chapters: chapters,
+                    characters: characters.filter(character => (
+                        character.id !== basicStats.id
+                    ))
                 }
-        }));
+            }));
+        });
     }
 
     resetCharacterToken(characterId) {

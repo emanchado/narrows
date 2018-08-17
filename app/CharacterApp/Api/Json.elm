@@ -2,6 +2,7 @@ module CharacterApp.Api.Json exposing (..)
 
 import Json.Decode as Json exposing (..)
 import Json.Encode
+import Common.Api.Json exposing (parseParticipantCharacter)
 import CharacterApp.Models exposing (CharacterInfo, ChapterSummary, NarrationSummary)
 
 
@@ -14,10 +15,11 @@ parseChapterSummary =
 
 parseNarrationSummary : Json.Decoder NarrationSummary
 parseNarrationSummary =
-    Json.map3 NarrationSummary
+    Json.map4 NarrationSummary
         (field "id" int)
         (field "title" string)
         (field "chapters" <| list parseChapterSummary)
+        (field "characters" <| list parseParticipantCharacter)
 
 
 parseCharacterInfo : Json.Decoder CharacterInfo

@@ -3,17 +3,8 @@ module NovelReaderApp.Api exposing (..)
 import Json.Decode as Json exposing (..)
 import Http
 import NovelReaderApp.Messages exposing (Msg, Msg(..))
-import Common.Models exposing (ParticipantCharacter)
+import Common.Api.Json exposing (parseParticipantCharacter)
 import NovelReaderApp.Models exposing (Chapter, Novel, Narration)
-
-
-parseParticipantCharacter : Json.Decoder ParticipantCharacter
-parseParticipantCharacter =
-    Json.map4 ParticipantCharacter
-        (field "id" int)
-        (field "name" string)
-        (maybe (field "avatar" string))
-        (field "description" Json.value)
 
 
 parseChapter : Json.Decoder Chapter

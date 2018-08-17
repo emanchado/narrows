@@ -2,7 +2,7 @@ module Common.Api.Json exposing (..)
 
 import Json.Decode as Json exposing (..)
 import ISO8601
-import Common.Models exposing (Character, FullCharacter, Narration, NarrationStatus(..), Chapter, FileSet, ChapterMessages, MessageThread, Message, ChapterOverview, NarrationOverview, UserInfo)
+import Common.Models exposing (Character, ParticipantCharacter, FullCharacter, Narration, NarrationStatus(..), Chapter, FileSet, ChapterMessages, MessageThread, Message, ChapterOverview, NarrationOverview, UserInfo)
 
 
 parseUserInfo : Json.Decoder UserInfo
@@ -13,6 +13,15 @@ parseUserInfo =
 parseCharacter : Json.Decoder Character
 parseCharacter =
     Json.map2 Character (field "id" int) (field "name" string)
+
+
+parseParticipantCharacter : Json.Decoder ParticipantCharacter
+parseParticipantCharacter =
+    Json.map4 ParticipantCharacter
+        (field "id" int)
+        (field "name" string)
+        (maybe (field "avatar" string))
+        (field "description" Json.value)
 
 
 parseIso8601Date : Json.Decoder ISO8601.Time

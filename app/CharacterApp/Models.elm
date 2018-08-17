@@ -1,7 +1,7 @@
 module CharacterApp.Models exposing (..)
 
 import Json.Decode
-import Common.Models exposing (Character, Banner)
+import Common.Models exposing (Character, ParticipantCharacter, Banner)
 
 
 type alias ChapterSummary =
@@ -14,6 +14,7 @@ type alias NarrationSummary =
     { id : Int
     , title : String
     , chapters : List ChapterSummary
+    , characters : List ParticipantCharacter
     }
 
 
