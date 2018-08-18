@@ -133,38 +133,40 @@ mainView model =
             [ h3 [] [ text "Appears in these chapters:" ]
             , case model.characterInfo of
                 Just characterInfo ->
-                  if List.length characterInfo.narration.chapters == 0 then
-                    em [] [ text "None." ]
-                  else
-                    div []
-                      [ ul []
-                          (List.map (chapterParticipation model.characterToken)
-                             characterInfo.narration.chapters)
-                      , text "Or read the "
-                      , a [ href <| "/novels/" ++ characterInfo.novelToken ]
-                          [ text characterInfo.narration.title ]
-                      , text " "
-                      , em [] [ text "novel" ]
-                      , text " from this character’s point of view. "
-                      , img [ src "/img/info.png"
-                            , class "help"
-                            , onClick ToggleNovelTip
-                            ]
-                          []
-                      , if model.showNovelTip then
-                          div [ class "floating-tip" ]
-                            [ text "Novels don’t have any way to interact "
-                            , text "and can be read like a book. You can "
-                            , text "share the link with others if you want: "
-                            , text "they won’t be able to post messages for "
-                            , text "you or change anything about your character."
-                            ]
-                        else
-                          text ""
-                      , h3 [] [ text "Other characters in the story:" ]
-                      , ul [ class "dramatis-personae" ]
-                          (List.map (characterView characterInfo.narration.id) characterInfo.narration.characters)
-                      ]
+                  div []
+                    [ if List.length characterInfo.narration.chapters == 0 then
+                        em [] [ text "None." ]
+                      else
+                        div []
+                          [ ul []
+                            (List.map (chapterParticipation model.characterToken)
+                               characterInfo.narration.chapters)
+                          , text "Or read the "
+                          , a [ href <| "/novels/" ++ characterInfo.novelToken ]
+                            [ text characterInfo.narration.title ]
+                          , text " "
+                          , em [] [ text "novel" ]
+                          , text " from this character’s point of view. "
+                          , img [ src "/img/info.png"
+                                , class "help"
+                                , onClick ToggleNovelTip
+                                ]
+                              []
+                          , if model.showNovelTip then
+                              div [ class "floating-tip" ]
+                                [ text "Novels don’t have any way to interact "
+                                , text "and can be read like a book. You can "
+                                , text "share the link with others if you want: "
+                                , text "they won’t be able to post messages for "
+                                , text "you or change anything about your character."
+                                ]
+                            else
+                              text ""
+                          ]
+                    , h3 [] [ text "Other characters in the story:" ]
+                    , ul [ class "dramatis-personae" ]
+                        (List.map (characterView characterInfo.narration.id) characterInfo.narration.characters)
+                    ]
 
                 Nothing ->
                   em [] [ text "None." ]
