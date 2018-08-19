@@ -507,7 +507,8 @@ class NarrowsStore {
         return Q.ninvoke(
             this.db,
             "all",
-            `SELECT C.id, C.name, C.avatar, C.description ${ extraFields }
+            `SELECT C.id, C.name, C.avatar, C.description,
+                    C.intro_sent AS introSent ${ extraFields }
                FROM characters C
                JOIN chapter_participants CP ON C.id = CP.character_id
                JOIN users U ON U.id = C.player_id
