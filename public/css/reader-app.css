@@ -103,7 +103,7 @@
 
 .chapter > p:first-child::first-letter {
     float: left;
-    
+
     font-size: 94px;
     line-height: 81px;
     margin-right: 3px;
@@ -163,6 +163,14 @@
 
 ul.thread-list.reader .message {
     background-color: black;
+    padding: 8px 10px;
+    margin: 2px 0;
+}
+ul.thread-list.reader strong {
+    color: #fff;
+}
+ul.thread-list.reader li {
+    padding: 10px 0;
 }
 ul.thread-list.reader li .btn-bar {
     background-color: black;
@@ -190,7 +198,10 @@ ul.thread-list.reader li .btn-bar {
     overflow: hidden;
 }
 .reference-container.hidden {
-    height: 1.5em;
+    height: 2.25em;
+}
+.reference-container.hidden h2:first-child {
+    margin-bottom: 1em;
 }
 .arrow {
     width: 0;
