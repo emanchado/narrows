@@ -1,7 +1,7 @@
 module Common.Views exposing (..)
 
 import String
-import Regex exposing (HowMany(All), regex)
+import Regex exposing (HowMany(All), regex, caseInsensitive)
 import Json.Decode
 import Html exposing (Html, h2, div, nav, textarea, button, span, ul, li, img, a, em, strong, text)
 import Html.Attributes exposing (class, rows, value, disabled, href, src, title)
@@ -28,7 +28,7 @@ onStopPropagationClick message =
 -- This regex cannot have capture groups, as they trigger a very weird
 -- bug in Regex.split.
 linkRegex : Regex.Regex
-linkRegex = regex <|
+linkRegex = caseInsensitive <| regex <|
             "https?://[a-z0-9.-]+(?::[0-9]+)?" ++       -- Protocol/host
             "(?:/(?:[,.]*[a-z0-9/&%_+-]+)*)?" ++        -- URL path
             "(?:\\?(?:[a-z0-9]*=[a-z0-9%_-]*&?)+)?" ++  -- Query parameters
