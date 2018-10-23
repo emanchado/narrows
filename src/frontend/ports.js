@@ -3,9 +3,23 @@
 const editor = require("./editor");
 const schemas = require("./narrows-schemas");
 
+const DEVICE_SETTINGS_TTL = 60 * 60 * 24 * 180;
+
 /*
  * Ports for the reader app
  */
+
+function readCookie(name, defaultValue) {
+    var nameEQ = name + "=";
+    var ca = document.cookie.split(";");
+    for (var i = 0; i < ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0) == " ") c = c.substring(1, c.length);
+        if (c.indexOf(nameEQ) == 0)
+            return c.substring(nameEQ.length, c.length);
+    }
+    return defaultValue;
+}
 
 function bumpVolume(audioEl) {
     audioEl.volume = Math.min(1, audioEl.volume + 0.02);
@@ -250,4 +264,16 @@ app.ports.uploadAvatar.subscribe(evt => {
     const formData = new FormData();
     formData.append("avatar", fileInput.files[0]);
     xhr.send(formData);
+});
+
+app.ports.readDeviceSettings.subscribe(receivingPortName => {
+    const settings = {
+        backgroundMusic: !!(readCookie("backgroundMusic", true))
+    };
+
+    app.ports[receivingPortName].send(settings);
+});
+
+app.ports.setDeviceSetting.subscribe(evt => {
+    document.cookie = `${evt.name}=${evt.value};path=/;max-age=${DEVICE_SETTINGS_TTL}`;
 });

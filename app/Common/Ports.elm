@@ -47,6 +47,12 @@ type alias AvatarUploadInfo =
   }
 
 
+type alias DeviceSettingValue =
+  { name : String
+  , value : String
+  }
+
+
 port renderText : RenderTextInfo -> Cmd msg
 port initEditor : InitEditorInfo -> Cmd msg
 port startNarration : NarrationMediaInfo -> Cmd msg
@@ -64,3 +70,6 @@ port uploadFile : FileUploadInfo -> Cmd msg
 
 port readAvatarAsUrl : AvatarElementInfo -> Cmd msg
 port uploadAvatar : AvatarUploadInfo -> Cmd msg
+
+port readDeviceSettings : String -> Cmd msg
+port setDeviceSetting : DeviceSettingValue -> Cmd msg

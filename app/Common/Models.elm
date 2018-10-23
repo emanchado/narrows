@@ -217,3 +217,8 @@ type alias ParticipantCharacter =
     , avatar : Maybe String
     , description : Json.Decode.Value
     }
+
+
+type alias DeviceSettings =
+    { backgroundMusic : Bool
+    }

@@ -1,12 +1,13 @@
 module NovelReaderApp.Messages exposing (..)
 
 import Http
+import Common.Models exposing (DeviceSettings)
 import NovelReaderApp.Models exposing (Novel)
-import NovelReaderApp.Models exposing (..)
 
 
 type Msg
     = NavigateTo String
+    | ReceiveDeviceSettings DeviceSettings
     | StartNarration
       -- The parameter is useless here, but is a subscription so it needs it
     | NarrationStarted Int

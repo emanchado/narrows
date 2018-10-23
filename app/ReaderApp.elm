@@ -4,6 +4,7 @@ import Html exposing (Html)
 import Core.Routes exposing (Route(..))
 import Common.Ports
 import Common.Models.Reading exposing (PageState(Loader))
+import ReaderApp.Ports
 import ReaderApp.Messages exposing (..)
 import ReaderApp.Models exposing (..)
 import ReaderApp.Update
@@ -56,4 +57,5 @@ subscriptions model =
     Sub.batch
         [ Common.Ports.pageScrollListener PageScroll
         , Common.Ports.markNarrationAsStarted NarrationStarted
+        , ReaderApp.Ports.receiveDeviceSettingsReader ReceiveDeviceSettings
         ]

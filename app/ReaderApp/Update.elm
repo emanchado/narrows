@@ -6,7 +6,7 @@ import Navigation
 import Json.Decode exposing (decodeString)
 
 import Core.Routes exposing (Route(..))
-import Common.Ports exposing (renderText, startNarration, playPauseNarrationMusic, flashElement)
+import Common.Ports exposing (readDeviceSettings, setDeviceSetting, renderText, startNarration, playPauseNarrationMusic, flashElement)
 import Common.Models exposing (Character, ParticipantCharacter, errorBanner, successBanner)
 import Common.Models.Reading exposing (PageState(Loader, StartingNarration, Narrating))
 import ReaderApp.Api
@@ -31,7 +31,10 @@ urlUpdate route model =
   case route of
     ChapterReaderPage chapterId characterToken ->
       ( { model | state = Loader }
-      , ReaderApp.Api.fetchChapterInfo chapterId characterToken
+      , Cmd.batch
+          [ ReaderApp.Api.fetchChapterInfo chapterId characterToken
+          , readDeviceSettings "receiveDeviceSettingsReader"
+          ]
       )
 
     _ ->
@@ -63,6 +66,14 @@ update msg model =
   case msg of
     NavigateTo url ->
       ( model, Navigation.newUrl url )
+
+
+    ReceiveDeviceSettings newSettings ->
+      ( { model | backgroundMusic = newSettings.backgroundMusic
+                , musicPlaying = newSettings.backgroundMusic
+        }
+      , Cmd.none
+      )
 
     ChapterFetchResult (Err error) ->
       let
@@ -126,6 +137,12 @@ update msg model =
                                , proseMirrorType = "chapter"
                                }
                   , startNarration { audioElemId = audioElemId }
+                  , setDeviceSetting { name = "backgroundMusic"
+                                     , value = if model.backgroundMusic then
+                                                 "1"
+                                               else
+                                                 ""
+                                     }
                   ]
                   (List.map descriptionRenderCommand chapterData.participants)
 

@@ -4,7 +4,7 @@ import Http
 import Navigation
 import Task
 import Core.Routes exposing (Route(..))
-import Common.Ports exposing (renderText, startNarration, pauseNarrationMusic, playPauseNarrationMusic, flashElement)
+import Common.Ports exposing (readDeviceSettings, setDeviceSetting, renderText, startNarration, pauseNarrationMusic, playPauseNarrationMusic, flashElement)
 import Common.Models exposing (Character, errorBanner, ParticipantCharacter)
 import Common.Models.Reading exposing (PageState(StartingNarration, Narrating))
 import NovelReaderApp.Api
@@ -29,7 +29,10 @@ urlUpdate route model =
   case route of
     NovelReaderPage novelToken ->
       ( model
-      , NovelReaderApp.Api.fetchNovelInfo novelToken
+      , Cmd.batch
+          [ NovelReaderApp.Api.fetchNovelInfo novelToken
+          , readDeviceSettings "receiveDeviceSettingsNovelReader"
+          ]
       )
 
     NovelReaderChapterPage novelToken chapterIndex ->
@@ -43,7 +46,10 @@ urlUpdate route model =
               _ -> Cmd.none
 
           Nothing ->
-            NovelReaderApp.Api.fetchNovelInfo novelToken
+            Cmd.batch
+              [ NovelReaderApp.Api.fetchNovelInfo novelToken
+              , readDeviceSettings "receiveDeviceSettingsNovelReader"
+              ]
       )
 
     _ ->
@@ -68,6 +74,14 @@ update msg model =
   case msg of
     NavigateTo url ->
       ( model, Navigation.newUrl url )
+
+
+    ReceiveDeviceSettings newSettings ->
+      ( { model | backgroundMusic = newSettings.backgroundMusic
+                , musicPlaying = newSettings.backgroundMusic
+        }
+      , Cmd.none
+      )
 
     NovelFetchResult (Err error) ->
       let
@@ -119,6 +133,12 @@ update msg model =
                                      , proseMirrorType = "chapter"
                                      }
                         , startNarration { audioElemId = audioElemId }
+                        , setDeviceSetting { name = "backgroundMusic"
+                                           , value = if model.backgroundMusic then
+                                                       "1"
+                                                     else
+                                                       ""
+                                            }
                         ]
                         (List.map
                           descriptionRenderCommand
