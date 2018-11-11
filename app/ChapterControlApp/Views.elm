@@ -114,7 +114,7 @@ mainView model =
                       messageThreads)
               , div [ class "new-message" ]
                   [ h3 [] [ text "New message" ]
-                  , textarea [ rows 3
+                  , textarea [ rows 10
                              , onInput UpdateNewMessageText
                              , value model.newMessageText
                              ]
