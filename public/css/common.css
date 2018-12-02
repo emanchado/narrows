@@ -176,6 +176,18 @@ ul li {
 .btn-bar-extra {
     margin-top: 10px;
 }
+.btn-bar-status {
+    display: flex;
+    justify-content: space-between;
+}
+.btn-bar-status .banner {
+    margin: inherit;
+    padding: 7px 10px;
+    flex-grow: 1;
+}
+.btn-bar-status .btn-bar {
+    margin-left: auto;
+}
 
 .btn {
     border: 1px solid #ddd;

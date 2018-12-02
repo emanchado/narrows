@@ -6,7 +6,7 @@ import Html exposing (Html, h2, h3, div, main_, nav, section, ul, li, img, a, in
 import Html.Attributes exposing (id, name, class, href, src, target, type_, value, placeholder, checked, disabled)
 import Html.Events exposing (onClick, onInput, on)
 
-import Common.Models exposing (FullCharacter, Narration, Chapter, MediaType(..))
+import Common.Models exposing (FullCharacter, Narration, Chapter, MediaType(..), Banner)
 import Common.Views exposing (bannerView, breadcrumbNavView, onStopPropagationClick, horizontalSpinner, messageThreadView, showDialog)
 import Common.Views.FileSelector exposing (fileSelector)
 import ChapterEditApp.Models exposing (Model, LastChapter)
@@ -92,8 +92,8 @@ chapterMediaView chapter narration uploadingAudio uploadingBackgroundImage =
     ]
 
 
-chapterView : Chapter -> Narration -> Bool -> Bool -> Bool -> Html Msg
-chapterView chapter narration savingChapter uploadingAudio uploadingBackgroundImage =
+chapterView : Chapter -> Narration -> Bool -> Bool -> Bool -> Maybe Banner -> Html Msg
+chapterView chapter narration savingChapter uploadingAudio uploadingBackgroundImage flashBanner =
   let
     (saveAction, publishAction) =
       if chapter.id == 0 then
@@ -124,27 +124,30 @@ chapterView chapter narration savingChapter uploadingAudio uploadingBackgroundIm
                 ]
               []
           ]
-      , div [ class "btn-bar" ]
-          [ button [ class "btn"
-                   , onClick saveAction
-                   , disabled savingChapter
-                   ]
-              [ text <| if savingChapter then
-                          "Saving…"
-                        else
-                          "Save" ]
-          , if chapter.published == Nothing then
-              button [ class "btn btn-default"
-                     , onClick publishAction
+      , div [ class "btn-bar-status" ]
+          [ bannerView flashBanner
+          , div [ class "btn-bar" ]
+            [ button [ class "btn"
+                     , onClick saveAction
                      , disabled savingChapter
                      ]
                 [ text <| if savingChapter then
-                            "Publishing…"
+                            "Saving…"
                           else
-                            "Publish"
-                ]
-            else
-              text ""
+                            "Save" ]
+            , if chapter.published == Nothing then
+                button [ class "btn btn-default"
+                       , onClick publishAction
+                       , disabled savingChapter
+                       ]
+                  [ text <| if savingChapter then
+                              "Publishing…"
+                            else
+                              "Publish"
+                  ]
+              else
+                text ""
+            ]
           ]
       , participantPreviewsView chapter.id chapter.participants
       ]
@@ -244,14 +247,12 @@ mainView model =
             em [] [ text "New chapter" ]
            else
             text chapter.title)
-      , bannerView model.banner
       , div [ class "two-column" ]
           [ case model.lastChapters of
               Just lastReactions -> lastReactionListView lastReactions chapter
               Nothing -> section [] [ text "Loading reactions…" ]
           , section []
-              [ chapterView chapter narration model.savingChapter model.uploadingAudio model.uploadingBackgroundImage
-              , bannerView model.flash
+              [ chapterView chapter narration model.savingChapter model.uploadingAudio model.uploadingBackgroundImage model.flash
               , if model.showPublishChapterDialog then
                   showDialog
                     "Publish chapter?"
