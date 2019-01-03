@@ -6,7 +6,8 @@ module.exports = {
         host: 'localhost',
         user: 'narrows',
         password: 'narratornarrows',
-        database: 'narrows'
+        database: 'narrows',
+        charset: 'utf8mb4'
     },
 
     files: {
