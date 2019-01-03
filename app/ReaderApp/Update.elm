@@ -286,20 +286,23 @@ update msg model =
           if String.isEmpty <| String.trim model.newMessageText then
             ( model, Cmd.none )
           else
-            ( model
+            ( { model | newMessageSending = True }
             , ReaderApp.Api.sendMessage chapter.id chapter.character.token model.newMessageText model.newMessageRecipients
             )
         Nothing ->
           ( model, Cmd.none )
 
     SendMessageResult (Err error) ->
-      ( { model | banner = errorBanner "Error sending message" }
+      ( { model | banner = errorBanner "Error sending message"
+                , newMessageSending = False
+        }
       , Cmd.none
       )
 
     SendMessageResult (Ok result) ->
         ( { model | messageThreads = Just result.messages
                   , newMessageText = ""
+                  , newMessageSending = False
                   , banner = Nothing
           }
         , Cmd.none

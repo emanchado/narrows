@@ -31,6 +31,7 @@ initialState =
     , replySending = False
     , newMessageText = ""
     , newMessageRecipients = []
+    , newMessageSending = False
     , showReactionTip = False
     , banner = Nothing
     , referenceInformationVisible = False

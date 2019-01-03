@@ -141,6 +141,7 @@ listView model =
                     [ button
                         [ class "btn btn-default"
                         , onClick SendMessage
+                        , disabled model.newMessageSending
                         ]
                         [ text "Send" ]
                     ]

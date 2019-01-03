@@ -67,6 +67,7 @@ type alias Model =
   , replySending : Bool
   , newMessageText : String
   , newMessageRecipients : List Int
+  , newMessageSending : Bool
   , showReactionTip : Bool
   , banner : Maybe Banner
   , referenceInformationVisible : Bool
