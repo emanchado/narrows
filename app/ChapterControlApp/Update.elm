@@ -171,9 +171,12 @@ update msg model =
     SendMessage ->
       case model.interactions of
         Just interactions ->
-          ( { model | newMessageSending = True }
-          , ChapterControlApp.Api.sendMessage interactions.chapter.id model.newMessageText model.newMessageRecipients
-          )
+          if String.isEmpty <| String.trim model.newMessageText then
+            ( model, Cmd.none )
+          else
+            ( { model | newMessageSending = True }
+            , ChapterControlApp.Api.sendMessage interactions.chapter.id model.newMessageText model.newMessageRecipients
+            )
         Nothing ->
           ( model, Cmd.none )
 
