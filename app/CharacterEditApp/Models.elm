@@ -1,5 +1,6 @@
 module CharacterEditApp.Models exposing (..)
 
+import Browser.Navigation as Nav
 import Json.Decode
 import ISO8601
 import Common.Models exposing (Character, Banner)
@@ -43,7 +44,8 @@ type alias SendIntroEmailResponse =
 
 
 type alias Model =
-    { characterId : Int
+    { key : Nav.Key
+    , characterId : Int
     , characterInfo : Maybe CharacterInfo
     , newAvatarUrl : Maybe String
     , showResetCharacterTokenDialog : Bool

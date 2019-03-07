@@ -29,21 +29,22 @@ fetchNarrationOverview : Int -> Cmd Msg
 fetchNarrationOverview narrationId =
   let
     narrationApiUrl =
-      "/api/narrations/" ++ (toString narrationId) ++ "/chapters"
+      "/api/narrations/" ++ (String.fromInt narrationId) ++ "/chapters"
   in
-    Http.send NarrationOverviewFetchResult (Http.get narrationApiUrl parseNarrationOverview)
+    Http.get { url = narrationApiUrl
+             , expect = Http.expectJson NarrationOverviewFetchResult parseNarrationOverview
+             }
 
 markNarration : Int -> NarrationStatus -> Cmd Msg
 markNarration narrationId status =
-  Http.send MarkNarrationResult <|
-    Http.request { method = "PUT"
-                 , url = "/api/narrations/" ++ (toString narrationId)
-                 , headers = []
-                 , body = Http.jsonBody <| encodeNarrationStatus status
-                 , expect = Http.expectJson parseNarration
-                 , timeout = Nothing
-                 , withCredentials = False
-                 }
+  Http.request { method = "PUT"
+               , headers = []
+               , url = "/api/narrations/" ++ (String.fromInt narrationId)
+               , body = Http.jsonBody <| encodeNarrationStatus status
+               , expect = Http.expectJson MarkNarrationResult parseNarration
+               , timeout = Nothing
+               , tracker = Nothing
+               }
 
 parseSendIntroDate : Json.Decoder SendIntroDate
 parseSendIntroDate =
@@ -57,8 +58,7 @@ parseSendPendingIntroEmailsResponse =
 
 sendPendingIntroEmails : Int -> Cmd Msg
 sendPendingIntroEmails narrationId =
-  Http.send SendPendingIntroEmailsResult <|
-    Http.post
-      ("/api/narrations/" ++ (toString narrationId) ++ "/intro-emails")
-      Http.emptyBody
-      parseSendPendingIntroEmailsResponse
+    Http.post { url = "/api/narrations/" ++ (String.fromInt narrationId) ++ "/intro-emails"
+              , body = Http.emptyBody
+              , expect = Http.expectJson SendPendingIntroEmailsResult parseSendPendingIntroEmailsResponse
+              }

@@ -2,7 +2,7 @@ module NarrationOverviewApp.Update exposing (..)
 
 import Dict exposing (Dict)
 import Http
-import Navigation
+import Browser.Navigation as Nav
 import ISO8601
 
 import Core.Routes exposing (Route(..))
@@ -30,7 +30,7 @@ cleanCharacterDict origDict =
   in
     Dict.fromList <|
       List.map
-        (\(stringId, sendIntroDate) -> ((Result.withDefault 0 <| String.toInt stringId), sendIntroDate.sendIntroDate))
+        (\(stringId, sendIntroDate) -> ((Maybe.withDefault 0 <| String.toInt stringId), sendIntroDate.sendIntroDate))
         serialisedOrig
 
 updateCharactersSendIntro : List FullCharacter -> Dict String SendIntroDate -> List FullCharacter
@@ -52,17 +52,17 @@ update msg model =
       (model, Cmd.none)
 
     NavigateTo url ->
-      (model, Navigation.newUrl url)
+      (model, Nav.pushUrl model.key url)
 
     NarrationOverviewFetchResult (Err error) ->
       case error of
-        Http.BadPayload parserError resp ->
+        Http.BadBody parserError ->
           ( { model | banner = errorBanner <| "Error! " ++ parserError }
           , Cmd.none
           )
 
-        Http.BadStatus resp ->
-          ( { model | banner = errorBanner <| "Error! Body: " ++ resp.body }
+        Http.BadStatus status ->
+          ( { model | banner = errorBanner <| "Error! Status: " ++ (String.fromInt status) }
           , Cmd.none
           )
 
@@ -91,13 +91,13 @@ update msg model =
           (model, Cmd.none)
     MarkNarrationResult (Err error) ->
       case error of
-        Http.BadPayload parserError resp ->
+        Http.BadBody parserError ->
           ( { model | banner = errorBanner <| "Error! " ++ parserError }
           , Cmd.none
           )
 
-        Http.BadStatus resp ->
-          ( { model | banner = errorBanner <| "Error! Body: " ++ resp.body }
+        Http.BadStatus status ->
+          ( { model | banner = errorBanner <| "Error! Status: " ++ (String.fromInt status) }
           , Cmd.none
           )
 

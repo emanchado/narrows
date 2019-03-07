@@ -11,61 +11,63 @@ import ChapterEditApp.Api.Json exposing (parseLastReactionResponse, encodeChapte
 fetchChapterInfo : Int -> Cmd Msg
 fetchChapterInfo chapterId =
   let
-    chapterApiUrl = "/api/chapters/" ++ (toString chapterId)
+    chapterApiUrl = "/api/chapters/" ++ (String.fromInt chapterId)
   in
-    Http.send ChapterFetchResult <|
-      Http.get chapterApiUrl parseChapter
+    Http.get { url = chapterApiUrl
+             , expect = Http.expectJson ChapterFetchResult parseChapter
+             }
 
 
 fetchNarrationInfo : Int -> Cmd Msg
 fetchNarrationInfo narrationId =
   let
-    narrationApiUrl = "/api/narrations/" ++ (toString narrationId)
+    narrationApiUrl = "/api/narrations/" ++ (String.fromInt narrationId)
   in
-    Http.send NarrationFetchResult <|
-      Http.get narrationApiUrl parseNarration
+    Http.get { url = narrationApiUrl
+             , expect = Http.expectJson NarrationFetchResult parseNarration
+             }
 
 
 fetchLastReactions : Int -> Cmd Msg
 fetchLastReactions chapterId =
   let
     lastReactionsApiUrl =
-      "/api/chapters/" ++ (toString chapterId) ++ "/last-reactions"
+      "/api/chapters/" ++ (String.fromInt chapterId) ++ "/last-reactions"
   in
-    Http.send LastReactionsFetchResult <|
-      Http.get lastReactionsApiUrl parseLastReactionResponse
+    Http.get { url = lastReactionsApiUrl
+             , expect = Http.expectJson LastReactionsFetchResult parseLastReactionResponse
+             }
 
 
 fetchNarrationLastReactions : Int -> Cmd Msg
 fetchNarrationLastReactions narrationId =
   let
     lastReactionsApiUrl =
-      "/api/narrations/" ++ (toString narrationId) ++ "/last-reactions"
+      "/api/narrations/" ++ (String.fromInt narrationId) ++ "/last-reactions"
   in
-    Http.send NarrationLastReactionsFetchResult <|
-      Http.get lastReactionsApiUrl parseLastReactionResponse
+    Http.get { url = lastReactionsApiUrl
+             , expect = Http.expectJson NarrationLastReactionsFetchResult parseLastReactionResponse
+             }
 
 
 saveChapter : Chapter -> Cmd Msg
 saveChapter chapter =
-  Http.send SaveChapterResult <|
-    Http.request { method = "PUT"
-                 , url = "/api/chapters/" ++ (toString chapter.id)
-                 , headers = []
-                 , body = Http.jsonBody <| encodeChapter chapter
-                 , expect = Http.expectStringResponse Ok
-                 , timeout = Nothing
-                 , withCredentials = False
-                 }
+  Http.request { method = "PUT"
+               , url = "/api/chapters/" ++ (String.fromInt chapter.id)
+               , headers = []
+               , body = Http.jsonBody <| encodeChapter chapter
+               , expect = Http.expectStringResponse SaveChapterResult Ok
+               , timeout = Nothing
+               , tracker = Nothing
+               }
 
 
 createChapter : Chapter -> Cmd Msg
 createChapter chapter =
   let
-    createChapterUrl = "/api/narrations/" ++ (toString chapter.narrationId) ++ "/chapters"
+    createChapterUrl = "/api/narrations/" ++ (String.fromInt chapter.narrationId) ++ "/chapters"
   in
-    Http.send SaveNewChapterResult <|
-      Http.post
-        createChapterUrl
-        (Http.jsonBody <| encodeChapter chapter)
-        parseChapter
+    Http.post { url = createChapterUrl
+              , body = Http.jsonBody <| encodeChapter chapter
+              , expect = Http.expectJson SaveNewChapterResult parseChapter
+              }

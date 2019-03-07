@@ -12,7 +12,7 @@ loadingPlaceholderChapter =
     , title = "…"
     , audio = Nothing
     , backgroundImage = Nothing
-    , text = Json.Encode.list []
+    , text = Json.Encode.list Json.Encode.string []
     , participants = []
     , published = Nothing
     }

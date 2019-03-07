@@ -48,59 +48,59 @@ parseApiError =
 fetchChapterInfo : Int -> String -> Cmd Msg
 fetchChapterInfo chapterId characterToken =
   let
-    chapterApiUrl = "/api/chapters/" ++ (toString chapterId) ++
+    chapterApiUrl = "/api/chapters/" ++ (String.fromInt chapterId) ++
                     "/" ++ characterToken
   in
-    Http.send ChapterFetchResult <|
-      Http.get chapterApiUrl parseChapter
+    Http.get { url = chapterApiUrl
+             , expect = Http.expectJson ChapterFetchResult parseChapter
+             }
 
 
 fetchChapterMessages : Int -> String -> Cmd Msg
 fetchChapterMessages chapterId characterToken =
   let
-    chapterMessagesApiUrl = "/api/messages/" ++ (toString chapterId) ++
+    chapterMessagesApiUrl = "/api/messages/" ++ (String.fromInt chapterId) ++
                             "/" ++ characterToken
   in
-    Http.send ChapterMessagesFetchResult <|
-      Http.get chapterMessagesApiUrl parseChapterMessages
+    Http.get { url = chapterMessagesApiUrl
+             , expect = Http.expectJson ChapterMessagesFetchResult parseChapterMessages
+             }
 
 
 sendMessage : Int -> String -> String -> List Int -> Cmd Msg
 sendMessage chapterId characterToken messageText messageRecipients =
   let
     sendMessageApiUrl =
-      "/api/messages/" ++ (toString chapterId) ++ "/" ++ characterToken
+      "/api/messages/" ++ (String.fromInt chapterId) ++ "/" ++ characterToken
 
     jsonEncodedBody =
       (Json.Encode.object
          [ ( "text", Json.Encode.string messageText )
-         , ( "recipients", Json.Encode.list (List.map Json.Encode.int messageRecipients) )
+         , ( "recipients", Json.Encode.list Json.Encode.int messageRecipients )
          ])
   in
-    Http.send SendMessageResult <|
-      Http.post
-        sendMessageApiUrl
-        (Http.jsonBody jsonEncodedBody)
-        parseChapterMessages
+    Http.post { url = sendMessageApiUrl
+              , body = Http.jsonBody jsonEncodedBody
+              , expect = Http.expectJson SendMessageResult parseChapterMessages
+              }
 
 
 sendReply : Int -> String -> String -> List Int -> Cmd Msg
 sendReply chapterId characterToken messageText messageRecipients =
   let
     sendMessageApiUrl =
-      "/api/messages/" ++ (toString chapterId) ++ "/" ++ characterToken
+      "/api/messages/" ++ (String.fromInt chapterId) ++ "/" ++ characterToken
 
     jsonEncodedBody =
       (Json.Encode.object
          [ ( "text", Json.Encode.string messageText )
-         , ( "recipients", Json.Encode.list (List.map Json.Encode.int messageRecipients) )
+         , ( "recipients", Json.Encode.list Json.Encode.int messageRecipients )
          ])
   in
-    Http.send SendReplyResult <|
-      Http.post
-        sendMessageApiUrl
-        (Http.jsonBody jsonEncodedBody)
-        parseChapterMessages
+    Http.post { url = sendMessageApiUrl
+              , body = Http.jsonBody jsonEncodedBody
+              , expect = Http.expectJson SendReplyResult parseChapterMessages
+              }
 
 
 sendNotes : String -> String -> Cmd Msg
@@ -111,14 +111,12 @@ sendNotes characterToken updatedNotes =
     jsonEncodedBody =
       (Json.Encode.object [ ( "notes", Json.Encode.string updatedNotes ) ])
   in
-    Http.send
-      SendNotesResult
-      (Http.request
-         { method = "PUT"
-         , url = sendNotesApiUrl
-         , headers = []
-         , body = Http.jsonBody jsonEncodedBody
-         , expect = Http.expectStringResponse (\_ -> Ok "")
-         , timeout = Nothing
-         , withCredentials = False
-         })
+    Http.request
+      { method = "PUT"
+      , url = sendNotesApiUrl
+      , headers = []
+      , body = Http.jsonBody jsonEncodedBody
+      , expect = Http.expectStringResponse SendNotesResult (\_ -> Ok "")
+      , timeout = Nothing
+      , tracker = Nothing
+      }

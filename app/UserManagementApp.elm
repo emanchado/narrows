@@ -1,6 +1,8 @@
 module UserManagementApp exposing (..)
 
 import Html exposing (Html)
+import Browser.Navigation as Nav
+
 import Core.Routes exposing (Route(..))
 import UserManagementApp.Messages exposing (..)
 import UserManagementApp.Models exposing (..)
@@ -16,9 +18,10 @@ type alias Msg =
     UserManagementApp.Messages.Msg
 
 
-initialState : Model
-initialState =
-    { banner = Nothing
+initialState : Nav.Key -> Model
+initialState key =
+    { key = key
+    , banner = Nothing
     , users = Nothing
     , userUi = Nothing
     , newUserEmail = ""

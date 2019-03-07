@@ -24,7 +24,6 @@ mainView model =
           , class "app-container app-container-simple"
           ]
       [ breadcrumbNavView
-          NavigateTo
           [ { title = "Home"
             , url = "/"
             }

@@ -1,6 +1,8 @@
 module ProfileApp exposing (..)
 
 import Html exposing (Html)
+import Browser.Navigation as Nav
+
 import Core.Routes exposing (Route(..))
 import ProfileApp.Messages exposing (..)
 import ProfileApp.Models exposing (..)
@@ -16,9 +18,10 @@ type alias Msg =
     ProfileApp.Messages.Msg
 
 
-initialState : Model
-initialState =
-    { banner = Nothing
+initialState : Nav.Key -> Model
+initialState key =
+    { key = key
+    , banner = Nothing
     , user = Nothing
     , newPassword = ""
     }

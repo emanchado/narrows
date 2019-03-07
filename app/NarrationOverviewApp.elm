@@ -1,6 +1,8 @@
 module NarrationOverviewApp exposing (..)
 
 import Html exposing (Html)
+import Browser.Navigation as Nav
+
 import Core.Routes exposing (Route(..))
 import NarrationOverviewApp.Messages exposing (..)
 import NarrationOverviewApp.Models exposing (..)
@@ -16,9 +18,10 @@ type alias Msg =
     NarrationOverviewApp.Messages.Msg
 
 
-initialState : Model
-initialState =
-    { narrationOverview = Nothing
+initialState : Nav.Key -> Model
+initialState key =
+    { key = key
+    , narrationOverview = Nothing
     , sendingPendingIntroEmails = False
     , banner = Nothing
     }

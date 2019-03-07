@@ -2,6 +2,8 @@ module ChapterEditApp.Models exposing (..)
 
 import Json.Encode
 import Json.Decode
+import Browser.Navigation as Nav
+
 import Common.Models exposing (FullCharacter, Character, Narration, Chapter, Banner, MessageThread)
 
 
@@ -13,7 +15,7 @@ newEmptyChapter narration =
     , audio = narration.defaultAudio
     , backgroundImage = narration.defaultBackgroundImage
     , text = Json.Encode.object [ ("type", Json.Encode.string "doc")
-                                , ("content", Json.Encode.list [])
+                                , ("content", Json.Encode.list Json.Encode.string [])
                                 ]
     , participants = narration.characters
     , published = Nothing
@@ -35,7 +37,8 @@ type alias LastReactionsResponse =
 
 
 type alias Model =
-    { chapter : Maybe Chapter
+    { key : Nav.Key
+    , chapter : Maybe Chapter
     , narration : Maybe Narration
     , lastChapters : Maybe (List LastChapter)
     , banner : Maybe Banner

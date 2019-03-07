@@ -2,11 +2,12 @@ module ChapterEditApp.Update exposing (..)
 
 import Http
 import Json.Encode
-import Navigation
+import Browser.Navigation as Nav
 import Task
 import Process
-import Time exposing (Time)
-import Time.DateTime as DateTime exposing (DateTime, fromTimestamp)
+import ISO8601 exposing (Time)
+import Time exposing (utc, toHour, toMinute, toSecond)
+
 import Core.Routes exposing (Route(..))
 import Common.Models exposing (Banner, Narration, Chapter, FileSet, FileUploadError, FileUploadSuccess, MediaType(..), errorBanner, successBanner, mediaTypeString, updateNarrationFiles)
 import Common.Ports exposing (initEditor, renderText, openFileInput, uploadFile)
@@ -76,11 +77,11 @@ genericHttpErrorHandler model error =
   let
     errorString =
       case error of
-        Http.BadPayload parserError _ ->
+        Http.BadBody parserError ->
           "Bad payload: " ++ parserError
 
-        Http.BadStatus resp ->
-          "Got status " ++ (toString resp.status) ++ " with body " ++ resp.body
+        Http.BadStatus status ->
+          "Got status " ++ (String.fromInt status)
 
         _ ->
           "Cannot connect to server"
@@ -91,11 +92,20 @@ genericHttpErrorHandler model error =
 showFlashMessage : Maybe Banner -> Cmd Msg
 showFlashMessage maybeBanner =
   Cmd.batch
-    [ Process.sleep (Time.second * 0)
+    [ Process.sleep 0
       |> Task.perform (\_ -> SetFlashMessage maybeBanner)
-    , Process.sleep (Time.second * 2)
+    , Process.sleep 2
       |> Task.perform (\_ -> RemoveFlashMessage)
     ]
+
+
+toUtcString : Time.Posix -> String
+toUtcString time =
+  String.fromInt (toHour utc time)
+  ++ ":" ++
+  String.fromInt (toMinute utc time)
+  ++ ":" ++
+  String.fromInt (toSecond utc time)
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -105,7 +115,7 @@ update msg model =
       ( model, Cmd.none )
 
     NavigateTo url ->
-      ( model, Navigation.newUrl url )
+      ( model, Nav.pushUrl model.key url )
 
     SetFlashMessage maybeBanner ->
       ( { model | flash = maybeBanner }
@@ -171,7 +181,7 @@ update msg model =
       ( { model | lastChapters = Just lastReactions.lastChapters }
       , Cmd.batch <|
           List.map
-            (\c -> renderText { elemId = "chapter-text-" ++ (toString c.id)
+            (\c -> renderText { elemId = "chapter-text-" ++ (String.fromInt c.id)
                               , text = c.text
                               , proseMirrorType = "chapter"
                               })
@@ -185,7 +195,7 @@ update msg model =
       ( { model | lastChapters = Just lastReactions.lastChapters }
       , Cmd.batch <|
           (List.map
-             (\c -> renderText { elemId = "chapter-text-" ++ (toString c.id)
+             (\c -> renderText { elemId = "chapter-text-" ++ (String.fromInt c.id)
                                , text = c.text
                                , proseMirrorType = "chapter"
                                })
@@ -386,7 +396,7 @@ update msg model =
         Just chapter ->
           let
             updatedChapter =
-              { chapter | published = Just <| DateTime.toISO8601 (fromTimestamp time) }
+              { chapter | published = Just <| toUtcString time }
           in
             ( { model | chapter = Just updatedChapter }
             , ChapterEditApp.Api.saveChapter updatedChapter
@@ -401,21 +411,27 @@ update msg model =
     SaveChapterResult (Ok resp) ->
       case model.chapter of
         Just chapter ->
-          if (resp.status.code >= 200) && (resp.status.code < 300) then
-            case chapter.published of
-              Just published ->
-                ( model
-                , Navigation.newUrl <| "/chapters/" ++ (toString chapter.id)
-                )
+          case resp of
+            Http.GoodStatus_ _ _ ->
+              case chapter.published of
+                Just published ->
+                  ( model
+                  , Nav.pushUrl model.key <| "/chapters/" ++ (String.fromInt chapter.id)
+                  )
 
-              Nothing ->
-                ( model
-                , showFlashMessage <| successBanner "Saved"
-                )
-          else
-            ( model
-            , showFlashMessage <| errorBanner <| "Error saving chapter, status code " ++ (toString resp.status)
-            )
+                Nothing ->
+                  ( model
+                  , showFlashMessage <| successBanner "Saved"
+                  )
+            Http.BadStatus_ metadata _ ->
+              ( model
+              , showFlashMessage <| errorBanner <| "Error saving chapter, status code " ++ (String.fromInt metadata.statusCode)
+              )
+
+            _ ->
+              ( model
+              , showFlashMessage <| errorBanner <| "Error saving chapter, network error"
+              )
 
         Nothing ->
           ( model, Cmd.none )
@@ -445,7 +461,7 @@ update msg model =
       case model.chapter of
         Just chapter ->
           let
-            publishTimestamp = Just <| DateTime.toISO8601 (fromTimestamp time)
+            publishTimestamp = Just <| toUtcString time
             updatedChapter = { chapter | published = publishTimestamp }
           in
             ( { model | chapter = Just updatedChapter }
@@ -466,5 +482,5 @@ update msg model =
       ( { model | banner = Nothing
                 , savingChapter = False
         }
-      , Navigation.newUrl <| "/chapters/" ++ (toString chapter.id) ++ "/edit"
+      , Nav.pushUrl model.key <| "/chapters/" ++ (String.fromInt chapter.id) ++ "/edit"
       )

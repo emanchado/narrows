@@ -7,7 +7,7 @@ import Html.Events exposing (onClick, onInput, on)
 import Json.Decode
 
 import Common.Models exposing (ParticipantCharacter)
-import Common.Views exposing (bannerView, linkTo)
+import Common.Views exposing (bannerView)
 import CharacterApp.Models exposing (Model, CharacterInfo, ChapterSummary)
 import CharacterApp.Messages exposing (..)
 
@@ -16,7 +16,7 @@ avatarUrl : Int -> Maybe String -> String
 avatarUrl narrationId maybeAvatar =
   case maybeAvatar of
     Just avatar ->
-      "/static/narrations/" ++ (toString narrationId) ++ "/avatars/" ++ avatar
+      "/static/narrations/" ++ (String.fromInt narrationId) ++ "/avatars/" ++ avatar
     Nothing ->
       "/img/default-avatar.png"
 
@@ -24,40 +24,27 @@ avatarUrl narrationId maybeAvatar =
 chapterParticipation : String -> ChapterSummary -> Html Msg
 chapterParticipation characterToken chapter =
   li []
-    [ a
-      (linkTo
-        NavigateTo
-        ("/read/" ++ (toString chapter.id) ++ "/" ++ characterToken)
-      )
-      [ text chapter.title ]
+    [ a [ href <| "/read/" ++ (String.fromInt chapter.id) ++ "/" ++ characterToken ]
+        [ text chapter.title ]
     ]
 
 
 characterView : Int -> ParticipantCharacter -> Html Msg
 characterView narrationId participant =
-  let
-    avatarUrl =
-      case participant.avatar of
-        Just avatar ->
-          "/static/narrations/" ++ (toString narrationId) ++ "/avatars/" ++ avatar
-
-        Nothing ->
-          "/img/default-avatar.png"
-  in
-    li []
-      [ img [ class "avatar"
-            , src avatarUrl
-            ]
-          []
-      , div []
-          [ strong [] [ text participant.name ]
-          , br [] []
-          , div [ id <| "description-character-" ++ (toString participant.id)
-                , class "character-description"
-                ]
-              []
+  li []
+    [ img [ class "avatar"
+          , src <| avatarUrl narrationId participant.avatar
           ]
-      ]
+        []
+    , div []
+        [ strong [] [ text participant.name ]
+        , br [] []
+        , div [ id <| "description-character-" ++ (String.fromInt participant.id)
+              , class "character-description"
+              ]
+            []
+        ]
+    ]
 
 
 mainView : Model -> Html Msg

@@ -3,7 +3,7 @@ module ChapterEditApp.Views exposing (mainView)
 import String
 import Set
 import Html exposing (Html, h2, h3, div, main_, nav, section, ul, li, img, a, input, button, audio, br, span, label, strong, em, text)
-import Html.Attributes exposing (id, name, class, href, src, target, type_, value, placeholder, checked, disabled)
+import Html.Attributes exposing (id, name, class, src, target, type_, value, placeholder, checked, disabled)
 import Html.Events exposing (onClick, onInput, on)
 
 import Common.Models exposing (FullCharacter, Narration, Chapter, MediaType(..), Banner)
@@ -42,7 +42,7 @@ chapterMediaView chapter narration uploadingAudio uploadingBackgroundImage =
         , img [ class "tiny-image-preview"
               , src (case chapter.backgroundImage of
                        Just image -> "/static/narrations/"
-                                       ++ (toString chapter.narrationId)
+                                       ++ (String.fromInt chapter.narrationId)
                                        ++ "/background-images/"
                                        ++ image
                        Nothing -> "/img/no-preview.png")
@@ -81,7 +81,7 @@ chapterMediaView chapter narration uploadingAudio uploadingBackgroundImage =
             Just chapterAudio ->
               audio [ id "audio-preview"
                     , src ("/static/narrations/"
-                             ++ (toString chapter.narrationId)
+                             ++ (String.fromInt chapter.narrationId)
                              ++ "/audio/"
                              ++ chapterAudio)
                     ]
@@ -168,7 +168,7 @@ lastChapterView participantChapterIds chapter =
   in
     li []
       [ h3 [ class extraClass ] [ text chapter.title ]
-      , div [ id <| "chapter-text-" ++ (toString chapter.id)
+      , div [ id <| "chapter-text-" ++ (String.fromInt chapter.id)
             , class <| "chapter" ++ extraClass
             ]
           []
@@ -200,17 +200,17 @@ lastReactionListView lastChapters chapter =
       [ h2 [] [ text "Last reactions" ]
       , div []
           (List.map
-            (\chapter ->
-              if List.member chapter.id participantChapterIds then
+            (\lastChapter ->
+              if List.member lastChapter.id participantChapterIds then
                 div []
-                  [ h3 [] [ text chapter.title ]
-                  , if List.isEmpty chapter.messageThreads then
+                  [ h3 [] [ text lastChapter.title ]
+                  , if List.isEmpty lastChapter.messageThreads then
                       em [] [ text "No messages." ]
                     else
                       ul [ class "thread-list narrator" ]
                         (List.map
                            (messageThreadView Nothing [])
-                           chapter.messageThreads)
+                           lastChapter.messageThreads)
                   ]
               else
                 text "")
@@ -227,20 +227,19 @@ mainView : Model -> Html Msg
 mainView model =
   let
     chapter = case model.chapter of
-                Just chapter -> chapter
+                Just ch -> ch
                 Nothing -> Common.Models.loadingPlaceholderChapter
     narration = case model.narration of
-                  Just narration -> narration
+                  Just narr -> narr
                   Nothing -> Common.Models.loadingPlaceholderNarration
   in
     div [ id "narrator-app", class "app-container" ]
       [ breadcrumbNavView
-          NavigateTo
           [ { title = "Home"
             , url = "/"
             }
           , { title = narration.title
-            , url = "/narrations/" ++ (toString chapter.narrationId)
+            , url = "/narrations/" ++ (String.fromInt chapter.narrationId)
             }
           ]
           (if String.isEmpty chapter.title then

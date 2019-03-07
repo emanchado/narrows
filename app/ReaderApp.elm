@@ -1,9 +1,11 @@
 module ReaderApp exposing (..)
 
 import Html exposing (Html)
+import Browser.Navigation as Nav
+
 import Core.Routes exposing (Route(..))
 import Common.Ports
-import Common.Models.Reading exposing (PageState(Loader))
+import Common.Models.Reading exposing (PageState(..))
 import ReaderApp.Ports
 import ReaderApp.Messages exposing (..)
 import ReaderApp.Models exposing (..)
@@ -19,9 +21,10 @@ type alias Msg =
     ReaderApp.Messages.Msg
 
 
-initialState : Model
-initialState =
-    { state = Loader
+initialState : Nav.Key -> Model
+initialState key =
+    { key = key
+    , state = Loader
     , chapter = Nothing
     , messageThreads = Nothing
     , backgroundMusic = True

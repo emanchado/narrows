@@ -1,38 +1,39 @@
 module Routing exposing (..)
 
-import Navigation
-import UrlParser exposing (..)
+import Browser.Navigation
+import Url exposing (Url)
+import Url.Parser as Parser exposing ((</>), Parser, oneOf, s, int, string)
 
 import Core.Routes exposing (Route(..))
 
 
-matchers : Parser (Route -> a) a
-matchers =
+parser : Parser (Route -> a) a
+parser =
     oneOf
-        [ map ChapterReaderPage (s "read" </> int </> string)
-        , map CharacterPage (s "characters" </> string)
-        , map NarratorIndex (s "")
-        , map NarrationArchivePage (s "narrations")
-        , map NarrationCreationPage (s "narrations" </> s "new")
-        , map NarrationEditPage (s "narrations" </> int </> s "edit")
-        , map ChapterEditNarratorPage (s "chapters" </> int </> s "edit")
-        , map ChapterControlPage (s "chapters" </> int)
-        , map CreateChapterPage (s "narrations" </> int </> s "new")
-        , map CharacterCreationPage (s "narrations" </> int </> s "characters" </> s "new")
-        , map CharacterEditPage (s "characters" </> int </> s "edit")
-        , map NarrationPage (s "narrations" </> int)
-        , map UserManagementPage (s "users")
-        , map NovelReaderChapterPage (s "novels" </> string </> s "chapters" </> int)
-        , map NovelReaderPage (s "novels" </> string)
-        , map ProfilePage (s "profile")
-        , map PasswordResetFailure (s "password-reset" </> string)
+        [ Parser.map NarratorIndex Parser.top
+        , Parser.map ChapterReaderPage (s "read" </> int </> string)
+        , Parser.map CharacterPage (s "characters" </> string)
+        , Parser.map NarrationArchivePage (s "narrations")
+        , Parser.map NarrationCreationPage (s "narrations" </> s "new")
+        , Parser.map NarrationEditPage (s "narrations" </> int </> s "edit")
+        , Parser.map ChapterEditNarratorPage (s "chapters" </> int </> s "edit")
+        , Parser.map ChapterControlPage (s "chapters" </> int)
+        , Parser.map CreateChapterPage (s "narrations" </> int </> s "new")
+        , Parser.map CharacterCreationPage (s "narrations" </> int </> s "characters" </> s "new")
+        , Parser.map CharacterEditPage (s "characters" </> int </> s "edit")
+        , Parser.map NarrationPage (s "narrations" </> int)
+        , Parser.map UserManagementPage (s "users")
+        , Parser.map NovelReaderChapterPage (s "novels" </> string </> s "chapters" </> int)
+        , Parser.map NovelReaderPage (s "novels" </> string)
+        , Parser.map ProfilePage (s "profile")
+        , Parser.map PasswordResetFailure (s "password-reset" </> string)
         ]
 
-
-parseLocation : Navigation.Location -> Route
-parseLocation location =
-  case (parsePath matchers location) of
-    Just route ->
-      route
-    Nothing ->
-      NotFoundRoute
+fromUrl : Url -> Route
+fromUrl url =
+    let
+      maybeRoute = Parser.parse parser url
+    in
+      case maybeRoute of
+        Just route -> route
+        Nothing -> NotFoundRoute

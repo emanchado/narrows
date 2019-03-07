@@ -4,7 +4,7 @@ import Html exposing (Html, div, span, a, input, text, img, label, button, br)
 import Html.Attributes exposing (id, class, for, src, href, type_, checked)
 import Html.Events exposing (onClick)
 import Common.Views exposing (bannerView, loadingView)
-import Common.Models.Reading exposing (PageState(Loader))
+import Common.Models.Reading exposing (PageState(..))
 import NovelReaderApp.Models exposing (Model, Banner)
 import NovelReaderApp.Messages exposing (..)
 import NovelReaderApp.Views.Novel

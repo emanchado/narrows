@@ -3,7 +3,7 @@ module CharacterCreationApp.Views exposing (..)
 import Html exposing (Html, main_, h1, h2, div, form, input, label, button, ul, li, a, text)
 import Html.Attributes exposing (id, class, href, type_, placeholder, for, value)
 import Html.Events exposing (onInput)
-import Common.Views exposing (onPreventDefaultClick, linkTo, breadcrumbNavView)
+import Common.Views exposing (onPreventDefaultClick, breadcrumbNavView)
 import CharacterCreationApp.Messages exposing (..)
 import CharacterCreationApp.Models exposing (..)
 
@@ -14,14 +14,13 @@ mainView model =
           , class "app-container app-container-simple"
           ]
         [ breadcrumbNavView
-            NavigateTo
             [ { title = "Home"
               , url = "/"
               }
             , case model.narration of
                 Just narration ->
                   { title = narration.title
-                  , url = "/narrations/" ++ (toString narration.id)
+                  , url = "/narrations/" ++ (String.fromInt narration.id)
                   }
                 Nothing ->
                   { title = "…"

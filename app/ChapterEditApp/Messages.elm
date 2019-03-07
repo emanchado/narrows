@@ -2,7 +2,7 @@ module ChapterEditApp.Messages exposing (..)
 
 import Http
 import Json.Encode
-import Time exposing (Time)
+import Time
 import Common.Models exposing (FullCharacter, Narration, Chapter, Banner, MediaType, FileUploadError, FileUploadSuccess)
 import ChapterEditApp.Models exposing (LastReactionsResponse)
 
@@ -35,6 +35,6 @@ type Msg
     | PublishChapter
     | ConfirmPublishChapter
     | CancelPublishChapter
-    | PublishChapterWithTime Time
+    | PublishChapterWithTime Time.Posix
     | PublishNewChapter
-    | PublishNewChapterWithTime Time
+    | PublishNewChapterWithTime Time.Posix

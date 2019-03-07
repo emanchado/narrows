@@ -1,7 +1,7 @@
 module NarrationArchiveApp.Update exposing (..)
 
 import Http
-import Navigation
+import Browser.Navigation as Nav
 
 import Core.Routes exposing (Route(..))
 import Common.Models exposing (errorBanner)
@@ -27,17 +27,17 @@ update msg model =
       (model, Cmd.none)
 
     NavigateTo url ->
-      (model, Navigation.newUrl url)
+      (model, Nav.pushUrl model.key url)
 
     NarrationArchiveFetchResult (Err error) ->
       case error of
-        Http.BadPayload parserError _ ->
+        Http.BadBody parserError ->
           ( { model | banner = errorBanner <| "Error! " ++ parserError }
           , Cmd.none
           )
 
-        Http.BadStatus resp ->
-          ( { model | banner = errorBanner <| "Error! Body: " ++ resp.body }
+        Http.BadStatus status ->
+          ( { model | banner = errorBanner <| "Error! Status: " ++ (String.fromInt status) }
           , Cmd.none
           )
 

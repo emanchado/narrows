@@ -1,6 +1,8 @@
 module ChapterControlApp exposing (..)
 
 import Html exposing (Html)
+import Browser.Navigation as Nav
+
 import Core.Routes exposing (Route(..))
 import ChapterControlApp.Messages exposing (..)
 import ChapterControlApp.Models exposing (..)
@@ -16,9 +18,10 @@ type alias Msg =
     ChapterControlApp.Messages.Msg
 
 
-initialState : Model
-initialState =
-    { narration = Nothing
+initialState : Nav.Key -> Model
+initialState key =
+    { key = key
+    , narration = Nothing
     , interactions = Nothing
     , banner = Nothing
     , reply = Nothing

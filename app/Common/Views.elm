@@ -1,34 +1,33 @@
 module Common.Views exposing (..)
 
 import String
-import Regex exposing (HowMany(All), regex, caseInsensitive)
+import Regex
 import Json.Decode
 import Html exposing (Html, h2, div, nav, textarea, button, span, ul, li, img, a, em, strong, text)
 import Html.Attributes exposing (class, rows, value, disabled, href, src, title)
-import Html.Events exposing (defaultOptions, onWithOptions, onClick, onInput)
+import Html.Events exposing (onClick, onInput, preventDefaultOn, stopPropagationOn)
 import Common.Models exposing (MessageThread, Message, Banner, ReplyInformation, Breadcrumb, ChapterOverview, Narration, NarrationOverview, NarrationStatus(..), narrationStatusString)
 
 
 onPreventDefaultClick : msg -> Html.Attribute msg
 onPreventDefaultClick message =
-  onWithOptions
-    "click"
-    { defaultOptions | preventDefault = True }
-    (Json.Decode.succeed message)
+  preventDefaultOn "click"
+    (Json.Decode.map (\m -> (m, True)) (Json.Decode.succeed message))
 
 
 onStopPropagationClick : msg -> Html.Attribute msg
 onStopPropagationClick message =
-  onWithOptions
-    "click"
-    { defaultOptions | stopPropagation = True }
-    (Json.Decode.succeed message)
+  stopPropagationOn "click"
+    (Json.Decode.map (\m -> (m, True)) (Json.Decode.succeed message))
 
 
 -- This regex cannot have capture groups, as they trigger a very weird
 -- bug in Regex.split.
-linkRegex : Regex.Regex
-linkRegex = caseInsensitive <| regex <|
+linkRegex : Maybe Regex.Regex
+linkRegex = Regex.fromStringWith
+              { caseInsensitive = True
+              , multiline = False
+              } <|
             "https?://[a-z0-9.-]+(?::[0-9]+)?" ++       -- Protocol/host
             "(?:/(?:[,.]*[a-z0-9/&%_+-]+)*)?" ++        -- URL path
             "(?:\\?(?:[a-z0-9]*=[a-z0-9%_-]*&?)+)?" ++  -- Query parameters
@@ -47,17 +46,21 @@ interleave list1 list2 =
 
 linkify : String -> List (Html msg)
 linkify message =
-   let
-     links =
-       List.map
-         (\{match} -> a [ href match ] [ text match ])
-         <| Regex.find All linkRegex message
-     textChunks =
-       List.map
-         text
-         <| Regex.split All linkRegex message
-   in
-     interleave links textChunks
+  case linkRegex of
+    Just regex ->
+      let
+        links =
+          List.map
+            (\{match} -> a [ href match ] [ text match ])
+            <| Regex.find regex message
+        textChunks =
+          List.map
+            text
+            <| Regex.split regex message
+      in
+        interleave links textChunks
+    Nothing ->
+      [ text message ]
 
 
 messageView : Message -> Html msg
@@ -179,25 +182,18 @@ bannerView maybeBanner =
       text ""
 
 
-linkTo : (String -> msg) -> String -> List (Html.Attribute msg)
-linkTo message url =
-  [ href url
-  , onPreventDefaultClick (message url)
-  ]
-
-
-breadcrumbView : (String -> msg) -> Breadcrumb -> Html msg
-breadcrumbView messageConstructor link =
-  a (linkTo messageConstructor link.url)
+breadcrumbView : Breadcrumb -> Html msg
+breadcrumbView link =
+  a [ href link.url ]
     [ text link.title ]
 
 
-breadcrumbNavView : (String -> msg) -> List Breadcrumb -> Html msg -> Html msg
-breadcrumbNavView messageConstructor links pageTitle =
+breadcrumbNavView : List Breadcrumb -> Html msg -> Html msg
+breadcrumbNavView links pageTitle =
   let
     parts =
       List.concat
-        [ (List.map (breadcrumbView messageConstructor) links)
+        [ (List.map breadcrumbView links)
         , [ pageTitle ]
         ]
   in
@@ -218,18 +214,15 @@ unpublishedChapterView navigationMessage narration chapterOverview =
           chapterOverview.participants
   in
     li []
-      [ a (linkTo
-             navigationMessage
-             ("/chapters/" ++ (toString chapterOverview.id) ++ "/edit"))
-          [ text chapterOverview.title
-          ]
+      [ a [ href <| "/chapters/" ++ (String.fromInt chapterOverview.id) ++ "/edit" ]
+          [ text chapterOverview.title ]
       , text " — "
       , em [] [ text "Draft" ]
       , if numberNarrationCharacters /= numberChapterParticipants then
           span [ title <| "Only for " ++ participantNames ]
             [ text " — "
             , img [ src "/img/character.png" ] []
-            , text <| toString numberChapterParticipants
+            , text <| String.fromInt numberChapterParticipants
             ]
         else
           text ""
@@ -248,13 +241,11 @@ publishedChapterView navigationMessage narration chapterOverview =
           chapterOverview.participants
   in
     li []
-      [ a (linkTo
-             navigationMessage
-             ("/chapters/" ++ (toString chapterOverview.id)))
+      [ a [ href <| "/chapters/" ++ (String.fromInt chapterOverview.id) ]
           [ text chapterOverview.title ]
       , if numberSentReactions /= numberChapterParticipants then
           text (" — "
-                ++ (toString <| numberChapterParticipants - numberSentReactions)
+                ++ (String.fromInt <| numberChapterParticipants - numberSentReactions)
                 ++ " reaction(s) pending")
         else
           text ""
@@ -262,7 +253,7 @@ publishedChapterView navigationMessage narration chapterOverview =
           span [ title <| "Only for " ++ participantNames ]
             [ text " — "
             , img [ src "/img/character.png" ] []
-            , text <| toString numberChapterParticipants
+            , text <| String.fromInt numberChapterParticipants
             ]
         else
           text ""
@@ -270,7 +261,7 @@ publishedChapterView navigationMessage narration chapterOverview =
           span []
             [ text " — "
             , img [ src "/img/envelope.png" ] []
-            , text <| toString chapterOverview.numberMessages
+            , text <| String.fromInt chapterOverview.numberMessages
             ]
         else
           text ""
@@ -311,7 +302,7 @@ compactNarrationView navigationMessage overview =
       case overview.narration.status of
         Active ->
           button [ class "btn btn-add"
-                 , onClick (navigationMessage <| "/narrations/" ++ (toString overview.narration.id) ++ "/new")
+                 , onClick (navigationMessage <| "/narrations/" ++ (String.fromInt overview.narration.id) ++ "/new")
                  ]
             [ text "New chapter" ]
         _ ->
@@ -321,11 +312,7 @@ compactNarrationView navigationMessage overview =
       [ ribbon
       , div [ class "narration-header" ]
           [ h2 []
-            [ a
-                (linkTo
-                  navigationMessage
-                  ("/narrations/" ++ (toString overview.narration.id))
-                )
+            [ a [ href <| "/narrations/" ++ (String.fromInt overview.narration.id) ]
                 [ text overview.narration.title ]
             ]
           , buttonBar

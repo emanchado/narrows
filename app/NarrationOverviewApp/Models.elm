@@ -2,6 +2,8 @@ module NarrationOverviewApp.Models exposing (..)
 
 import Dict exposing (Dict)
 import ISO8601
+import Browser.Navigation as Nav
+
 import Common.Models exposing (Narration, Banner, NarrationOverview)
 
 
@@ -23,7 +25,8 @@ type alias SendIntroDate =
 
 
 type alias Model =
-    { narrationOverview : Maybe NarrationOverview
+    { key : Nav.Key
+    , narrationOverview : Maybe NarrationOverview
     , sendingPendingIntroEmails : Bool
     , banner : Maybe Banner
     }

@@ -1,5 +1,6 @@
 module UserManagementApp.Models exposing (..)
 
+import Browser.Navigation as Nav
 import Common.Models exposing (Banner, UserInfo)
 
 
@@ -16,7 +17,8 @@ type alias UserListResponse =
 
 
 type alias Model =
-    { banner : Maybe Banner
+    { key : Nav.Key
+    , banner : Maybe Banner
     , users : Maybe (List UserInfo)
     , userUi : Maybe UserChanges
     , newUserEmail : String

@@ -1,7 +1,8 @@
 module Core.Messages exposing (..)
 
 import Http
-import Navigation
+import Browser
+import Url
 
 import Core.Models exposing (ResetPasswordResponse)
 import Common.Models exposing (UserInfo)
@@ -22,8 +23,9 @@ import ProfileApp
 
 type Msg
     = NoOp
-    | NavigateTo String
-    | UpdateLocation Navigation.Location
+    | NavigateTo Browser.UrlRequest
+    | UpdateLocation Url.Url
+    | GoToFrontpage
     | SessionFetchResult (Result Http.Error UserInfo)
     | UpdateEmail String
     | UpdatePassword String

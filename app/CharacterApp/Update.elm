@@ -1,7 +1,8 @@
 module CharacterApp.Update exposing (..)
 
 import Http
-import Navigation
+import Browser.Navigation as Nav
+
 import Core.Routes exposing (Route(..))
 import Common.Models exposing (errorBanner, successBanner)
 import Common.Ports exposing (initEditor, readAvatarAsUrl, uploadAvatar, renderText)
@@ -29,17 +30,17 @@ update msg model =
       ( model, Cmd.none )
 
     NavigateTo url ->
-      ( model, Navigation.newUrl url )
+      ( model, Nav.pushUrl model.key url )
 
     CharacterFetchResult (Err error) ->
       let
         errorString =
           case error of
-            Http.BadPayload parserError _ ->
+            Http.BadBody parserError ->
               "Bad payload: " ++ parserError
 
-            Http.BadStatus resp ->
-              "Got status " ++ (toString resp.status) ++ " with body " ++ resp.body
+            Http.BadStatus status ->
+              "Got status " ++ (String.fromInt status)
 
             _ ->
               "Cannot connect to server"
@@ -70,10 +71,10 @@ update msg model =
                          }
             ]
             (List.map
-               (\character ->
+               (\narrationCharacter ->
                   renderText
-                    { elemId = "description-character-" ++ (toString character.id)
-                    , text = character.description
+                    { elemId = "description-character-" ++ (String.fromInt narrationCharacter.id)
+                    , text = narrationCharacter.description
                     , proseMirrorType = "description"
                     })
                character.narration.characters)
@@ -141,7 +142,7 @@ update msg model =
 
     UploadAvatarError err ->
       let
-        banner = errorBanner <| (toString err.status) ++ " - " ++ err.message
+        banner = errorBanner <| (String.fromInt err.status) ++ " - " ++ err.message
       in
         ( { model | banner = banner }
         , Cmd.none

@@ -1,12 +1,13 @@
 module NovelReaderApp.Update exposing (..)
 
 import Http
-import Navigation
+import Browser.Navigation as Nav
 import Task
+
 import Core.Routes exposing (Route(..))
 import Common.Ports exposing (readDeviceSettings, setDeviceSetting, renderText, startNarration, pauseNarrationMusic, playPauseNarrationMusic, flashElement)
 import Common.Models exposing (Character, errorBanner, ParticipantCharacter)
-import Common.Models.Reading exposing (PageState(StartingNarration, Narrating))
+import Common.Models.Reading exposing (PageState(..))
 import NovelReaderApp.Api
 import NovelReaderApp.Messages exposing (..)
 import NovelReaderApp.Models exposing (..)
@@ -58,7 +59,7 @@ urlUpdate route model =
 
 descriptionRenderCommand : ParticipantCharacter -> Cmd Msg
 descriptionRenderCommand character =
-  renderText { elemId = "description-character-" ++ (toString character.id)
+  renderText { elemId = "description-character-" ++ (String.fromInt character.id)
              , text = character.description
              , proseMirrorType = "description"
              }
@@ -73,8 +74,7 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
   case msg of
     NavigateTo url ->
-      ( model, Navigation.newUrl url )
-
+      ( model, Nav.pushUrl model.key url )
 
     ReceiveDeviceSettings newSettings ->
       ( { model | backgroundMusic = newSettings.backgroundMusic
@@ -87,10 +87,10 @@ update msg model =
       let
         errorString =
           case error of
-            Http.BadPayload parserError _ ->
+            Http.BadBody parserError ->
               "Bad payload: " ++ parserError
-            Http.BadStatus resp ->
-              "Got status " ++ (toString resp.status) ++ " with body " ++ resp.body
+            Http.BadStatus status ->
+              "Got status " ++ (String.fromInt status)
             _ ->
               "Cannot connect to server"
         newBanner = errorBanner <| "Error fetching chapter: " ++ errorString
@@ -114,7 +114,7 @@ update msg model =
       let
         audioElemId =
           if model.musicPlaying then
-            "background-music-chapter-" ++ (toString model.currentChapterIndex)
+            "background-music-chapter-" ++ (String.fromInt model.currentChapterIndex)
           else
             ""
       in
@@ -166,7 +166,7 @@ update msg model =
     PlayPauseMusic ->
       let
         audioElemId = "background-music-chapter-" ++
-                        (toString model.currentChapterIndex)
+                        (String.fromInt model.currentChapterIndex)
       in
         ( { model | musicPlaying = not model.musicPlaying }
         , playPauseNarrationMusic { audioElemId = audioElemId }
@@ -183,12 +183,12 @@ update msg model =
       let
         newChapterIndex = max 0 (model.currentChapterIndex - 1)
         audioElemId = "background-music-chapter-" ++
-                        (toString model.currentChapterIndex)
+                        (String.fromInt model.currentChapterIndex)
       in
         case model.novel of
           Just novel ->
             ( model
-            , Cmd.batch [ Navigation.newUrl <| "/novels/" ++ novel.token ++ "/chapters/" ++ (toString newChapterIndex)
+            , Cmd.batch [ Nav.pushUrl model.key <| "/novels/" ++ novel.token ++ "/chapters/" ++ (String.fromInt newChapterIndex)
                         , pauseNarrationMusic { audioElemId = audioElemId }
                         ]
             )
@@ -203,12 +203,12 @@ update msg model =
                         Nothing -> 0
         newChapterIndex = min lastChapter (model.currentChapterIndex + 1)
         audioElemId = "background-music-chapter-" ++
-                        (toString model.currentChapterIndex)
+                        (String.fromInt model.currentChapterIndex)
       in
         case model.novel of
           Just novel ->
             ( model
-            , Cmd.batch [ Navigation.newUrl <| "/novels/" ++ novel.token ++ "/chapters/" ++ (toString newChapterIndex)
+            , Cmd.batch [ Nav.pushUrl model.key <| "/novels/" ++ novel.token ++ "/chapters/" ++ (String.fromInt newChapterIndex)
                         , pauseNarrationMusic { audioElemId = audioElemId }
                         ]
             )

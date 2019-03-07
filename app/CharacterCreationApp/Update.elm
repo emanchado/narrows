@@ -1,7 +1,7 @@
 module CharacterCreationApp.Update exposing (..)
 
 import Http
-import Navigation
+import Browser.Navigation as Nav
 
 import Core.Routes exposing (Route(..))
 import CharacterCreationApp.Api
@@ -33,16 +33,16 @@ update msg model =
             ( model, Cmd.none )
 
         NavigateTo url ->
-            ( model, Navigation.newUrl url )
+            ( model, Nav.pushUrl model.key url )
 
         FetchNarrationResult (Err error) ->
             let
               errorString =
                 case error of
-                  Http.BadPayload parserError _ ->
+                  Http.BadBody parserError ->
                     "Bad payload: " ++ parserError
-                  Http.BadStatus resp ->
-                    "Got status " ++ (toString resp.status) ++ " with body " ++ resp.body
+                  Http.BadStatus status ->
+                    "Got status " ++ (String.fromInt status)
                   _ ->
                     "Cannot connect to server"
             in
@@ -74,10 +74,10 @@ update msg model =
 
         CreateCharacterResult (Ok character) ->
             ( model
-            , Navigation.newUrl <| "/characters/" ++ (toString character.id) ++ "/edit"
+            , Nav.pushUrl model.key <| "/characters/" ++ (String.fromInt character.id) ++ "/edit"
             )
 
         CancelCreateCharacter ->
             ( model
-            , Navigation.newUrl <| "/narrations/" ++ (toString model.narrationId)
+            , Nav.pushUrl model.key <| "/narrations/" ++ (String.fromInt model.narrationId)
             )

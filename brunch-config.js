@@ -13,7 +13,7 @@ module.exports = {
     plugins: {
         elmBrunch: {
             mainModules: ['app/Main.elm'],
-            makeParameters: ['--warn']
+            makeParameters: []
         },
 
         babel: {presets: ['es2015']}

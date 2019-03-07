@@ -16,7 +16,7 @@ characterView narrationId participant =
     avatarUrl =
       case participant.avatar of
         Just avatar ->
-          "/static/narrations/" ++ (toString narrationId) ++ "/avatars/" ++ avatar
+          "/static/narrations/" ++ (String.fromInt narrationId) ++ "/avatars/" ++ avatar
 
         Nothing ->
           "/img/default-avatar.png"
@@ -29,7 +29,7 @@ characterView narrationId participant =
       , div []
           [ strong [] [ text participant.name ]
           , br [] []
-          , div [ id <| "description-character-" ++ (toString participant.id)
+          , div [ id <| "description-character-" ++ (String.fromInt participant.id)
                 , class "character-description"
                 ]
               []
@@ -42,7 +42,7 @@ view model =
   case model.novel of
     Just novel ->
       case findChapter novel model.currentChapterIndex of
-        Just chapter ->
+        Just currentChapter ->
           div [ id "chapter-container", class (chapterContainerClass model.state) ]
             [ if isFirstChapter novel model.currentChapterIndex then
                 text ""
@@ -66,13 +66,13 @@ view model =
                         ]
                       []
                   ]
-            , div [ id "top-image"
-                  , style (backgroundImageStyle novel.narration.id chapter.backgroundImage model.backgroundBlurriness)
-                  ]
-                [ text (if (String.isEmpty chapter.title) then
+            , div (List.append
+                     [ id "top-image" ]
+                     (backgroundImageStyle novel.narration.id currentChapter.backgroundImage model.backgroundBlurriness))
+                [ text (if (String.isEmpty currentChapter.title) then
                           "Untitled"
                         else
-                          chapter.title)
+                          currentChapter.title)
                 ]
             , img [ id "play-icon"
                   , src ("/img/" ++ (if model.musicPlaying then
@@ -98,9 +98,9 @@ view model =
                    (\i chapter ->
                       case chapter.audio of
                         Just audioUrl ->
-                          audio [ id <| "background-music-chapter-" ++ (toString i)
+                          audio [ id <| "background-music-chapter-" ++ (String.fromInt i)
                                 , src ("/static/narrations/" ++
-                                         (toString novel.narration.id) ++
+                                         (String.fromInt novel.narration.id) ++
                                          "/audio/" ++ audioUrl)
                                 , loop True
                                 , preload (if model.backgroundMusic then
@@ -116,7 +116,7 @@ view model =
 
         Nothing ->
           div [ id "chapter-container", class (chapterContainerClass model.state) ]
-            [ text <| "Internal Error: no such chapter " ++ (toString model.currentChapterIndex)
+            [ text <| "Internal Error: no such chapter " ++ (String.fromInt model.currentChapterIndex)
             ]
 
     Nothing ->

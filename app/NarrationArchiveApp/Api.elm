@@ -7,5 +7,6 @@ import NarrationArchiveApp.Api.Json exposing (parseNarrationArchive)
 
 fetchAllNarrations : Cmd Msg
 fetchAllNarrations =
-  Http.send NarrationArchiveFetchResult <|
-    Http.get "/api/narrations" parseNarrationArchive
+  Http.get { url = "/api/narrations"
+           , expect = Http.expectJson NarrationArchiveFetchResult parseNarrationArchive
+           }

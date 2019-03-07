@@ -49,7 +49,7 @@ participantListView chapterId allCharacters currentParticipants =
 
 characterPreviewView : Int -> FullCharacter -> Html Msg
 characterPreviewView chapterId character =
-  a [ href <| "/read/" ++ (toString chapterId) ++ "/" ++ character.token
+  a [ href <| "/read/" ++ (String.fromInt chapterId) ++ "/" ++ character.token
     , target "_blank"
     , class "btn btn-small"
     ]

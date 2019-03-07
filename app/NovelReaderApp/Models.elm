@@ -1,6 +1,8 @@
 module NovelReaderApp.Models exposing (..)
 
 import Json.Decode
+import Browser.Navigation as Nav
+
 import Common.Models exposing (Character, ReplyInformation, ParticipantCharacter)
 import Common.Models.Reading exposing (PageState)
 
@@ -51,7 +53,8 @@ type alias Novel =
 
 
 type alias Model =
-  { state : PageState
+  { key : Nav.Key
+  , state : PageState
   , novel : Maybe Novel
   , currentChapterIndex : Int
   , backgroundMusic : Bool

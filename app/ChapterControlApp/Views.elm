@@ -13,7 +13,7 @@ recipientView : List Int -> FullCharacter -> Html Msg
 recipientView currentRecipients character =
   label []
     [ input [ type_ "checkbox"
-            , value (toString character.id)
+            , value (String.fromInt character.id)
             , checked (List.any (\r -> r == character.id) currentRecipients)
             , onCheck (UpdateNewMessageRecipient character.id)
             ]
@@ -43,7 +43,7 @@ mainView model =
                    )
     narration =
       case model.narration of
-        Just narration -> narration
+        Just narr -> narr
         Nothing -> { id = 0
                    , title = "…"
                    , status = Active
@@ -61,15 +61,14 @@ mainView model =
       [ div [ class "reaction-header" ]
           [ div []
               [ breadcrumbNavView
-                  NavigateTo
                   [ { title = "Home"
                     , url = "/"
                     }
                   , { title = narration.title
-                    , url = "/narrations/" ++ (toString chapter.narrationId)
+                    , url = "/narrations/" ++ (String.fromInt chapter.narrationId)
                     }
                   , { title = chapter.title
-                    , url = "/chapters/" ++ (toString chapter.id) ++ "/edit"
+                    , url = "/chapters/" ++ (String.fromInt chapter.id) ++ "/edit"
                     }
                   ]
                   (text "Reaction")
@@ -78,10 +77,10 @@ mainView model =
           , div []
               [ img [ class "tiny-image-preview"
                     , src (case chapter.backgroundImage of
-                             Just image -> "/static/narrations/"
-                             ++ (toString chapter.narrationId)
-                             ++ "/background-images/"
-                             ++ image
+                             Just image ->
+                               "/static/narrations/" ++
+                                 (String.fromInt chapter.narrationId) ++
+                                 "/background-images/" ++ image
                              Nothing -> "/img/no-preview.png")
                     ]
                   []

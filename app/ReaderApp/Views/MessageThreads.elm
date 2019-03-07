@@ -14,7 +14,7 @@ recipientView currentRecipients character =
     label []
         [ input
             [ type_ "checkbox"
-            , value (toString character.id)
+            , value (String.fromInt character.id)
             , checked (List.any (\r -> r == character.id) currentRecipients)
             , onCheck (UpdateNewMessageRecipient character.id)
             ]

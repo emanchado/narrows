@@ -16,19 +16,19 @@ encodeUserChanges newPassword =
 
 fetchCurrentUser : Cmd Msg
 fetchCurrentUser =
-  Http.send UserFetchResult <|
-  Http.get "/api/session" parseUserInfo
+  Http.get { url = "/api/session"
+           , expect = Http.expectJson UserFetchResult parseUserInfo
+           }
 
 
 saveUser : Int -> String -> Cmd Msg
 saveUser userId newPassword =
-  Http.send SaveUserResult <|
   Http.request
     { method = "PUT"
     , headers = []
-    , url = "/api/users/" ++ (toString userId)
+    , url = "/api/users/" ++ (String.fromInt userId)
     , body = Http.jsonBody <| encodeUserChanges newPassword
-    , expect = Http.expectStringResponse Ok
+    , expect = Http.expectStringResponse SaveUserResult Ok
     , timeout = Nothing
-    , withCredentials = False
+    , tracker = Nothing
     }

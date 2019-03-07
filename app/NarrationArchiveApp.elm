@@ -1,6 +1,8 @@
 module NarrationArchiveApp exposing (..)
 
 import Html exposing (Html)
+import Browser.Navigation as Nav
+
 import Core.Routes exposing (Route(..))
 import NarrationArchiveApp.Messages exposing (..)
 import NarrationArchiveApp.Models exposing (..)
@@ -16,9 +18,10 @@ type alias Msg =
     NarrationArchiveApp.Messages.Msg
 
 
-initialState : Model
-initialState =
-    { banner = Nothing
+initialState : Nav.Key -> Model
+initialState key =
+    { key = key
+    , banner = Nothing
     , narrations = Nothing
     }
 

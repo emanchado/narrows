@@ -62,7 +62,7 @@ encodeChapter chapter =
               Nothing ->
                   Json.Encode.null
         )
-      , ( "participants", Json.Encode.list <| List.map encodeCharacter chapter.participants )
+      , ( "participants", Json.Encode.list encodeCharacter chapter.participants )
       , ( "published"
         , case chapter.published of
               Just published ->

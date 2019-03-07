@@ -30,9 +30,19 @@ update msg model =
       (model, Cmd.none)
 
     UserFetchResult (Err error) ->
-      ( { model | banner = errorBanner <| "Error fetching user: " ++ (toString error) }
-      , Cmd.none
-      )
+      case error of
+        Http.BadStatus status ->
+          ( { model | banner = errorBanner <| "Error fetching user: " ++ (String.fromInt status) }
+          , Cmd.none
+          )
+        Http.BadBody body ->
+          ( { model | banner = errorBanner <| "Could not parse fetched user: " ++ body }
+          , Cmd.none
+          )
+        _ ->
+          ( { model | banner = errorBanner <| "Network error fetching user" }
+          , Cmd.none
+          )
 
     UserFetchResult (Ok resp) ->
       ( { model | user = Just resp }
@@ -57,22 +67,27 @@ update msg model =
     SaveUserResult (Err err) ->
       let
         errorString = case err of
-                        Http.BadPayload parserError _ ->
+                        Http.BadBody parserError ->
                           "Bad payload: " ++ parserError
-                        Http.BadStatus resp ->
-                          "Got status " ++ (toString resp.status) ++ " with body " ++ resp.body
+                        Http.BadStatus status ->
+                          "Got status " ++ (String.fromInt status)
                         _ ->
                           "Cannot connect to server"
       in
         ({ model | banner = errorBanner errorString }, Cmd.none)
 
     SaveUserResult (Ok resp) ->
-      if (resp.status.code >= 200) && (resp.status.code < 300) then
-        ( { model | banner = successBanner "User updated"
-                  , newPassword = "" }
-        , Cmd.none
-        )
-      else
-        ( { model | banner = errorBanner "Error updating user" }
-        , Cmd.none
-        )
+      case resp of
+        Http.GoodStatus_ _ _ ->
+          ( { model | banner = successBanner "User updated"
+                    , newPassword = "" }
+          , Cmd.none
+          )
+        Http.BadStatus_ metadata _ ->
+          ( { model | banner = errorBanner <| "Error updating user, error code " ++ (String.fromInt metadata.statusCode) }
+          , Cmd.none
+          )
+        _ ->
+          ( { model | banner = errorBanner "Error updating user, network error" }
+          , Cmd.none
+          )

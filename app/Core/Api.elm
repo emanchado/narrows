@@ -24,8 +24,9 @@ parseResetPasswordResponse =
 
 refreshSession : Cmd Msg
 refreshSession =
-  Http.send SessionFetchResult <|
-    Http.get "/api/session" parseSession
+  Http.get { url = "/api/session"
+           , expect = Http.expectJson SessionFetchResult parseSession
+           }
 
 
 login : String -> String -> Cmd Msg
@@ -36,8 +37,10 @@ login email password =
                          , ( "password", Json.Encode.string password )
                          ])
   in
-    Http.send LoginResult <|
-      Http.post "/api/session" (Http.jsonBody jsonEncodedBody) parseSession
+    Http.post { url = "/api/session"
+              , body = (Http.jsonBody jsonEncodedBody)
+              , expect = Http.expectJson LoginResult parseSession
+              }
 
 
 resetPassword : String -> Cmd Msg
@@ -47,18 +50,19 @@ resetPassword email =
                          [ ( "email", Json.Encode.string email )
                          ])
   in
-    Http.send ResetPasswordResult <|
-      Http.post "/api/password-reset" (Http.jsonBody jsonEncodedBody) parseResetPasswordResponse
+    Http.post { url = "/api/password-reset"
+              , body =(Http.jsonBody jsonEncodedBody)
+              , expect = Http.expectJson ResetPasswordResult parseResetPasswordResponse
+              }
 
 
 logout : Cmd Msg
 logout =
-  Http.send LogoutResult <|
-      Http.request { method = "DELETE"
-                   , url = "/api/session"
-                   , headers = []
-                   , body = Http.emptyBody
-                   , expect = Http.expectString
-                   , timeout = Nothing
-                   , withCredentials = False
-                   }
+  Http.request { method = "DELETE"
+               , url = "/api/session"
+               , headers = []
+               , body = Http.emptyBody
+               , expect = Http.expectString LogoutResult
+               , timeout = Nothing
+               , tracker = Nothing
+               }

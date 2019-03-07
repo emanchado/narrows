@@ -83,18 +83,6 @@ app.ports.playPauseNarrationMusic.subscribe(evt => {
     }
 });
 
-app.ports.playNarrationMusic.subscribe(evt => {
-    const audioEl = document.getElementById(evt.audioElemId);
-    if (!audioEl) {
-        console.warn("Audio element", evt.audioElemId, "not found");
-        return;
-    }
-
-    if (audioEl.paused) {
-        audioEl.play();
-    }
-});
-
 app.ports.pauseNarrationMusic.subscribe(evt => {
     const audioEl = document.getElementById(evt.audioElemId);
     if (!audioEl) {

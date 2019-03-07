@@ -2,6 +2,7 @@ module CharacterEditApp.Messages exposing (..)
 
 import Http
 import Json.Encode
+import Browser
 import CharacterEditApp.Models exposing (..)
 import CharacterEditApp.Ports
 
@@ -27,4 +28,4 @@ type Msg
     | ToggleTokenInfoBox
     | ToggleNovelTokenInfoBox
     | SaveCharacter
-    | SaveCharacterResult (Result Http.Error (Http.Response String))
+    | SaveCharacterResult (Result Http.Error ())

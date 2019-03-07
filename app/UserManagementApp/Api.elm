@@ -37,25 +37,27 @@ encodeNewUser email isAdmin =
 
 fetchUsers : Cmd Msg
 fetchUsers =
-  Http.send UsersFetchResult <|
-    Http.get "/api/users" parseUsers
+  Http.get { url = "/api/users"
+           , expect = Http.expectJson UsersFetchResult parseUsers
+           }
 
 
 saveUser : UserChanges -> Cmd Msg
 saveUser userChanges =
-  Http.send SaveUserResult <|
-    Http.request
-      { method = "PUT"
-      , headers = []
-      , url = "/api/users/" ++ (toString userChanges.userId)
-      , body = Http.jsonBody <| encodeUserChanges userChanges
-      , expect = Http.expectStringResponse Ok
-      , timeout = Nothing
-      , withCredentials = False
-      }
+  Http.request
+    { method = "PUT"
+    , headers = []
+    , url = "/api/users/" ++ (String.fromInt userChanges.userId)
+    , body = Http.jsonBody <| encodeUserChanges userChanges
+    , expect = Http.expectStringResponse SaveUserResult Ok
+    , timeout = Nothing
+    , tracker = Nothing
+    }
 
 
 saveNewUser : String -> Bool -> Cmd Msg
 saveNewUser email isAdmin =
-  Http.send SaveNewUserResult <|
-    Http.post "/api/users" (Http.jsonBody <| encodeNewUser email isAdmin) parseUserInfo
+  Http.post { url = "/api/users"
+            , body = Http.jsonBody <| encodeNewUser email isAdmin
+            , expect = Http.expectJson SaveNewUserResult parseUserInfo
+            }

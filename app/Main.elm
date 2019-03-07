@@ -1,7 +1,10 @@
 module Main exposing (..)
 
-import Navigation
+import Browser
+import Browser.Navigation as Nav
 import Tuple exposing (first, second)
+import Url
+import Http
 
 import Routing
 import Common.Models exposing (errorBanner, successBanner)
@@ -25,27 +28,28 @@ import NovelReaderApp
 import ProfileApp
 
 
-initialState : Navigation.Location -> (Model, Cmd Msg)
-initialState location =
-  ( { route = Routing.parseLocation location
+initialState : () -> Url.Url -> Nav.Key -> (Model, Cmd Msg)
+initialState flags url key =
+  ( { route = Routing.fromUrl url
+    , key = key
     , session = Nothing
     , banner = Nothing
     , email = ""
     , password = ""
     , forgotPasswordUi = False
-    , readerApp = ReaderApp.initialState
-    , characterApp = CharacterApp.initialState
-    , narratorDashboardApp = NarratorDashboardApp.initialState
-    , narrationArchiveApp = NarrationArchiveApp.initialState
-    , narrationCreationApp = NarrationCreationApp.initialState
-    , narrationOverviewApp = NarrationOverviewApp.initialState
-    , chapterEditApp = ChapterEditApp.initialState
-    , chapterControlApp = ChapterControlApp.initialState
-    , characterEditApp = CharacterEditApp.initialState
-    , characterCreationApp = CharacterCreationApp.initialState
-    , userManagementApp = UserManagementApp.initialState
-    , novelReaderApp = NovelReaderApp.initialState
-    , profileApp = ProfileApp.initialState
+    , readerApp = ReaderApp.initialState key
+    , characterApp = CharacterApp.initialState key
+    , narratorDashboardApp = NarratorDashboardApp.initialState key
+    , narrationArchiveApp = NarrationArchiveApp.initialState key
+    , narrationCreationApp = NarrationCreationApp.initialState key
+    , narrationOverviewApp = NarrationOverviewApp.initialState key
+    , chapterEditApp = ChapterEditApp.initialState key
+    , chapterControlApp = ChapterControlApp.initialState key
+    , characterEditApp = CharacterEditApp.initialState key
+    , characterCreationApp = CharacterCreationApp.initialState key
+    , userManagementApp = UserManagementApp.initialState key
+    , novelReaderApp = NovelReaderApp.initialState key
+    , profileApp = ProfileApp.initialState key
     }
   , Core.Api.refreshSession
   )
@@ -143,13 +147,20 @@ combinedUpdate msg model =
   case msg of
     NoOp ->
       ( model, Cmd.none )
-    NavigateTo url ->
-      ( model, Navigation.newUrl url )
+    NavigateTo urlRequest ->
+      case urlRequest of
+        Browser.Internal url ->
+          ( model, Nav.pushUrl model.key (Url.toString url) )
+        Browser.External href ->
+          ( model, Nav.load href )
     UpdateLocation newLocation ->
       let
-        updatedModel = { model | route = Routing.parseLocation newLocation }
+        newRoute = Routing.fromUrl newLocation
+        updatedModel = { model | route = newRoute }
       in
         dispatchEnterLocation updatedModel
+    GoToFrontpage ->
+      ( model, Nav.pushUrl model.key "/" )
 
     SessionFetchResult (Err err) ->
       dispatchEnterLocation { model | session = Just AnonymousSession }
@@ -197,9 +208,19 @@ combinedUpdate msg model =
         ( model, Core.Api.resetPassword model.email )
 
     ResetPasswordResult (Err err) ->
-      ( { model | banner = errorBanner <| "Cannot contact the server: " ++ (toString err) }
-      , Cmd.none
-      )
+      case err of
+        Http.BadBody parserError ->
+          ( { model | banner = errorBanner <| "Cannot parse server response: " ++ parserError }
+          , Cmd.none
+          )
+        Http.BadStatus status ->
+          ( { model | banner = errorBanner <| "Could not get a proper server response; error code was " ++ (String.fromInt status) }
+          , Cmd.none
+          )
+        _ ->
+          ( { model | banner = errorBanner <| "Could not contact server" }
+          , Cmd.none
+          )
 
     ResetPasswordResult (Ok resp) ->
       ( { model | forgotPasswordUi = False
@@ -347,12 +368,14 @@ subscriptions model =
         ]
 
 
-main : Program Never Model Msg
+main : Program () Model Msg
 main =
-  Navigation.program UpdateLocation
+  Browser.application
     { init = initialState
+    , view = Core.Views.mainView
     , update = combinedUpdate
     , subscriptions = subscriptions
-    , view = Core.Views.mainView
+    , onUrlRequest = NavigateTo
+    , onUrlChange = UpdateLocation
     }
     

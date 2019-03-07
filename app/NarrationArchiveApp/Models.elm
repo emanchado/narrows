@@ -1,5 +1,6 @@
 module NarrationArchiveApp.Models exposing (..)
 
+import Browser.Navigation as Nav
 import Common.Models exposing (Banner, NarrationOverview)
 
 
@@ -10,6 +11,7 @@ type alias NarrationArchive =
 
 
 type alias Model =
-    { banner : Maybe Banner
+    { key : Nav.Key
+    , banner : Maybe Banner
     , narrations : Maybe (List NarrationOverview)
     }

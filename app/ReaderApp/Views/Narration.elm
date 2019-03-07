@@ -2,9 +2,9 @@ module ReaderApp.Views.Narration exposing (view)
 
 import String
 import Html exposing (Html, h2, h3, div, span, a, input, textarea, em, strong, text, img, label, button, br, audio, ul, li, blockquote, p)
-import Html.Attributes exposing (id, class, style, for, src, href, target, type_, checked, preload, loop, alt, defaultValue, rows, placeholder)
+import Html.Attributes exposing (id, class, style, for, src, href, target, type_, checked, preload, loop, alt, rows, placeholder)
 import Html.Events exposing (onClick, onInput)
-import Common.Views exposing (bannerView, linkTo)
+import Common.Views exposing (bannerView)
 import Common.Views.Reading exposing (backgroundImageStyle, chapterContainerClass)
 import Common.Models exposing (ParticipantCharacter)
 import ReaderApp.Models exposing (Model, Chapter, OwnCharacter, Banner)
@@ -18,7 +18,7 @@ characterView narrationId ownCharacter participant =
     avatarUrl =
       case participant.avatar of
         Just avatar ->
-          "/static/narrations/" ++ (toString narrationId) ++ "/avatars/" ++ avatar
+          "/static/narrations/" ++ (String.fromInt narrationId) ++ "/avatars/" ++ avatar
 
         Nothing ->
           "/img/default-avatar.png"
@@ -33,17 +33,13 @@ characterView narrationId ownCharacter participant =
           , if ownCharacter.id == participant.id then
               span []
                 [ text " — "
-                , a
-                  (linkTo
-                    NavigateTo
-                    ("/characters/" ++ ownCharacter.token)
-                  )
-                  [ text "character sheet" ]
+                , a [ href <| "/characters/" ++ ownCharacter.token ]
+                    [ text "character sheet" ]
                 ]
             else
               text ""
           , br [] []
-          , div [ id <| "description-character-" ++ (toString participant.id)
+          , div [ id <| "description-character-" ++ (String.fromInt participant.id)
                 , class "character-description"
                 ]
               []
@@ -75,26 +71,24 @@ reactionView model =
                 else
                   " hidden"
             ]
-          [ h2 [ style <| if model.referenceInformationVisible then
-                            [ ( "display", "none" ) ]
-                          else
-                            []
-               ]
+          [ h2 (if model.referenceInformationVisible then
+                  [ style "display" "none" ]
+                else
+                  [])
               [ text "Reference information" ]
         , h2 [] [ text ("Story notes for " ++ character.name) ]
         , div []
             [ textarea [ placeholder "You can write some notes here. These are remembered between chapters!"
                        , rows 10
                        , onInput UpdateNotesText
-                       , defaultValue (case character.notes of
-                                         Just notes -> notes
-                                         Nothing -> "")
                        ]
-                []
+                [ text (case character.notes of
+                                  Just notes -> notes
+                                  Nothing -> "") ]
             ]
         , div [ class "btn-bar" ]
             [ span [ id "save-notes-message"
-                   , style [ ( "display", "none" ) ]
+                   , style "display" "none"
                    ]
                 [ text "Notes saved" ]
             , button [ class "btn"
@@ -132,9 +126,9 @@ view model =
       div [ id "chapter-container"
           , class (chapterContainerClass model.state)
           ]
-        [ div [ id "top-image"
-              , style (backgroundImageStyle chapter.narrationId chapter.backgroundImage model.backgroundBlurriness)
-              ]
+        [ div (List.append
+                 [ id "top-image" ]
+                 (backgroundImageStyle chapter.narrationId chapter.backgroundImage model.backgroundBlurriness))
             [ text (if (String.isEmpty chapter.title) then
                       "Untitled"
                     else
@@ -157,7 +151,7 @@ view model =
             Just audioUrl ->
               audio [ id "background-music"
                     , src ("/static/narrations/" ++
-                             (toString chapter.narrationId) ++
+                             (String.fromInt chapter.narrationId) ++
                              "/audio/" ++
                              audioUrl)
                     , loop True

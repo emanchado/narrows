@@ -1,7 +1,7 @@
 module ChapterControlApp.Update exposing (..)
 
 import Http
-import Navigation
+import Browser.Navigation as Nav
 import Core.Routes exposing (Route(..))
 import Common.Models exposing (Banner, Character, errorBanner)
 import Common.Ports exposing (renderText)
@@ -35,16 +35,16 @@ update msg model =
       ( model, Cmd.none )
 
     NavigateTo url ->
-      ( model, Navigation.newUrl url )
+      ( model, Nav.pushUrl model.key url )
 
     ChapterInteractionsFetchResult (Err error) ->
       let
         errorString =
           case error of
-            Http.BadPayload parserError _ ->
+            Http.BadBody parserError ->
               "Bad payload: " ++ parserError
-            Http.BadStatus resp ->
-              "Got status " ++ (toString resp.status) ++ " with body " ++ resp.body
+            Http.BadStatus status ->
+              "Got status " ++ (String.fromInt status)
             _ ->
               "Cannot connect to server"
       in
@@ -72,10 +72,10 @@ update msg model =
       let
         errorString =
           case error of
-            Http.BadPayload parserError _ ->
+            Http.BadBody parserError ->
               "Bad payload: " ++ parserError
-            Http.BadStatus resp ->
-              "Got status " ++ (toString resp.status) ++ " with body " ++ resp.body
+            Http.BadStatus status ->
+              "Got status " ++ (String.fromInt status)
             _ ->
               "Cannot connect to server"
       in

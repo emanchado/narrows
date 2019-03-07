@@ -1,5 +1,6 @@
 module NarrationCreationApp.Models exposing (..)
 
+import Browser.Navigation as Nav
 import Common.Models exposing (Banner, FileSet)
 
 
@@ -28,7 +29,8 @@ type alias CreateNarrationResponse =
 
 
 type alias Model =
-    { banner : Maybe Banner
+    { key : Nav.Key
+    , banner : Maybe Banner
     , title : String
     , narrationId : Maybe Int
     , files : Maybe FileSet

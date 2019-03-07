@@ -1,6 +1,7 @@
 module NarrationCreationApp.Update exposing (..)
 
-import Navigation
+import Browser.Navigation as Nav
+
 import Core.Routes exposing (Route(..))
 import Common.Models exposing (errorBanner, updateNarrationFiles, mediaTypeString, MediaType(..))
 import Common.Ports exposing (openFileInput, uploadFile)
@@ -43,7 +44,7 @@ update msg model =
       ( model, Cmd.none )
 
     NavigateTo url ->
-      ( model, Navigation.newUrl url )
+      ( model, Nav.pushUrl model.key url )
 
     UpdateTitle newTitle ->
       ( { model | title = newTitle }
@@ -149,7 +150,7 @@ update msg model =
 
     CreateNarrationResult (Ok narration) ->
       ( { model | banner = Nothing }
-      , Navigation.newUrl <| "/narrations/" ++ (toString narration.id)
+      , Nav.pushUrl model.key <| "/narrations/" ++ (String.fromInt narration.id)
       )
 
     SaveNarration ->
@@ -176,7 +177,7 @@ update msg model =
 
     SaveNarrationResult (Ok narration) ->
       ( { model | banner = Nothing }
-      , Navigation.newUrl <| "/narrations/" ++ (toString narration.id)
+      , Nav.pushUrl model.key <| "/narrations/" ++ (String.fromInt narration.id)
       )
 
     FetchNarrationResult (Err _) ->
@@ -197,9 +198,9 @@ update msg model =
     CancelCreateNarration ->
       let
         newUrl = case model.narrationId of
-                   Just narrationId -> "/narrations/" ++ (toString narrationId)
+                   Just narrationId -> "/narrations/" ++ (String.fromInt narrationId)
                    Nothing -> "/"
       in
         ( model
-        , Navigation.newUrl newUrl
+        , Nav.pushUrl model.key newUrl
         )

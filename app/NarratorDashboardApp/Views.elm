@@ -4,7 +4,7 @@ import List
 import Html exposing (Html, main_, h1, h2, div, button, ul, li, a, text)
 import Html.Attributes exposing (id, class, href)
 import Html.Events exposing (onClick)
-import Common.Views exposing (linkTo, loadingView, compactNarrationView)
+import Common.Views exposing (loadingView, compactNarrationView)
 import NarratorDashboardApp.Messages exposing (..)
 import NarratorDashboardApp.Models exposing (..)
 

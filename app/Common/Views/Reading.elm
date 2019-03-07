@@ -1,29 +1,30 @@
 module Common.Views.Reading exposing (..)
 
-import Http exposing (encodeUri)
+import Html
+import Html.Attributes exposing (style)
 
-import Common.Models.Reading exposing (PageState(Loader, StartingNarration, Narrating))
+import Common.Models.Reading exposing (PageState(..))
 
 
-backgroundImageStyle : Int -> Maybe String -> Int -> List ( String, String )
+backgroundImageStyle : Int -> Maybe String -> Int -> List (Html.Attribute msg)
 backgroundImageStyle narrationId maybeBgImage backgroundBlurriness =
   let
     imageUrl =
       case maybeBgImage of
         Just backgroundImage ->
           "/static/narrations/" ++
-            (toString narrationId) ++
+            String.fromInt narrationId ++
             "/background-images/" ++
-            (encodeUri <| backgroundImage)
+            backgroundImage
 
         Nothing ->
           "#"
-    filter = "blur(" ++ (toString backgroundBlurriness) ++ "px)"
+    filter = "blur(" ++ (String.fromInt backgroundBlurriness) ++ "px)"
   in
-    [ ( "background-image", "url(" ++ imageUrl ++ ")" )
-    , ( "-webkit-filter", filter )
-    , ( "-moz-filter", filter )
-    , ( "filter", filter )
+    [ style "background-image" <| "url(" ++ imageUrl ++ ")"
+    , style "-webkit-filter" filter
+    , style "-moz-filter" filter
+    , style "filter" filter
     ]
 
 

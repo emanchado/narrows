@@ -7,7 +7,7 @@ import Html.Events exposing (onClick, onInput, on)
 import Json.Decode
 import ISO8601
 
-import Common.Views exposing (breadcrumbNavView, bannerView, linkTo, showDialog)
+import Common.Views exposing (breadcrumbNavView, bannerView, showDialog)
 import CharacterEditApp.Models exposing (Model, CharacterInfo, ChapterSummary)
 import CharacterEditApp.Messages exposing (..)
 
@@ -16,7 +16,7 @@ avatarUrl : Int -> Maybe String -> String
 avatarUrl narrationId maybeAvatar =
   case maybeAvatar of
     Just avatar ->
-      "/static/narrations/" ++ (toString narrationId) ++ "/avatars/" ++ avatar
+      "/static/narrations/" ++ (String.fromInt narrationId) ++ "/avatars/" ++ avatar
     Nothing ->
       "/img/default-avatar.png"
 
@@ -24,33 +24,28 @@ avatarUrl narrationId maybeAvatar =
 chapterParticipation : String -> ChapterSummary -> Html Msg
 chapterParticipation characterToken chapter =
   li []
-    [ a
-      (linkTo
-        NavigateTo
-        ("/read/" ++ (toString chapter.id) ++ "/" ++ characterToken)
-      )
-      [ text chapter.title ]
+    [ a [ href <| "/read/" ++ (String.fromInt chapter.id) ++ "/" ++ characterToken ]
+        [ text chapter.title ]
     ]
 
 
 formatDate : ISO8601.Time -> String
 formatDate time =
-  (toString <| ISO8601.day time) ++ "/" ++ (toString <| ISO8601.month time) ++
-    "/" ++ (toString <| ISO8601.year time) ++ " at " ++
-    (toString <| ISO8601.hour time) ++ ":" ++ (toString <| ISO8601.minute time)
+  (String.fromInt <| ISO8601.day time) ++ "/" ++ (String.fromInt <| ISO8601.month time) ++
+    "/" ++ (String.fromInt <| ISO8601.year time) ++ " at " ++
+    (String.fromInt <| ISO8601.hour time) ++ ":" ++ (String.fromInt <| ISO8601.minute time)
 
 
 mainView : Model -> Html Msg
 mainView model =
   main_ [ class "app-container" ]
     [ breadcrumbNavView
-        NavigateTo
         [ { title = "Home"
           , url = "/"
           }
         , case model.characterInfo of
             Just info -> { title = info.narration.title
-                         , url = "/narrations/" ++ (toString info.narration.id)
+                         , url = "/narrations/" ++ (String.fromInt info.narration.id)
                          }
             Nothing -> { title = "…"
                        , url = "#"

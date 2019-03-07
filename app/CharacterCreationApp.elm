@@ -1,6 +1,8 @@
 module CharacterCreationApp exposing (..)
 
 import Html exposing (Html)
+import Browser.Navigation as Nav
+
 import Core.Routes exposing (Route(..))
 import CharacterCreationApp.Messages exposing (..)
 import CharacterCreationApp.Models exposing (..)
@@ -16,9 +18,10 @@ type alias Msg =
     CharacterCreationApp.Messages.Msg
 
 
-initialState : Model
-initialState =
-    { banner = Nothing
+initialState : Nav.Key -> Model
+initialState key =
+    { key = key
+    , banner = Nothing
     , narrationId = 0
     , narration = Nothing
     , playerEmail = ""

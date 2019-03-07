@@ -10,17 +10,18 @@ import CharacterCreationApp.Messages exposing (Msg, Msg(..))
 fetchNarration : Int -> Cmd Msg
 fetchNarration narrationId =
   let
-    getNarrationUrl = "/api/narrations/" ++ (toString narrationId)
+    getNarrationUrl = "/api/narrations/" ++ (String.fromInt narrationId)
   in
-    Http.send FetchNarrationResult <|
-      Http.get getNarrationUrl parseNarration
+    Http.get { url = getNarrationUrl
+             , expect = Http.expectJson FetchNarrationResult parseNarration
+             }
 
 
 createCharacter : Int -> String -> String -> Cmd Msg
 createCharacter narrationId characterName playerEmail =
   let
     postNarrationCharacter =
-      "/api/narrations/" ++ (toString narrationId) ++ "/characters"
+      "/api/narrations/" ++ (String.fromInt narrationId) ++ "/characters"
 
     jsonEncodedBody =
       (Json.Encode.object
@@ -28,8 +29,7 @@ createCharacter narrationId characterName playerEmail =
          , ( "email", Json.Encode.string playerEmail )
          ])
   in
-    Http.send CreateCharacterResult <|
-      Http.post
-        postNarrationCharacter
-        (Http.jsonBody jsonEncodedBody)
-        parseCharacter
+    Http.post { url = postNarrationCharacter
+              , expect = Http.expectJson CreateCharacterResult parseCharacter
+              , body = (Http.jsonBody jsonEncodedBody)
+              }

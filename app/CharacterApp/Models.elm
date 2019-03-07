@@ -1,5 +1,6 @@
 module CharacterApp.Models exposing (..)
 
+import Browser.Navigation as Nav
 import Json.Decode
 import Common.Models exposing (Character, ParticipantCharacter, Banner)
 
@@ -30,7 +31,8 @@ type alias CharacterInfo =
 
 
 type alias Model =
-    { characterToken : String
+    { key : Nav.Key
+    , characterToken : String
     , characterInfo : Maybe CharacterInfo
     , newAvatarUrl : Maybe String
     , banner : Maybe Banner

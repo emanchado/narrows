@@ -1,9 +1,11 @@
 module NovelReaderApp exposing (..)
 
 import Html exposing (Html)
+import Browser.Navigation as Nav
+
 import Core.Routes exposing (Route(..))
 import Common.Ports
-import Common.Models.Reading exposing (PageState(Loader))
+import Common.Models.Reading exposing (PageState(..))
 import NovelReaderApp.Ports
 import NovelReaderApp.Messages exposing (..)
 import NovelReaderApp.Models exposing (..)
@@ -19,9 +21,10 @@ type alias Msg =
     NovelReaderApp.Messages.Msg
 
 
-initialState : Model
-initialState =
-    { state = Loader
+initialState : Nav.Key -> Model
+initialState key =
+    { key = key
+    , state = Loader
     , novel = Nothing
     , currentChapterIndex = 0
     , backgroundMusic = True

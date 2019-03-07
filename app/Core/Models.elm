@@ -1,5 +1,7 @@
 module Core.Models exposing (..)
 
+import Browser.Navigation as Nav
+
 import Core.Routes exposing (Route(..))
 import Common.Models exposing (Banner, UserInfo)
 import ReaderApp
@@ -29,6 +31,7 @@ type alias ResetPasswordResponse =
 
 type alias Model =
   { route : Route
+  , key : Nav.Key
   , session : Maybe UserSession
   , banner : Maybe Banner
   , email : String

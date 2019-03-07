@@ -5,7 +5,7 @@ import Html exposing (Html, main_, h1, h2, section, div, span, ul, li, button, i
 import Html.Attributes exposing (id, class, for, checked, name, title, type_, href, src)
 import Html.Events exposing (onClick)
 import Common.Models exposing (Narration, NarrationStatus(..), ChapterOverview, NarrationOverview, FullCharacter, narrationStatusString)
-import Common.Views exposing (linkTo, breadcrumbNavView, narrationOverviewView, loadingView, ribbonForNarrationStatus)
+import Common.Views exposing (breadcrumbNavView, narrationOverviewView, loadingView, ribbonForNarrationStatus)
 import NarrationOverviewApp.Messages exposing (..)
 import NarrationOverviewApp.Models exposing (Model)
 
@@ -16,7 +16,7 @@ narrationCharacterView narration character =
     avatarUrl =
       case character.avatar of
         Just avatar ->
-          "/static/narrations/" ++ (toString narration.id) ++ "/avatars/" ++ avatar
+          "/static/narrations/" ++ (String.fromInt narration.id) ++ "/avatars/" ++ avatar
 
         Nothing ->
           "/img/default-avatar.png"
@@ -27,10 +27,8 @@ narrationCharacterView narration character =
             ]
           []
       , span []
-          [ a ((title <| "Played by " ++ character.email) ::
-                 (linkTo
-                    NavigateTo
-                    ("/characters/" ++ (toString character.id) ++ "/edit")))
+          [ a [ title <| "Played by " ++ character.email
+              , href <| "/characters/" ++ (String.fromInt character.id) ++ "/edit" ]
               [ text character.name ]
           , case character.introSent of
               Just _ ->
@@ -58,14 +56,14 @@ overviewView overview =
     isActive = overview.narration.status == Active
     chapterOptions = if isActive then
                        button [ class "btn btn-add"
-                              , onClick (NavigateTo <| "/narrations/" ++ (toString overview.narration.id) ++ "/new")
+                              , onClick (NavigateTo <| "/narrations/" ++ (String.fromInt overview.narration.id) ++ "/new")
                               ]
                          [ text "New chapter" ]
                      else
                        text ""
     characterOptions = if isActive then
                          button [ class "btn btn-add"
-                                , onClick (NavigateTo <| "/narrations/" ++ (toString overview.narration.id) ++ "/characters/new")
+                                , onClick (NavigateTo <| "/narrations/" ++ (String.fromInt overview.narration.id) ++ "/characters/new")
                                 ]
                            [ text "New character" ]
                        else
@@ -73,7 +71,6 @@ overviewView overview =
   in
     main_ [ id "narrator-app", class "app-container" ]
       [ breadcrumbNavView
-          NavigateTo
           [ { title = "Home"
             , url = "/"
             }
@@ -82,7 +79,7 @@ overviewView overview =
       , h1 []
           [ text <| "Narration " ++ overview.narration.title ++ " "
           , a [ class "btn btn-edit"
-              , href <| "/narrations/" ++ (toString overview.narration.id) ++ "/edit" ]
+              , href <| "/narrations/" ++ (String.fromInt overview.narration.id) ++ "/edit" ]
               [ text "Edit" ]
           ]
       , div [ class <| "two-column narration-" ++ (narrationStatusString overview.narration.status) ]

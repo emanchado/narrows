@@ -1,6 +1,8 @@
 module ReaderApp.Models exposing (..)
 
 import Json.Decode
+import Browser.Navigation as Nav
+
 import Common.Models exposing (Character, ReplyInformation, ParticipantCharacter)
 import Common.Models.Reading exposing (PageState)
 
@@ -57,7 +59,8 @@ type alias Chapter =
 
 
 type alias Model =
-  { state : PageState
+  { key : Nav.Key
+  , state : PageState
   , chapter : Maybe Chapter
   , messageThreads : Maybe (List MessageThread)
   , backgroundMusic : Bool

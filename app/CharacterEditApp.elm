@@ -1,6 +1,8 @@
 module CharacterEditApp exposing (..)
 
 import Html exposing (Html)
+import Browser.Navigation as Nav
+
 import Core.Routes exposing (Route(..))
 import CharacterEditApp.Messages exposing (..)
 import CharacterEditApp.Models exposing (..)
@@ -17,9 +19,10 @@ type alias Msg =
     CharacterEditApp.Messages.Msg
 
 
-initialState : Model
-initialState =
-    { characterId = 0
+initialState : Nav.Key -> Model
+initialState key =
+    { key = key
+    , characterId = 0
     , characterInfo = Nothing
     , newAvatarUrl = Nothing
     , showResetCharacterTokenDialog = False

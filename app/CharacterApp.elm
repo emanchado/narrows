@@ -1,6 +1,8 @@
 module CharacterApp exposing (..)
 
 import Html exposing (Html)
+import Browser.Navigation as Nav
+
 import Core.Routes exposing (Route(..))
 import CharacterApp.Messages exposing (..)
 import CharacterApp.Models exposing (..)
@@ -17,9 +19,10 @@ type alias Msg =
     CharacterApp.Messages.Msg
 
 
-initialState : Model
-initialState =
-    { characterToken = ""
+initialState : Nav.Key -> Model
+initialState key =
+    { key = key
+    , characterToken = ""
     , characterInfo = Nothing
     , newAvatarUrl = Nothing
     , banner = Nothing

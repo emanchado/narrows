@@ -19,49 +19,52 @@ fetchChapterInteractions : Int -> Cmd Msg
 fetchChapterInteractions chapterId =
   let
     chapterInteractionsApiUrl =
-      "/api/chapters/" ++ (toString chapterId) ++ "/interactions"
+      "/api/chapters/" ++ (String.fromInt chapterId) ++ "/interactions"
   in
-    Http.send ChapterInteractionsFetchResult <|
-      Http.get chapterInteractionsApiUrl parseChapterInteractions
+    Http.get { url = chapterInteractionsApiUrl
+             , expect = Http.expectJson ChapterInteractionsFetchResult parseChapterInteractions
+             }
 
 
 fetchNarrationInfo : Int -> Cmd Msg
 fetchNarrationInfo narrationId =
   let
-    narrationApiUrl = "/api/narrations/" ++ (toString narrationId)
+    narrationApiUrl = "/api/narrations/" ++ (String.fromInt narrationId)
   in
-    Http.send NarrationFetchResult <|
-      Http.get narrationApiUrl parseNarration
+    Http.get { url = narrationApiUrl
+             , expect = Http.expectJson NarrationFetchResult parseNarration
+             }
 
 
 sendMessage : Int -> String -> List Int -> Cmd Msg
 sendMessage chapterId messageText messageRecipients =
   let
-    sendMessageApiUrl = "/api/chapters/" ++ (toString chapterId) ++ "/messages"
+    sendMessageApiUrl = "/api/chapters/" ++ (String.fromInt chapterId) ++ "/messages"
 
     jsonEncodedBody =
       (Json.Encode.object
          [ ( "text", Json.Encode.string messageText )
-         , ( "recipients", Json.Encode.list (List.map Json.Encode.int messageRecipients) )
+         , ( "recipients", Json.Encode.list Json.Encode.int messageRecipients )
          ])
   in
-    Http.send SendMessageResult <|
-      Http.post sendMessageApiUrl (Http.jsonBody jsonEncodedBody) parseChapterMessages
+    Http.post { url = sendMessageApiUrl
+              , body = (Http.jsonBody jsonEncodedBody)
+              , expect = Http.expectJson SendMessageResult parseChapterMessages
+              }
 
 
 sendReply : Int -> String -> List Int -> Cmd Msg
 sendReply chapterId messageText messageRecipients =
   let
-    sendMessageApiUrl = "/api/chapters/" ++ (toString chapterId) ++ "/messages"
+    sendMessageApiUrl = "/api/chapters/" ++ (String.fromInt chapterId) ++ "/messages"
 
     jsonEncodedBody =
       (Json.Encode.object
          [ ( "text", Json.Encode.string messageText )
-         , ( "recipients", Json.Encode.list (List.map Json.Encode.int messageRecipients) )
+         , ( "recipients", Json.Encode.list Json.Encode.int messageRecipients )
          ])
   in
-    Http.send SendReplyResult <|
-      Http.post
-        sendMessageApiUrl
-        (Http.jsonBody jsonEncodedBody)
-        parseChapterMessages
+    Http.post { url = sendMessageApiUrl
+              , body = (Http.jsonBody jsonEncodedBody)
+              , expect = Http.expectJson SendReplyResult parseChapterMessages
+              }

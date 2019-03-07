@@ -1,9 +1,9 @@
 module Core.Views exposing (..)
 
-import Html exposing (program)
 import Html exposing (Html, nav, div, span, a, form, input, code, text, img, label, button, br)
 import Html.Attributes exposing (class, type_, placeholder, autofocus, href, value)
 import Html.Events exposing (onInput, onClick, onSubmit)
+import Browser
 
 import Core.Messages exposing (Msg(..))
 import Core.Models exposing (Model, UserSession(..))
@@ -36,7 +36,7 @@ unregisteredPageView : Html Msg
 unregisteredPageView =
   div []
     [ div []
-        [ text "Cannot page the page: maybe you forgot to register it in "
+        [ text "Cannot view the page: maybe you forgot to register it in "
         , code [] [ text "Core.Views" ]
         , text "?"
         ]
@@ -50,7 +50,7 @@ passwordResetFailureView model =
     , div [ class "login-form" ]
         [ div [ class "form-actions" ]
             [ button [ class "btn btn-default"
-                     , onClick <| NavigateTo "/"
+                     , onClick GoToFrontpage
                      ]
                 [ text "Back to login page" ]
             ]
@@ -226,7 +226,7 @@ actionLinks maybeSession =
 
                   LoggedInSession userInfo ->
                       if userInfo.role == "admin" then
-                          [ a (Common.Views.linkTo NavigateTo "/users")
+                          [ a [ href "/users" ]
                               [ text "Manage users" ]
                           , text " | "
                           ]
@@ -236,7 +236,7 @@ actionLinks maybeSession =
           Nothing ->
               []
   in
-    List.concat [ [ a (Common.Views.linkTo NavigateTo "/profile")
+    List.concat [ [ a [ href "/profile" ]
                       [ text "Profile" ]
                   , text " | "
                   ]
@@ -249,11 +249,11 @@ actionLinks maybeSession =
                 ]
 
 
-mainView : Model -> Html Msg
+mainView : Model -> Browser.Document Msg
 mainView model =
     let
         homeLink =
-            [ a (Common.Views.linkTo NavigateTo "/")
+            [ a [ href "/" ]
                 [ div [ class "logo" ] [ text "NARROWS" ] ]
             ]
 
@@ -264,13 +264,20 @@ mainView model =
             Just session ->
                 case session of
                     AnonymousSession ->
-                        appContentView model
+                        Browser.Document
+                          "NARROWS"
+                          [ appContentView model ]
 
                     LoggedInSession _ ->
-                        div []
-                            [ nav [ class "top-bar" ] finalLinks
-                            , appContentView model
-                            ]
+                        Browser.Document
+                          "NARROWS"
+                          [ div []
+                              [ nav [ class "top-bar" ] finalLinks
+                              , appContentView model
+                              ]
+                          ]
 
             Nothing ->
-                appContentView model
+                Browser.Document
+                  "NARROWS"
+                  [ appContentView model ]

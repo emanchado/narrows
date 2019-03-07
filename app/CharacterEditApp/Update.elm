@@ -1,7 +1,10 @@
 module CharacterEditApp.Update exposing (..)
 
 import Http
-import Navigation
+import Browser
+import Browser.Navigation as Nav
+import Url
+
 import Core.Routes exposing (Route(..))
 import Common.Models exposing (errorBanner, successBanner)
 import Common.Ports exposing (initEditor, readAvatarAsUrl, uploadAvatar)
@@ -29,17 +32,17 @@ update msg model =
       ( model, Cmd.none )
 
     NavigateTo url ->
-      ( model, Navigation.newUrl url )
+      ( model, Nav.pushUrl model.key url )
 
     CharacterFetchResult (Err error) ->
       let
         errorString =
           case error of
-            Http.BadPayload parserError _ ->
-              "Bad payload: " ++ parserError
+            Http.BadBody parserError ->
+              "Bad body: " ++ parserError
 
-            Http.BadStatus resp ->
-              "Got status " ++ (toString resp.status) ++ " with body " ++ resp.body
+            Http.BadStatus status ->
+              "Got status " ++ (String.fromInt status)
 
             _ ->
               "Cannot connect to server"
@@ -132,7 +135,7 @@ update msg model =
 
     UploadAvatarError err ->
       let
-        banner = errorBanner <| (toString err.status) ++ " - " ++ err.message
+        banner = errorBanner <| (String.fromInt err.status) ++ " - " ++ err.message
       in
         ( { model | banner = banner }
         , Cmd.none

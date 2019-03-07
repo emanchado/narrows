@@ -11,34 +11,33 @@ import NarrationCreationApp.Api.Json exposing (encodeNewNarration, encodeNarrati
 fetchNarration : Int -> Cmd Msg
 fetchNarration narrationId =
   let
-    narrationApiUrl = "/api/narrations/" ++ (toString narrationId)
+    narrationApiUrl = "/api/narrations/" ++ (String.fromInt narrationId)
   in
-    Http.send FetchNarrationResult <|
-      Http.get narrationApiUrl parseNarration
+    Http.get { url = narrationApiUrl
+             , expect = Http.expectJson FetchNarrationResult parseNarration
+             }
 
 createNarration : NewNarrationProperties -> Cmd Msg
 createNarration props =
-  Http.send CreateNarrationResult <|
   Http.request { method = "POST"
                , url = "/api/narrations/"
                , headers = []
-               , body = Http.jsonBody <| encodeNewNarration props
-               , expect = Http.expectJson parseCreateNarrationResponse
+               , body = Http.jsonBody  <| encodeNewNarration props
+               , expect = Http.expectJson CreateNarrationResult parseCreateNarrationResponse
                , timeout = Nothing
-               , withCredentials = False
+               , tracker = Nothing
                }
 
 saveNarration : Int -> NarrationUpdateProperties -> Cmd Msg
 saveNarration narrationId props =
   let
-    narrationApiUrl = "/api/narrations/" ++ (toString narrationId)
+    narrationApiUrl = "/api/narrations/" ++ (String.fromInt narrationId)
   in
-    Http.send SaveNarrationResult <|
     Http.request { method = "PUT"
                  , url = narrationApiUrl
                  , headers = []
                  , body = Http.jsonBody <| encodeNarrationUpdate props
-                 , expect = Http.expectJson parseNarration
+                 , expect = Http.expectJson SaveNarrationResult parseNarration
                  , timeout = Nothing
-                 , withCredentials = False
+                 , tracker = Nothing
                  }

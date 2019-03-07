@@ -41,4 +41,6 @@ fetchNovelInfo novelToken =
   let
     novelApiUrl = "/api/novels/" ++ novelToken
   in
-    Http.send NovelFetchResult <| Http.get novelApiUrl parseNovel
+    Http.get { url = novelApiUrl
+             , expect = Http.expectJson NovelFetchResult parseNovel
+             }

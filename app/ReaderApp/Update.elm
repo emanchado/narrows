@@ -2,13 +2,13 @@ module ReaderApp.Update exposing (..)
 
 import String
 import Http
-import Navigation
+import Browser.Navigation as Nav
 import Json.Decode exposing (decodeString)
 
 import Core.Routes exposing (Route(..))
 import Common.Ports exposing (readDeviceSettings, setDeviceSetting, renderText, startNarration, playPauseNarrationMusic, flashElement)
 import Common.Models exposing (Character, ParticipantCharacter, errorBanner, successBanner)
-import Common.Models.Reading exposing (PageState(Loader, StartingNarration, Narrating))
+import Common.Models.Reading exposing (PageState(..))
 import ReaderApp.Api
 import ReaderApp.Messages exposing (..)
 import ReaderApp.Models exposing (..)
@@ -44,7 +44,7 @@ urlUpdate route model =
 descriptionRenderCommand : ParticipantCharacter -> Cmd Msg
 descriptionRenderCommand character =
     renderText
-        { elemId = "description-character-" ++ (toString character.id)
+        { elemId = "description-character-" ++ (String.fromInt character.id)
         , text = character.description
         , proseMirrorType = "description"
         }
@@ -53,10 +53,8 @@ descriptionRenderCommand character =
 formatError : Http.Error -> String
 formatError httpError =
   case httpError of
-    Http.BadStatus response ->
-      case decodeString ReaderApp.Api.parseApiError response.body of
-        Ok value -> value.errorMessage
-        Err error -> "Cannot parse server error: " ++ error
+    Http.BadStatus status ->
+      "Got status " ++ (String.fromInt status)
     _ ->
       "Unknown network error"
 
@@ -65,8 +63,7 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
   case msg of
     NavigateTo url ->
-      ( model, Navigation.newUrl url )
-
+      ( model, Nav.pushUrl model.key url )
 
     ReceiveDeviceSettings newSettings ->
       ( { model | backgroundMusic = newSettings.backgroundMusic
@@ -79,10 +76,10 @@ update msg model =
       let
         errorString =
           case error of
-            Http.BadPayload parserError _ ->
+            Http.BadBody parserError ->
               "Bad payload: " ++ parserError
-            Http.BadStatus resp ->
-              "Got status " ++ (toString resp.status) ++ " with body " ++ resp.body
+            Http.BadStatus status ->
+              "Got status " ++ (String.fromInt status)
             _ ->
               "Cannot connect to server"
       in
