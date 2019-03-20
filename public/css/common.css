@@ -432,3 +432,10 @@ span.mention img {
   }
 }
 /* End of the CSS spinner rules */
+
+/* Print CSS */
+@media print {
+    nav.top-bar {
+        display: none;
+    }
+}
