@@ -295,3 +295,37 @@ ul.thread-list.reader li .btn-bar {
 #reader-app .floating-tip {
     background-color: black;
 }
+
+/* Print CSS */
+@media print {
+    #play-icon,
+    .chapter-navigation,
+    .interaction {
+        display: none;
+    }
+
+    #chapter-container {
+        padding: 0;
+    }
+
+    body,
+    #reader-app,
+    #top-image,
+    .chapter > p,
+    .chapter > blockquote {
+        background-color: #fff !important;
+        background-image: none !important;
+        color: #000;
+    }
+
+    #top-image {
+        position: static;
+        height: auto;
+        padding: 0;
+
+        color: #000;
+        font-size: 22pt;
+        text-shadow: none;
+        filter: none !important;
+    }
+}
