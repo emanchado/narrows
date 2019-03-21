@@ -312,18 +312,14 @@ ul.thread-list.reader li .btn-bar {
     #reader-app,
     #top-image,
     .chapter > p,
-    .chapter > blockquote,
-    .chapter .separator {
+    .chapter > blockquote {
         background-color: #fff !important;
         background-image: none !important;
         color: #000;
     }
 
     .chapter .separator {
-        border-top: 1px solid;
-        height: 0;
-        padding: 0;
-        margin: 2em auto;
+        content: url(/img/separator.png);
     }
 
     #top-image {
