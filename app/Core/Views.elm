@@ -1,7 +1,7 @@
 module Core.Views exposing (..)
 
-import Html exposing (Html, nav, div, span, a, form, input, code, text, img, label, button, br)
-import Html.Attributes exposing (class, type_, placeholder, autofocus, href, value)
+import Html exposing (Html, nav, div, span, a, form, input, code, text, img, label, button, br, node)
+import Html.Attributes exposing (id, class, type_, placeholder, autofocus, href, value, style)
 import Html.Events exposing (onInput, onClick, onSubmit)
 import Browser
 
@@ -266,7 +266,14 @@ mainView model =
                     AnonymousSession ->
                         Browser.Document
                           "NARROWS"
-                          [ appContentView model ]
+                          [ node
+                              "svg"
+                              [ id "ProseMirror-icon-collection"
+                              , style "display" "none"
+                              ]
+                              []
+                          , appContentView model
+                          ]
 
                     LoggedInSession _ ->
                         Browser.Document
@@ -275,9 +282,22 @@ mainView model =
                               [ nav [ class "top-bar" ] finalLinks
                               , appContentView model
                               ]
+                          , node
+                              "svg"
+                              [ id "ProseMirror-icon-collection"
+                              , style "display" "none"
+                              ]
+                              []
                           ]
 
             Nothing ->
                 Browser.Document
                   "NARROWS"
-                  [ appContentView model ]
+                  [ node
+                      "svg"
+                      [ id "ProseMirror-icon-collection"
+                      , style "display" "none"
+                      ]
+                      []
+                  , appContentView model
+                  ]
