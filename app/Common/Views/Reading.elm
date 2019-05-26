@@ -21,7 +21,7 @@ backgroundImageStyle narrationId maybeBgImage backgroundBlurriness =
           "#"
     filter = "blur(" ++ (String.fromInt backgroundBlurriness) ++ "px)"
   in
-    [ style "background-image" <| "url(" ++ imageUrl ++ ")"
+    [ style "background-image" <| "url('" ++ imageUrl ++ "')"
     , style "-webkit-filter" filter
     , style "-moz-filter" filter
     , style "filter" filter
