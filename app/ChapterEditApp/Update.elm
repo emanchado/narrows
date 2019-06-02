@@ -6,7 +6,7 @@ import Browser.Navigation as Nav
 import Task
 import Process
 import ISO8601 exposing (Time)
-import Time exposing (utc, toHour, toMinute, toSecond)
+import Time exposing (utc, toYear, toMonth, toDay, toHour, toMinute, toSecond)
 
 import Core.Routes exposing (Route(..))
 import Common.Models exposing (Banner, Narration, Chapter, FileSet, FileUploadError, FileUploadSuccess, MediaType(..), errorBanner, successBanner, mediaTypeString, updateNarrationFiles)
@@ -99,13 +99,36 @@ showFlashMessage maybeBanner =
     ]
 
 
+toMonthNumber : Time.Month -> Int
+toMonthNumber month =
+  case month of
+    Time.Jan -> 1
+    Time.Feb -> 2
+    Time.Mar -> 3
+    Time.Apr -> 4
+    Time.May -> 5
+    Time.Jun -> 6
+    Time.Jul -> 7
+    Time.Aug -> 8
+    Time.Sep -> 9
+    Time.Oct -> 10
+    Time.Nov -> 11
+    Time.Dec -> 12
+
+
 toUtcString : Time.Posix -> String
 toUtcString time =
-  String.fromInt (toHour utc time)
+  String.fromInt (toYear utc time)
+  ++ "-" ++
+  String.padLeft 2 '0' (String.fromInt (toMonthNumber <| toMonth utc time))
+  ++ "-" ++
+  String.padLeft 2 '0' (String.fromInt (toDay utc time))
+  ++ " " ++
+  String.padLeft 2 '0' (String.fromInt (toHour utc time))
   ++ ":" ++
-  String.fromInt (toMinute utc time)
+  String.padLeft 2 '0' (String.fromInt (toMinute utc time))
   ++ ":" ++
-  String.fromInt (toSecond utc time)
+  String.padLeft 2 '0' (String.fromInt (toSecond utc time))
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -395,8 +418,9 @@ update msg model =
       case model.chapter of
         Just chapter ->
           let
+            publishTimestamp = Just <| toUtcString time
             updatedChapter =
-              { chapter | published = Just <| toUtcString time }
+              { chapter | published = publishTimestamp }
           in
             ( { model | chapter = Just updatedChapter }
             , ChapterEditApp.Api.saveChapter updatedChapter
