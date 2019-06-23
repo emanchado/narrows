@@ -94,7 +94,7 @@ showFlashMessage maybeBanner =
   Cmd.batch
     [ Process.sleep 0
       |> Task.perform (\_ -> SetFlashMessage maybeBanner)
-    , Process.sleep 2
+    , Process.sleep 2000
       |> Task.perform (\_ -> RemoveFlashMessage)
     ]
 
