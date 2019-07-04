@@ -31,7 +31,8 @@
     "q": "^1.4.1",
     "rss": "^1.2.1",
     "sharp": "^0.17.3",
-    "sqlite3": "^4.0.0"
+    "sqlite3": "^4.0.0",
+    "snyk": "^1.189.0"
   },
   "scripts": {
     "start": "node build/index.js",
@@ -44,7 +45,9 @@
     "test": "NODE_ENV=test NODE_CONFIG_DIR=../config ava",
     "watchtest": "NODE_ENV=test NODE_CONFIG_DIR=../config ava --watch",
     "updatedbmigrateconf": "node update-db-migrate-conf.js",
-    "dbmigrate": "npm run updatedbmigrateconf && db-migrate up"
+    "dbmigrate": "npm run updatedbmigrateconf && db-migrate up",
+    "snyk-protect": "snyk protect",
+    "prepublish": "npm run snyk-protect"
   },
   "devDependencies": {
     "ava": "^0.16.0",
@@ -58,5 +61,6 @@
     "require": [
       "babel-register"
     ]
-  }
+  },
+  "snyk": true
 }
