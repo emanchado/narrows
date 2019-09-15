@@ -4,7 +4,7 @@ import Json.Decode as Json exposing (..)
 import Json.Encode
 import Common.Models exposing (FullCharacter, Narration, Chapter, FileSet)
 import Common.Api.Json exposing (parseCharacter, parseFullCharacter, parseChapter, parseMessageThread)
-import ChapterEditApp.Models exposing (LastReactionsResponse, LastChapter)
+import ChapterEditApp.Models exposing (LastReactionsResponse, LastChapter, NarrationChapterSearchResponse, NarrationChapterSearchResult)
 
 
 parseFileSet : Json.Decoder FileSet
@@ -29,6 +29,19 @@ parseLastChapter =
         (field "text" Json.value)
         (field "participants" <| list parseCharacter)
         (field "messageThreads" <| list parseMessageThread)
+
+
+parseNarrationChapterSearchResponse : Json.Decoder NarrationChapterSearchResponse
+parseNarrationChapterSearchResponse =
+    Json.map NarrationChapterSearchResponse
+        (field "results" <| list parseNarrationChapterSearchResult)
+
+
+parseNarrationChapterSearchResult : Json.Decoder NarrationChapterSearchResult
+parseNarrationChapterSearchResult =
+    Json.map2 NarrationChapterSearchResult
+        (field "id" int)
+        (field "title" string)
 
 
 encodeCharacter : FullCharacter -> Json.Encode.Value

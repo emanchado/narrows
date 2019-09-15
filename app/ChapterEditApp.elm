@@ -31,6 +31,9 @@ initialState key =
     , savingChapter = False
     , uploadingAudio = False
     , uploadingBackgroundImage = False
+    , narrationChapterSearchTerm = ""
+    , narrationChapterSearchLoading = False
+    , narrationChapterSearchResults = Nothing
     }
 
 

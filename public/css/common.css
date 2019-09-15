@@ -114,6 +114,16 @@ ul li {
     border: none;
 }
 
+.secondary-form {
+    margin-top: 18px;
+    margin-bottom: 18px;
+    padding: 15px;
+    background-color: #ddd;
+}
+.secondary-form input[type="text"], .secondary-form ul {
+    font-size: 80%;
+}
+
 #loader {
     width: 100%;
     height: 100%;

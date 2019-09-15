@@ -36,6 +36,14 @@ type alias LastReactionsResponse =
     }
 
 
+type alias NarrationChapterSearchResult =
+    { id : Int
+    , title : String
+    }
+
+type alias NarrationChapterSearchResponse =
+    { results : List (NarrationChapterSearchResult) }
+
 type alias Model =
     { key : Nav.Key
     , chapter : Maybe Chapter
@@ -47,4 +55,7 @@ type alias Model =
     , savingChapter : Bool
     , uploadingAudio : Bool
     , uploadingBackgroundImage : Bool
+    , narrationChapterSearchTerm : String
+    , narrationChapterSearchLoading : Bool
+    , narrationChapterSearchResults : Maybe (List NarrationChapterSearchResult)
     }

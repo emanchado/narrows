@@ -1,17 +1,17 @@
-.two-column {
+div.two-column {
     display: flex;
     margin-top: 10px;
     padding-top: 10px;
 }
-.two-column > section {
+div.two-column > section {
     width: 50%;
     padding-left: 10px;
 }
-.two-column > section:first-child {
+div.two-column > section:first-child {
     padding-left: 0;
     padding-right: 10px;
 }
-.two-column > section > *:first-child {
+div.two-column > section > *:first-child {
     margin-top: 0;
 }
 
@@ -46,6 +46,9 @@ ul.participant-list li {
     padding-left: 1em;
 }
 
+ul.search-results {
+    columns: 3;
+}
 
 
 /* Mentions */

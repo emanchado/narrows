@@ -1133,6 +1133,23 @@ class NarrowsStore {
             results.map(result => result.id)
         ));
     }
+
+    searchNarration(narrationId, searchTerms) {
+        return Q.ninvoke(
+            this.db,
+            "query",
+            `SELECT id, title
+               FROM chapters
+              WHERE narration_id = ?
+                AND (main_text LIKE ? OR title LIKE ?)`,
+            [narrationId, `%${searchTerms}%`, `%${searchTerms}%`]
+        ).spread(results => (
+            results.map(result => ({
+                id: result.id,
+                title: result.title
+            }))
+        ));
+    }
 }
 
 export default NarrowsStore;

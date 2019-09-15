@@ -2,12 +2,12 @@ module ChapterEditApp.Views exposing (mainView)
 
 import String
 import Set
-import Html exposing (Html, h2, h3, div, main_, nav, section, ul, li, img, a, input, button, audio, br, span, label, strong, em, text)
-import Html.Attributes exposing (id, name, class, src, target, type_, value, placeholder, checked, disabled)
-import Html.Events exposing (onClick, onInput, on)
+import Html exposing (Html, h2, h3, div, main_, nav, section, form, ul, li, img, a, input, button, audio, br, span, label, strong, em, text)
+import Html.Attributes exposing (id, name, class, src, href, target, type_, value, placeholder, checked, disabled)
+import Html.Events exposing (onClick, onInput, onSubmit, on)
 
 import Common.Models exposing (FullCharacter, Narration, Chapter, MediaType(..), Banner)
-import Common.Views exposing (bannerView, breadcrumbNavView, onStopPropagationClick, horizontalSpinner, messageThreadView, showDialog)
+import Common.Views exposing (loadingView, bannerView, breadcrumbNavView, onStopPropagationClick, horizontalSpinner, messageThreadView, showDialog)
 import Common.Views.FileSelector exposing (fileSelector)
 import ChapterEditApp.Models exposing (Model, LastChapter)
 import ChapterEditApp.Messages exposing (..)
@@ -262,6 +262,36 @@ mainView model =
                     CancelPublishChapter
                 else
                   text ""
+              , bannerView model.banner
+              , form [ class "vertical-form secondary-form"
+                     , onSubmit (SearchNarrationChapters model.narrationChapterSearchTerm)
+                     ]
+                  [ label [] [ text "Search in earlier chapters" ]
+                  , input [ type_ "text"
+                          , placeholder "Type a word and press Enter…"
+                          , onInput UpdateChapterSearchTerm
+                          ]
+                      []
+                  , if model.narrationChapterSearchLoading then
+                      horizontalSpinner
+                    else
+                      case model.narrationChapterSearchResults of
+                        Just [] ->
+                          div []
+                            [ em [] [ text "No results" ]
+                            ]
+                        Just results ->
+                          ul [ class "search-results" ]
+                            (List.map
+                               (\r ->
+                                  li []
+                                    [ a [ href <| "/chapters/" ++ (String.fromInt r.id)
+                                        , target "_blank"
+                                        ]
+                                        [ text r.title ] ])
+                               results)
+                        Nothing -> text ""
+                  ]
               ]
           ]
       ]

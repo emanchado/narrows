@@ -4,7 +4,7 @@ import Http
 import Json.Encode
 import Time
 import Common.Models exposing (FullCharacter, Narration, Chapter, Banner, MediaType, FileUploadError, FileUploadSuccess)
-import ChapterEditApp.Models exposing (LastReactionsResponse)
+import ChapterEditApp.Models exposing (LastReactionsResponse, NarrationChapterSearchResponse)
 
 
 type Msg
@@ -38,3 +38,6 @@ type Msg
     | PublishChapterWithTime Time.Posix
     | PublishNewChapter
     | PublishNewChapterWithTime Time.Posix
+    | UpdateChapterSearchTerm String
+    | SearchNarrationChapters String
+    | NarrationChapterSearchFetchResult (Result Http.Error NarrationChapterSearchResponse)

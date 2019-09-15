@@ -760,3 +760,20 @@ export function postNarrationIntroEmails(req, res) {
         });
     });
 }
+
+export function getNarrationChapterSearch(req, res) {
+    const narrationId = parseInt(req.params.narrId, 10);
+    const searchTerms = req.query.terms;
+
+    store.getNarration(narrationId).then(narrationData => (
+        userStore.canActAs(req.session.userId, narrationData.narratorId)
+    )).then(() => (
+        store.searchNarration(narrationId, searchTerms)
+    )).then(chapters => {
+        res.json({ results: chapters });
+    }).catch(err => {
+        res.status(500).json({
+            errorMessage: `Cannot search: ${ err }`
+        });
+    });
+}

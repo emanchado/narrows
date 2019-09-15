@@ -1,11 +1,12 @@
 module ChapterEditApp.Api exposing (..)
 
 import Http
+import Url.Builder as UB
 
 import ChapterEditApp.Messages exposing (Msg, Msg(..))
 import Common.Models exposing (Chapter)
 import Common.Api.Json exposing (parseChapter, parseNarration)
-import ChapterEditApp.Api.Json exposing (parseLastReactionResponse, encodeChapter, encodeCharacter)
+import ChapterEditApp.Api.Json exposing (parseLastReactionResponse, parseNarrationChapterSearchResponse, encodeChapter, encodeCharacter)
 
 
 fetchChapterInfo : Int -> Cmd Msg
@@ -71,3 +72,15 @@ createChapter chapter =
               , body = Http.jsonBody <| encodeChapter chapter
               , expect = Http.expectJson SaveNewChapterResult parseChapter
               }
+
+searchNarrationChapters : Int -> String -> Cmd Msg
+searchNarrationChapters narrationId searchTerm =
+  let
+    searchApiBaseUrl =
+      "/api/narrations/" ++ (String.fromInt narrationId) ++ "/search"
+    queryString =
+      UB.toQuery [ UB.string "terms" searchTerm ]
+  in
+    Http.get { url = searchApiBaseUrl ++ queryString
+             , expect = Http.expectJson NarrationChapterSearchFetchResult parseNarrationChapterSearchResponse
+             }

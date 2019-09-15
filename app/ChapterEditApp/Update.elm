@@ -39,7 +39,9 @@ urlUpdate : Route -> Model -> ( Model, Cmd Msg )
 urlUpdate route model =
   case route of
     ChapterEditNarratorPage chapterId ->
-      ( model
+      ( { model | narrationChapterSearchTerm = ""
+                , narrationChapterSearchResults = Nothing
+        }
       , Cmd.batch
         [ ChapterEditApp.Api.fetchChapterInfo chapterId
         , ChapterEditApp.Api.fetchLastReactions chapterId
@@ -61,6 +63,8 @@ urlUpdate route model =
       in
         ( { model | chapter = Nothing
                   , lastChapters = Nothing
+                  , narrationChapterSearchTerm = ""
+                  , narrationChapterSearchResults = Nothing
           }
         , Cmd.batch
           [ command
@@ -507,4 +511,31 @@ update msg model =
                 , savingChapter = False
         }
       , Nav.pushUrl model.key <| "/chapters/" ++ (String.fromInt chapter.id) ++ "/edit"
+      )
+
+    UpdateChapterSearchTerm newTerm ->
+      ( { model | narrationChapterSearchTerm = newTerm }
+      , Cmd.none
+      )
+
+    SearchNarrationChapters searchTerm ->
+      ( { model | narrationChapterSearchLoading = True }
+      , case model.narration of
+          Just narration ->
+            ChapterEditApp.Api.searchNarrationChapters narration.id model.narrationChapterSearchTerm
+          Nothing ->
+            Cmd.none
+      )
+
+    NarrationChapterSearchFetchResult (Err error) ->
+      genericHttpErrorHandler
+        { model | narrationChapterSearchLoading = False }
+        error
+
+    NarrationChapterSearchFetchResult (Ok results) ->
+      ( { model | narrationChapterSearchResults = Just results.results
+                , narrationChapterSearchLoading = False
+                , banner = Nothing
+        }
+      , Cmd.none
       )
