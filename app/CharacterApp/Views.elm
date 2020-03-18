@@ -64,57 +64,63 @@ mainView model =
     , bannerView model.banner
     , div [ class "two-column" ]
         [ section []
-            [ case model.characterInfo of
-              Just characterInfo ->
-                div []
-                  [ div [ class "avatars" ]
-                      [ div [ class "current-avatar" ]
-                          [ img [ src <| avatarUrl characterInfo.narration.id characterInfo.avatar ] []
-                          ]
-                      , div [ class "upload-new-avatar" ]
-                          [ div [ class "new-avatar-controls" ]
-                              [ label [] [ text "Upload new avatar:" ]
-                              , input [ id "new-avatar"
-                                      , type_ "file"
-                                      , on "change" (Json.Decode.succeed <| UpdateCharacterAvatar "new-avatar")
-                                      ]
-                                  []
-                              ]
-                          , img [ src <| case model.newAvatarUrl of
-                                           Just url -> url
-                                           Nothing -> "/img/default-avatar.png"
+            [ div [ class "vertical-form" ]
+              [ case model.characterInfo of
+                Just characterInfo ->
+                  div [ class "form-line" ]
+                    [ div [ class "avatars" ]
+                        [ div [ class "current-avatar" ]
+                            [ img [ src <| avatarUrl characterInfo.narration.id characterInfo.avatar ] []
+                            ]
+                        , div [ class "upload-new-avatar" ]
+                            [ div [ class "new-avatar-controls" ]
+                                [ label [] [ text "Upload new avatar:" ]
+                                , input [ id "new-avatar"
+                                        , type_ "file"
+                                        , on "change" (Json.Decode.succeed <| UpdateCharacterAvatar "new-avatar")
+                                        ]
+                                    []
                                 ]
-                              []
-                          ]
-                      ]
-                  , label [] [ text "Name" ]
-                  , div []
-                      [ input [ type_ "text"
-                              , class "character-name"
-                              , value characterInfo.name
-                              , onInput UpdateCharacterName
-                              ]
-                          []
-                      ]
-                  ]
+                            , img [ src <| case model.newAvatarUrl of
+                                             Just url -> url
+                                             Nothing -> "/img/default-avatar.png"
+                                  ]
+                                []
+                            ]
+                        ]
+                    , label [] [ text "Name" ]
+                    , div []
+                        [ input [ type_ "text"
+                                , class "character-name"
+                                , value characterInfo.name
+                                , onInput UpdateCharacterName
+                                ]
+                            []
+                        ]
+                    ]
 
-              Nothing ->
-                text "Loading…"
-            , label [] [ text "Description (public)" ]
-            , div [ id "description-editor"
-                  , class "editor-container"
-                  ] []
-            , label [] [ text "Backstory (private)" ]
-            , div [ id "backstory-editor"
-                  , class "editor-container"
-                  ] []
-            , div [ class "btn-bar" ]
-                [ button
-                  [ class "btn btn-default"
-                  , onClick SaveCharacter
+                Nothing ->
+                  text "Loading…"
+              , div [ class "form-line" ]
+                  [ label [] [ text "Description (public)" ]
+                  , div [ id "description-editor"
+                        , class "editor-container"
+                        ] []
                   ]
-                  [ text "Save" ]
-                ]
+              , div [ class "form-line" ]
+                  [ label [] [ text "Backstory (private)" ]
+                  , div [ id "backstory-editor"
+                        , class "editor-container"
+                        ] []
+                  ]
+              , div [ class "btn-bar" ]
+                  [ button
+                    [ class "btn btn-default"
+                    , onClick SaveCharacter
+                    ]
+                    [ text "Save" ]
+                  ]
+              ]
             ]
         , section []
             [ h3 [] [ text "Appears in these chapters:" ]
