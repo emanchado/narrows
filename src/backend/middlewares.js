@@ -32,6 +32,9 @@ export function firstTimeSetup(req, res, next) {
             res.sendFile(path.resolve(path.join(STATIC_HTML_FILES,
                                                 "first-time-setup.html")));
         }
+    }).catch(err => {
+        res.statusCode = 401;
+        res.send("Could not check if there are any admins in the app: " + err);
     });
 }
 
