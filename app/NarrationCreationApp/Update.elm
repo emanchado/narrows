@@ -19,6 +19,7 @@ urlUpdate route model =
                 , files = Nothing
                 , uploadingAudio = False
                 , uploadingBackgroundImage = False
+                , banner = Nothing
         }
       , Cmd.none
       )
@@ -29,6 +30,7 @@ urlUpdate route model =
                 , files = Nothing
                 , uploadingAudio = False
                 , uploadingBackgroundImage = False
+                , banner = Nothing
         }
       , NarrationCreationApp.Api.fetchNarration narrationId
       )
@@ -150,7 +152,7 @@ update msg model =
 
     CreateNarrationResult (Ok narration) ->
       ( { model | banner = Nothing }
-      , Nav.pushUrl model.key <| "/narrations/" ++ (String.fromInt narration.id)
+      , Nav.pushUrl model.key <| "/narrations/" ++ (String.fromInt narration.id) ++ "/edit"
       )
 
     SaveNarration ->
