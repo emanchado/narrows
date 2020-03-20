@@ -1,21 +1,27 @@
 module NarrationCreationApp.Messages exposing (..)
 
 import Http
+import Json.Encode
 
 import Common.Models exposing (MediaType, FileUploadError, FileUploadSuccess, Narration)
 import NarrationCreationApp.Models exposing (CreateNarrationResponse)
 
 
+type MediaTarget = NarrationIntroTarget | NarrationDefaultTarget
+
 type Msg
     = NoOp
     | NavigateTo String
     | UpdateTitle String
-    | UpdateSelectedBackgroundImage String
-    | UpdateSelectedAudio String
+    | UpdateIntro Json.Encode.Value
+    | UpdateSelectedIntroBackgroundImage String
+    | UpdateSelectedIntroAudio String
+    | UpdateSelectedDefaultBackgroundImage String
+    | UpdateSelectedDefaultAudio String
     | OpenMediaFileSelector String
-    | AddMediaFile MediaType String
-    | AddMediaFileError FileUploadError
-    | AddMediaFileSuccess FileUploadSuccess
+    | AddMediaFile MediaType MediaTarget String
+    | AddMediaFileError MediaTarget FileUploadError
+    | AddMediaFileSuccess MediaTarget FileUploadSuccess
     | CreateNarration
     | CreateNarrationResult (Result Http.Error CreateNarrationResponse)
     | SaveNarration

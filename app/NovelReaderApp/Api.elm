@@ -19,9 +19,12 @@ parseChapter =
 
 parseNarration : Json.Decoder Narration
 parseNarration =
-    Json.map5 Narration
+    Json.map8 Narration
         (field "id" int)
         (field "title" string)
+        (field "intro" Json.value)
+        (maybe (field "introAudio" string))
+        (maybe (field "introBackgroundImage" string))
         (field "characters" <| list parseParticipantCharacter)
         (maybe (field "defaultAudio" string))
         (maybe (field "defaultBackgroundImage" string))

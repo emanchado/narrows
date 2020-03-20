@@ -10,12 +10,15 @@ import generateToken from "./token-generator";
 const JSON_TO_DB = {
     id: "id",
     title: "title",
+    intro: "intro",
     status: "status",
     audio: "audio",
     backgroundImage: "background_image",
     text: "main_text",
     published: "published",
     narratorId: "narrator_id",
+    introBackgroundImage: "intro_background_image",
+    introAudio: "intro_audio",
     defaultBackgroundImage: "default_background_image",
     defaultAudio: "default_audio",
     name: "name",
@@ -78,6 +81,23 @@ function mysqlTimestamp(dateString) {
         `${pad(hour)}:${pad(minutes)}:${pad(seconds)}`;
 }
 
+// Parses the JSON text for a narration intro and returns the parsed
+// JS object. If the intro is effectively empty, return null as if the
+// input had been null.
+function parseIntroText(introText) {
+    const parsedIntro = JSON.parse(introText);
+
+    if (
+        parsedIntro &&
+            parsedIntro.content &&
+            parsedIntro.content.length === 1 &&
+            !("content" in parsedIntro.content[0])
+    ) {
+        return null;
+    }
+    return parsedIntro;
+}
+
 class NarrowsStore {
     constructor(connConfig, narrationDir) {
         this.connConfig = connConfig;
@@ -115,12 +135,13 @@ class NarrowsStore {
     createNarration(props) {
         const deferred = Q.defer();
 
-        const fields = Object.keys(props).map(convertToDb);
+        const fields = Object.keys(props).map(convertToDb).concat("token");
+        const token = generateToken();
 
         this.db.run(
             `INSERT INTO narrations (${ fields.join(", ") })
                 VALUES (${ fields.map(() => "?").join(", ") })`,
-            Object.keys(props).map(f => props[f]),
+            Object.keys(props).map(f => props[f]).concat(token),
             function(err, result) {
                 if (err) {
                     deferred.reject(err);
@@ -168,8 +189,7 @@ class NarrowsStore {
             this.db,
             "all",
             `SELECT characters.id, name, email, token,
-                    novel_token AS novelToken, intro_sent AS introSent,
-                    avatar
+                    novel_token AS novelToken, avatar
                FROM characters
           LEFT JOIN users
                  ON characters.player_id = users.id
@@ -182,12 +202,13 @@ class NarrowsStore {
         return Q.ninvoke(
             this.db,
             "all",
-            `SELECT id, name, avatar, description
+            `SELECT id, player_id IS NOT NULL AS claimed, name, avatar, description
                FROM characters
               WHERE narration_id = ?`,
             narrationId
         ).then(characters => {
             characters.forEach(c => {
+                c.claimed = !!c.claimed;
                 c.description = JSON.parse(c.description);
             });
 
@@ -211,7 +232,10 @@ class NarrowsStore {
         return Q.ninvoke(
             this.db,
             "get",
-            `SELECT id, title, status, narrator_id AS narratorId,
+            `SELECT id, token, title, intro, status,
+                    narrator_id AS narratorId,
+                    intro_background_image AS introBackgroundImage,
+                    intro_audio AS introAudio,
                     default_audio AS defaultAudio,
                     default_background_image AS defaultBackgroundImage
                FROM narrations WHERE id = ?`,
@@ -220,6 +244,10 @@ class NarrowsStore {
             if (!narrationInfo) {
                 throw new Error("Cannot find narration " + id);
             }
+            if (narrationInfo.intro) {
+                narrationInfo.intro = parseIntroText(narrationInfo.intro);
+            }
+            narrationInfo.introUrl = `${config.publicAddress}/narrations/${narrationInfo.token}/intro`;
 
             return Q.all([
                 this._getNarrationCharacters(id),
@@ -232,12 +260,38 @@ class NarrowsStore {
         });
     }
 
+    getNarrationByToken(token) {
+        return Q.ninvoke(
+            this.db,
+            "get",
+            `SELECT id, title, intro, status, narrator_id AS narratorId,
+                    intro_background_image AS backgroundImage,
+                    intro_audio AS audio
+               FROM narrations WHERE token = ?`,
+            token
+        ).then(narrationInfo => {
+            if (!narrationInfo) {
+                throw new Error("Cannot find narration " + token);
+            }
+            if (narrationInfo.intro) {
+                narrationInfo.intro = parseIntroText(narrationInfo.intro);
+            }
+
+            return this._getPublicNarrationCharacters(narrationInfo.id).then(characters => {
+                narrationInfo.characters = characters;
+                return narrationInfo;
+            });
+        });
+    }
+
     getPublicNarration(id) {
         return Q.all([
             Q.ninvoke(
                 this.db,
                 "get",
-                `SELECT id, title, default_audio AS defaultAudio,
+                `SELECT id, title, intro, intro_audio AS introAudio,
+                    intro_background_image AS introBackgroundImage,
+                    default_audio AS defaultAudio,
                     default_background_image AS defaultBackgroundImage
                FROM narrations WHERE id = ?`,
                 id
@@ -248,6 +302,7 @@ class NarrowsStore {
                 throw new Error("Cannot find narration " + id);
             }
 
+            narrationInfo.intro = parseIntroText(narrationInfo.intro);
             narrationInfo.characters = characters;
             return narrationInfo;
         });
@@ -362,7 +417,8 @@ class NarrowsStore {
         return Q.ninvoke(
             this.db,
             "all",
-            `SELECT id, title, status, default_audio AS defaultAudio,
+            `SELECT id, token, title, intro, status,
+                    default_audio AS defaultAudio,
                     default_background_image AS defaultBackgroundImage
                FROM narrations
               WHERE narrator_id = ?
@@ -380,7 +436,9 @@ class NarrowsStore {
                 narrations: chapterLists.map((chapters, i) => ({
                     narration: Object.assign(rows[i],
                                              {characters: characterLists[i],
-                                              files: fileLists[i]}),
+                                              files: fileLists[i],
+                                              intro: parseIntroText(rows[i].intro),
+                                              introUrl: `${config.publicAddress}/narrations/${rows[i].token}/intro`}),
                     chapters: chapters
                 }))
             }))
@@ -511,17 +569,19 @@ class NarrowsStore {
             this.db,
             "all",
             `SELECT C.id, C.name, C.avatar, C.description,
-                    C.intro_sent AS introSent ${ extraFields }
+                    CASE WHEN C.player_id THEN TRUE ELSE FALSE END AS claimed
+                    ${ extraFields }
                FROM characters C
                JOIN chapter_participants CP ON C.id = CP.character_id
-               JOIN users U ON U.id = C.player_id
+          LEFT JOIN users U ON U.id = C.player_id
               WHERE chapter_id = ?`,
             chapterId
         ).then(participants => (
             participants.map(participant => (
                 Object.assign(
                     participant,
-                    { description: JSON.parse(participant.description) }
+                    { description: JSON.parse(participant.description),
+                      claimed: !!participant.claimed }
                 )
             ))
         ));
@@ -546,9 +606,11 @@ class NarrowsStore {
         return Q.ninvoke(
             this.db,
             "get",
-            "SELECT id, title, audio, narration_id as narrationId, " +
-                "background_image AS backgroundImage, " +
-                "main_text AS text, published FROM chapters WHERE id = ?",
+            `SELECT id, title, audio, narration_id as narrationId,
+                    background_image AS backgroundImage,
+                    main_text AS text, published
+               FROM chapters
+              WHERE id = ?`,
             id
         ).then(chapterData => {
             if (!chapterData) {
@@ -634,6 +696,21 @@ class NarrowsStore {
             `SELECT id, name, token, notes${ extraFieldString }
                FROM characters WHERE token = ?`,
             characterToken
+        );
+    }
+
+    getCharacterInfoById(characterId, extraFields) {
+        extraFields = extraFields || [];
+        const extraFieldString = extraFields.length !== 0 ?
+              `, ${ extraFields.join(", ") }` :
+              "";
+
+        return Q.ninvoke(
+            this.db,
+            "get",
+            `SELECT id, name, token, notes${ extraFieldString }
+               FROM characters WHERE id = ?`,
+            characterId
         );
     }
 
@@ -1008,8 +1085,7 @@ class NarrowsStore {
                 this.db,
                 "get",
                 `SELECT C.id, C.name, C.token, C.avatar, C.description,
-                        C.backstory, C.novel_token AS novelToken,
-                        C.intro_sent AS introSent, U.email,
+                        C.backstory, C.novel_token AS novelToken, U.email,
                         N.id AS narrationId, N.title AS narrationTitle
                    FROM characters C
                    JOIN narrations N
@@ -1028,7 +1104,6 @@ class NarrowsStore {
                 name: basicStats.name,
                 avatar: basicStats.avatar,
                 novelToken: basicStats.novelToken,
-                introSent: basicStats.introSent,
                 description: JSON.parse(basicStats.description),
                 backstory: JSON.parse(basicStats.backstory),
                 narration: {
@@ -1126,20 +1201,6 @@ class NarrowsStore {
         });
     }
 
-    getUnintroducedCharacters(narrationId) {
-        return Q.ninvoke(
-            this.db,
-            "query",
-            `SELECT id
-               FROM characters
-              WHERE narration_id = ?
-                AND intro_sent IS NULL`,
-            narrationId
-        ).spread(results => (
-            results.map(result => result.id)
-        ));
-    }
-
     searchNarration(narrationId, searchTerms) {
         return Q.ninvoke(
             this.db,
@@ -1154,6 +1215,56 @@ class NarrowsStore {
                 id: result.id,
                 title: result.title
             }))
+        ));
+    }
+
+    claimCharacter(characterId, userId) {
+        return Q.ninvoke(
+            this.db,
+            "query",
+            `SELECT id, name, narration_id, player_id
+               FROM characters
+              WHERE player_id = ?
+                AND narration_id = (SELECT narration_id
+                                      FROM characters
+                                     WHERE id = ?)`,
+            [userId, characterId]
+        ).spread(results => {
+            // Don't allow claiming more than one character per player
+            // in the same narration
+            if (results.length > 0) {
+                throw new Error(
+                    "Cannot claim more than one character in the same " +
+                        "narration"
+                );
+            }
+
+            // Yes, possibility of race condition here, but... MySQL
+            return Q.ninvoke(
+                this.db,
+                "query",
+                `UPDATE characters SET player_id = ?
+                  WHERE id = ?
+                    AND player_id IS NULL`,
+                [userId, characterId]
+            );
+        }).then(() => (
+            Q.ninvoke(
+                this.db,
+                "query",
+                `SELECT player_id FROM characters WHERE id = ?`,
+                [characterId]
+            ).spread(results => {
+                if (results[0].player_id === userId) {
+                    return results[0].player_id;
+                } else {
+                    throw new Error(
+                        `Could not claim character ${characterId} ` +
+                            `with user id ${userId} (claimed by ` +
+                            `${results[0].player_id})`
+                    );
+                }
+            })
         ));
     }
 }

@@ -259,4 +259,87 @@ export default function testcases(test, stash) {
             t.is(stats.narration.chapters.length, 1);
         });
     });
+
+    test.serial("can claim a character", t => {
+        const ctx = t.context;
+        const narrationId = ctx.testNarration.id;
+        const userId = ctx.userId1;
+
+        return stash.store.createNarration({
+            narratorId: stash.narratorUserId,
+            title: "Character claim narration 1"
+        }).then(narration => (
+            stash.store.addCharacter("Char 1", null, narration.id).then(char => (
+                stash.store.claimCharacter(char.id, userId).then(id => {
+                    t.is(id, userId);
+                })
+            ))
+        ));
+    });
+
+    test.serial("cannot claim an already-claimed character", t => {
+        const ctx = t.context;
+        const userId = ctx.userId1;
+        const userId2 = ctx.userId2;
+
+        return stash.store.createNarration({
+            narratorId: stash.narratorUserId,
+            title: "Character claim narration 1"
+        }).then(narration => (
+            stash.store.addCharacter("Char 1", null, narration.id)
+        )).then(char => (
+            stash.store.claimCharacter(char.id, userId).then(id => {
+                t.is(id, userId);
+
+                return stash.store.claimCharacter(char.id, userId2).then(() => {
+                    t.is(1, 0, "Character claim should have failed");
+                }).catch(err => {
+                    t.truthy(err);
+                });
+            })
+        ));
+    });
+
+    test.serial("can claim a character while having another character in a different narration", t => {
+        const ctx = t.context;
+        const userId = ctx.userId1;
+
+        return Q.all([
+            stash.store.createNarration({
+                narratorId: stash.narratorUserId,
+                title: "Character claim narration 1"
+            }),
+            stash.store.createNarration({
+                narratorId: stash.narratorUserId,
+                title: "Character claim narration 2"
+            })
+        ]).spread((narration1, narration2) => (
+            Q.all([
+                stash.store.addCharacter("Char 1", null, narration1.id),
+                stash.store.addCharacter("Char 2", null, narration2.id)
+            ])
+        )).spread((charNarration1, charNarration2) => (
+            Q.all([
+                stash.store.claimCharacter(charNarration1.id, userId),
+                stash.store.claimCharacter(charNarration2.id, userId)
+            ])
+        )).spread((userId1, userId2) => {
+            t.is(userId1, userId);
+            t.is(userId2, userId);
+        });
+    });
+
+    test.serial("cannot claim a character while having another character in the same narration", t => {
+        const ctx = t.context;
+        const narrationId = ctx.testNarration.id;
+        const userId = ctx.userId1;
+
+        return stash.store.addCharacter("Char 1", null, narrationId).then(char => (
+            stash.store.claimCharacter(char.id, userId)
+        )).then(userId => {
+            t.is(1, 0, "Character claim should have failed!");
+        }).catch(err => {
+            t.truthy(err);
+        });
+    });
 };

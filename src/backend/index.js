@@ -45,7 +45,6 @@ app.post("/api/narrations/:narrId/background-images", middlewares.apiAuth, endpo
 app.post("/api/narrations/:narrId/audio", middlewares.apiAuth, endpoints.postNarrationAudio);
 app.post("/api/narrations/:narrId/characters", middlewares.apiAuth, endpoints.postNarrationCharacters);
 app.get("/api/narrations/:narrId/last-reactions", middlewares.apiAuth, endpoints.getNarrationLastReactions);
-app.post("/api/narrations/:narrId/intro-emails", middlewares.apiAuth, endpoints.postNarrationIntroEmails);
 app.get("/api/narrations/:narrId/search", middlewares.apiAuth, endpoints.getNarrationChapterSearch);
 
 app.get("/api/chapters/:chptId", middlewares.apiAuth, endpoints.getChapter);
@@ -58,13 +57,13 @@ app.put("/api/users/:userId", endpoints.putUser);
 app.get("/api/characters/by-id/:charId", endpoints.getCharacterById);
 app.put("/api/characters/by-id/:charId", endpoints.putCharacterById);
 app.post("/api/characters/by-id/:charId/token", endpoints.postCharacterByIdToken);
-app.post("/api/characters/by-id/:charId/intro-email", endpoints.postCharacterByIdIntroEmail);
 
 // These endpoints are only for admins!
 app.get("/api/users", middlewares.apiAdminAuth, endpoints.getUsers);
 app.post("/api/users", middlewares.apiAdminAuth, endpoints.postUser);
 
 // Public endpoints, only protected by an unguessable string
+app.get("/api/narrations/by-token/:narrToken", endpoints.getNarrationByToken);
 app.get("/api/chapters/:chptId/:charToken", endpoints.getChapterCharacter);
 app.get("/api/messages/:chptId/:charToken", endpoints.getMessagesCharacter);
 app.post("/api/messages/:chptId/:charToken", endpoints.postMessageCharacter);
@@ -74,6 +73,8 @@ app.put("/api/characters/:charToken", endpoints.putCharacter);
 app.put("/api/characters/:charToken/avatar", endpoints.putCharacterAvatar);
 app.get("/api/novels/:novelToken", endpoints.getNovel);
 app.post("/api/password-reset", endpoints.postPasswordReset);
+// Public endpoint
+app.post("/api/characters/by-id/:charId/claim", endpoints.postCharacterClaim);
 
 // Catch-all for non-existent API paths
 app.use("/api", function(req, res) {

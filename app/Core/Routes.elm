@@ -8,6 +8,7 @@ type Route
     | NarrationArchivePage
     | NarrationCreationPage
     | NarrationEditPage Int
+    | NarrationIntroPage String
     | ChapterEditNarratorPage Int
     | ChapterControlPage Int
     | CreateChapterPage Int

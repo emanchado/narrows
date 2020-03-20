@@ -23,6 +23,10 @@ class Mailer {
         this.transport = transport;
     }
 
+    narrationUrlFor(narrationId) {
+        return `${config.publicAddress}/narrations/${narrationId}`;
+    }
+
     chapterUrlFor(chapterId, characterToken) {
         return `${config.publicAddress}/read/${chapterId}/${characterToken}`;
     }
@@ -158,15 +162,48 @@ class Mailer {
         );
     }
 
-    characterIntroEmail(character) {
+    characterClaimed(email, narration, character) {
+        // Send the user an intro message
         this.sendMail(
-            "characterIntro",
-            character.email,
-            'Welcome to the storytelling system NARROWS',
-            {narrationTitle: character.narration.title,
+            "characterClaimed",
+            email,
+            `Your character ${character.name} for "${narration.title}" in NARROWS`,
+            {narrationTitle: narration.title,
              characterName: character.name,
              characterSheetLink: this.characterUrlFor(character.token)}
         );
+
+        // Calculate the number of unclaimed characters
+        const numberUnclaimed = narration.characters.filter(
+            c => c.email === null
+        ).length;
+
+        // Tell the narrator a character was claimed
+        this.sendMail(
+            "characterClaimedNarrator",
+            narration.narrator.email,
+            `${character.name} was claimed in "${narration.title}"`,
+            {narrationTitle: narration.title,
+             characterName: character.name,
+             characterSheetLink: this.characterUrlFor(character.token),
+             narrationLink: this.narrationUrlFor(narration.id),
+             numberUnclaimed: numberUnclaimed}
+        );
+
+        // Tell the other players that a character was claimed
+        narration.characters.forEach(character => {
+            if (character.email && character.email !== email) {
+                this.sendMail(
+                    "characterClaimedFellowPlayer",
+                     character.email,
+                    `${character.name} was claimed in "${narration.title}"`,
+                    {narrationTitle: narration.title,
+                     characterName: character.name,
+                     narrationLink: narration.introUrl,
+                     numberUnclaimed: numberUnclaimed}
+                );
+            }
+        });
     }
 };
 

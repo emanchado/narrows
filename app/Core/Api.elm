@@ -51,7 +51,7 @@ resetPassword email =
                          ])
   in
     Http.post { url = "/api/password-reset"
-              , body =(Http.jsonBody jsonEncodedBody)
+              , body = Http.jsonBody jsonEncodedBody
               , expect = Http.expectJson ResetPasswordResult parseResetPasswordResponse
               }
 

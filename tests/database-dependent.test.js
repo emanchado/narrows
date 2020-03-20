@@ -96,6 +96,11 @@ test.beforeEach(t => {
                                   [CHAR3_NAME, userId3, narration.id],
                                   [CHAR4_NAME, userId4, narration.id] ]);
     }).spread((char1, char2, char3, char4) => {
+        t.context.narrationUserId = narratorUserId;
+        t.context.userId1 = userId1;
+        t.context.userId2 = userId2;
+        t.context.userId3 = userId3;
+        t.context.userId4 = userId4;
         t.context.characterId1 = char1.id;
         t.context.characterId2 = char2.id;
         t.context.characterId3 = char3.id;

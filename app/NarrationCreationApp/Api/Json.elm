@@ -22,6 +22,14 @@ encodeNewNarration props =
 encodeNarrationUpdate : NarrationUpdateProperties -> Value
 encodeNarrationUpdate props =
   let
+    newEncodedIntroBackgroundImage =
+      case props.introBackgroundImage of
+        Just bgImage -> Json.Encode.string bgImage
+        Nothing -> Json.Encode.null
+    newEncodedIntroAudio =
+      case props.introAudio of
+        Just audio -> Json.Encode.string audio
+        Nothing -> Json.Encode.null
     newEncodedDefaultBackgroundImage =
       case props.defaultBackgroundImage of
         Just bgImage -> Json.Encode.string bgImage
@@ -33,6 +41,9 @@ encodeNarrationUpdate props =
   in
     (Json.Encode.object
        [ ( "title", Json.Encode.string props.title )
+       , ( "intro", props.intro )
+       , ( "introBackgroundImage", newEncodedIntroBackgroundImage )
+       , ( "introAudio", newEncodedIntroAudio )
        , ( "defaultBackgroundImage", newEncodedDefaultBackgroundImage )
        , ( "defaultAudio", newEncodedDefaultAudio )
        ])

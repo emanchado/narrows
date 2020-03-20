@@ -2,7 +2,7 @@ module NarrationOverviewApp.Views exposing (..)
 
 import List
 import Html exposing (Html, main_, h1, h2, section, div, span, ul, li, button, img, input, label, a, em, text)
-import Html.Attributes exposing (id, class, for, checked, name, title, type_, href, src)
+import Html.Attributes exposing (id, class, for, checked, name, title, type_, readonly, value, href, src)
 import Html.Events exposing (onClick)
 import Common.Models exposing (Narration, NarrationStatus(..), ChapterOverview, NarrationOverview, FullCharacter, narrationStatusString)
 import Common.Views exposing (breadcrumbNavView, narrationOverviewView, loadingView, ribbonForNarrationStatus)
@@ -42,13 +42,8 @@ narrationCharacterView narration character =
       ]
 
 
-someIntroEmailPending : List FullCharacter -> Bool
-someIntroEmailPending characterList =
-  List.any (\c -> c.introSent == Nothing) characterList
-
-
-overviewView : NarrationOverview -> Html Msg
-overviewView overview =
+overviewView : NarrationOverview -> Bool -> Html Msg
+overviewView overview showUrlInfoBox =
   let
     isActive = overview.narration.status == Active
     chapterOptions = if isActive then
@@ -92,15 +87,30 @@ overviewView overview =
               , characterOptions
               , ul [ class "dramatis-personae compact" ]
                   (List.map (narrationCharacterView overview.narration) overview.narration.characters)
-              , if someIntroEmailPending overview.narration.characters then
-                  span []
-                    [ button [ class "btn"
-                             , onClick SendPendingIntroEmails
+              , div [ class "vertical-form small-form" ]
+                  [ label [] [ text "Narration intro URL: "
+                             , img [ src "/img/info-black.png"
+                                   , class "help"
+                                   , onClick ToggleURLInfoBox
+                                   ]
+                                 []
                              ]
-                        [ text "Send pending intro e-mails" ]
-                    ]
-                else
-                  text ""
+                  , if showUrlInfoBox then
+                      div [ class "floating-tip" ]
+                        [ text "Send this URL to potential players, "
+                        , text "including posting on public forums. Anyone "
+                        , text "with access to this URL will be able to "
+                        , text "claim a character in the story, even if "
+                        , text "they didn't have an account in NARROWS."
+                        ]
+                    else
+                      text ""
+                  , input [ readonly True
+                          , type_ "text"
+                          , value overview.narration.introUrl
+                          ]
+                      []
+                  ]
               , h2 [] [ text "Status" ]
               , div [ class "narration-status" ]
                   [ input [ type_ "radio"
@@ -144,7 +154,7 @@ mainView : Model -> Html Msg
 mainView model =
   case model.narrationOverview of
     Just overview ->
-      overviewView overview
+      overviewView overview model.showUrlInfoBox
 
     Nothing ->
       loadingView model.banner

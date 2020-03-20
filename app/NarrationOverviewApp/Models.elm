@@ -29,4 +29,5 @@ type alias Model =
     , narrationOverview : Maybe NarrationOverview
     , sendingPendingIntroEmails : Bool
     , banner : Maybe Banner
+    , showUrlInfoBox : Bool
     }

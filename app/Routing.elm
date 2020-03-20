@@ -27,6 +27,7 @@ parser =
         , Parser.map NovelReaderPage (s "novels" </> string)
         , Parser.map ProfilePage (s "profile")
         , Parser.map PasswordResetFailure (s "password-reset" </> string)
+        , Parser.map NarrationIntroPage (s "narrations" </> string </> s "intro")
         ]
 
 fromUrl : Url -> Route

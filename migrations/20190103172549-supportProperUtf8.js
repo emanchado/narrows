@@ -23,7 +23,6 @@ exports.up = function(db) {
   return new Promise( function( resolve, reject ) {
     fs.readFile(filePath, {encoding: 'utf-8'}, function(err,data){
       if (err) return reject(err);
-      console.log('received data: ' + data);
 
       resolve(data);
     });
@@ -38,7 +37,6 @@ exports.down = function(db) {
   return new Promise( function( resolve, reject ) {
     fs.readFile(filePath, {encoding: 'utf-8'}, function(err,data){
       if (err) return reject(err);
-      console.log('received data: ' + data);
 
       resolve(data);
     });

@@ -45,20 +45,3 @@ markNarration narrationId status =
                , timeout = Nothing
                , tracker = Nothing
                }
-
-parseSendIntroDate : Json.Decoder SendIntroDate
-parseSendIntroDate =
-  Json.map SendIntroDate
-    (field "sendIntroDate" parseIso8601Date)
-
-parseSendPendingIntroEmailsResponse : Json.Decoder SendPendingIntroEmailsResponse
-parseSendPendingIntroEmailsResponse =
-  Json.map SendPendingIntroEmailsResponse
-    (field "characters" (dict parseSendIntroDate))
-
-sendPendingIntroEmails : Int -> Cmd Msg
-sendPendingIntroEmails narrationId =
-    Http.post { url = "/api/narrations/" ++ (String.fromInt narrationId) ++ "/intro-emails"
-              , body = Http.emptyBody
-              , expect = Http.expectJson SendPendingIntroEmailsResult parseSendPendingIntroEmailsResponse
-              }

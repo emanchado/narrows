@@ -13,7 +13,7 @@ loadingPlaceholderChapter =
     , title = "…"
     , audio = Nothing
     , backgroundImage = Nothing
-    , text = Json.Encode.list Json.Encode.string []
+    , text = Json.Encode.null
     , participants = []
     , published = Nothing
     }
@@ -24,6 +24,10 @@ loadingPlaceholderNarration =
     { id = 0
     , title = "…"
     , status = Active
+    , intro = Json.Encode.null
+    , introUrl = ""
+    , introAudio = Nothing
+    , introBackgroundImage = Nothing
     , characters = []
     , defaultAudio = Nothing
     , defaultBackgroundImage = Nothing
@@ -63,7 +67,7 @@ bannerForHttpError error =
                      _ ->
                        "Cannot connect to server"
   in
-    errorBanner <| Debug.log "HTTP error" errorMessage
+    errorBanner errorMessage
 
 
 narrationStatusString : NarrationStatus -> String
@@ -93,7 +97,6 @@ type alias FullCharacter =
     , token : String
     , novelToken : String
     , avatar : Maybe String
-    , introSent : Maybe ISO8601.Time
     }
 
 
@@ -114,6 +117,10 @@ type alias Narration =
     { id : Int
     , title : String
     , status : NarrationStatus
+    , intro : Json.Decode.Value
+    , introUrl : String
+    , introAudio : Maybe String
+    , introBackgroundImage : Maybe String
     , characters : List FullCharacter
     , defaultAudio : Maybe String
     , defaultBackgroundImage : Maybe String
@@ -231,6 +238,7 @@ updateNarrationFiles fileSet uploadResponse =
 type alias ParticipantCharacter =
     { id : Int
     , name : String
+    , claimed : Bool
     , avatar : Maybe String
     , description : Json.Decode.Value
     }

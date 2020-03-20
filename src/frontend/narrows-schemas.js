@@ -44,10 +44,16 @@ const chapterSchema = new Schema({
   marks: chapterMarkSpec
 });
 
+const narrationIntroSchema = new Schema({
+  nodes: nodeSpecWithLists,
+  marks: baseSchema.spec.marks
+});
+
 const descriptionSchema = new Schema({
   nodes: nodeSpecWithLists.remove("image"),
   marks: baseSchema.spec.marks
 });
 
 module.exports.chapter = chapterSchema;
+module.exports.narrationIntro = narrationIntroSchema;
 module.exports.description = descriptionSchema;

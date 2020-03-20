@@ -102,6 +102,18 @@ export function getNarration(req, res) {
     });
 }
 
+export function getNarrationByToken(req, res) {
+    const narrationToken = req.params.narrToken;
+
+    store.getNarrationByToken(narrationToken).then(narrationData => {
+        res.json(narrationData);
+    }).catch(err => {
+        res.status(404).json({
+            errorMessage: `Cannot find narration ${ narrationToken } by token `
+        });
+    });
+}
+
 export function putNarration(req, res) {
     const narrationId = parseInt(req.params.narrId, 10);
     const newProps = req.body;
@@ -360,19 +372,26 @@ export function postNarrationCharacters(req, res) {
           name = req.body.name || "Unnamed character",
           email = req.body.email;
 
-    if (!isValidEmail(email)) {
-        res.status(400).json({
-            errorMessage: `'${ email }' is not a valid e-mail`
-        });
-        return;
+    let promise;
+    if (email) {
+        if (!isValidEmail(email)) {
+            res.status(400).json({
+                errorMessage: `'${ email }' is not a valid e-mail`
+            });
+            return;
+        }
+
+        promise = userStore.getUserByEmail(email).catch(() => (
+            userStore.createUser({ email: email }).then(() => (
+                userStore.getUserByEmail(email)
+            ))
+        )).then(user => user.id);
+    } else {
+        promise = Q(null);
     }
 
-    userStore.getUserByEmail(email).catch(() => (
-        userStore.createUser({ email: email }).then(() => (
-            userStore.getUserByEmail(email)
-        ))
-    )).then(user => (
-        store.addCharacter(name, user.id, narrationId)
+    promise.then(userId => (
+        store.addCharacter(name, userId, narrationId)
     )).then(character => (
         res.json(character)
     )).catch(err => {
@@ -558,20 +577,24 @@ export function putCharacterById(req, res) {
     );
 
     return store.updateCharacter(characterId, newProps).then(newCharacter => {
-        if (!req.body.email) {
+        if (!("email" in req.body)) {
             return newCharacter;
         }
 
         const email = req.body.email;
-        return userStore.getUserByEmail(email).catch(() => (
-            userStore.createUser({ email: email }).then(() => (
-                userStore.getUserByEmail(email)
-            ))
-        )).then(playerUser => (
-            store.updateCharacter(characterId, {
-                playerId: playerUser.id
-            })
-        ));
+        if (email) {
+            return userStore.getUserByEmail(email).catch(() => (
+                userStore.createUser({ email: email }).then(() => (
+                    userStore.getUserByEmail(email)
+                ))
+            )).then(playerUser => (
+                store.updateCharacter(characterId, {
+                    playerId: playerUser.id
+                })
+            ));
+        } else {
+            return store.updateCharacter(characterId, { playerId: null });
+        }
     }).then(updatedCharacter => {
         res.json(updatedCharacter);
     }).catch(err => {
@@ -718,47 +741,6 @@ export function postCharacterByIdToken(req, res) {
     });
 }
 
-export function postCharacterByIdIntroEmail(req, res) {
-    const characterId = req.params.charId,
-          dateNow = new Date();
-
-    return store.updateCharacter(characterId, { introSent: dateNow }).then(character => {
-        mailer.characterIntroEmail(character);
-        res.json({ sendIntroDate: character.introSent });
-    }).catch(err => {
-        res.status(500).json({
-            errorMessage: `Could not send character intro e-mail for ` +
-                `character '${ characterId }': ${ err }`
-        });
-    });
-}
-
-export function postNarrationIntroEmails(req, res) {
-    const narrationId = req.params.narrId,
-          dateNow = new Date();
-
-    return store.getUnintroducedCharacters(narrationId).then(characterIds => (
-        Q.all(
-            characterIds.map(id => store.updateCharacter(id, { introSent: dateNow }).then(character => {
-                mailer.characterIntroEmail(character);
-                return id;
-            }))
-        )
-    )).then(characterIds => {
-        const results = { characters: {} };
-        characterIds.forEach(characterId => {
-            results.characters[characterId] = { sendIntroDate: dateNow };
-        });
-
-        res.json(results);
-    }).catch(err => {
-        res.status(500).json({
-            errorMessage: `Could not send character intro e-mails for ` +
-                `narration '${ narrationId }': ${ err }`
-        });
-    });
-}
-
 export function getNarrationChapterSearch(req, res) {
     const narrationId = parseInt(req.params.narrId, 10);
     const searchTerms = req.query.terms;
@@ -772,6 +754,39 @@ export function getNarrationChapterSearch(req, res) {
     }).catch(err => {
         res.status(500).json({
             errorMessage: `Cannot search: ${ err }`
+        });
+    });
+}
+
+export function postCharacterClaim(req, res) {
+    const characterId = parseInt(req.params.charId, 10);
+    const email = req.body.email;
+
+    return userStore.getUserByEmail(email).catch(() => (
+        userStore.createUser({ email: email }).then(() => (
+            userStore.getUserByEmail(email)
+        ))
+    )).then(user => (
+        store.claimCharacter(characterId, user.id)
+    )).then(() => (
+        store.updateCharacter(characterId, { introSent: new Date() })
+    )).then(() => (
+        store.getCharacterInfoById(characterId, ["narration_id"]).then(character => (
+            store.getNarration(character.narration_id).then(narration => (
+                userStore.getUser(narration.narratorId).then(narrator => {
+                    narration.narrator = narrator;
+                    mailer.characterClaimed(email, narration, character);
+                })
+            )).then(() => {
+                res.json({
+                    id: characterId,
+                    email: email
+                });
+            })
+        ))
+    )).catch(err => {
+        res.status(400).json({
+            errorMessage: `Could not claim character ${characterId}: ${ err }`
         });
     });
 }

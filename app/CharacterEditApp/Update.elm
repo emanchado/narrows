@@ -172,32 +172,6 @@ update msg model =
       , Cmd.none
       )
 
-    SendIntroEmail email ->
-      case model.characterInfo of
-        Just info ->
-          ( { model | sendingIntroEmail = False }
-          , CharacterEditApp.Api.sendIntroEmail info.id
-          )
-        Nothing ->
-          ( model, Cmd.none )
-
-    SendIntroEmailResult (Err err) ->
-      ( { model | sendingIntroEmail = False }
-      , Cmd.none
-      )
-
-    SendIntroEmailResult (Ok sendIntroResponse) ->
-      case model.characterInfo of
-        Just info ->
-          let
-            updatedCharacterInfo = { info | introSent = Just sendIntroResponse.introSentDate }
-          in
-            ( { model | characterInfo = Just updatedCharacterInfo }
-            , Cmd.none
-            )
-        Nothing ->
-          ( model, Cmd.none )
-
     ResetCharacterToken ->
       ( { model | showResetCharacterTokenDialog = True }
       , Cmd.none

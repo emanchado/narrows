@@ -131,27 +131,7 @@ mainView model =
                                     , onInput UpdatePlayerEmail
                                     ]
                                 []
-                            , button [ class "btn"
-                                     , onClick <| case characterInfo.email of
-                                                    Just email ->
-                                                      (SendIntroEmail email)
-                                                    Nothing ->
-                                                      NoOp
-                                     , disabled model.sendingIntroEmail
-                                     ]
-                                [ text <| case characterInfo.introSent of
-                                            Just _ -> "Resend"
-                                            Nothing -> "Send"
-                                ]
                             ]
-                        , div []
-                            (case characterInfo.introSent of
-                               Just when ->
-                                 [ span [ title <| "Sent at " ++ (formatDate when) ]
-                                     [ text <| "Intro e-mail sent." ]
-                                 ]
-                               Nothing ->
-                                 [ text "Intro e-mail not sent." ])
                         ]
                     , div [ class "form-line" ]
                         [ label [] [ text "Character token" ]

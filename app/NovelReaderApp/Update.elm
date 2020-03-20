@@ -25,11 +25,15 @@ maxBlurriness : Int
 maxBlurriness = 10
 
 
+defaultChapterIndex : Int
+defaultChapterIndex = -999
+
+
 urlUpdate : Route -> Model -> ( Model, Cmd Msg )
 urlUpdate route model =
   case route of
     NovelReaderPage novelToken ->
-      ( model
+      ( { model | currentChapterIndex = defaultChapterIndex }
       , Cmd.batch
           [ NovelReaderApp.Api.fetchNovelInfo novelToken
           , readDeviceSettings "receiveDeviceSettingsNovelReader"
@@ -101,11 +105,16 @@ update msg model =
 
     NovelFetchResult (Ok novelData) ->
       let
+        chapterIndex = if model.currentChapterIndex == defaultChapterIndex then
+                         firstChapterIndex novelData
+                       else
+                         model.currentChapterIndex
         lastChapterIndex = (List.length novelData.chapters) - 1
-        newChapterIndex = min lastChapterIndex model.currentChapterIndex
+        firstChapterIndex_ = firstChapterIndex novelData
+        newChapterIndex = min lastChapterIndex chapterIndex
       in
         ( { model | novel = Just novelData
-                  , currentChapterIndex = max 0 newChapterIndex
+                  , currentChapterIndex = max firstChapterIndex_ newChapterIndex
           }
         , Cmd.none
         )
@@ -180,21 +189,23 @@ update msg model =
         ( { model | backgroundBlurriness = blurriness }, Cmd.none )
 
     PreviousChapter ->
-      let
-        newChapterIndex = max 0 (model.currentChapterIndex - 1)
-        audioElemId = "background-music-chapter-" ++
-                        (String.fromInt model.currentChapterIndex)
-      in
-        case model.novel of
-          Just novel ->
+      case model.novel of
+        Just novel ->
+          let
+            newChapterIndex = max
+                                (firstChapterIndex novel)
+                                (model.currentChapterIndex - 1)
+            audioElemId = "background-music-chapter-" ++
+                            (String.fromInt model.currentChapterIndex)
+          in
             ( model
-            , Cmd.batch [ Nav.pushUrl model.key <| "/novels/" ++ novel.token ++ "/chapters/" ++ (String.fromInt newChapterIndex)
+            , Cmd.batch [ Nav.pushUrl model.key <| novelChapterUrl novel newChapterIndex
                         , pauseNarrationMusic { audioElemId = audioElemId }
                         ]
             )
 
-          Nothing ->
-            ( model, Cmd.none )
+        Nothing ->
+          ( model, Cmd.none )
 
     NextChapter ->
       let

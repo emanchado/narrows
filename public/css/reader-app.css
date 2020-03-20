@@ -226,6 +226,9 @@ ul.thread-list.reader li .btn-bar {
     min-height: 200px;
 }
 
+.character-description-container {
+    width: 100%;
+}
 .character-description p {
     margin-top: 0;
 }

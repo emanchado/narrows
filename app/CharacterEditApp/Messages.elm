@@ -19,8 +19,6 @@ type Msg
     | UpdateDescriptionText Json.Encode.Value
     | UpdateBackstoryText Json.Encode.Value
     | UpdatePlayerEmail String
-    | SendIntroEmail String
-    | SendIntroEmailResult (Result Http.Error SendIntroEmailResponse)
     | ResetCharacterToken
     | ConfirmResetCharacterToken
     | CancelResetCharacterToken

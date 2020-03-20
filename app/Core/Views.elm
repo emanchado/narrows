@@ -16,6 +16,7 @@ import NarratorDashboardApp
 import NarrationArchiveApp
 import NarrationCreationApp
 import NarrationOverviewApp
+import NarrationIntroApp
 import ChapterEditApp
 import ChapterControlApp
 import CharacterCreationApp
@@ -190,6 +191,9 @@ appContentView model =
 
     CharacterPage characterToken ->
       Html.map CharacterMsg (CharacterApp.view model.characterApp)
+
+    NarrationIntroPage narrationToken ->
+      Html.map NarrationIntroMsg (NarrationIntroApp.view model.narrationIntroApp)
 
     PasswordResetFailure _ ->
       passwordResetFailureView model

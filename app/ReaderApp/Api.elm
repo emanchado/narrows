@@ -3,19 +3,10 @@ module ReaderApp.Api exposing (..)
 import Json.Decode as Json exposing (..)
 import Json.Encode
 import Http
-import Common.Api.Json exposing (parseChapterMessages)
+import Common.Api.Json exposing (parseChapterMessages, parseParticipantCharacter)
 import ReaderApp.Messages exposing (Msg, Msg(..))
 import Common.Models exposing (ParticipantCharacter)
 import ReaderApp.Models exposing (Chapter, OwnCharacter, ChapterMessages, MessageThread, Message, ApiErrorResponse)
-
-
-parseParticipantCharacter : Json.Decoder ParticipantCharacter
-parseParticipantCharacter =
-    Json.map4 ParticipantCharacter
-        (field "id" int)
-        (field "name" string)
-        (maybe (field "avatar" string))
-        (field "description" Json.value)
 
 
 parseOwnCharacter : Json.Decoder OwnCharacter

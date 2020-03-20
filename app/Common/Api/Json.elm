@@ -20,9 +20,10 @@ parseCharacter =
 
 parseParticipantCharacter : Json.Decoder ParticipantCharacter
 parseParticipantCharacter =
-    Json.map4 ParticipantCharacter
+    Json.map5 ParticipantCharacter
         (field "id" int)
         (field "name" string)
+        (field "claimed" bool)
         (maybe (field "avatar" string))
         (field "description" Json.value)
 
@@ -43,14 +44,13 @@ parseIso8601Date =
 
 parseFullCharacter : Json.Decoder FullCharacter
 parseFullCharacter =
-    Json.map7 FullCharacter
+    Json.map6 FullCharacter
       (field "id" int)
       (field "name" string)
       (maybe (field "email" string))
       (field "token" string)
       (field "novelToken" string)
       (maybe (field "avatar" string))
-      (maybe (field "introSent" parseIso8601Date))
 
 
 parseFileSet : Json.Decoder FileSet
@@ -77,14 +77,20 @@ parseNarrationStatus =
 
 parseNarration : Json.Decoder Narration
 parseNarration =
-    Json.map7 Narration
+    Json.map8 Narration
         (field "id" int)
         (field "title" string)
         (field "status" parseNarrationStatus)
+        (field "intro" Json.value)
+        (field "introUrl" string)
+        (maybe (field "introAudio" string))
+        (maybe (field "introBackgroundImage" string))
         (field "characters" <| list parseFullCharacter)
-        (maybe (field "defaultAudio" string))
-        (maybe (field "defaultBackgroundImage" string))
-        (field "files" parseFileSet)
+    |> andThen (\r ->
+               Json.map3 r
+                 (maybe (field "defaultAudio" string))
+                 (maybe (field "defaultBackgroundImage" string))
+                 (field "files" parseFileSet))
 
 
 parseChapter : Json.Decoder Chapter

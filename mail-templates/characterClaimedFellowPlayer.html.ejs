@@ -1,0 +1,7 @@
+<p>The character <%= characterName %> in the narration "<a href="<%= narrationLink %>"><%= narrationTitle %></a>" was claimed by a fellow player.</p>
+
+<% if (numberUnclaimed) { %>
+  <p>There are still <%= numberUnclaimed %> unclaimed character(s) in the story, but the narrator might still write the first chapter before they are claimed.</p>
+<% } else { %>
+  <p>That means that now all characters in the story are claimed! Now it's just a matter of waiting until the narrator publishes the first chapter. Have fun!</p>
+<% } %>

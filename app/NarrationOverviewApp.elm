@@ -24,6 +24,7 @@ initialState key =
     , narrationOverview = Nothing
     , sendingPendingIntroEmails = False
     , banner = Nothing
+    , showUrlInfoBox = False
     }
 
 

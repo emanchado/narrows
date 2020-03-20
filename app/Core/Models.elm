@@ -10,6 +10,7 @@ import NarratorDashboardApp
 import NarrationArchiveApp
 import NarrationCreationApp
 import NarrationOverviewApp
+import NarrationIntroApp
 import ChapterEditApp
 import ChapterControlApp
 import CharacterCreationApp
@@ -43,6 +44,7 @@ type alias Model =
   , narrationArchiveApp : NarrationArchiveApp.Model
   , narrationCreationApp : NarrationCreationApp.Model
   , narrationOverviewApp : NarrationOverviewApp.Model
+  , narrationIntroApp : NarrationIntroApp.Model
   , chapterEditApp : ChapterEditApp.Model
   , chapterControlApp : ChapterControlApp.Model
   , characterCreationApp : CharacterCreationApp.Model

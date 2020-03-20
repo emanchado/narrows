@@ -4,7 +4,7 @@ import Browser.Navigation as Nav
 
 import Core.Routes exposing (Route(..))
 import Common.Models exposing (errorBanner, updateNarrationFiles, mediaTypeString, MediaType(..))
-import Common.Ports exposing (openFileInput, uploadFile)
+import Common.Ports exposing (initEditor, openFileInput, uploadFile)
 import NarrationCreationApp.Api
 import NarrationCreationApp.Messages exposing (..)
 import NarrationCreationApp.Models exposing (..)
@@ -53,7 +53,42 @@ update msg model =
       , Cmd.none
       )
 
-    UpdateSelectedBackgroundImage newBgImage ->
+    UpdateIntro newIntro ->
+      ( { model | intro = newIntro }
+      , Cmd.none
+      )
+
+    UpdateSelectedIntroBackgroundImage newBgImage ->
+      let
+        newValue =
+          case model.files of
+            Just files ->
+              List.head <|
+                List.filter (\i -> i == newBgImage) files.backgroundImages
+            Nothing -> Nothing
+      in
+        ( { model | introBackgroundImage = newValue
+                  , banner = Nothing
+          }
+        , Cmd.none
+        )
+
+    UpdateSelectedIntroAudio newAudio ->
+      let
+        newValue =
+          case model.files of
+            Just files ->
+              List.head <|
+                List.filter (\i -> i == newAudio) files.audio
+            Nothing -> Nothing
+      in
+        ( { model | introAudio = newValue
+                  , banner = Nothing
+          }
+        , Cmd.none
+        )
+
+    UpdateSelectedDefaultBackgroundImage newBgImage ->
       let
         newValue =
           case model.files of
@@ -68,7 +103,7 @@ update msg model =
         , Cmd.none
         )
 
-    UpdateSelectedAudio newAudio ->
+    UpdateSelectedDefaultAudio newAudio ->
       let
         newValue =
           case model.files of
@@ -86,7 +121,7 @@ update msg model =
     OpenMediaFileSelector fileInputId ->
       ( model, openFileInput fileInputId )
 
-    AddMediaFile mediaType fileInputId ->
+    AddMediaFile mediaType mediaTarget fileInputId ->
       case model.narrationId of
         Just narrationId ->
           let
@@ -94,10 +129,14 @@ update msg model =
               case mediaType of
                 Audio -> { model | uploadingAudio = True }
                 BackgroundImage -> { model | uploadingBackgroundImage = True }
+            portType =
+              case mediaTarget of
+                NarrationIntroTarget -> "narrationIntroEdit"
+                NarrationDefaultTarget -> "narrationDefaultEdit"
           in
             ( modelWithUploadFlag
             , uploadFile { type_ = mediaTypeString mediaType
-                         , portType = "narrationEdit"
+                         , portType = portType
                          , fileInputId = fileInputId
                          , narrationId = narrationId
                          }
@@ -106,7 +145,7 @@ update msg model =
         Nothing ->
           ( model, Cmd.none )
 
-    AddMediaFileError error ->
+    AddMediaFileError mediaTarget error ->
       -- Bah. We don't know which type was uploaded, so we assume we
       -- can safely turn off both spinners. Sigh.
       ( { model | banner = errorBanner error.message
@@ -116,17 +155,29 @@ update msg model =
       , Cmd.none
       )
 
-    AddMediaFileSuccess resp ->
+    AddMediaFileSuccess mediaTarget resp ->
       let
         modelWithoutUploadFlag =
           if resp.type_ == "audio" then
-            { model | uploadingAudio = False
-                    , defaultAudio = Just resp.name
-            }
+            case mediaTarget of
+              NarrationIntroTarget ->
+                { model | uploadingAudio = False
+                        , introAudio = Just resp.name
+                }
+              NarrationDefaultTarget ->
+                { model | uploadingAudio = False
+                        , defaultAudio = Just resp.name
+                }
           else
-            { model | uploadingBackgroundImage = False
-                    , defaultBackgroundImage = Just resp.name
-            }
+            case mediaTarget of
+              NarrationIntroTarget ->
+                { model | uploadingBackgroundImage = False
+                        , introBackgroundImage = Just resp.name
+                }
+              NarrationDefaultTarget ->
+                { model | uploadingBackgroundImage = False
+                        , defaultBackgroundImage = Just resp.name
+                }
         updatedFiles = case model.files of
                          Just files ->
                            Just <| updateNarrationFiles files resp
@@ -165,6 +216,9 @@ update msg model =
               NarrationCreationApp.Api.saveNarration
                 narrationId
                 { title = model.title
+                , intro = model.intro
+                , introBackgroundImage = model.introBackgroundImage
+                , introAudio = model.introAudio
                 , defaultBackgroundImage = model.defaultBackgroundImage
                 , defaultAudio = model.defaultAudio
                 }
@@ -190,11 +244,23 @@ update msg model =
     FetchNarrationResult (Ok narration) ->
       ( { model | banner = Nothing
                 , title = narration.title
+                , intro = narration.intro
+                , introBackgroundImage = narration.introBackgroundImage
+                , introAudio = narration.introAudio
+                , introUrl = narration.introUrl
                 , defaultBackgroundImage = narration.defaultBackgroundImage
                 , defaultAudio = narration.defaultAudio
                 , files = Just narration.files
         }
-      , Cmd.none
+      , initEditor
+          { elemId = "intro-editor"
+          , narrationId = narration.id
+          , narrationImages = narration.files.images
+          , chapterParticipants = []
+          , text = narration.intro
+          , editorType = "narrationIntro"
+          , updatePortName = "narrationIntroContentChanged"
+          }
       )
 
     CancelCreateNarration ->

@@ -2,6 +2,7 @@ module NarrationCreationApp exposing (..)
 
 import Html exposing (Html)
 import Browser.Navigation as Nav
+import Json.Encode
 
 import Core.Routes exposing (Route(..))
 import NarrationCreationApp.Messages exposing (..)
@@ -24,8 +25,12 @@ initialState key =
     { key = key
     , banner = Nothing
     , title = ""
+    , intro = Json.Encode.null
     , narrationId = Nothing
     , files = Nothing
+    , introAudio = Nothing
+    , introBackgroundImage = Nothing
+    , introUrl = ""
     , defaultAudio = Nothing
     , defaultBackgroundImage = Nothing
     , uploadingAudio = False
@@ -50,6 +55,10 @@ view =
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    Sub.batch [ NarrationCreationApp.Ports.narrationEditUploadFileError AddMediaFileError
-              , NarrationCreationApp.Ports.narrationEditUploadFileSuccess AddMediaFileSuccess
-              ]
+    Sub.batch
+        [ NarrationCreationApp.Ports.narrationIntroContentChanged UpdateIntro
+        , NarrationCreationApp.Ports.narrationIntroEditUploadFileError (AddMediaFileError NarrationIntroTarget)
+        , NarrationCreationApp.Ports.narrationIntroEditUploadFileSuccess (AddMediaFileSuccess NarrationIntroTarget)
+        , NarrationCreationApp.Ports.narrationDefaultEditUploadFileError (AddMediaFileError NarrationDefaultTarget)
+        , NarrationCreationApp.Ports.narrationDefaultEditUploadFileSuccess (AddMediaFileSuccess NarrationDefaultTarget)
+        ]

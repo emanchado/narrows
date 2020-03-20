@@ -91,23 +91,35 @@ ul li {
     display: flex;
     flex-direction: column;
 }
+.inline-form {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
 .vertical-form .form-line {
     margin-bottom: 18px;
 }
-.vertical-form label {
+.vertical-form label, .inline-form label {
     font-size: 18px;
 }
-.vertical-form input[type="text"], .vertical-form input[type="password"], .vertical-form input[type="email"] {
-    padding: 4px;
-    font-size: 22px;
-}
-.vertical-form input {
-    width: 100%;
+.vertical-form input, .inline-form input {
     border: 1px solid black;
     background-color: #eee;
 }
+.vertical-form input {
+    width: 100%;
+}
+.vertical-form input[type="text"],
+.vertical-form input[type="password"],
+.vertical-form input[type="email"],
+.inline-form input[type="text"],
+.inline-form input[type="password"],
+.inline-form input[type="email"] {
+    padding: 4px;
+    font-size: 22px;
+}
 
-.vertical-form input[type="text"][readonly] {
+.vertical-form input[type="text"][readonly], .vertical-form input[type="email"][readonly] {
     background-color: #ddd;
 }
 .vertical-form input[type="file"] {
@@ -166,6 +178,9 @@ ul li {
 }
 
 .banner {
+    /* For some reason, this seems needed for the character claiming error
+       messages in the narration intro pages */
+    position: relative;
     max-width: 50em;
 
     margin: 20px auto;
@@ -403,6 +418,13 @@ span.mention img {
 .floating-tip blockquote {
     font-style: italic;
     font-weight: normal;
+}
+
+.peekaboo-container .peekaboo-item {
+    visibility: hidden;
+}
+.peekaboo-container:hover .peekaboo-item {
+    visibility: visible;
 }
 
 /* CSS Spinner rules (from http://tobiasahlin.com/spinkit/) */

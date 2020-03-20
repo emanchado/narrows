@@ -26,7 +26,6 @@ type alias CharacterInfo =
     , name : String
     , avatar : Maybe String
     , novelToken : String
-    , introSent : Maybe ISO8601.Time
     , description : Json.Decode.Value
     , backstory : Json.Decode.Value
     , narration : NarrationSummary
@@ -38,11 +37,6 @@ type alias CharacterTokenResponse =
     }
 
 
-type alias SendIntroEmailResponse =
-    { introSentDate : ISO8601.Time
-    }
-
-
 type alias Model =
     { key : Nav.Key
     , characterId : Int
@@ -51,6 +45,5 @@ type alias Model =
     , showResetCharacterTokenDialog : Bool
     , showTokenInfoBox : Bool
     , showNovelTokenInfoBox : Bool
-    , sendingIntroEmail : Bool
     , banner : Maybe Banner
     }

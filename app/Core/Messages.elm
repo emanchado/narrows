@@ -12,6 +12,7 @@ import NarratorDashboardApp
 import NarrationArchiveApp
 import NarrationCreationApp
 import NarrationOverviewApp
+import NarrationIntroApp
 import ChapterEditApp
 import ChapterControlApp
 import CharacterCreationApp
@@ -43,6 +44,7 @@ type Msg
     | NarrationArchiveMsg NarrationArchiveApp.Msg
     | NarrationCreationMsg NarrationCreationApp.Msg
     | NarrationOverviewMsg NarrationOverviewApp.Msg
+    | NarrationIntroMsg NarrationIntroApp.Msg
     | ChapterEditMsg ChapterEditApp.Msg
     | ChapterControlMsg ChapterControlApp.Msg
     | CharacterCreationMsg CharacterCreationApp.Msg

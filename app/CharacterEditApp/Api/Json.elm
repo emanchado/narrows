@@ -3,7 +3,7 @@ module CharacterEditApp.Api.Json exposing (..)
 import Json.Decode as Json exposing (..)
 import Json.Encode
 import Common.Api.Json exposing (parseIso8601Date)
-import CharacterEditApp.Models exposing (CharacterInfo, ChapterSummary, NarrationSummary, CharacterTokenResponse, SendIntroEmailResponse)
+import CharacterEditApp.Models exposing (CharacterInfo, ChapterSummary, NarrationSummary, CharacterTokenResponse)
 
 
 parseChapterSummary : Json.Decoder ChapterSummary
@@ -27,12 +27,11 @@ parseCharacterInfo =
       (field "id" int)
       (field "token" string)
     |> andThen (\r ->
-                  Json.map8 r
+                  Json.map7 r
                     (maybe (field "email" string))
                     (field "name" string)
                     (maybe (field "avatar" string))
                     (field "novelToken" string)
-                    (maybe (field "introSent" parseIso8601Date))
                     (field "description" Json.value)
                     (field "backstory" Json.value)
                     (field "narration" parseNarrationSummary))
@@ -44,23 +43,14 @@ parseCharacterToken =
     (field "token" string)
 
 
-parseSendIntroResponse : Json.Decoder SendIntroEmailResponse
-parseSendIntroResponse =
-  Json.map SendIntroEmailResponse
-    (field "sendIntroDate" parseIso8601Date)
-
-
 encodeCharacterUpdate : CharacterInfo -> Value
 encodeCharacterUpdate characterInfo =
   Json.Encode.object <|
-    List.append
       [ ( "name", Json.Encode.string characterInfo.name )
       , ( "description", characterInfo.description )
+      , ( "email", case characterInfo.email of
+                     Nothing -> Json.Encode.null
+                     Just "" -> Json.Encode.null
+                     Just email -> Json.Encode.string email )
       , ( "backstory", characterInfo.backstory )
       ]
-      (case characterInfo.email of
-         Just email ->
-           [ ( "email", Json.Encode.string email ) ]
-         Nothing ->
-           [])
-

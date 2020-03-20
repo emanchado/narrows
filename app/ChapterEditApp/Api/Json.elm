@@ -63,7 +63,6 @@ encodeChapter chapter =
         , case chapter.audio of
               Just audio ->
                   Json.Encode.string audio
-
               Nothing ->
                   Json.Encode.null
         )
@@ -71,7 +70,6 @@ encodeChapter chapter =
         , case chapter.backgroundImage of
               Just bgImage ->
                   Json.Encode.string bgImage
-
               Nothing ->
                   Json.Encode.null
         )
@@ -80,7 +78,6 @@ encodeChapter chapter =
         , case chapter.published of
               Just published ->
                   Json.Encode.string published
-
               Nothing ->
                   Json.Encode.null
         )

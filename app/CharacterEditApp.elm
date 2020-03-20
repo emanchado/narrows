@@ -28,7 +28,6 @@ initialState key =
     , showResetCharacterTokenDialog = False
     , showTokenInfoBox = False
     , showNovelTokenInfoBox = False
-    , sendingIntroEmail = False
     , banner = Nothing
     }
 
