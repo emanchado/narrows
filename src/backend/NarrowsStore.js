@@ -141,6 +141,9 @@ class NarrowsStore {
                 VALID_NARRATION_STATUSES.indexOf(newProps.status) === -1) {
             return Q.reject(new Error("Invalid status '" + newProps.status + "'"));
         }
+        if ("intro" in newProps) {
+            newProps.intro = JSON.stringify(newProps.intro);
+        }
 
         const propNames = Object.keys(newProps).map(convertToDb),
               propNameStrings = propNames.map(p => `${p} = ?`);
@@ -588,6 +591,9 @@ class NarrowsStore {
     updateChapter(id, props) {
         const participants = props.participants;
         delete props.participants;
+        if ("text" in props) {
+            props.text = JSON.stringify(props.text);
+        }
 
         let updatePromise;
         if (Object.keys(props).length === 0) {

@@ -214,20 +214,18 @@ export function getNarrationChapters(req, res) {
 
 export function putChapter(req, res) {
     const chapterId = parseInt(req.params.chptId, 10);
+    const newProps = req.body;
 
-    if ("text" in req.body) {
-        req.body.text = JSON.stringify(req.body.text);
-    }
     store.getChapter(chapterId).then(origChapter => (
         store.getNarration(origChapter.narrationId).then(narrationData => (
             userStore.canActAs(req.session.userId, narrationData.narratorId)
         )).then(() => {
             const origPublished = origChapter.published;
 
-            return store.updateChapter(chapterId, req.body).then(chapter => {
+            return store.updateChapter(chapterId, newProps).then(chapter => {
                 res.json(chapter);
 
-                if (!origPublished && req.body.published) {
+                if (!origPublished && newProps.published) {
                     mailer.chapterPublished(chapter);
                 }
             });
