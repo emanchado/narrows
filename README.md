@@ -66,6 +66,19 @@ Then you will have to recompile the frontend and backend code with:
 
     npm run build
 
+## Running the tests
+
+To be able to run the tests you need to create two test databases: the
+main one, and the "user storage" one. For the first one you have the
+settings in `config/test.js`. The second one is the same, except for
+the database name, which is `narrows-userstore-test`.
+
+Once you have the two databases created and the test user created and
+have given access to them, you can run the tests by typing:
+
+    npm t
+
+
 # Docker
 
 This repo includes a Dockerfile for building a deployable image. It
