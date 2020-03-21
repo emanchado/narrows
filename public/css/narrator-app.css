@@ -234,9 +234,6 @@ form.create-form h2 {
 .narration-header h2 {
     margin: auto 0;
 }
-.narration-header > * {
-    align-items: baseline;
-}
 .narration-header a {
     text-decoration: none;
 }
