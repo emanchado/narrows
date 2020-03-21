@@ -207,6 +207,7 @@ ul li {
     font-size: 18px;
     font-weight: normal;
     background-color: whitesmoke;
+    white-space: nowrap;
 }
 a.btn {
     display: inline-block;

@@ -229,6 +229,7 @@ form.create-form h2 {
 .narration-header {
     display: flex;
     justify-content: space-between;
+    align-items: flex-start;
 }
 .narration-header h2 {
     margin: auto 0;
