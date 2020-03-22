@@ -9,7 +9,7 @@ import ISO8601 exposing (Time)
 import Time exposing (utc, toYear, toMonth, toDay, toHour, toMinute, toSecond)
 
 import Core.Routes exposing (Route(..))
-import Common.Models exposing (Banner, Narration, Chapter, FileSet, FileUploadError, FileUploadSuccess, MediaType(..), errorBanner, successBanner, mediaTypeString, updateNarrationFiles)
+import Common.Models exposing (Banner, Narration, Chapter, FileSet, FileUploadError, FileUploadSuccess, MediaType(..), errorBanner, successBanner, bannerForHttpError, mediaTypeString, updateNarrationFiles)
 import Common.Ports exposing (initEditor, renderText, openFileInput, uploadFile)
 import ChapterEditApp.Api
 import ChapterEditApp.Messages exposing (..)
@@ -76,23 +76,6 @@ urlUpdate route model =
       ( model, Cmd.none )
 
 
-genericHttpErrorHandler : Model -> Http.Error -> ( Model, Cmd Msg )
-genericHttpErrorHandler model error =
-  let
-    errorString =
-      case error of
-        Http.BadBody parserError ->
-          "Bad payload: " ++ parserError
-
-        Http.BadStatus status ->
-          "Got status " ++ (String.fromInt status)
-
-        _ ->
-          "Cannot connect to server"
-  in
-    ( { model | banner = errorBanner errorString }, Cmd.none )
-
-
 showFlashMessage : Maybe Banner -> Cmd Msg
 showFlashMessage maybeBanner =
   Cmd.batch
@@ -155,7 +138,9 @@ update msg model =
       )
 
     ChapterFetchResult (Err error) ->
-      genericHttpErrorHandler model error
+      ( { model | banner = bannerForHttpError error }
+      , Cmd.none
+      )
 
     ChapterFetchResult (Ok chapter) ->
       ( { model | chapter = Just chapter }
@@ -178,7 +163,9 @@ update msg model =
       )
 
     NarrationFetchResult (Err error) ->
-      genericHttpErrorHandler model error
+      ( { model | banner = bannerForHttpError error }
+      , Cmd.none
+      )
 
     NarrationFetchResult (Ok narration) ->
       let
@@ -202,7 +189,9 @@ update msg model =
         )
 
     NarrationLastReactionsFetchResult (Err error) ->
-      genericHttpErrorHandler model error
+      ( { model | banner = bannerForHttpError error }
+      , Cmd.none
+      )
 
     NarrationLastReactionsFetchResult (Ok lastReactions) ->
       ( { model | lastChapters = Just lastReactions.lastChapters }
@@ -216,7 +205,9 @@ update msg model =
       )
 
     LastReactionsFetchResult (Err error) ->
-      genericHttpErrorHandler model error
+      ( { model | banner = bannerForHttpError error }
+      , Cmd.none
+      )
 
     LastReactionsFetchResult (Ok lastReactions) ->
       ( { model | lastChapters = Just lastReactions.lastChapters }
@@ -528,9 +519,10 @@ update msg model =
       )
 
     NarrationChapterSearchFetchResult (Err error) ->
-      genericHttpErrorHandler
-        { model | narrationChapterSearchLoading = False }
-        error
+      ( { model | narrationChapterSearchLoading = False
+                , banner = bannerForHttpError error }
+      , Cmd.none
+      )
 
     NarrationChapterSearchFetchResult (Ok results) ->
       ( { model | narrationChapterSearchResults = Just results.results

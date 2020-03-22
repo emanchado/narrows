@@ -1,5 +1,6 @@
 module Common.Models exposing (..)
 
+import Http
 import Json.Decode
 import Json.Encode
 import ISO8601
@@ -47,6 +48,22 @@ successBanner errorMessage =
         { text = errorMessage
         , type_ = "success"
         }
+
+
+bannerForHttpError : Http.Error -> Maybe Banner
+bannerForHttpError error =
+  let
+    errorMessage = case error of
+                     Http.BadBody parserError ->
+                       "Bad payload: " ++ parserError
+
+                     Http.BadStatus status ->
+                       "Got status " ++ (String.fromInt status)
+
+                     _ ->
+                       "Cannot connect to server"
+  in
+    errorBanner <| Debug.log "HTTP error" errorMessage
 
 
 narrationStatusString : NarrationStatus -> String
