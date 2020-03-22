@@ -3,7 +3,7 @@ module NarrationIntroApp.Api exposing (..)
 import Http
 import Json.Decode as Json exposing (..)
 import Json.Encode
-import Common.Api.Json exposing (parseParticipantCharacter)
+import Common.Api.Json exposing (parseUserInfo, parseParticipantCharacter)
 import NarrationIntroApp.Models exposing (NarrationIntroResponse)
 import NarrationIntroApp.Messages exposing (Msg, Msg(..))
 

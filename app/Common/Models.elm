@@ -192,6 +192,11 @@ type alias UserInfo =
     }
 
 
+type UserSession
+  = AnonymousSession
+  | LoggedInSession UserInfo
+
+
 type alias Breadcrumb =
     { title : String
     , url : String

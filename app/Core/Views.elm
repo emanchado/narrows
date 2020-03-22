@@ -6,8 +6,9 @@ import Html.Events exposing (onInput, onClick, onSubmit)
 import Browser
 
 import Core.Messages exposing (Msg(..))
-import Core.Models exposing (Model, UserSession(..))
+import Core.Models exposing (Model)
 import Core.Routes exposing (Route(..))
+import Common.Models exposing (UserSession(..))
 import Common.Views exposing (onPreventDefaultClick)
 
 import ReaderApp
@@ -205,13 +206,13 @@ appContentView model =
       case model.session of
         Just session ->
           case session of
-            Core.Models.AnonymousSession ->
+            AnonymousSession ->
               if model.forgotPasswordUi then
                 forgotPasswordView model
               else
                 loginView model
 
-            Core.Models.LoggedInSession _ ->
+            LoggedInSession _ ->
               dispatchProtectedPage model
 
         Nothing ->

@@ -3,17 +3,11 @@ module Core.Api exposing (..)
 import Http
 import Json.Decode as Json exposing (..)
 import Json.Encode
+
 import Core.Messages exposing (..)
 import Core.Models exposing (ResetPasswordResponse)
-import Common.Models exposing (UserInfo)
-
-
-parseSession : Json.Decoder UserInfo
-parseSession =
-  Json.map3 UserInfo
-    (field "id" int)
-    (field "email" string)
-    (field "role" string)
+import Common.Models exposing (UserInfo, UserSession(..))
+import Common.Api.Json exposing (parseUserInfo)
 
 
 parseResetPasswordResponse : Json.Decoder ResetPasswordResponse
@@ -25,7 +19,7 @@ parseResetPasswordResponse =
 refreshSession : Cmd Msg
 refreshSession =
   Http.get { url = "/api/session"
-           , expect = Http.expectJson SessionFetchResult parseSession
+           , expect = Http.expectJson SessionFetchResult parseUserInfo
            }
 
 
@@ -39,7 +33,7 @@ login email password =
   in
     Http.post { url = "/api/session"
               , body = (Http.jsonBody jsonEncodedBody)
-              , expect = Http.expectJson LoginResult parseSession
+              , expect = Http.expectJson LoginResult parseUserInfo
               }
 
 

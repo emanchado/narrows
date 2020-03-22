@@ -7,10 +7,10 @@ import Url
 import Http
 
 import Routing
-import Common.Models exposing (errorBanner, successBanner)
+import Common.Models exposing (errorBanner, successBanner, UserSession(..))
 import Core.Api
 import Core.Views
-import Core.Models exposing (Model, UserSession(..))
+import Core.Models exposing (Model)
 import Core.Messages exposing (Msg(..))
 
 import ReaderApp

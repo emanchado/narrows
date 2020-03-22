@@ -3,7 +3,7 @@ module Core.Models exposing (..)
 import Browser.Navigation as Nav
 
 import Core.Routes exposing (Route(..))
-import Common.Models exposing (Banner, UserInfo)
+import Common.Models exposing (Banner, UserInfo, UserSession)
 import ReaderApp
 import CharacterApp
 import NarratorDashboardApp
@@ -20,11 +20,6 @@ import NovelReaderApp
 import ProfileApp
 
 
-
-
-type UserSession
-  = AnonymousSession
-  | LoggedInSession UserInfo
 
 
 type alias ResetPasswordResponse =
