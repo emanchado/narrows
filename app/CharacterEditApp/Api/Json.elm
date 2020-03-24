@@ -28,7 +28,7 @@ parseCharacterInfo =
       (field "token" string)
     |> andThen (\r ->
                   Json.map8 r
-                    (field "email" string)
+                    (maybe (field "email" string))
                     (field "name" string)
                     (maybe (field "avatar" string))
                     (field "novelToken" string)
@@ -52,9 +52,15 @@ parseSendIntroResponse =
 
 encodeCharacterUpdate : CharacterInfo -> Value
 encodeCharacterUpdate characterInfo =
-  Json.Encode.object
-    [ ( "name", Json.Encode.string characterInfo.name )
-    , ( "email", Json.Encode.string characterInfo.email )
-    , ( "description", characterInfo.description )
-    , ( "backstory", characterInfo.backstory )
-    ]
+  Json.Encode.object <|
+    List.append
+      [ ( "name", Json.Encode.string characterInfo.name )
+      , ( "description", characterInfo.description )
+      , ( "backstory", characterInfo.backstory )
+      ]
+      (case characterInfo.email of
+         Just email ->
+           [ ( "email", Json.Encode.string email ) ]
+         Nothing ->
+           [])
+

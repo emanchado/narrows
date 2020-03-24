@@ -27,20 +27,17 @@ narrationCharacterView narration character =
             ]
           []
       , span []
-          [ a [ title <| "Played by " ++ character.email
-              , href <| "/characters/" ++ (String.fromInt character.id) ++ "/edit" ]
+          [ a [ href <| "/characters/" ++ (String.fromInt character.id) ++ "/edit"
+              , title <| case character.email of
+                           Just email -> "Played by " ++ email
+                           Nothing -> "Unclaimed character"
+              ]
               [ text character.name ]
-          , case character.introSent of
+          , case character.email of
               Just _ ->
                 text ""
               Nothing ->
-                span []
-                  [ text " — "
-                  , img [ src "/img/blocked.png"
-                        , title "Intro e-mail not sent yet to the player"
-                        ]
-                      []
-                  ]
+                text " — Unclaimed character"
           ]
       ]
 

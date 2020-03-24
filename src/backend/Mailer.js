@@ -77,14 +77,17 @@ class Mailer {
             this.store.getCharacterInfoBulk(participants.map(p => p.id))
         ]).spread((narration, info) => {
             participants.forEach(participant => {
-                this.sendMail(
-                    "chapterPublished",
-                    info[participant.id].email,
-                    `New chapter published: "${chapter.title}"`,
-                    {narrationTitle: narration.title,
-                     chapterTitle: chapter.title,
-                     chapterUrl: this.chapterUrlFor(chapter.id, participant.token)}
-                );
+                if (info[participant.id]) {
+                    this.sendMail(
+                        "chapterPublished",
+                        info[participant.id].email,
+                        `New chapter published: "${chapter.title}"`,
+                        {narrationTitle: narration.title,
+                         chapterTitle: chapter.title,
+                         chapterUrl: this.chapterUrlFor(chapter.id,
+                                                        participant.token)}
+                    );
+                }
             });
         }).catch(console.error);
     }
@@ -109,7 +112,7 @@ class Mailer {
                 return this.store.getCharacterTokenById(recipientId).then(token => (
                     this.sendMail(
                         "messagePosted",
-                        info[recipientId].email,
+                        info[recipientId] && info[recipientId].email,
                         `${message.sender.name} sent a message in "${chapter.title}"`,
                         {senderName: message.sender.name,
                          recipientListString: recipients,

@@ -125,12 +125,18 @@ mainView model =
                             [ input [ class "large-text-input"
                                     , type_ "email"
                                     , size 36
-                                    , value characterInfo.email
+                                    , value <| case characterInfo.email of
+                                                 Just email -> email
+                                                 Nothing -> ""
                                     , onInput UpdatePlayerEmail
                                     ]
                                 []
                             , button [ class "btn"
-                                     , onClick (SendIntroEmail characterInfo.email)
+                                     , onClick <| case characterInfo.email of
+                                                    Just email ->
+                                                      (SendIntroEmail email)
+                                                    Nothing ->
+                                                      NoOp
                                      , disabled model.sendingIntroEmail
                                      ]
                                 [ text <| case characterInfo.introSent of

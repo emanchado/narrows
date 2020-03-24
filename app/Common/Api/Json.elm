@@ -7,7 +7,10 @@ import Common.Models exposing (Character, ParticipantCharacter, FullCharacter, N
 
 parseUserInfo : Json.Decoder UserInfo
 parseUserInfo =
-    Json.map3 UserInfo (field "id" int) (field "email" string) (field "role" string)
+    Json.map3 UserInfo
+      (field "id" int)
+      (field "email" string)
+      (field "role" string)
 
 
 parseCharacter : Json.Decoder Character
@@ -43,7 +46,7 @@ parseFullCharacter =
     Json.map7 FullCharacter
       (field "id" int)
       (field "name" string)
-      (field "email" string)
+      (maybe (field "email" string))
       (field "token" string)
       (field "novelToken" string)
       (maybe (field "avatar" string))

@@ -171,7 +171,7 @@ class NarrowsStore {
                     novel_token AS novelToken, intro_sent AS introSent,
                     avatar
                FROM characters
-               JOIN users
+          LEFT JOIN users
                  ON characters.player_id = users.id
               WHERE narration_id = ?`,
             narrationId
@@ -1014,7 +1014,7 @@ class NarrowsStore {
                    FROM characters C
                    JOIN narrations N
                      ON C.narration_id = N.id
-                   JOIN users U
+              LEFT JOIN users U
                      ON C.player_id = U.id
                   WHERE C.id = ?`,
                 characterId

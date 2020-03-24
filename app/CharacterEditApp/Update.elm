@@ -155,7 +155,7 @@ update msg model =
       let
         updatedCharacter =
           case model.characterInfo of
-            Just character -> Just { character | email = newEmail }
+            Just character -> Just { character | email = Just newEmail }
             Nothing -> Nothing
       in
         ( { model | characterInfo = updatedCharacter }
