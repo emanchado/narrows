@@ -42,6 +42,8 @@ export function getPasswordReset(req, res, next) {
     const token = req.params.token;
 
     userStore.getPasswordResetUserId(token).then(userId => {
+        // If the password reset token is valid, create a valid
+        // session for the user and redirect to the profile screen
         req.session.userId = userId;
         res.redirect("/profile");
     }).catch(err => {

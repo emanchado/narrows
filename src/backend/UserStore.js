@@ -67,7 +67,7 @@ class UserStore {
         return Q.ninvoke(
             this.db,
             "query",
-            "SELECT id, email, role FROM users WHERE id = ?",
+            "SELECT id, email, COALESCE(role, '') AS role FROM users WHERE id = ?",
             userId
         ).spread(userRows => {
             if (userRows.length === 0) {
@@ -82,7 +82,7 @@ class UserStore {
         return Q.ninvoke(
             this.db,
             "query",
-            `SELECT id, email, role FROM users WHERE email = ?`,
+            `SELECT id, email, COALESCE(role, '') AS role FROM users WHERE email = ?`,
             email.trim()
         ).spread(userRows => {
             if (userRows.length === 0) {
