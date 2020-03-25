@@ -134,19 +134,23 @@ view model =
                     else
                       chapter.title)
             ]
-        , img [ id "play-icon"
-              , src ("/img/" ++ (if model.musicPlaying then
-                                   "play"
-                                 else
-                                   "mute") ++
-                       "-small.png")
-              , alt (if model.musicPlaying then
-                       "Stop"
-                     else
-                       "Start")
-              , onClick PlayPauseMusic
-              ]
-            []
+        , case chapter.audio of
+            Just _ ->
+              img [ id "play-icon"
+                  , src ("/img/" ++ (if model.musicPlaying then
+                                       "play"
+                                     else
+                                       "mute") ++
+                           "-small.png")
+                  , alt (if model.musicPlaying then
+                           "Stop"
+                         else
+                           "Start")
+                  , onClick PlayPauseMusic
+                  ]
+                []
+            Nothing ->
+              text ""
         , case chapter.audio of
             Just audioUrl ->
               audio [ id "background-music"
