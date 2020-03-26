@@ -88,7 +88,7 @@ overviewView overview showUrlInfoBox =
               , ul [ class "dramatis-personae compact" ]
                   (List.map (narrationCharacterView overview.narration) overview.narration.characters)
               , div [ class "vertical-form small-form" ]
-                  [ label [] [ text "Narration intro URL: "
+                  [ label [] [ text "Narration intro URL "
                              , img [ src "/img/info-black.png"
                                    , class "help"
                                    , onClick ToggleURLInfoBox

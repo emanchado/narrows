@@ -19,7 +19,7 @@ chapterMediaView chapter narration uploadingAudio uploadingBackgroundImage =
   div [ class "chapter-media" ]
     [ div [ class "image-selector" ]
         [ label []
-            [ text "Background image:"
+            [ text "Background image"
             , if uploadingBackgroundImage then
                 horizontalSpinner
               else
@@ -51,7 +51,7 @@ chapterMediaView chapter narration uploadingAudio uploadingBackgroundImage =
         ]
     , div [ class "audio-selector" ]
         [ label []
-            [ text "Background audio:"
+            [ text "Background audio"
             , if uploadingAudio then
                 horizontalSpinner
               else
@@ -118,7 +118,7 @@ chapterView chapter narration savingChapter uploadingAudio uploadingBackgroundIm
         [ chapterMediaView chapter narration uploadingAudio uploadingBackgroundImage
         ]
       , div [ class "form-line" ]
-          [ label [] [ text "Text:" ]
+          [ label [] [ text "Text" ]
           , div [ id "editor-container"
                 , class "editor-container"
                 ]

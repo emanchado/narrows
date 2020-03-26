@@ -26,7 +26,7 @@ userView user password =
              , onSubmit SaveUser
              ]
           [ div [ class "form-line" ]
-              [ label [ for "password" ] [ text "New password:" ]
+              [ label [ for "password" ] [ text "New password" ]
               , input [ id "password"
                       , type_ "password"
                       , onInput UpdatePassword
