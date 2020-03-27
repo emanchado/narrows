@@ -49,28 +49,16 @@ urlUpdate route model =
       )
 
     CreateChapterPage narrationId ->
-      let
-        command =
-          case model.narration of
-            Just narration ->
-              if narration.id == narrationId then
-                initNewChapterCmd narration
-              else
-                ChapterEditApp.Api.fetchNarrationInfo narrationId
-
-            Nothing ->
-              ChapterEditApp.Api.fetchNarrationInfo narrationId
-      in
-        ( { model | chapter = Nothing
-                  , lastChapters = Nothing
-                  , narrationChapterSearchTerm = ""
-                  , narrationChapterSearchResults = Nothing
-          }
-        , Cmd.batch
-          [ command
-          , ChapterEditApp.Api.fetchNarrationLastReactions narrationId
-          ]
-        )
+      ( { model | chapter = Nothing
+                , lastChapters = Nothing
+                , narrationChapterSearchTerm = ""
+                , narrationChapterSearchResults = Nothing
+        }
+      , Cmd.batch
+        [ ChapterEditApp.Api.fetchNarrationInfo narrationId
+        , ChapterEditApp.Api.fetchNarrationLastReactions narrationId
+        ]
+      )
 
     _ ->
       ( model, Cmd.none )
