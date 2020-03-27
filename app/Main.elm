@@ -163,7 +163,15 @@ combinedUpdate msg model =
       ( model, Nav.pushUrl model.key "/" )
 
     SessionFetchResult (Err err) ->
-      dispatchEnterLocation { model | session = Just AnonymousSession }
+      let
+        maybeUpdatedModel = 
+          case err of
+            Http.BadStatus 404 ->
+              model
+            _ ->
+              { model | banner = errorBanner "Error checking session; staying as anonymous" }
+      in
+        dispatchEnterLocation { maybeUpdatedModel | session = Just AnonymousSession }
 
     SessionFetchResult (Ok session) ->
       dispatchEnterLocation { model | session = Just <| LoggedInSession session }
