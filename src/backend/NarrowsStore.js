@@ -469,9 +469,14 @@ class NarrowsStore {
                 "DELETE FROM narrations WHERE id = ?",
                 id
             )
-        )).then(result => (
-            result.affectedRows === 1
-        ));
+        )).then(result => {
+            // Delete the files
+            const filesDir = path.join(config.files.path, id.toString());
+            fs.removeSync(filesDir);
+
+            // Return if there was a deleted narration in the above query
+            return result.affectedRows === 1;
+        });
     }
 
     deleteChapter(id) {
