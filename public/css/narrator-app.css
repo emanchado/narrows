@@ -251,18 +251,22 @@ form.create-form h2 {
     transform: rotate(-45deg);
     -webkit-transform: rotate(-45deg);
 
+    font-weight: bold;
     text-align: center;
     line-height: 50px;
     letter-spacing: 1px;
     text-transform: capitalize;
 }
-
 .corner-ribbon.top-right {
     top: 25px;
     right: -50px;
     left: auto;
     transform: rotate(45deg);
     -webkit-transform: rotate(45deg);
+}
+.corner-ribbon-abandoned {
+    background: #ab8b5c;
+    color: #333;
 }
 
 .narration-status label {

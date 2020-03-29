@@ -286,12 +286,15 @@ narrationOverviewView navigationMessage narrationOverview =
 
 ribbonForNarrationStatus : NarrationStatus -> Html msg
 ribbonForNarrationStatus status =
-  case status of
-    Active ->
-      text ""
-    _ ->
-      div [ class "corner-ribbon top-right" ]
-        [ text <| narrationStatusString status ]
+  let
+    statusString = narrationStatusString status
+  in
+    case status of
+      Active ->
+        text ""
+      _ ->
+        div [ class <| "corner-ribbon top-right corner-ribbon-" ++ statusString ]
+          [ text statusString ]
 
 
 compactNarrationView : (String -> msg) -> NarrationOverview -> Html msg
