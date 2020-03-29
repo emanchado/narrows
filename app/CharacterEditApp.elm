@@ -28,6 +28,7 @@ initialState key =
     , showResetCharacterTokenDialog = False
     , showTokenInfoBox = False
     , showNovelTokenInfoBox = False
+    , showRemoveCharacterDialog = False
     , banner = Nothing
     }
 

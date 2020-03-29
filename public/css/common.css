@@ -260,6 +260,16 @@ a.btn {
     background-position: 8px 50%;
 }
 
+.btn-remove {
+    padding-left: 30px;
+    background-image: url("/img/remove.png");
+    background-repeat: no-repeat;
+    background-position: 8px 50%;
+
+    background-color: #bf2424;
+    color: #eee;
+}
+
 .btn-inline.btn-add {
     min-width: 18px;
     min-height: 18px;

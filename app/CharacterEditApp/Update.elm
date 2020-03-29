@@ -17,7 +17,9 @@ urlUpdate : Route -> Model -> ( Model, Cmd Msg )
 urlUpdate route model =
     case route of
         CharacterEditPage characterId ->
-            ( { model | characterId = characterId }
+            ( { model | characterId = characterId
+                      , banner = Nothing
+              }
             , CharacterEditApp.Api.fetchCharacterInfo characterId
             )
 
@@ -239,6 +241,42 @@ update msg model =
                              }
               Nothing ->
                 Cmd.none
+          Nothing ->
+            Cmd.none
+      )
+
+    RemoveCharacter ->
+      ( { model | showRemoveCharacterDialog = True
+                , banner = Nothing
+        }
+      , Cmd.none
+      )
+
+    ConfirmRemoveCharacter ->
+      case model.characterInfo of
+        Just character ->
+          ( { model | showRemoveCharacterDialog = False }
+          , CharacterEditApp.Api.removeCharacter character.id
+          )
+
+        Nothing ->
+          ( model, Cmd.none )
+
+    CancelRemoveCharacter ->
+      ( { model | showRemoveCharacterDialog = False }
+      , Cmd.none
+      )
+
+    RemoveCharacterResult (Err error) ->
+      ( { model | banner = errorBanner "Error deleting character" }
+      , Cmd.none
+      )
+
+    RemoveCharacterResult (Ok resp) ->
+      ( model
+      , case model.characterInfo of
+          Just info ->
+            Nav.pushUrl model.key <| "/narrations/" ++ (String.fromInt info.narration.id)
           Nothing ->
             Cmd.none
       )

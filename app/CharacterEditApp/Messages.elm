@@ -27,3 +27,7 @@ type Msg
     | ToggleNovelTokenInfoBox
     | SaveCharacter
     | SaveCharacterResult (Result Http.Error ())
+    | RemoveCharacter
+    | ConfirmRemoveCharacter
+    | CancelRemoveCharacter
+    | RemoveCharacterResult (Result Http.Error ())

@@ -570,7 +570,7 @@ export function putCharacter(req, res) {
 }
 
 export function putCharacterById(req, res) {
-    const characterId = req.params.charId;
+    const characterId = parseInt(req.params.charId, 10);
     const newProps = objectSelect(
         req.body,
         ["name", "description", "backstory", "notes"]
@@ -600,6 +600,31 @@ export function putCharacterById(req, res) {
     }).catch(err => {
         res.status(500).json({
             errorMessage: `Could not update character with ` +
+                `id '${ characterId }': ${ err }`
+        });
+    });
+}
+
+export function deleteCharacterById(req, res) {
+    const characterId = parseInt(req.params.charId, 10);
+
+    return store.getCharacterInfoById(characterId, ["narration_id"]).then(character => (
+        store.getNarration(character.narration_id)
+    )).then(narration => (
+        userStore.canActAs(req.session.userId, narration.narratorId)
+    )).then(() => (
+        store.removeCharacter(characterId)
+    )).then(success => {
+        if (success) {
+            res.status(204).json();
+        } else {
+            res.status(404).json({
+                errorMessage: `Cannot find character with id '${ characterId }'`
+            });
+        }
+    }).catch(err => {
+        res.status(500).json({
+            errorMessage: `Cannot delete character with ` +
                 `id '${ characterId }': ${ err }`
         });
     });
@@ -716,7 +741,7 @@ export function postPasswordReset(req, res) {
 }
 
 export function getCharacterById(req, res) {
-    const characterId = req.params.charId;
+    const characterId = parseInt(req.params.charId, 10);
 
     return store.getFullCharacterStats(characterId).then(stats => {
         res.json(stats);
@@ -729,7 +754,7 @@ export function getCharacterById(req, res) {
 }
 
 export function postCharacterByIdToken(req, res) {
-    const characterId = req.params.charId;
+    const characterId = parseInt(req.params.charId, 10);
 
     return store.resetCharacterToken(characterId).then(newCharacter => {
         res.json(newCharacter);

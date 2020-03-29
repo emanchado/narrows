@@ -34,3 +34,15 @@ saveCharacter characterId characterInfo =
                , timeout = Nothing
                , tracker = Nothing
                }
+
+
+removeCharacter : Int -> Cmd Msg
+removeCharacter characterId =
+  Http.request { method = "DELETE"
+               , url = "/api/characters/by-id/" ++ (String.fromInt characterId)
+               , headers = []
+               , body = Http.emptyBody
+               , expect = Http.expectWhatever RemoveCharacterResult
+               , timeout = Nothing
+               , tracker = Nothing
+               }

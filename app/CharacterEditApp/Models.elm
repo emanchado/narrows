@@ -45,5 +45,6 @@ type alias Model =
     , showResetCharacterTokenDialog : Bool
     , showTokenInfoBox : Bool
     , showNovelTokenInfoBox : Bool
+    , showRemoveCharacterDialog : Bool
     , banner : Maybe Banner
     }

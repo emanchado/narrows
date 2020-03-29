@@ -1267,6 +1267,24 @@ class NarrowsStore {
             })
         ));
     }
+
+    removeCharacter(characterId) {
+        return Q.ninvoke(
+            this.db,
+            "query",
+            `DELETE FROM messages WHERE sender_id = ?`,
+            [characterId]
+        ).then(() => (
+            Q.ninvoke(
+                this.db,
+                "query",
+                `DELETE FROM characters WHERE id = ?`,
+                [characterId]
+            )
+        )).then(result => {
+            return result[0].affectedRows === 1;
+        });
+    }
 }
 
 export default NarrowsStore;

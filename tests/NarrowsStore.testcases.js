@@ -342,4 +342,56 @@ export default function testcases(test, stash) {
             t.truthy(err);
         });
     });
+
+    test.serial("can delete a character", t => {
+        const ctx = t.context;
+        const charId1 = ctx.characterId1;
+
+        return stash.store.getCharacterInfoById(charId1).then(char1 => {
+            t.is(char1.id, charId1);
+
+            return stash.store.removeCharacter(charId1);
+        }).then(success => {
+            t.is(success, true, "Character should be deleted");
+
+            return stash.store.getCharacterInfoById(charId1);
+        }).then(() => {
+            t.is(1, 0, "Getting a deleted character should have failed!");
+        }).catch(err => {
+            t.truthy(err);
+        });
+    });
+
+    test.serial("can delete a character who has sent/received messages", t => {
+        const ctx = t.context;
+        const charId1 = ctx.characterId1;
+        const charId2 = ctx.characterId2;
+
+        return stash.store.getCharacterInfoById(charId1).then(char1 => {
+            t.is(char1.id, charId1);
+
+            return stash.store.createChapter(
+                ctx.testNarration.id,
+                { title: "Some test chapter with messages",
+                  text: [],
+                  participants: [{id: charId1, charId2}],
+                  published: new Date() }
+            );
+        }).then(chapter => (
+            Q.all([
+                stash.store.addMessage(chapter.id, charId2, "Ha!", [charId1]),
+                stash.store.addMessage(chapter.id, charId1, "Heh!", [charId2])
+            ])
+        )).then(() => (
+            stash.store.removeCharacter(charId1)
+        )).then(success => {
+            t.is(success, true, "Character should be deleted");
+
+            return stash.store.getCharacterInfoById(charId1).then(() => {
+                t.is(1, 0, "Getting a deleted character should have failed!");
+            }).catch(err => {
+                t.truthy(err);
+            });
+        });
+    });
 };

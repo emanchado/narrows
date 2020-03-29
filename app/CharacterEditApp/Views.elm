@@ -214,6 +214,22 @@ mainView model =
                           else
                             text ""
                             ]
+                        , div [ class "btn-bar btn-bar-extra" ]
+                            [ button [ class "btn btn-remove"
+                                     , onClick RemoveCharacter
+                                     ]
+                                [ text "Delete" ]
+                            ]
+                        , if model.showRemoveCharacterDialog then
+                            showDialog
+                              "Delete character?"
+                              NoOp
+                              "Delete"
+                              ConfirmRemoveCharacter
+                              "Cancel"
+                              CancelRemoveCharacter
+                          else
+                            text ""
                         ]
                     ]
 
