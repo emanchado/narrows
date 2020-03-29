@@ -11,3 +11,7 @@ type Msg
     | MarkNarration NarrationStatus
     | MarkNarrationResult (Result Http.Error Narration)
     | ToggleURLInfoBox
+    | RemoveNarration
+    | ConfirmRemoveNarration
+    | CancelRemoveNarration
+    | RemoveNarrationResult (Result Http.Error ())

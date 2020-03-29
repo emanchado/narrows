@@ -90,3 +90,39 @@ update msg model =
       ( { model | showUrlInfoBox = not model.showUrlInfoBox }
       , Cmd.none
       )
+
+    RemoveNarration ->
+      ( { model | showRemoveNarrationDialog = True
+                , banner = Nothing
+        }
+      , Cmd.none
+      )
+
+    ConfirmRemoveNarration ->
+      case model.narrationOverview of
+        Just overview ->
+          ( { model | showRemoveNarrationDialog = False }
+          , NarrationOverviewApp.Api.removeNarration overview.narration.id
+          )
+
+        Nothing ->
+          ( model, Cmd.none )
+
+    CancelRemoveNarration ->
+      ( { model | showRemoveNarrationDialog = False }
+      , Cmd.none
+      )
+
+    RemoveNarrationResult (Err error) ->
+      ( { model | banner = errorBanner "Error deleting narration" }
+      , Cmd.none
+      )
+
+    RemoveNarrationResult (Ok resp) ->
+      ( model
+      , case model.narrationOverview of
+          Just info ->
+            Nav.pushUrl model.key "/"
+          Nothing ->
+            Cmd.none
+      )

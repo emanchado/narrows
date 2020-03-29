@@ -30,4 +30,5 @@ type alias Model =
     , sendingPendingIntroEmails : Bool
     , banner : Maybe Banner
     , showUrlInfoBox : Bool
+    , showRemoveNarrationDialog : Bool
     }

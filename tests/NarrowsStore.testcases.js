@@ -45,6 +45,28 @@ export default function testcases(test, stash) {
         });
     });
 
+    test.serial("can delete a narration", t => {
+        const narrationId = t.context.testNarration.id;
+        const character = {id: t.context.characterId1};
+        const props = { title: "Intro", text: [], participants: [character] };
+
+        return stash.store.createChapter(narrationId, props).then(() => (
+            stash.store.deleteNarration(narrationId)
+        )).then(success => {
+            t.is(success, true, "Narration should be deleted");
+        }).then(() => (
+            stash.store.getNarration(narrationId).then(narration => {
+                t.is(
+                    1,
+                    0,
+                    "It should not be possible to get a deleted narration"
+                );
+            }).catch(err => {
+                t.truthy(err);
+            })
+        ));
+    });
+
     test.serial("can set a specific audio for the chapter", t => {
         const narrationId = t.context.testNarration.id;
         const props = {

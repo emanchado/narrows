@@ -159,6 +159,27 @@ export function postNarration(req, res) {
     });
 }
 
+export function deleteNarration(req, res) {
+    const narrationId = parseInt(req.params.narrId, 10);
+    const newProps = req.body;
+
+    store.getNarration(narrationId).then(narrationData => (
+        userStore.canActAs(
+            req.session.userId,
+            narrationData.narratorId
+        ).then(() => (
+            store.deleteNarration(narrationId, newProps)
+        ))
+    )).then(narrationData => {
+        res.status(204).json();
+    }).catch(err => {
+        res.status(404).json({
+            errorMessage: `Cannot delete narration ${ narrationId } as ` +
+                `this user: ${ err }`
+        });
+    });
+}
+
 export function getChapter(req, res) {
     const chapterId = parseInt(req.params.chptId, 10);
 

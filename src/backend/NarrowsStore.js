@@ -445,6 +445,35 @@ class NarrowsStore {
         ));
     }
 
+    deleteNarration(id) {
+        return Q.ninvoke(
+            this.db,
+            "run",
+            "SELECT id FROM characters WHERE narration_id = ?",
+            id
+        ).then(characters => (
+            Q.all(characters.map(char => (
+                this.removeCharacter(char.id)
+            )))
+        )).then(() => (
+            Q.ninvoke(
+                this.db,
+                "run",
+                "DELETE FROM chapters WHERE narration_id = ?",
+                id
+            )
+        )).then(() => (
+            Q.ninvoke(
+                this.db,
+                "run",
+                "DELETE FROM narrations WHERE id = ?",
+                id
+            )
+        )).then(result => (
+            result.affectedRows === 1
+        ));
+    }
+
     deleteChapter(id) {
         return Q.ninvoke(
             this.db,

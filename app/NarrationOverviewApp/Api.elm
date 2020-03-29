@@ -45,3 +45,15 @@ markNarration narrationId status =
                , timeout = Nothing
                , tracker = Nothing
                }
+
+
+removeNarration : Int -> Cmd Msg
+removeNarration narrationId =
+  Http.request { method = "DELETE"
+               , url = "/api/narrations/" ++ (String.fromInt narrationId)
+               , headers = []
+               , body = Http.emptyBody
+               , expect = Http.expectWhatever RemoveNarrationResult
+               , timeout = Nothing
+               , tracker = Nothing
+               }

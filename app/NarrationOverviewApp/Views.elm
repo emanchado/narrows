@@ -4,8 +4,9 @@ import List
 import Html exposing (Html, main_, h1, h2, section, div, span, ul, li, button, img, input, label, a, em, text)
 import Html.Attributes exposing (id, class, for, checked, name, title, type_, readonly, value, href, src)
 import Html.Events exposing (onClick)
+
 import Common.Models exposing (Narration, NarrationStatus(..), ChapterOverview, NarrationOverview, FullCharacter, narrationStatusString)
-import Common.Views exposing (breadcrumbNavView, narrationOverviewView, loadingView, ribbonForNarrationStatus)
+import Common.Views exposing (breadcrumbNavView, narrationOverviewView, loadingView, ribbonForNarrationStatus, showDialog)
 import NarrationOverviewApp.Messages exposing (..)
 import NarrationOverviewApp.Models exposing (Model)
 
@@ -42,8 +43,8 @@ narrationCharacterView narration character =
       ]
 
 
-overviewView : NarrationOverview -> Bool -> Html Msg
-overviewView overview showUrlInfoBox =
+overviewView : NarrationOverview -> Bool -> Bool -> Html Msg
+overviewView overview showUrlInfoBox showRemoveNarrationDialog =
   let
     isActive = overview.narration.status == Active
     chapterOptions = if isActive then
@@ -145,6 +146,30 @@ overviewView overview showUrlInfoBox =
                   , label [ for "narration-status-abandoned" ]
                       [ text "Abandoned" ]
                   ]
+              , div [ class "btn-bar" ]
+                  [ button [ class "btn btn-remove"
+                           , onClick RemoveNarration
+                           ]
+                      [ text "Delete" ]
+                  ]
+              , if showRemoveNarrationDialog then
+                  let
+                    extraNarrationDescription =
+                      if overview.narration.status == Abandoned then
+                        ""
+                      else
+                        (String.toUpper <|
+                           narrationStatusString overview.narration.status) ++ " "
+                  in
+                    showDialog
+                      ("Delete this " ++ extraNarrationDescription ++ "narration, with all its chapters and characters?")
+                      NoOp
+                      "Delete"
+                      ConfirmRemoveNarration
+                      "Cancel"
+                      CancelRemoveNarration
+                else
+                  text ""
               ]
           ]
       ]
@@ -154,7 +179,7 @@ mainView : Model -> Html Msg
 mainView model =
   case model.narrationOverview of
     Just overview ->
-      overviewView overview model.showUrlInfoBox
+      overviewView overview model.showUrlInfoBox model.showRemoveNarrationDialog
 
     Nothing ->
       loadingView model.banner
