@@ -1200,7 +1200,7 @@ class NarrowsStore {
             return Q.nfcall(fs.move, tmpPath, finalPath, {clobber: true}).then(() => {
                 return Q.ninvoke(
                     this.db,
-                    "query",
+                    "run",
                     `UPDATE characters SET avatar = ? WHERE id = ?`,
                     [finalBasename, characterId]
                 );
@@ -1271,7 +1271,7 @@ class NarrowsStore {
             // Yes, possibility of race condition here, but... MySQL
             return Q.ninvoke(
                 this.db,
-                "query",
+                "run",
                 `UPDATE characters SET player_id = ?
                   WHERE id = ?
                     AND player_id IS NULL`,
@@ -1300,19 +1300,19 @@ class NarrowsStore {
     removeCharacter(characterId) {
         return Q.ninvoke(
             this.db,
-            "query",
+            "run",
             `DELETE FROM messages WHERE sender_id = ?`,
             [characterId]
         ).then(() => (
             Q.ninvoke(
                 this.db,
-                "query",
+                "run",
                 `DELETE FROM characters WHERE id = ?`,
                 [characterId]
             )
-        )).then(result => {
-            return result[0].affectedRows === 1;
-        });
+        )).then(result => (
+            result.affectedRows === 1
+        ));
     }
 }
 
