@@ -101,7 +101,7 @@ chapterView chapter narration savingChapter uploadingAudio uploadingBackgroundIm
       else
         (SaveChapter, PublishChapter)
   in
-    section [ class "page-aside vertical-form" ]
+    section [ class "vertical-form" ]
       [ div [ class "form-line" ]
           [ input [ type_ "text"
                   , placeholder "Title"

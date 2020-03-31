@@ -83,7 +83,7 @@ overviewView overview showUrlInfoBox showRemoveNarrationDialog =
               , ul [ class "chapter-list" ] <|
                   narrationOverviewView NavigateTo overview
               ]
-          , section [ class "page-aside" ]
+          , section []
               [ h2 [] [ text "Characters" ]
               , characterOptions
               , ul [ class "dramatis-personae compact" ]

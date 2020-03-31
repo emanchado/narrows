@@ -103,7 +103,7 @@ mainView model =
                               [ text "Cancel" ]
                           ]
                       ]
-                  , section [ class "page-aside" ]
+                  , section []
                       [ div [ class "form-line" ]
                           [ label [] [ text "Default background image for the narration" ]
                           , fileSelector

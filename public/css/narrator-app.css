@@ -15,21 +15,8 @@ div.two-column > section > *:first-child {
     margin-top: 0;
 }
 
-.no-content {
-    opacity: 0.7;
-}
-
 input, .ProseMirror, .last-reaction-text {
     font-family: StoryFont;
-}
-
-main.page-aside {
-    display: flex;
-}
-
-main.page-aside section {
-    margin-right: 20px;
-    flex-grow: 1;
 }
 
 ul.participant-list {
@@ -212,33 +199,6 @@ form.create-form h2 {
     background-color: #ddd;
 }
 
-.narration-list {
-    display: flex;
-    flex-wrap: wrap;
-}
-.narration-container {
-    width: 500px;
-    margin: 10px;
-    border: 1px solid #aaa;
-    padding: 10px;
-
-    /* For the ribbon */
-    position: relative;
-    overflow: hidden;
-}
-.narration-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-}
-.narration-header h2 {
-    margin: auto 0;
-}
-.narration-header a {
-    text-decoration: none;
-}
-
-
 .corner-ribbon {
     position: absolute;
     top: 25px;
@@ -267,6 +227,32 @@ form.create-form h2 {
 .corner-ribbon-abandoned {
     background: #ab8b5c;
     color: #333;
+}
+
+.narration-list {
+    display: flex;
+    flex-wrap: wrap;
+}
+.narration-container {
+    width: 500px;
+    margin: 10px;
+    border: 1px solid #aaa;
+    padding: 10px;
+
+    /* For the ribbon */
+    position: relative;
+    overflow: hidden;
+}
+.narration-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+.narration-header h2 {
+    margin: auto 0;
+}
+.narration-header a {
+    text-decoration: none;
 }
 
 .narration-status label {
