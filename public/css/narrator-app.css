@@ -2,9 +2,12 @@ div.two-column {
     display: flex;
     margin-top: 10px;
     padding-top: 10px;
+
+    justify-content: space-between;
 }
 div.two-column > section {
-    width: 50%;
+    flex-basis: 0;
+    flex-grow: 1;
     padding-left: 10px;
 }
 div.two-column > section:first-child {
