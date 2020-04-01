@@ -8,10 +8,26 @@
   src: url("../fonts/Roboto-Regular.ttf");
 }
 
+:root {
+    --main-bg-color: #eee;
+    --alt-bg-color: #e5e5e5;
+    --alt-bg-color2: #ddd;
+    --input-bg-color: #eee;
+    --disabled-bg-color: #ddd;
+    --link-color: #0066cc;
+    --heading-color: black;
+    --border-color: #ccc;
+    --soft-border-color: #ddd;
+    --input-border-color: black;
+    --text-color: black;
+    --disabled-color: black;
+}
+
 body {
     margin: 0;
-    background-color: #eee;
+    background-color: var(--main-bg-color);
     font-family: Roboto;
+    color: var(--text-color);
 }
 
 button {
@@ -21,14 +37,16 @@ button {
 h1, h2 {
     margin-top: 20px;
     margin-bottom: 10px;
+    color: var(--heading-color);
 }
 h3 {
     margin-top: 5px;
     margin-bottom: 5px;
+    color: var(--heading-color);
 }
 
 a, a:visited {
-    color: #0069CF;
+    color: var(--link-color);
     text-decoration: none;
 }
 
@@ -53,7 +71,7 @@ label {
 }
 
 input[type="file"] {
-    color: #eee;
+    color: var(--input-bg-color);
     background-color: buttonface;
 }
 
@@ -122,10 +140,13 @@ ul li {
 .inline-form input[type="email"] {
     padding: 4px;
     font-size: 22px;
+    border: 1px solid var(--input-border-color);
+    background-color: var(--input-bg-color);
 }
 
 .vertical-form input[type="text"][readonly], .vertical-form input[type="email"][readonly] {
-    background-color: #ddd;
+    background-color: var(--disabled-bg-color);
+    color: var(--disabled-color);
 }
 .vertical-form input[type="file"] {
     border: none;
@@ -135,7 +156,7 @@ ul li {
     margin-top: 18px;
     margin-bottom: 18px;
     padding: 15px;
-    background-color: #ddd;
+    background-color: var(--alt-bg-color2);
 }
 .secondary-form input[type="text"], .secondary-form ul {
     font-size: 80%;
@@ -220,19 +241,20 @@ ul li {
 }
 
 .btn {
-    border: 1px solid #ddd;
+    border: 1px solid var(--soft-border-color);
     margin: 0 3px;
     padding: 5px 10px;
 
     font-size: 18px;
     font-weight: normal;
-    background-color: whitesmoke;
+    color: var(--text-color);
+    background-color: var(--input-bg-color);
     white-space: nowrap;
 }
 a.btn {
     display: inline-block;
     text-decoration: none;
-    color: inherit;
+    color: var(--text-color);
 }
 
 .btn-default {
@@ -307,17 +329,15 @@ ul.thread-list li .btn-bar {
 .ProseMirror {
     padding: 5px;
     color: #113;
-    background-color: #eee;
+    background-color: var(--input-bg-color);
     outline: -webkit-focus-ring-color auto 5px;
 }
-
 .ProseMirror p:first-child {
     margin-top: 0;
 }
 .ProseMirror p:last-child {
     margin-bottom: 0;
 }
-
 .ProseMirror img, .chapter img {
     width: 100%;
 }
@@ -343,7 +363,11 @@ span.mention img {
 .chapter .separator {
     font-size: 18px;
     max-width: 40em;
-    background-color:  #e5e5e5;
+    background-color: #e5e5e5;
+}
+
+div.ProseMirror-menubar {
+    background-color: var(--input-bg-color);
 }
 
 .dialog-overlay {
@@ -417,11 +441,11 @@ span.mention img {
 
 .floating-tip {
     margin: 5px 20px;
-    border: 2px solid #ccc;
+    border: 2px solid var(--border-color);
     padding: 10px;
 
     font-size: 16px;
-    background-color: #ddd;
+    background-color: var(--alt-bg-color2);
 }
 .floating-tip h3 {
     margin: 0;

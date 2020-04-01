@@ -110,7 +110,7 @@ ul.search-results {
 
 .thread-list.narrator > li {
     margin-bottom: 20px;
-    background-color: #e5e5e5;
+    background-color: var(--alt-bg-color);
 }
 .thread-list.narrator li .btn-bar {
     padding: 10px 0 0 0;
@@ -297,7 +297,7 @@ form.create-form h2 {
     font-size: 16px;
 }
 .chapter-list > li:nth-child(odd) {
-    background-color: #ddd;
+    background-color: var(--alt-bg-color2);
 }
 
 .message-counter {

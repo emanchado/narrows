@@ -2,6 +2,11 @@
     min-height: 100%;
     background-color: black;
     color: #e5e5e5;
+
+    --heading-color: #e7e7e7;
+    --alt-bg-color: whitesmoke;
+    --input-bg-color: whitesmoke;
+    --text-color: black;
 }
 /* Unfortunately need this hack because reader app has black
    background and having something at the top with margin-top (like
