@@ -407,6 +407,7 @@ span.mention img {
 }
 .dramatis-personae.compact > li {
     align-items: center;
+    font-size: 20px;
 }
 .dramatis-personae.compact > li img.avatar {
     margin-right: 10px;

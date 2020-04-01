@@ -281,3 +281,26 @@ form.create-form h2 {
     display: flex;
     justify-content: space-between;
 }
+
+.chapter-list {
+    padding-left: 0;
+}
+.chapter-list > li {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px;
+}
+.chapter-list > li a {
+    font-size: 20px;
+}
+.chapter-list-compact > li a {
+    font-size: 16px;
+}
+.chapter-list > li:nth-child(odd) {
+    background-color: #ddd;
+}
+
+.message-counter {
+    display: inline-block;
+    width: 35px;
+}

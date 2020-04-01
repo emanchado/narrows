@@ -83,7 +83,7 @@ overviewView overview showUrlInfoBox showRemoveNarrationDialog =
                   , chapterOptions
                   ]
               , ul [ class "chapter-list" ] <|
-                  narrationOverviewView NavigateTo overview
+                  narrationOverviewView False NavigateTo overview
               ]
           , section [ class "narrow-column" ]
               [ div [ class "narration-header" ]

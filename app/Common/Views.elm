@@ -229,8 +229,8 @@ unpublishedChapterView navigationMessage narration chapterOverview =
       ]
 
 
-publishedChapterView : (String -> msg) -> Narration -> ChapterOverview -> Html msg
-publishedChapterView navigationMessage narration chapterOverview =
+publishedChapterView : Bool -> (String -> msg) -> Narration -> ChapterOverview -> Html msg
+publishedChapterView compact navigationMessage narration chapterOverview =
   let
     numberSentReactions = List.length chapterOverview.activeUsers
     numberChapterParticipants = List.length chapterOverview.participants
@@ -243,44 +243,54 @@ publishedChapterView navigationMessage narration chapterOverview =
     li []
       [ a [ href <| "/chapters/" ++ (String.fromInt chapterOverview.id) ]
           [ text chapterOverview.title ]
-      , if numberSentReactions /= numberChapterParticipants then
-          text (" — "
-                ++ (String.fromInt <| numberChapterParticipants - numberSentReactions)
-                ++ " reaction(s) pending")
-        else
-          text ""
-      , if numberNarrationCharacters /= numberChapterParticipants then
-          span [ title <| "Only for " ++ participantNames ]
-            [ text " — "
-            , img [ src "/img/character.png" ] []
-            , text <| String.fromInt numberChapterParticipants
-            ]
-        else
-          text ""
-      , if chapterOverview.numberMessages > 0 then
-          span []
-            [ text " — "
-            , img [ src "/img/envelope.png" ] []
-            , text <| String.fromInt chapterOverview.numberMessages
-            ]
-        else
-          text ""
+      , div []
+          (List.intersperse (text " — ") <|
+             List.concat
+               [ if numberSentReactions /= numberChapterParticipants then
+                   [ span []
+                       [ text <|
+                           (String.fromInt <| numberChapterParticipants - numberSentReactions)
+                           ++ (if compact then "" else " reaction(s)")
+                           ++ " missing"
+                       ]
+                   ]
+                 else
+                   []
+               , if not compact && numberNarrationCharacters /= numberChapterParticipants then
+                   [ span []
+                       [ span [ title <| "Only for " ++ participantNames ]
+                           [ img [ src "/img/character.png" ] []
+                           , text <| String.fromInt numberChapterParticipants
+                           ]
+                       ]
+                   ]
+                 else
+                   []
+               , if not compact && chapterOverview.numberMessages > 0 then
+                   [ span [ class "message-counter" ]
+                       [ img [ src "/img/envelope.png" ] []
+                       , text <| String.fromInt chapterOverview.numberMessages
+                       ]
+                   ]
+                 else
+                   []
+               ])
       ]
 
 
-chapterOverviewView : (String -> msg) -> Narration -> ChapterOverview -> Html msg
-chapterOverviewView navigationMessage narration chapterOverview =
+chapterOverviewView : Bool -> (String -> msg) -> Narration -> ChapterOverview -> Html msg
+chapterOverviewView compact navigationMessage narration chapterOverview =
   case chapterOverview.published of
     Just published ->
-      publishedChapterView navigationMessage narration chapterOverview
+      publishedChapterView compact navigationMessage narration chapterOverview
     Nothing ->
       unpublishedChapterView navigationMessage narration chapterOverview
 
 
-narrationOverviewView : (String -> msg) -> NarrationOverview -> List (Html msg)
-narrationOverviewView navigationMessage narrationOverview =
+narrationOverviewView : Bool -> (String -> msg) -> NarrationOverview -> List (Html msg)
+narrationOverviewView compact navigationMessage narrationOverview =
   (List.map
-     (chapterOverviewView navigationMessage narrationOverview.narration)
+     (chapterOverviewView compact navigationMessage narrationOverview.narration)
      narrationOverview.chapters)
 
 
@@ -320,8 +330,8 @@ compactNarrationView navigationMessage overview =
             ]
           , buttonBar
           ]
-      , ul [ class "chapter-list" ] <|
-          narrationOverviewView navigationMessage overview
+      , ul [ class "chapter-list chapter-list-compact" ] <|
+          narrationOverviewView True navigationMessage overview
       ]
 
 
