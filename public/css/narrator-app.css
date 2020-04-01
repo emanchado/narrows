@@ -8,14 +8,18 @@ div.two-column {
 div.two-column > section {
     flex-basis: 0;
     flex-grow: 1;
-    padding-left: 10px;
+    padding-left: 15px;
 }
 div.two-column > section:first-child {
     padding-left: 0;
-    padding-right: 10px;
+    padding-right: 15px;
 }
 div.two-column > section > *:first-child {
     margin-top: 0;
+}
+
+div.two-column > section.narrow-column {
+    flex-grow: 0.7;
 }
 
 input, .ProseMirror, .last-reaction-text {
@@ -250,6 +254,9 @@ form.create-form h2 {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
+}
+.narration-header *:last-child {
+    margin-right: 0;
 }
 .narration-header h2 {
     margin: auto 0;

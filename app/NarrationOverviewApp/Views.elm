@@ -78,14 +78,17 @@ overviewView overview showUrlInfoBox showRemoveNarrationDialog =
       , div [ class <| "two-column narration-" ++ (narrationStatusString overview.narration.status) ]
           [ ribbonForNarrationStatus overview.narration.status
           , section []
-              [ h2 [] [ text "Chapters" ]
-              , chapterOptions
+              [ div [ class "narration-header" ]
+                  [ h2 [] [ text "Chapters" ]
+                  , chapterOptions
+                  ]
               , ul [ class "chapter-list" ] <|
                   narrationOverviewView NavigateTo overview
               ]
-          , section []
-              [ h2 [] [ text "Characters" ]
-              , characterOptions
+          , section [ class "narrow-column" ]
+              [ div [ class "narration-header" ]
+                  [ h2 [] [ text "Characters" ]
+                  , characterOptions ]
               , ul [ class "dramatis-personae compact" ]
                   (List.map (narrationCharacterView overview.narration) overview.narration.characters)
               , div [ class "vertical-form small-form" ]
