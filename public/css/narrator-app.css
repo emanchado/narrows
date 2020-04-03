@@ -8,11 +8,11 @@ div.two-column {
 div.two-column > section {
     flex-basis: 0;
     flex-grow: 1;
-    padding-left: 15px;
+    padding-left: 30px;
 }
 div.two-column > section:first-child {
     padding-left: 0;
-    padding-right: 15px;
+    padding-right: 30px;
 }
 div.two-column > section > *:first-child {
     margin-top: 0;
