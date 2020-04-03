@@ -140,9 +140,13 @@ ul li {
 .inline-form input[type="password"],
 .inline-form input[type="email"] {
     padding: 4px;
-    font-size: 22px;
     border: 1px solid var(--input-border-color);
     background-color: var(--input-bg-color);
+}
+.vertical-form input[type="text"],
+.vertical-form input[type="password"],
+.vertical-form input[type="email"] {
+    font-size: 22px;
 }
 
 .vertical-form input[type="text"][readonly], .vertical-form input[type="email"][readonly] {
