@@ -11,27 +11,30 @@ import ReaderApp.Messages exposing (..)
 
 recipientView : List Int -> ParticipantCharacter -> Html Msg
 recipientView currentRecipients character =
-    label []
-        [ input
-            [ type_ "checkbox"
-            , value (String.fromInt character.id)
-            , checked (List.any (\r -> r == character.id) currentRecipients)
-            , onCheck (UpdateNewMessageRecipient character.id)
-            ]
-            []
-        , text character.name
-        ]
+    label [ class "checkbox" ]
+      [ input
+          [ type_ "checkbox"
+          , value (String.fromInt character.id)
+          , checked (List.any (\r -> r == character.id) currentRecipients)
+          , onCheck (UpdateNewMessageRecipient character.id)
+          ]
+          []
+      , text character.name
+      ]
 
 
 recipientListView : List ParticipantCharacter -> List Int -> Html Msg
 recipientListView possibleRecipients currentRecipients =
-    div [ class "recipients" ]
-        ([ text "Recipients:"
-         , input [ type_ "checkbox", checked True, disabled True ] []
-         , label [] [ text "Narrator" ]
-         ]
-            ++ List.map (recipientView currentRecipients) possibleRecipients
-        )
+    div [ class "inline-form" ]
+      [ div [ class "form-line" ]
+          ([ label []
+               [ text "Recipients:" ]
+           , input [ type_ "checkbox", checked True, disabled True ] []
+           , label [ class "checkbox" ]
+               [ text "Narrator" ]
+           ]
+             ++ List.map (recipientView currentRecipients) possibleRecipients)
+      ]
 
 
 listView : Model -> Html Msg

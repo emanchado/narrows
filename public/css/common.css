@@ -65,11 +65,6 @@ nav.breadcrumbs {
     margin-bottom: 10px;
 }
 
-label {
-    font-weight: bold;
-    font-size: 14px;
-}
-
 input[type="file"] {
     color: var(--input-bg-color);
     background-color: buttonface;
@@ -122,8 +117,14 @@ ul li {
 .vertical-form .form-line {
     margin-bottom: 18px;
 }
-.vertical-form label, .inline-form label {
+.vertical-form label {
     font-size: 18px;
+}
+.inline-form label {
+    font-weight: bold;
+}
+.inline-form label.checkbox {
+    font-weight: normal;
 }
 .vertical-form input, .inline-form input {
     border: 1px solid black;

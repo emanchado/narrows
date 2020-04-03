@@ -13,7 +13,7 @@ import ChapterControlApp.Models exposing (Model, ChapterInteractions)
 
 recipientView : List Int -> FullCharacter -> Html Msg
 recipientView currentRecipients character =
-  label []
+  label [ class "checkbox" ]
     [ input [ type_ "checkbox"
             , value (String.fromInt character.id)
             , checked (List.any (\r -> r == character.id) currentRecipients)
@@ -26,10 +26,12 @@ recipientView currentRecipients character =
 
 recipientListView : List FullCharacter -> List Int -> Html Msg
 recipientListView possibleRecipients currentRecipients =
-  div [ class "recipients" ]
-    (List.append
-       [ label [] [ text "Recipients:" ] ]
-       (List.map (recipientView currentRecipients) possibleRecipients))
+  div [ class "inline-form" ]
+    [ div [ class "form-line" ]
+        (List.append
+           [ label [] [ text "Recipients:" ] ]
+           (List.map (recipientView currentRecipients) possibleRecipients))
+    ]
 
 
 mainView : Model -> Html Msg
