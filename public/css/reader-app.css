@@ -8,14 +8,10 @@
     --input-bg-color: whitesmoke;
     --text-color: black;
 }
-/* Unfortunately need this hack because reader app has black
-   background and having something at the top with margin-top (like
-   the "h2" title in the character app) leaves an ugly, white top
-   bar. Apparently it's enough to make it non-zero to make it work
-   properly. */
+/* We need this hack because reader app has black
+   background. Otherwise the bottom will be white. */
 #reader-app.app-container {
-    padding-top: 1px;
-    min-height: 100%
+    min-height: 100vh;
 }
 
 #reader-app .two-column > section {
