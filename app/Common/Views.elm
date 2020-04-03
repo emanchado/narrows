@@ -239,6 +239,9 @@ publishedChapterView compact navigationMessage narration chapterOverview =
         List.map
           (\r -> r.name)
           chapterOverview.participants
+    reactionsMissingTitle =
+      (String.fromInt <| numberChapterParticipants - numberSentReactions)
+      ++ " reaction(s) missing"
   in
     li []
       [ a [ href <| "/chapters/" ++ (String.fromInt chapterOverview.id) ]
@@ -247,7 +250,8 @@ publishedChapterView compact navigationMessage narration chapterOverview =
           (List.intersperse (text " — ") <|
              List.concat
                [ if numberSentReactions /= numberChapterParticipants then
-                   [ span []
+                   [ span (if compact then [ title reactionsMissingTitle ]
+                           else [])
                        [ text <|
                            (String.fromInt <| numberChapterParticipants - numberSentReactions)
                            ++ (if compact then "" else " reaction(s)")
