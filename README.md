@@ -1,9 +1,5 @@
 # NARROWS
 
-What about the other characters?? There should probably be a dramatis
-personae. The problem is that the narrator might not have finished all
-character sheets.
-
 NARROWS is an online storytelling system. The name stands for
 NARRation On Web System. The easiest way to explain it is to
 imagine an online
