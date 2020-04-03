@@ -247,10 +247,7 @@ mainView model =
            else
             text chapter.title)
       , div [ class "two-column" ]
-          [ case model.lastChapters of
-              Just lastReactions -> lastReactionListView lastReactions chapter
-              Nothing -> section [] [ text "Loading reactions…" ]
-          , section []
+          [ section []
               [ chapterView chapter narration model.savingChapter model.uploadingAudio model.uploadingBackgroundImage model.flash
               , if model.showPublishChapterDialog then
                   showDialog
@@ -293,5 +290,8 @@ mainView model =
                         Nothing -> text ""
                   ]
               ]
+          , case model.lastChapters of
+              Just lastReactions -> lastReactionListView lastReactions chapter
+              Nothing -> section [] [ text "Loading reactions…" ]
           ]
       ]
