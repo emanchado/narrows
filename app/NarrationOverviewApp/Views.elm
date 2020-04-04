@@ -11,6 +11,11 @@ import NarrationOverviewApp.Messages exposing (..)
 import NarrationOverviewApp.Models exposing (Model)
 
 
+unclaimed : FullCharacter -> Bool
+unclaimed character =
+  character.email == Nothing
+
+
 narrationCharacterView : Narration -> FullCharacter -> Html Msg
 narrationCharacterView narration character =
   let
@@ -85,94 +90,99 @@ overviewView overview showUrlInfoBox showRemoveNarrationDialog =
               , ul [ class "chapter-list" ] <|
                   narrationOverviewView False NavigateTo overview
               ]
-          , section [ class "narrow-column" ]
-              [ div [ class "narration-header" ]
-                  [ h2 [] [ text "Intro" ]
-                  , a [ class "btn btn-edit"
-                      , href <| "/narrations/" ++ (String.fromInt overview.narration.id) ++ "/edit" ]
-                      [ text "Edit" ]
-                  ]
-              , p []
-                [ text "Send this URL to potential players, "
-                , text "including posting on public forums. Anyone "
-                , text "with access to this URL will be able to "
-                , text "claim a character in the story, even if "
-                , text "they didn't have an account in NARROWS."
+          , section [ class "narrow-column" ] <|
+              List.append
+                (if List.any unclaimed overview.narration.characters then
+                   [ div [ class "narration-header" ]
+                       [ h2 [] [ text "Intro" ]
+                       , a [ class "btn btn-edit"
+                           , href <| "/narrations/" ++ (String.fromInt overview.narration.id) ++ "/edit" ]
+                           [ text "Edit" ]
+                       ]
+                   , p []
+                       [ text "Send this URL to potential players, "
+                       , text "including posting on public forums. Anyone "
+                       , text "with access to this URL will be able to "
+                       , text "claim a character in the story, even if "
+                       , text "they didn't have an account in NARROWS."
+                       ]
+                   , div [ class "single-field-form" ]
+                       [ input [ type_ "text"
+                               , readonly True
+                               , value overview.narration.introUrl
+                               ]
+                           []
+                       , button [ onClick (CopyText overview.narration.introUrl)
+                                ]
+                           [ text "Copy" ]
+                       ]
+                   ]
+                 else
+                   [])
+                [ div [ class "narration-header" ]
+                   [ h2 [] [ text "Characters" ]
+                    , characterOptions ]
+                , ul [ class "dramatis-personae compact" ]
+                    (List.map (narrationCharacterView overview.narration) overview.narration.characters)
+                , h2 [] [ text "Status" ]
+                , div [ class "narration-status" ]
+                    [ input [ type_ "radio"
+                            , id "narration-status-active"
+                            , name "narration-status"
+                            , onClick <| MarkNarration Active
+                            , checked (overview.narration.status == Active)
+                            ]
+                        []
+                    , label [ for "narration-status-active" ]
+                        [ text "Active" ]
+                    ]
+                , div [ class "narration-status" ]
+                    [ input [ type_ "radio"
+                              , id "narration-status-finished"
+                              , name "narration-status"
+                              , onClick <| MarkNarration Finished
+                              , checked (overview.narration.status == Finished)
+                              ]
+                          []
+                    , label [ for "narration-status-finished" ]
+                        [ text "Finished" ]
+                    ]
+                , div [ class "narration-status" ]
+                    [ input [ type_ "radio"
+                              , id "narration-status-abandoned"
+                              , name "narration-status"
+                              , onClick <| MarkNarration Abandoned
+                              , checked (overview.narration.status == Abandoned)
+                              ]
+                          []
+                    , label [ for "narration-status-abandoned" ]
+                        [ text "Abandoned" ]
+                    ]
+                , div [ class "btn-bar" ]
+                    [ button [ class "btn btn-remove"
+                             , onClick RemoveNarration
+                             ]
+                        [ text "Delete" ]
+                    ]
+                , if showRemoveNarrationDialog then
+                    let
+                      extraNarrationDescription =
+                        if overview.narration.status == Abandoned then
+                          ""
+                        else
+                          (String.toUpper <|
+                             narrationStatusString overview.narration.status) ++ " "
+                    in
+                      showDialog
+                        ("Delete this " ++ extraNarrationDescription ++ "narration, with all its chapters and characters?")
+                        NoOp
+                        "Delete"
+                        ConfirmRemoveNarration
+                        "Cancel"
+                        CancelRemoveNarration
+                  else
+                    text ""
                 ]
-              , div [ class "single-field-form" ]
-                  [ input [ type_ "text"
-                          , readonly True
-                          , value overview.narration.introUrl
-                          ]
-                      []
-                  , button [ onClick (CopyText overview.narration.introUrl)
-                           ]
-                      [ text "Copy" ]
-                  ]
-              , div [ class "narration-header" ]
-                  [ h2 [] [ text "Characters" ]
-                  , characterOptions ]
-              , ul [ class "dramatis-personae compact" ]
-                  (List.map (narrationCharacterView overview.narration) overview.narration.characters)
-              , h2 [] [ text "Status" ]
-              , div [ class "narration-status" ]
-                  [ input [ type_ "radio"
-                          , id "narration-status-active"
-                          , name "narration-status"
-                          , onClick <| MarkNarration Active
-                          , checked (overview.narration.status == Active)
-                          ]
-                      []
-                  , label [ for "narration-status-active" ]
-                      [ text "Active" ]
-                  ]
-              , div [ class "narration-status" ]
-                  [ input [ type_ "radio"
-                            , id "narration-status-finished"
-                            , name "narration-status"
-                            , onClick <| MarkNarration Finished
-                            , checked (overview.narration.status == Finished)
-                            ]
-                        []
-                  , label [ for "narration-status-finished" ]
-                      [ text "Finished" ]
-                  ]
-              , div [ class "narration-status" ]
-                  [ input [ type_ "radio"
-                            , id "narration-status-abandoned"
-                            , name "narration-status"
-                            , onClick <| MarkNarration Abandoned
-                            , checked (overview.narration.status == Abandoned)
-                            ]
-                        []
-                  , label [ for "narration-status-abandoned" ]
-                      [ text "Abandoned" ]
-                  ]
-              , div [ class "btn-bar" ]
-                  [ button [ class "btn btn-remove"
-                           , onClick RemoveNarration
-                           ]
-                      [ text "Delete" ]
-                  ]
-              , if showRemoveNarrationDialog then
-                  let
-                    extraNarrationDescription =
-                      if overview.narration.status == Abandoned then
-                        ""
-                      else
-                        (String.toUpper <|
-                           narrationStatusString overview.narration.status) ++ " "
-                  in
-                    showDialog
-                      ("Delete this " ++ extraNarrationDescription ++ "narration, with all its chapters and characters?")
-                      NoOp
-                      "Delete"
-                      ConfirmRemoveNarration
-                      "Cancel"
-                      CancelRemoveNarration
-                else
-                  text ""
-              ]
           ]
       ]
 
