@@ -1,9 +1,11 @@
 module NarrationCreationApp.Update exposing (..)
 
 import Browser.Navigation as Nav
+import Process
+import Task
 
 import Core.Routes exposing (Route(..))
-import Common.Models exposing (errorBanner, updateNarrationFiles, mediaTypeString, MediaType(..))
+import Common.Models exposing (Banner, successBanner, errorBanner, updateNarrationFiles, mediaTypeString, MediaType(..))
 import Common.Ports exposing (initEditor, openFileInput, uploadFile)
 import NarrationCreationApp.Api
 import NarrationCreationApp.Messages exposing (..)
@@ -37,6 +39,16 @@ urlUpdate route model =
 
     _ ->
       ( model, Cmd.none )
+
+
+showFlashMessage : Maybe Banner -> Cmd Msg
+showFlashMessage maybeBanner =
+  Cmd.batch
+    [ Process.sleep 0
+      |> Task.perform (\_ -> SetFlashMessage maybeBanner)
+    , Process.sleep 2000
+      |> Task.perform (\_ -> RemoveFlashMessage)
+    ]
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -148,11 +160,10 @@ update msg model =
     AddMediaFileError mediaTarget error ->
       -- Bah. We don't know which type was uploaded, so we assume we
       -- can safely turn off both spinners. Sigh.
-      ( { model | banner = errorBanner error.message
-                , uploadingAudio = False
+      ( { model | uploadingAudio = False
                 , uploadingBackgroundImage = False
         }
-      , Cmd.none
+      , showFlashMessage <| errorBanner error.message
       )
 
     AddMediaFileSuccess mediaTarget resp ->
@@ -197,8 +208,8 @@ update msg model =
       )
 
     CreateNarrationResult (Err _) ->
-      ( { model | banner = errorBanner "Could not create new narration" }
-      , Cmd.none
+      ( model
+      , showFlashMessage <| errorBanner "Could not create new narration"
       )
 
     CreateNarrationResult (Ok narration) ->
@@ -227,13 +238,13 @@ update msg model =
       )
 
     SaveNarrationResult (Err _) ->
-      ( { model | banner = errorBanner "Could not save narration" }
-      , Cmd.none
+      ( model
+      , showFlashMessage <| errorBanner "Could not save narration"
       )
 
     SaveNarrationResult (Ok narration) ->
       ( { model | banner = Nothing }
-      , Nav.pushUrl model.key <| "/narrations/" ++ (String.fromInt narration.id)
+      , showFlashMessage <| successBanner "Narration saved"
       )
 
     FetchNarrationResult (Err _) ->
@@ -272,3 +283,13 @@ update msg model =
         ( model
         , Nav.pushUrl model.key newUrl
         )
+
+    SetFlashMessage maybeBanner ->
+      ( { model | banner = maybeBanner }
+      , Cmd.none
+      )
+
+    RemoveFlashMessage ->
+      ( { model | banner = Nothing }
+      , Cmd.none
+      )

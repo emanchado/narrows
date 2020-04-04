@@ -29,8 +29,10 @@ mainView model =
             }
           ]
           (text pageTitle)
-      , h1 [] [ text pageTitle ]
-      , bannerView model.banner
+      , div [ class "narration-header" ]
+          [ h1 [] [ text pageTitle ]
+          , bannerView model.banner
+          ]
       , case model.files of
           Just files ->
             form [ class "vertical-form" ]

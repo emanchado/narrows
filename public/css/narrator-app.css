@@ -265,6 +265,13 @@ form.create-form h2 {
 .narration-header a {
     text-decoration: none;
 }
+.narration-header .banner {
+    /* Smaller margins than h1 (because the banner apparently is 1px
+       taller than an h1) so that showing a banner besides an h1 won't
+       make the page jump */
+    margin-up: 5px;
+    margin-bottom: 5px;
+}
 
 .narration-status label {
     font-weight: normal;

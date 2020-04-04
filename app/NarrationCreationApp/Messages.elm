@@ -3,7 +3,7 @@ module NarrationCreationApp.Messages exposing (..)
 import Http
 import Json.Encode
 
-import Common.Models exposing (MediaType, FileUploadError, FileUploadSuccess, Narration)
+import Common.Models exposing (MediaType, FileUploadError, FileUploadSuccess, Narration, Banner)
 import NarrationCreationApp.Models exposing (CreateNarrationResponse)
 
 
@@ -28,3 +28,5 @@ type Msg
     | SaveNarrationResult (Result Http.Error Narration)
     | FetchNarrationResult (Result Http.Error Narration)
     | CancelCreateNarration
+    | SetFlashMessage (Maybe Banner)
+    | RemoveFlashMessage
