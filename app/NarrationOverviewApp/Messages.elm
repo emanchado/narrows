@@ -15,3 +15,4 @@ type Msg
     | ConfirmRemoveNarration
     | CancelRemoveNarration
     | RemoveNarrationResult (Result Http.Error ())
+    | CopyText String

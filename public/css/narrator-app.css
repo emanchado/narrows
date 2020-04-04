@@ -254,6 +254,7 @@ form.create-form h2 {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
+    margin-top: 20px;  /* Should probably be the same as for h2 */
 }
 .narration-header *:last-child {
     margin-right: 0;

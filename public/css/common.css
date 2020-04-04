@@ -114,6 +114,11 @@ ul li {
     justify-content: space-between;
     align-items: center;
 }
+.single-field-form {
+    display: flex;
+    justify-content: space-between;
+}
+
 .vertical-form .form-line {
     margin-bottom: 18px;
 }
@@ -148,10 +153,28 @@ ul li {
 .vertical-form input[type="email"] {
     font-size: 22px;
 }
+.inline-form input[type="text"],
+.inline-form input[type="password"],
+.inline-form input[type="email"],
+.single-field-form input[type="text"],
+.single-field-form input[type="password"],
+.single-field-form input[type="email"] {
+    font-size: 16px;
+}
 
-.vertical-form input[type="text"][readonly], .vertical-form input[type="email"][readonly] {
+.vertical-form input[type="text"][readonly],
+.vertical-form input[type="email"][readonly],
+.inline-form input[type="text"][readonly],
+.inline-form input[type="email"][readonly],
+.single-field-form input[type="text"][readonly],
+.single-field-form input[type="email"][readonly] {
     background-color: var(--disabled-bg-color);
     color: var(--disabled-color);
+}
+.single-field-form input[type="text"],
+.single-field-form input[type="password"],
+.single-field-form input[type="email"] {
+    width: 100%;
 }
 .vertical-form input[type="file"] {
     border: none;

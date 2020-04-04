@@ -265,3 +265,9 @@ app.ports.readDeviceSettings.subscribe(receivingPortName => {
 app.ports.setDeviceSetting.subscribe(evt => {
     document.cookie = `${evt.name}=${evt.value};path=/;max-age=${DEVICE_SETTINGS_TTL}`;
 });
+
+app.ports.copyText.subscribe(text => {
+    navigator.clipboard.writeText(text).catch(err => {
+        console.error("Could not copy:", err);
+    });
+});

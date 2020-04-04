@@ -10,6 +10,7 @@ import Common.Models exposing (errorBanner, FullCharacter)
 import NarrationOverviewApp.Api
 import NarrationOverviewApp.Messages exposing (..)
 import NarrationOverviewApp.Models exposing (..)
+import NarrationOverviewApp.Ports exposing (copyText)
 
 
 urlUpdate : Route -> Model -> ( Model, Cmd Msg )
@@ -125,4 +126,9 @@ update msg model =
             Nav.pushUrl model.key "/"
           Nothing ->
             Cmd.none
+      )
+
+    CopyText text ->
+      ( model
+      , copyText text
       )

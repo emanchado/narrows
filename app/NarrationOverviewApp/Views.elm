@@ -1,7 +1,7 @@
 module NarrationOverviewApp.Views exposing (..)
 
 import List
-import Html exposing (Html, main_, h1, h2, section, div, span, ul, li, button, img, input, label, a, em, text)
+import Html exposing (Html, main_, h1, h2, section, div, span, ul, li, button, img, input, label, a, em, p, text)
 import Html.Attributes exposing (id, class, for, checked, name, title, type_, readonly, value, href, src)
 import Html.Events exposing (onClick)
 
@@ -87,34 +87,33 @@ overviewView overview showUrlInfoBox showRemoveNarrationDialog =
               ]
           , section [ class "narrow-column" ]
               [ div [ class "narration-header" ]
+                  [ h2 [] [ text "Intro" ]
+                  , a [ class "btn btn-edit"
+                      , href <| "/narrations/" ++ (String.fromInt overview.narration.id) ++ "/edit" ]
+                      [ text "Edit" ]
+                  ]
+              , p []
+                [ text "Send this URL to potential players, "
+                , text "including posting on public forums. Anyone "
+                , text "with access to this URL will be able to "
+                , text "claim a character in the story, even if "
+                , text "they didn't have an account in NARROWS."
+                ]
+              , div [ class "single-field-form" ]
+                  [ input [ type_ "text"
+                          , readonly True
+                          , value overview.narration.introUrl
+                          ]
+                      []
+                  , button [ onClick (CopyText overview.narration.introUrl)
+                           ]
+                      [ text "Copy" ]
+                  ]
+              , div [ class "narration-header" ]
                   [ h2 [] [ text "Characters" ]
                   , characterOptions ]
               , ul [ class "dramatis-personae compact" ]
                   (List.map (narrationCharacterView overview.narration) overview.narration.characters)
-              , div [ class "vertical-form small-form" ]
-                  [ label [] [ text "Narration intro URL "
-                             , img [ src "/img/info-black.png"
-                                   , class "help"
-                                   , onClick ToggleURLInfoBox
-                                   ]
-                                 []
-                             ]
-                  , if showUrlInfoBox then
-                      div [ class "floating-tip" ]
-                        [ text "Send this URL to potential players, "
-                        , text "including posting on public forums. Anyone "
-                        , text "with access to this URL will be able to "
-                        , text "claim a character in the story, even if "
-                        , text "they didn't have an account in NARROWS."
-                        ]
-                    else
-                      text ""
-                  , input [ readonly True
-                          , type_ "text"
-                          , value overview.narration.introUrl
-                          ]
-                      []
-                  ]
               , h2 [] [ text "Status" ]
               , div [ class "narration-status" ]
                   [ input [ type_ "radio"
