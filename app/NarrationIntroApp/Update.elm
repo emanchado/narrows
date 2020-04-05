@@ -146,6 +146,6 @@ update msg model =
             )
 
         ClaimCharacterFetchResult (Ok ()) ->
-            ( { model | banner = successBanner "Character claimed. See your email for more details" }
+            ( { model | banner = successBanner "Character claimed. See your email for more details (please check your spam folder, too)." }
             , NarrationIntroApp.Api.fetchNarrationIntro model.narrationToken
             )
