@@ -2,7 +2,7 @@ module NarrationOverviewApp.Views exposing (..)
 
 import List
 import Html exposing (Html, main_, h1, h2, section, div, span, ul, li, button, img, input, label, a, em, p, text)
-import Html.Attributes exposing (id, class, for, checked, name, title, type_, readonly, value, href, src)
+import Html.Attributes exposing (id, class, for, checked, name, title, type_, readonly, value, href, src, width, height)
 import Html.Events exposing (onClick)
 
 import Common.Models exposing (Narration, NarrationStatus(..), ChapterOverview, NarrationOverview, FullCharacter, narrationStatusString)
@@ -29,6 +29,8 @@ narrationCharacterView narration character =
   in
     li []
       [ img [ class "avatar"
+            , width 100
+            , height 100
             , src avatarUrl
             ]
           []

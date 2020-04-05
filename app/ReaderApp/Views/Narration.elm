@@ -2,7 +2,7 @@ module ReaderApp.Views.Narration exposing (view)
 
 import String
 import Html exposing (Html, h2, h3, div, span, a, input, textarea, em, strong, text, img, label, button, br, audio, ul, li, blockquote, p)
-import Html.Attributes exposing (id, class, style, for, src, href, target, type_, checked, preload, loop, alt, rows, placeholder)
+import Html.Attributes exposing (id, class, style, for, src, href, target, type_, checked, preload, loop, alt, rows, placeholder, width, height)
 import Html.Events exposing (onClick, onInput)
 import Common.Views exposing (bannerView)
 import Common.Views.Reading exposing (backgroundImageStyle, chapterContainerClass)
@@ -25,6 +25,8 @@ characterView narrationId ownCharacter participant =
   in
     li []
       [ img [ class "avatar"
+            , width 100
+            , height 100
             , src avatarUrl
             ]
           []

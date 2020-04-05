@@ -1,7 +1,7 @@
 module CharacterApp.Views exposing (mainView)
 
 import Html exposing (Html, main_, section, h2, h3, div, span, ul, li, img, input, button, a, label, em, text, br, strong)
-import Html.Attributes exposing (id, class, for, src, href, type_, value, checked)
+import Html.Attributes exposing (id, class, for, src, href, type_, value, checked, width, height)
 import Html.Events exposing (onClick, onInput, on)
 
 import Json.Decode
@@ -33,6 +33,8 @@ characterView : Int -> ParticipantCharacter -> Html Msg
 characterView narrationId participant =
   li []
     [ img [ class "avatar"
+          , width 100
+          , height 100
           , src <| avatarUrl narrationId participant.avatar
           ]
         []

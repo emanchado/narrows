@@ -2,7 +2,7 @@ module NarrationIntroApp.Views exposing (..)
 
 import String
 import Html exposing (Html, main_, aside, h1, h2, div, form, input, label, button, br, audio, img, ul, li, a, strong, text)
-import Html.Attributes exposing (id, class, style, src, preload, loop, alt, href, type_, placeholder, value, checked, for)
+import Html.Attributes exposing (id, class, style, src, preload, loop, alt, href, type_, placeholder, value, checked, for, width, height)
 import Html.Events exposing (onInput, onClick)
 
 import Common.Models exposing (ParticipantCharacter, UserSession(..))
@@ -49,6 +49,8 @@ characterView email narrationId showEmailBox participant =
   in
     li [ class "peekaboo-container" ]
       [ img [ class "avatar"
+            , width 100
+            , height 100
             , src avatarUrl
             ]
           []

@@ -2,7 +2,7 @@ module NovelReaderApp.Views.Novel exposing (view)
 
 import String
 import Html exposing (Html, h2, div, a, strong, text, img, br, audio, ul, li)
-import Html.Attributes exposing (id, class, style, src, preload, loop, alt)
+import Html.Attributes exposing (id, class, style, src, preload, loop, alt, width, height)
 import Html.Events exposing (onClick)
 import Common.Models exposing (ParticipantCharacter)
 import Common.Views.Reading exposing (backgroundImageStyle, chapterContainerClass)
@@ -23,6 +23,8 @@ characterView narrationId participant =
   in
     li []
       [ img [ class "avatar"
+            , width 100
+            , height 100
             , src avatarUrl
             ]
           []
