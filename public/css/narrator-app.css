@@ -242,13 +242,16 @@ form.create-form h2 {
 }
 .narration-container {
     width: 500px;
-    margin: 10px;
+    margin: 0 20px 20px 0;
     border: 1px solid #aaa;
-    padding: 10px;
+    padding: 15px;
 
     /* For the ribbon */
     position: relative;
     overflow: hidden;
+}
+.narration-container .narration-header {
+    margin-top: 0;
 }
 .narration-header {
     display: flex;
@@ -300,6 +303,9 @@ form.create-form h2 {
 }
 .chapter-list > li a {
     font-size: 20px;
+}
+.chapter-list-compact {
+    margin-bottom: 0;
 }
 .chapter-list-compact > li a {
     font-size: 16px;
