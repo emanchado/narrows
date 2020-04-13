@@ -216,7 +216,6 @@ unpublishedChapterView navigationMessage narration chapterOverview =
     li []
       [ a [ href <| "/chapters/" ++ (String.fromInt chapterOverview.id) ++ "/edit" ]
           [ text chapterOverview.title ]
-      , text " — "
       , em [] [ text "Draft" ]
       , if numberNarrationCharacters /= numberChapterParticipants then
           span [ title <| "Only for " ++ participantNames ]
