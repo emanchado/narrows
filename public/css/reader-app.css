@@ -91,11 +91,24 @@
     padding: 0 20px;
 }
 
-.chapter > p:first-child {
+.chapter > blockquote > p {
+    margin: 0;
+    padding: 3px 2em;
+    font-style: italic;
+}
+
+.chapter > p:first-child,
+.chapter > h1:first-child,
+.chapter > h2:first-child {
     padding-top: 20px;
 }
-.chapter > p:last-child, .chapter > blockquote:last-child {
+.chapter > p:last-child,
+.chapter > blockquote:last-child {
     padding-bottom: 20px;
+}
+.chapter > ol:last-child,
+.chapter > ul:last-child {
+    padding-bottom: 30px;
 }
 
 .chapter > p:first-child::first-letter {
@@ -107,7 +120,7 @@
 }
 
 .chapter ul, .chapter ol {
-    max-width: 45em;
+    max-width: 720px;
     margin: 0 auto;
     padding: 10px 20px;
     background-color: #e5e5e5;
@@ -126,10 +139,13 @@
     width: 100%;
 }
 
-.chapter > blockquote > p {
-    margin: 0;
-    padding: 3px 2em;
-    font-style: italic;
+.chapter > h1, .chapter > h2, .chapter > h3 {
+    max-width: 720px;
+    margin: 0 auto;
+    padding-left: 20px;
+    padding-right: 20px;
+    color: black;
+    background-color: #e5e5e5;
 }
 
 .interaction {
