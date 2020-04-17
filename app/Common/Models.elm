@@ -31,6 +31,7 @@ loadingPlaceholderNarration =
     , characters = []
     , defaultAudio = Nothing
     , defaultBackgroundImage = Nothing
+    , notes = ""
     , files = { audio = []
               , backgroundImages = []
               , images = []
@@ -121,6 +122,7 @@ type alias Narration =
     , introUrl : String
     , introAudio : Maybe String
     , introBackgroundImage : Maybe String
+    , notes : String
     , characters : List FullCharacter
     , defaultAudio : Maybe String
     , defaultBackgroundImage : Maybe String

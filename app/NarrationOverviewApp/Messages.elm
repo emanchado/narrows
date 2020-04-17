@@ -16,3 +16,6 @@ type Msg
     | CancelRemoveNarration
     | RemoveNarrationResult (Result Http.Error ())
     | CopyText String
+    | UpdateNarrationNotes String
+    | SaveNarrationNotes
+    | SaveNarrationNotesResult (Result Http.Error Narration)

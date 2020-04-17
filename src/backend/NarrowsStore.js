@@ -21,6 +21,7 @@ const JSON_TO_DB = {
     introAudio: "intro_audio",
     defaultBackgroundImage: "default_background_image",
     defaultAudio: "default_audio",
+    notes: "notes",
     name: "name",
     description: "description",
     backstory: "backstory",
@@ -237,7 +238,8 @@ class NarrowsStore {
                     intro_background_image AS introBackgroundImage,
                     intro_audio AS introAudio,
                     default_audio AS defaultAudio,
-                    default_background_image AS defaultBackgroundImage
+                    default_background_image AS defaultBackgroundImage,
+                    COALESCE(notes, '') AS notes
                FROM narrations WHERE id = ?`,
             id
         ).then(narrationInfo => {
@@ -419,7 +421,8 @@ class NarrowsStore {
             "all",
             `SELECT id, token, title, intro, status,
                     default_audio AS defaultAudio,
-                    default_background_image AS defaultBackgroundImage
+                    default_background_image AS defaultBackgroundImage,
+                    COALESCE(notes, '') AS notes
                FROM narrations
               WHERE narrator_id = ?
                     ${ extraConditions }

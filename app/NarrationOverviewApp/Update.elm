@@ -132,3 +132,40 @@ update msg model =
       ( model
       , copyText text
       )
+
+    UpdateNarrationNotes newNotes ->
+      let
+        updatedOverview =
+          case model.narrationOverview of
+            Just overview -> 
+              let
+                narration = overview.narration
+                updatedNarration = { narration | notes = newNotes }
+              in
+                Just { overview | narration = updatedNarration }
+            Nothing -> Nothing
+      in
+        ( { model | narrationOverview = updatedOverview }
+        , Cmd.none
+        )
+
+    SaveNarrationNotes ->
+      ( model
+      , case model.narrationOverview of
+          Just overview ->
+            NarrationOverviewApp.Api.saveNarrationNotes
+              overview.narration.id
+              overview.narration.notes
+          Nothing ->
+            Cmd.none
+      )
+
+    SaveNarrationNotesResult (Err error) ->
+      ( { model | banner = errorBanner "Error saving narration notes" }
+      , Cmd.none
+      )
+
+    SaveNarrationNotesResult (Ok _) ->
+      ( { model | banner = Nothing }
+      , Cmd.none
+      )

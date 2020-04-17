@@ -519,3 +519,30 @@ update msg model =
         }
       , Cmd.none
       )
+
+    UpdateNarrationNotes newNotes ->
+      let
+        updatedNarration = case model.narration of
+                             Just narration -> Just { narration | notes = newNotes }
+                             Nothing -> Nothing
+      in
+        ( { model | narration = updatedNarration }
+        , Cmd.none
+        )
+
+    SaveNarrationNotes ->
+      ( model
+      , case model.narration of
+          Just narration ->
+            ChapterEditApp.Api.saveNarrationNotes narration.id narration.notes
+          Nothing ->
+            Cmd.none
+      )
+
+    SaveNarrationNotesResult (Err error) ->
+      ( { model | banner = errorBanner "Error deleting narration" }
+      , Cmd.none
+      )
+
+    SaveNarrationNotesResult (Ok _) ->
+      (model, Cmd.none)

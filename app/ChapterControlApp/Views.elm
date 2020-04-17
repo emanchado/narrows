@@ -58,6 +58,7 @@ mainView model =
                    , introBackgroundImage = Nothing
                    , defaultAudio = Nothing
                    , defaultBackgroundImage = Nothing
+                   , notes = ""
                    , files =
                        { audio = []
                        , backgroundImages = []

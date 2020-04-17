@@ -135,7 +135,7 @@ ul li {
     border: 1px solid black;
     background-color: #eee;
 }
-.vertical-form input {
+.vertical-form input, .vertical-form textarea {
     width: 100%;
 }
 .vertical-form input[type="text"],

@@ -2,6 +2,7 @@ module ChapterEditApp.Api exposing (..)
 
 import Http
 import Url.Builder as UB
+import Json.Encode
 
 import ChapterEditApp.Messages exposing (Msg, Msg(..))
 import Common.Models exposing (Chapter)
@@ -84,3 +85,22 @@ searchNarrationChapters narrationId searchTerm =
     Http.get { url = searchApiBaseUrl ++ queryString
              , expect = Http.expectJson NarrationChapterSearchFetchResult parseNarrationChapterSearchResponse
              }
+
+
+encodeNarrationNotes : String -> Json.Encode.Value
+encodeNarrationNotes notes =
+    (Json.Encode.object
+        [ ( "notes", Json.Encode.string notes )
+        ]
+    )
+
+saveNarrationNotes : Int -> String -> Cmd Msg
+saveNarrationNotes narrationId notes =
+  Http.request { method = "PUT"
+               , headers = []
+               , url = "/api/narrations/" ++ (String.fromInt narrationId)
+               , body = Http.jsonBody <| encodeNarrationNotes notes
+               , expect = Http.expectJson SaveNarrationNotesResult parseNarration
+               , timeout = Nothing
+               , tracker = Nothing
+               }

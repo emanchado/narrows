@@ -85,9 +85,10 @@ parseNarration =
         (field "introUrl" string)
         (maybe (field "introAudio" string))
         (maybe (field "introBackgroundImage" string))
-        (field "characters" <| list parseFullCharacter)
+        (field "notes" string)
     |> andThen (\r ->
-               Json.map3 r
+               Json.map4 r
+                 (field "characters" <| list parseFullCharacter)
                  (maybe (field "defaultAudio" string))
                  (maybe (field "defaultBackgroundImage" string))
                  (field "files" parseFileSet))

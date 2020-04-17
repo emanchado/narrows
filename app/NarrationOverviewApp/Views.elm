@@ -1,12 +1,12 @@
 module NarrationOverviewApp.Views exposing (..)
 
 import List
-import Html exposing (Html, main_, h1, h2, section, div, span, ul, li, button, img, input, label, a, em, p, text)
-import Html.Attributes exposing (id, class, for, checked, name, title, type_, readonly, value, href, src, width, height)
-import Html.Events exposing (onClick)
+import Html exposing (Html, main_, h1, h2, section, div, span, ul, li, form, button, img, input, textarea, label, a, em, p, text)
+import Html.Attributes exposing (id, class, for, checked, name, title, type_, readonly, value, href, src, width, height, rows)
+import Html.Events exposing (onClick, onInput, onSubmit)
 
 import Common.Models exposing (Narration, NarrationStatus(..), ChapterOverview, NarrationOverview, FullCharacter, narrationStatusString)
-import Common.Views exposing (breadcrumbNavView, narrationOverviewView, loadingView, ribbonForNarrationStatus, showDialog)
+import Common.Views exposing (breadcrumbNavView, narrationOverviewView, loadingView, ribbonForNarrationStatus, showDialog, bannerView)
 import NarrationOverviewApp.Messages exposing (..)
 import NarrationOverviewApp.Models exposing (Model)
 
@@ -126,6 +126,21 @@ overviewView overview showUrlInfoBox showRemoveNarrationDialog =
                     , characterOptions ]
                 , ul [ class "dramatis-personae compact" ]
                     (List.map (narrationCharacterView overview.narration) overview.narration.characters)
+                , h2 [] [ text "Notes" ]
+                , form [ class "vertical-form"
+                       , onSubmit SaveNarrationNotes
+                       ]
+                    [ textarea [ rows 10
+                               , onInput UpdateNarrationNotes
+                               ]
+                        [ text overview.narration.notes ]
+                    , div [ class "btn-bar" ]
+                      [ button [ type_ "submit"
+                               , class "btn btn-default"
+                               ]
+                          [ text "Save" ]
+                      ]
+                    ]
                 , h2 [] [ text "Status" ]
                 , div [ class "narration-status" ]
                     [ input [ type_ "radio"
@@ -193,7 +208,10 @@ mainView : Model -> Html Msg
 mainView model =
   case model.narrationOverview of
     Just overview ->
-      overviewView overview model.showUrlInfoBox model.showRemoveNarrationDialog
+      div []
+        [ bannerView model.banner
+        , overviewView overview model.showUrlInfoBox model.showRemoveNarrationDialog
+        ]
 
     Nothing ->
       loadingView model.banner

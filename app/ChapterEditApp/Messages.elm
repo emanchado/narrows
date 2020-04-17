@@ -41,3 +41,6 @@ type Msg
     | UpdateChapterSearchTerm String
     | SearchNarrationChapters String
     | NarrationChapterSearchFetchResult (Result Http.Error NarrationChapterSearchResponse)
+    | UpdateNarrationNotes String
+    | SaveNarrationNotes
+    | SaveNarrationNotesResult (Result Http.Error Narration)

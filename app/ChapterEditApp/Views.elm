@@ -2,8 +2,8 @@ module ChapterEditApp.Views exposing (mainView)
 
 import String
 import Set
-import Html exposing (Html, h2, h3, div, main_, nav, section, form, ul, li, img, a, input, button, audio, br, span, label, strong, em, text)
-import Html.Attributes exposing (id, name, class, src, href, target, type_, value, placeholder, checked, disabled)
+import Html exposing (Html, h2, h3, div, main_, nav, section, form, ul, li, img, a, input, textarea, button, audio, br, span, label, strong, em, text)
+import Html.Attributes exposing (id, name, class, src, href, target, type_, value, placeholder, checked, disabled, rows)
 import Html.Events exposing (onClick, onInput, onSubmit, on)
 
 import Common.Models exposing (FullCharacter, Narration, Chapter, MediaType(..), Banner)
@@ -196,7 +196,7 @@ lastReactionListView lastChapters chapter =
         []
         lastChapters
   in
-    section []
+    div []
       [ h2 [] [ text "Last reactions" ]
       , div []
           (List.map
@@ -290,8 +290,27 @@ mainView model =
                         Nothing -> text ""
                   ]
               ]
-          , case model.lastChapters of
-              Just lastReactions -> lastReactionListView lastReactions chapter
-              Nothing -> section [] [ text "Loading reactions…" ]
+          , section []
+              [ h2 [] [ text "Notes" ]
+              , form [ class "vertical-form"
+                     , onSubmit SaveNarrationNotes
+                     ]
+                  [ textarea [ rows 10
+                             , onInput UpdateNarrationNotes
+                             ]
+                      [ text narration.notes ]
+                  , div [ class "btn-bar" ]
+                    [ button [ type_ "submit"
+                             , class "btn btn-default"
+                             ]
+                        [ text "Save" ]
+                    ]
+                  ]
+              , case model.lastChapters of
+                  Just lastReactions ->
+                    lastReactionListView lastReactions chapter
+                  Nothing ->
+                    text "Loading reactions…"
+              ]
           ]
       ]

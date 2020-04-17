@@ -25,6 +25,13 @@ encodeNarrationStatus status =
         ]
     )
 
+encodeNarrationNotes : String -> Json.Encode.Value
+encodeNarrationNotes notes =
+    (Json.Encode.object
+        [ ( "notes", Json.Encode.string notes )
+        ]
+    )
+
 fetchNarrationOverview : Int -> Cmd Msg
 fetchNarrationOverview narrationId =
   let
@@ -34,6 +41,7 @@ fetchNarrationOverview narrationId =
     Http.get { url = narrationApiUrl
              , expect = Http.expectJson NarrationOverviewFetchResult parseNarrationOverview
              }
+
 
 markNarration : Int -> NarrationStatus -> Cmd Msg
 markNarration narrationId status =
@@ -54,6 +62,18 @@ removeNarration narrationId =
                , headers = []
                , body = Http.emptyBody
                , expect = Http.expectWhatever RemoveNarrationResult
+               , timeout = Nothing
+               , tracker = Nothing
+               }
+
+
+saveNarrationNotes : Int -> String -> Cmd Msg
+saveNarrationNotes narrationId notes =
+  Http.request { method = "PUT"
+               , headers = []
+               , url = "/api/narrations/" ++ (String.fromInt narrationId)
+               , body = Http.jsonBody <| encodeNarrationNotes notes
+               , expect = Http.expectJson SaveNarrationNotesResult parseNarration
                , timeout = Nothing
                , tracker = Nothing
                }
