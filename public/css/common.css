@@ -143,6 +143,7 @@ ul li {
 .vertical-form input[type="text"],
 .vertical-form input[type="password"],
 .vertical-form input[type="email"],
+.vertical-form textarea,
 .inline-form input[type="text"],
 .inline-form input[type="password"],
 .inline-form input[type="email"] {
@@ -169,7 +170,8 @@ ul li {
 .inline-form input[type="text"][readonly],
 .inline-form input[type="email"][readonly],
 .single-field-form input[type="text"][readonly],
-.single-field-form input[type="email"][readonly] {
+.single-field-form input[type="email"][readonly],
+.single-field-form textarea[readonly]{
     background-color: var(--readonly-bg-color);
     color: var(--readonly-color);
 }
@@ -178,7 +180,8 @@ ul li {
 .single-field-form button[disabled],
 .vertical-form input[type="button"][disabled],
 .inline-form input[type="button"][disabled],
-.single-field-form input[type="button"][disabled] {
+.single-field-form input[type="button"][disabled],
+.single-field-form textarea[disabled] {
     background-color: var(--disabled-bg-color);
     color: var(--disabled-color);
 }
