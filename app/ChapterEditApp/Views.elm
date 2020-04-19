@@ -92,8 +92,8 @@ chapterMediaView chapter narration uploadingAudio uploadingBackgroundImage =
     ]
 
 
-chapterView : Chapter -> Narration -> Bool -> Bool -> Bool -> Maybe Banner -> Html Msg
-chapterView chapter narration savingChapter uploadingAudio uploadingBackgroundImage flashBanner =
+chapterView : Chapter -> Narration -> Bool -> Bool -> Bool -> Bool -> Maybe Banner -> Html Msg
+chapterView chapter narration savingChapter chapterModified uploadingAudio uploadingBackgroundImage flashBanner =
   let
     (saveAction, publishAction) =
       if chapter.id == 0 then
@@ -129,7 +129,7 @@ chapterView chapter narration savingChapter uploadingAudio uploadingBackgroundIm
           , div [ class "btn-bar" ]
             [ button [ class "btn"
                      , onClick saveAction
-                     , disabled savingChapter
+                     , disabled (savingChapter || not chapterModified)
                      ]
                 [ text <| if savingChapter then
                             "Saving…"
@@ -248,7 +248,7 @@ mainView model =
             text chapter.title)
       , div [ class "two-column" ]
           [ section []
-              [ chapterView chapter narration model.savingChapter model.uploadingAudio model.uploadingBackgroundImage model.flash
+              [ chapterView chapter narration model.savingChapter model.chapterModified model.uploadingAudio model.uploadingBackgroundImage model.flash
               , if model.showPublishChapterDialog then
                   showDialog
                     "Publish chapter?"
@@ -291,20 +291,26 @@ mainView model =
                   ]
               ]
           , section []
-              [ h2 [] [ text "Notes" ]
+              [ h2 [] [ text "Narration notes" ]
               , form [ class "vertical-form"
                      , onSubmit SaveNarrationNotes
                      ]
-                  [ textarea [ rows 10
-                             , onInput UpdateNarrationNotes
-                             ]
-                      [ text narration.notes ]
-                  , div [ class "btn-bar" ]
-                    [ button [ type_ "submit"
-                             , class "btn btn-default"
-                             ]
-                        [ text "Save" ]
-                    ]
+                  [ div [ class "form-line" ]
+                      [ textarea [ rows 10
+                                 , onInput UpdateNarrationNotes
+                                 ]
+                          [ text narration.notes ]
+                      ]
+                  , div [ class "btn-bar-status" ]
+                      [ bannerView model.notesFlash
+                      , div [ class "btn-bar" ]
+                          [ button [ type_ "submit"
+                                   , class "btn btn-default"
+                                   , disabled <| not model.notesModified
+                                   ]
+                              [ text "Save" ]
+                          ]
+                      ]
                   ]
               , case model.lastChapters of
                   Just lastReactions ->

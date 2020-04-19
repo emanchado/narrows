@@ -7,11 +7,16 @@ import Common.Models exposing (FullCharacter, Narration, Chapter, Banner, MediaT
 import ChapterEditApp.Models exposing (LastReactionsResponse, NarrationChapterSearchResponse)
 
 
+type FlashMessageType
+  = ChapterSaveFlash
+  | NarrationNotesSaveFlash
+
+
 type Msg
     = NoOp
     | NavigateTo String
-    | SetFlashMessage (Maybe Banner)
-    | RemoveFlashMessage
+    | SetFlashMessage FlashMessageType (Maybe Banner)
+    | RemoveFlashMessage FlashMessageType
     | ChapterFetchResult (Result Http.Error Chapter)
     | InitNewChapter Narration
     | NarrationFetchResult (Result Http.Error Narration)

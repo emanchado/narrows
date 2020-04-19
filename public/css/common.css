@@ -13,6 +13,7 @@
     --alt-bg-color: #e5e5e5;
     --alt-bg-color2: #ddd;
     --input-bg-color: #eee;
+    --readonly-bg-color: #ddd;
     --disabled-bg-color: #ddd;
     --link-color: #0066cc;
     --heading-color: black;
@@ -20,7 +21,8 @@
     --soft-border-color: #ddd;
     --input-border-color: black;
     --text-color: black;
-    --disabled-color: black;
+    --readonly-color: black;
+    --disabled-color: #aaa;
 }
 
 body {
@@ -168,6 +170,15 @@ ul li {
 .inline-form input[type="email"][readonly],
 .single-field-form input[type="text"][readonly],
 .single-field-form input[type="email"][readonly] {
+    background-color: var(--readonly-bg-color);
+    color: var(--readonly-color);
+}
+.vertical-form button[disabled],
+.inline-form button[disabled],
+.single-field-form button[disabled],
+.vertical-form input[type="button"][disabled],
+.inline-form input[type="button"][disabled],
+.single-field-form input[type="button"][disabled] {
     background-color: var(--disabled-bg-color);
     color: var(--disabled-color);
 }

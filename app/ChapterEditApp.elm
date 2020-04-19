@@ -26,6 +26,7 @@ initialState key =
     , narration = Nothing
     , lastChapters = Nothing
     , banner = Nothing
+    , chapterModified = False
     , flash = Nothing
     , showPublishChapterDialog = False
     , savingChapter = False
@@ -34,6 +35,8 @@ initialState key =
     , narrationChapterSearchTerm = ""
     , narrationChapterSearchLoading = False
     , narrationChapterSearchResults = Nothing
+    , notesModified = False
+    , notesFlash = Nothing
     }
 
 

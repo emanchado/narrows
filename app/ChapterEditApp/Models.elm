@@ -50,6 +50,7 @@ type alias Model =
     , narration : Maybe Narration
     , lastChapters : Maybe (List LastChapter)
     , banner : Maybe Banner
+    , chapterModified : Bool
     , flash : Maybe Banner
     , showPublishChapterDialog : Bool
     , savingChapter : Bool
@@ -58,4 +59,6 @@ type alias Model =
     , narrationChapterSearchTerm : String
     , narrationChapterSearchLoading : Bool
     , narrationChapterSearchResults : Maybe (List NarrationChapterSearchResult)
+    , notesModified : Bool
+    , notesFlash : Maybe Banner
     }

@@ -41,6 +41,8 @@ urlUpdate route model =
     ChapterEditNarratorPage chapterId ->
       ( { model | narrationChapterSearchTerm = ""
                 , narrationChapterSearchResults = Nothing
+                , chapterModified = False
+                , notesModified = False
         }
       , Cmd.batch
         [ ChapterEditApp.Api.fetchChapterInfo chapterId
@@ -53,6 +55,8 @@ urlUpdate route model =
                 , lastChapters = Nothing
                 , narrationChapterSearchTerm = ""
                 , narrationChapterSearchResults = Nothing
+                , chapterModified = False
+                , notesModified = False
         }
       , Cmd.batch
         [ ChapterEditApp.Api.fetchNarrationInfo narrationId
@@ -64,13 +68,13 @@ urlUpdate route model =
       ( model, Cmd.none )
 
 
-showFlashMessage : Maybe Banner -> Cmd Msg
-showFlashMessage maybeBanner =
+showFlashMessage : FlashMessageType -> Maybe Banner -> Cmd Msg
+showFlashMessage flashType maybeBanner =
   Cmd.batch
     [ Process.sleep 0
-      |> Task.perform (\_ -> SetFlashMessage maybeBanner)
+      |> Task.perform (\_ -> SetFlashMessage flashType maybeBanner)
     , Process.sleep 2000
-      |> Task.perform (\_ -> RemoveFlashMessage)
+      |> Task.perform (\_ -> RemoveFlashMessage flashType)
     ]
 
 
@@ -115,13 +119,19 @@ update msg model =
     NavigateTo url ->
       ( model, Nav.pushUrl model.key url )
 
-    SetFlashMessage maybeBanner ->
-      ( { model | flash = maybeBanner }
+    SetFlashMessage flashType maybeBanner ->
+      ( if flashType == ChapterSaveFlash then
+          { model | flash = maybeBanner }
+        else
+          { model | notesFlash = maybeBanner }
       , Cmd.none
       )
 
-    RemoveFlashMessage ->
-      ( { model | flash = Nothing }
+    RemoveFlashMessage flashType ->
+      ( if flashType == ChapterSaveFlash then
+          { model | flash = Nothing }
+        else
+          { model | notesFlash = Nothing }
       , Cmd.none
       )
 
@@ -217,6 +227,7 @@ update msg model =
           in
             ( { model | chapter = Just newChapter
                       , banner = Nothing
+                      , chapterModified = True
               }
             , Cmd.none
             )
@@ -232,6 +243,7 @@ update msg model =
           in
             ( { model | chapter = Just updatedChapter
                       , banner = Nothing
+                      , chapterModified = model.chapterModified || (chapter.text /= newText)
               }
             , Cmd.none
             )
@@ -252,7 +264,9 @@ update msg model =
             chapterWithCharacter =
               { chapter | participants = participantsWithCharacter }
           in
-            ( { model | chapter = Just chapterWithCharacter }
+            ( { model | chapter = Just chapterWithCharacter
+                      , chapterModified = True
+              }
             , updateParticipants { editor = "editor-container"
                                  , participantList = participantsWithCharacter
                                  }
@@ -271,7 +285,9 @@ update msg model =
             updatedChapter =
               { chapter | participants = updatedParticipantList }
           in
-            ( { model | chapter = Just updatedChapter }
+            ( { model | chapter = Just updatedChapter
+                      , chapterModified = True
+              }
             , updateParticipants { editor = "editor-container"
                                  , participantList = updatedParticipantList
                                  }
@@ -288,7 +304,11 @@ update msg model =
 
             updatedChapter = { chapter | backgroundImage = newBgImage }
           in
-            ( { model | chapter = Just updatedChapter }, Cmd.none )
+            ( { model | chapter = Just updatedChapter
+                      , chapterModified = True
+              }
+            , Cmd.none
+            )
 
         Nothing ->
           ( model, Cmd.none )
@@ -301,7 +321,11 @@ update msg model =
 
             updatedChapter = { chapter | audio = newAudio }
           in
-            ( { model | chapter = Just updatedChapter }, Cmd.none )
+            ( { model | chapter = Just updatedChapter
+                      , chapterModified = True
+              }
+            , Cmd.none
+            )
 
         Nothing ->
           ( model, Cmd.none )
@@ -359,6 +383,7 @@ update msg model =
               in
                 ( { modelWithoutUploadFlag | narration = Just updatedNarration
                                            , chapter = Just updatedChapter
+                                           , chapterModified = True
                   }
                 , Cmd.none
                 )
@@ -413,7 +438,7 @@ update msg model =
           ( model, Cmd.none )
 
     SaveChapterResult (Err error) ->
-      ( model, showFlashMessage <| errorBanner "Error saving chapter" )
+      ( model, showFlashMessage ChapterSaveFlash <| errorBanner "Error saving chapter" )
 
     SaveChapterResult (Ok resp) ->
       case model.chapter of
@@ -427,17 +452,17 @@ update msg model =
                   )
 
                 Nothing ->
-                  ( model
-                  , showFlashMessage <| successBanner "Saved"
+                  ( { model | chapterModified = False }
+                  , showFlashMessage ChapterSaveFlash <| successBanner "Saved"
                   )
             Http.BadStatus_ metadata _ ->
               ( model
-              , showFlashMessage <| errorBanner <| "Error saving chapter, status code " ++ (String.fromInt metadata.statusCode)
+              , showFlashMessage ChapterSaveFlash <| errorBanner <| "Error saving chapter, status code " ++ (String.fromInt metadata.statusCode)
               )
 
             _ ->
               ( model
-              , showFlashMessage <| errorBanner <| "Error saving chapter, network error"
+              , showFlashMessage ChapterSaveFlash <| errorBanner "Error saving chapter, network error"
               )
 
         Nothing ->
@@ -488,6 +513,7 @@ update msg model =
     SaveNewChapterResult (Ok chapter) ->
       ( { model | banner = Nothing
                 , savingChapter = False
+                , chapterModified = False
         }
       , Nav.pushUrl model.key <| "/chapters/" ++ (String.fromInt chapter.id) ++ "/edit"
       )
@@ -526,7 +552,9 @@ update msg model =
                              Just narration -> Just { narration | notes = newNotes }
                              Nothing -> Nothing
       in
-        ( { model | narration = updatedNarration }
+        ( { model | narration = updatedNarration
+                  , notesModified = True
+          }
         , Cmd.none
         )
 
@@ -540,9 +568,11 @@ update msg model =
       )
 
     SaveNarrationNotesResult (Err error) ->
-      ( { model | banner = errorBanner "Error deleting narration" }
-      , Cmd.none
+      ( model
+      , showFlashMessage NarrationNotesSaveFlash <| errorBanner "Error saving notes"
       )
 
     SaveNarrationNotesResult (Ok _) ->
-      (model, Cmd.none)
+      ( { model | notesModified = False }
+      , showFlashMessage NarrationNotesSaveFlash <| successBanner "Saved"
+      )
