@@ -17,7 +17,7 @@ urlUpdate : Route -> Model -> ( Model, Cmd Msg )
 urlUpdate route model =
   case route of
     NarrationPage narrationId ->
-      ( model
+      ( { model | notesModified = False }
       , NarrationOverviewApp.Api.fetchNarrationOverview narrationId
       )
 
@@ -145,7 +145,9 @@ update msg model =
                 Just { overview | narration = updatedNarration }
             Nothing -> Nothing
       in
-        ( { model | narrationOverview = updatedOverview }
+        ( { model | narrationOverview = updatedOverview
+                  , notesModified = True
+          }
         , Cmd.none
         )
 
@@ -166,6 +168,8 @@ update msg model =
       )
 
     SaveNarrationNotesResult (Ok _) ->
-      ( { model | banner = Nothing }
+      ( { model | notesModified = False
+                , banner = Nothing
+        }
       , Cmd.none
       )

@@ -26,6 +26,7 @@ initialState key =
     , banner = Nothing
     , showUrlInfoBox = False
     , showRemoveNarrationDialog = False
+    , notesModified = False
     }
 
 

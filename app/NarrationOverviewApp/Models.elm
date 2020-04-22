@@ -31,4 +31,5 @@ type alias Model =
     , banner : Maybe Banner
     , showUrlInfoBox : Bool
     , showRemoveNarrationDialog : Bool
+    , notesModified : Bool
     }

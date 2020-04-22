@@ -2,7 +2,7 @@ module NarrationOverviewApp.Views exposing (..)
 
 import List
 import Html exposing (Html, main_, h1, h2, section, div, span, ul, li, form, button, img, input, textarea, label, a, em, p, text)
-import Html.Attributes exposing (id, class, for, checked, name, title, type_, readonly, value, href, src, width, height, rows)
+import Html.Attributes exposing (id, class, for, checked, disabled, name, title, type_, readonly, value, href, src, width, height, rows)
 import Html.Events exposing (onClick, onInput, onSubmit)
 
 import Common.Models exposing (Narration, NarrationStatus(..), ChapterOverview, NarrationOverview, FullCharacter, narrationStatusString)
@@ -50,8 +50,8 @@ narrationCharacterView narration character =
       ]
 
 
-overviewView : NarrationOverview -> Bool -> Bool -> Html Msg
-overviewView overview showUrlInfoBox showRemoveNarrationDialog =
+overviewView : NarrationOverview -> Bool -> Bool -> Bool -> Html Msg
+overviewView overview showUrlInfoBox showRemoveNarrationDialog notesModified =
   let
     isActive = overview.narration.status == Active
     chapterOptions = if isActive then
@@ -137,6 +137,7 @@ overviewView overview showUrlInfoBox showRemoveNarrationDialog =
                     , div [ class "btn-bar" ]
                       [ button [ type_ "submit"
                                , class "btn btn-default"
+                               , disabled (not notesModified)
                                ]
                           [ text "Save" ]
                       ]
@@ -210,7 +211,7 @@ mainView model =
     Just overview ->
       div []
         [ bannerView model.banner
-        , overviewView overview model.showUrlInfoBox model.showRemoveNarrationDialog
+        , overviewView overview model.showUrlInfoBox model.showRemoveNarrationDialog model.notesModified
         ]
 
     Nothing ->
