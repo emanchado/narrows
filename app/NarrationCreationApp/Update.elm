@@ -22,6 +22,7 @@ urlUpdate route model =
                 , uploadingAudio = False
                 , uploadingBackgroundImage = False
                 , banner = Nothing
+                , narrationModified = False
         }
       , Cmd.none
       )
@@ -33,6 +34,7 @@ urlUpdate route model =
                 , uploadingAudio = False
                 , uploadingBackgroundImage = False
                 , banner = Nothing
+                , narrationModified = False
         }
       , NarrationCreationApp.Api.fetchNarration narrationId
       )
@@ -61,12 +63,16 @@ update msg model =
       ( model, Nav.pushUrl model.key url )
 
     UpdateTitle newTitle ->
-      ( { model | title = newTitle }
+      ( { model | title = newTitle
+                , narrationModified = True
+        }
       , Cmd.none
       )
 
     UpdateIntro newIntro ->
-      ( { model | intro = newIntro }
+      ( { model | intro = newIntro
+                , narrationModified = model.narrationModified || (newIntro /= model.intro)
+        }
       , Cmd.none
       )
 
@@ -80,6 +86,7 @@ update msg model =
             Nothing -> Nothing
       in
         ( { model | introBackgroundImage = newValue
+                  , narrationModified = True
                   , banner = Nothing
           }
         , Cmd.none
@@ -95,6 +102,7 @@ update msg model =
             Nothing -> Nothing
       in
         ( { model | introAudio = newValue
+                  , narrationModified = True
                   , banner = Nothing
           }
         , Cmd.none
@@ -110,6 +118,7 @@ update msg model =
             Nothing -> Nothing
       in
         ( { model | defaultBackgroundImage = newValue
+                  , narrationModified = True
                   , banner = Nothing
           }
         , Cmd.none
@@ -125,6 +134,7 @@ update msg model =
             Nothing -> Nothing
       in
         ( { model | defaultAudio = newValue
+                  , narrationModified = True
                   , banner = Nothing
           }
         , Cmd.none
@@ -195,7 +205,9 @@ update msg model =
                          Nothing ->
                            Nothing
       in
-        ( { modelWithoutUploadFlag | files = updatedFiles }
+        ( { modelWithoutUploadFlag | files = updatedFiles
+                                   , narrationModified = True
+          }
         , Cmd.none
         )
 
@@ -243,7 +255,9 @@ update msg model =
       )
 
     SaveNarrationResult (Ok narration) ->
-      ( { model | banner = Nothing }
+      ( { model | banner = Nothing
+                , narrationModified = False
+        }
       , showFlashMessage <| successBanner "Narration saved"
       )
 

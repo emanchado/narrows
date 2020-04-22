@@ -46,4 +46,5 @@ type alias Model =
     , defaultBackgroundImage : Maybe String
     , uploadingAudio : Bool
     , uploadingBackgroundImage : Bool
+    , narrationModified : Bool
     }

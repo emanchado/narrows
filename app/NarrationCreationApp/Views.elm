@@ -29,10 +29,7 @@ mainView model =
             }
           ]
           (text pageTitle)
-      , div [ class "narration-header" ]
-          [ h1 [] [ text pageTitle ]
-          , bannerView model.banner
-          ]
+      , h1 [] [ text pageTitle ]
       , case model.files of
           Just files ->
             form [ class "vertical-form" ]
@@ -87,22 +84,26 @@ mainView model =
                                      files.audio)
                               ]
                           ]
-                      , div [ class "btn-bar" ]
-                          [ a [ class "btn"
-                              , href model.introUrl
-                              , target "_blank"
+                      , div [ class "btn-bar-status" ]
+                          [ bannerView model.banner
+                          , div [ class "btn-bar" ]
+                              [ a [ class "btn"
+                                  , href model.introUrl
+                                  , target "_blank"
+                                  ]
+                                  [ text "Preview intro"
+                                  ]
+                              , button [ class "btn btn-default"
+                                       , type_ "submit"
+                                       , disabled (not model.narrationModified)
+                                       , onPreventDefaultClick SaveNarration
+                                       ]
+                                  [ text "Save" ]
+                              , button [ class "btn"
+                                       , onPreventDefaultClick CancelCreateNarration
+                                       ]
+                                  [ text "Cancel" ]
                               ]
-                              [ text "Preview intro"
-                              ]
-                          , button [ class "btn btn-default"
-                                   , type_ "submit"
-                                   , onPreventDefaultClick SaveNarration
-                                   ]
-                              [ text "Save" ]
-                          , button [ class "btn"
-                                   , onPreventDefaultClick CancelCreateNarration
-                                   ]
-                              [ text "Cancel" ]
                           ]
                       ]
                   , section []

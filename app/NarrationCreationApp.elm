@@ -35,6 +35,7 @@ initialState key =
     , defaultBackgroundImage = Nothing
     , uploadingAudio = False
     , uploadingBackgroundImage = False
+    , narrationModified = False
     }
 
 
