@@ -71,11 +71,19 @@ export function getNarrationArchive(req, res) {
 }
 
 export function getNarrationOverview(req, res) {
-    store.getNarrationOverview(
-        req.session.userId,
-        { status: "active" }
-    ).then(narrationOverviewData => {
-        res.json(narrationOverviewData);
+    Q.all([
+        store.getNarrationOverview(
+            req.session.userId,
+            { status: "active" }
+        ),
+        store.getCharacterOverview(
+            req.session.userId
+        )
+    ]).spread((narrationOverviewData, characterOverviewData) => {
+        res.json({
+            narrations: narrationOverviewData.narrations,
+            characters: characterOverviewData
+        });
     }).catch(err => {
         res.status(500).json({
             errorMessage: `Cannot get narration overview for ` +

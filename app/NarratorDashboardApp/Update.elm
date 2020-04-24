@@ -47,7 +47,9 @@ update msg model =
           )
 
     NarratorOverviewFetchResult (Ok narratorOverview) ->
-      ( { model | narrations = Just narratorOverview.narrations }
+      ( { model | narrations = Just narratorOverview.narrations
+                , characters = Just narratorOverview.characters
+        }
       , Cmd.none
       )
 

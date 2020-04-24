@@ -23,6 +23,7 @@ initialState key =
     { key = key
     , banner = Nothing
     , narrations = Nothing
+    , characters = Nothing
     }
 
 

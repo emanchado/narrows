@@ -448,6 +448,26 @@ class NarrowsStore {
         ));
     }
 
+    getCharacterOverview(userId) {
+        const narrationGraceTime = new Date();
+        narrationGraceTime.setDate(narrationGraceTime.getDate() - 14);
+
+        return Q.ninvoke(
+            this.db,
+            "all",
+            `SELECT CHR.id, status, MAX(published) AS last_published
+               FROM chapters C JOIN narrations N ON C.narration_id = N.id
+               JOIN characters CHR ON N.id = CHR.narration_id
+              WHERE player_id = ?
+           GROUP BY CHR.id
+             HAVING status = 'active' OR last_published > ?
+           ORDER BY last_published DESC`,
+            [userId, narrationGraceTime]
+        ).then(rows => (
+            Q.all(rows.map(row => this.getFullCharacterStats(row.id)))
+        ));
+    }
+
     deleteNarration(id) {
         return Q.ninvoke(
             this.db,

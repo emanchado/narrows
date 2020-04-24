@@ -1,12 +1,43 @@
 module NarratorDashboardApp.Views exposing (..)
 
 import List
-import Html exposing (Html, main_, h1, h2, div, button, ul, li, a, text)
-import Html.Attributes exposing (id, class, href)
+import Html exposing (Html, main_, h1, h2, div, button, ul, li, a, strong, text, img, span, pre)
+import Html.Attributes exposing (id, class, href, src, height, width)
 import Html.Events exposing (onClick)
-import Common.Views exposing (loadingView, compactNarrationView)
+import Common.Views exposing (loadingView, compactNarrationView, avatarUrl, ribbonForNarrationStatus)
+import Common.Models exposing (CharacterInfo, NarrationStatus(..), narrationStatusString)
 import NarratorDashboardApp.Messages exposing (..)
 import NarratorDashboardApp.Models exposing (..)
+
+
+participationView : CharacterInfo -> Html Msg
+participationView character =
+  div [ class "participation-container" ]
+    [ ribbonForNarrationStatus character.narration.status
+    , h2 [] [ text character.narration.title ]
+    , div [ class "character-container" ]
+        [ img [ class "avatar"
+              , width 50
+              , height 50
+              , src <| avatarUrl character.narration.id character.avatar
+              ]
+            []
+        , span []
+            [ a [ href <| "/characters/" ++ character.token
+                ]
+                [ text character.name ]
+            ]
+        ]
+    , case List.head <| List.reverse character.narration.chapters of
+        Just chapter ->
+          div []
+            [ text "Latest chapter: "
+            , a [ href <| "/read/" ++ (String.fromInt chapter.id) ++ "/" ++ character.token ]
+                [ text chapter.title ]
+            ]
+        Nothing ->
+          text ""
+    ]
 
 
 mainView : Model -> Html Msg
@@ -14,7 +45,7 @@ mainView model =
   main_ [ id "narrator-app"
         , class "app-container"
         ]
-    [ h1 [] [ text "Active narrations" ]
+    [ h1 [] [ text "Stories you are narrating" ]
     , case model.narrations of
         Just narrations ->
           div [ class "narration-list" ]
@@ -32,4 +63,11 @@ mainView model =
                  ]
             [ text "New narration" ]
         ]
+    , h1 [] [ text "Characters you are playing" ]
+    , case model.characters of
+        Just characters ->
+          div [ class "participation-list" ]
+            (List.map participationView characters)
+        Nothing ->
+          text ""
     ]

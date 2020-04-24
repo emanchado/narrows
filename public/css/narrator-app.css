@@ -288,6 +288,33 @@ form.create-form h2 {
     margin-bottom: 5px;
 }
 
+.participation-list {
+    display: flex;
+    flex-wrap: wrap;
+}
+.participation-container {
+    width: 500px;
+    margin: 0 20px 20px 0;
+    border: 1px solid #aaa;
+    padding: 15px;
+
+    /* For the ribbon */
+    position: relative;
+    overflow: hidden;
+}
+.participation-container h2 {
+    margin-top: 0;
+}
+.character-container {
+    display: flex;
+    align-items: center;
+    margin-top: 15px;
+    margin-bottom: 15px;
+    font-size: 20px;
+}
+.character-container > img.avatar {
+    margin-right: 10px;
+}
 .narration-status label {
     font-weight: normal;
 }
