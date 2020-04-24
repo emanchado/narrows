@@ -17,9 +17,21 @@ div.two-column > section:first-child {
 div.two-column > section > *:first-child {
     margin-top: 0;
 }
-
 div.two-column > section.narrow-column {
     flex-grow: 0.7;
+}
+@media (max-width: 800px) {
+    div.two-column {
+        flex-direction: column;
+    }
+    div.two-column > section {
+        padding-left: 0;
+    }
+}
+@media (max-width: 1024px) {
+    div.two-column > section:first-child {
+        padding-right: 0;
+    }
 }
 
 input, .ProseMirror, .last-reaction-text {

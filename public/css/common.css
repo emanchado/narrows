@@ -83,6 +83,23 @@ ul li {
 .app-container-simple {
     max-width: 50em;
 }
+@media (max-width: 1024px) {
+    .app-container {
+        padding: 40px;
+        padding-top: 10px;
+    }
+}
+@media (max-width: 800px) {
+    .app-container {
+        padding: 20px;
+        padding-top: 10px;
+    }
+}
+@media (max-width: 600px) {
+    .app-container {
+        padding: 10px;
+    }
+}
 
 .login-page {
     margin-top: 30vh;
