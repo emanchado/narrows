@@ -81,7 +81,7 @@ mainView model =
                     }
                   ]
                   (text "Reaction")
-              , h1 [] [ text <| chapter.title ]
+              , h1 [] [ text <| "Reactions to “" ++ chapter.title ++ "”" ]
               ]
           , div []
               [ img [ class "tiny-image-preview"
