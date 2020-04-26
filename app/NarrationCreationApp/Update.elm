@@ -71,7 +71,7 @@ update msg model =
 
     UpdateIntro newIntro ->
       ( { model | intro = newIntro
-                , narrationModified = model.narrationModified || (newIntro /= model.intro)
+                , narrationModified = True
         }
       , Cmd.none
       )

@@ -243,7 +243,7 @@ update msg model =
           in
             ( { model | chapter = Just updatedChapter
                       , banner = Nothing
-                      , chapterModified = model.chapterModified || (chapter.text /= newText)
+                      , chapterModified = True
               }
             , Cmd.none
             )

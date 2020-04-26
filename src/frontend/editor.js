@@ -18,13 +18,34 @@ function _textToState(text, schema) {
     });
 }
 
+function objectEquals(x, y) {
+    if (x === null || x === undefined || y === null || y === undefined) { return x === y; }
+    if (x === y || x.valueOf() === y.valueOf()) { return true; }
+    if (Array.isArray(x) && x.length !== y.length) { return false; }
+
+    // if they are strictly equal, they both need to be object at least
+    if (!(x instanceof Object) || !(y instanceof Object)) { return false; }
+
+    // recursive object equality check
+    var p = Object.keys(x);
+    return Object.keys(y).every(function (i) { return p.indexOf(i) !== -1; }) &&
+        p.every(function (i) { return objectEquals(x[i], y[i]); });
+}
+
+
 function create(initialContent, schema, place, onChangeHandler) {
     const view = new EditorView(place, {
         state: _textToState(initialContent, schema),
         images: [],
         dispatchTransaction: tr => {
-            view.updateState(view.state.apply(tr));
-            onChangeHandler(view);
+            const newState = view.state.apply(tr);
+            const originalDoc = view.state.toJSON().doc;
+            const updatedDoc = newState.toJSON().doc;
+            view.updateState(newState);
+
+            if (!objectEquals(originalDoc, updatedDoc)) {
+                onChangeHandler(view);
+            }
         }
     });
 
