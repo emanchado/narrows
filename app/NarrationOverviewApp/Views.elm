@@ -6,7 +6,7 @@ import Html.Attributes exposing (id, class, for, checked, disabled, name, title,
 import Html.Events exposing (onClick, onInput, onSubmit)
 
 import Common.Models exposing (Narration, NarrationStatus(..), ChapterOverview, NarrationOverview, FullCharacter, narrationStatusString)
-import Common.Views exposing (breadcrumbNavView, narrationOverviewView, loadingView, ribbonForNarrationStatus, showDialog, bannerView)
+import Common.Views exposing (breadcrumbNavView, narrationOverviewView, loadingView, ribbonForNarrationStatus, showDialog, bannerView, sanitizedTitle)
 import NarrationOverviewApp.Messages exposing (..)
 import NarrationOverviewApp.Models exposing (Model)
 
@@ -75,7 +75,7 @@ overviewView overview showUrlInfoBox showRemoveNarrationDialog notesModified =
             , url = "/"
             }
           ]
-          (text overview.narration.title)
+          (text <| sanitizedTitle overview.narration.title)
       , h1 []
           [ text <| "Narration " ++ overview.narration.title ++ " "
           , a [ class "btn btn-edit"

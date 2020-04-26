@@ -203,6 +203,14 @@ breadcrumbNavView links pageTitle =
         parts)
 
 
+sanitizedTitle : String -> String
+sanitizedTitle title =
+  if String.isEmpty <| String.trim title then
+    "Untitled"
+  else
+    title
+
+
 unpublishedChapterView : (String -> msg) -> Narration -> ChapterOverview -> Html msg
 unpublishedChapterView navigationMessage narration chapterOverview =
   let
@@ -215,7 +223,7 @@ unpublishedChapterView navigationMessage narration chapterOverview =
   in
     li []
       [ a [ href <| "/chapters/" ++ (String.fromInt chapterOverview.id) ++ "/edit" ]
-          [ text chapterOverview.title ]
+          [ text <| sanitizedTitle chapterOverview.title ]
       , em [] [ text "Draft" ]
       , if numberNarrationCharacters /= numberChapterParticipants then
           span [ title <| "Only for " ++ participantNames ]
@@ -244,7 +252,8 @@ publishedChapterView compact navigationMessage narration chapterOverview =
   in
     li []
       [ a [ href <| "/chapters/" ++ (String.fromInt chapterOverview.id) ]
-          [ text chapterOverview.title ]
+          [ text <| sanitizedTitle chapterOverview.title
+          ]
       , div []
           (List.intersperse (text " — ") <|
              List.concat

@@ -6,7 +6,7 @@ import Html.Events exposing (onInput, onClick, onCheck)
 import Json.Encode
 
 import Common.Models exposing (Character, FullCharacter, Narration, NarrationStatus(..), loadingPlaceholderChapter)
-import Common.Views exposing (messageThreadInteractionView, breadcrumbNavView, bannerView)
+import Common.Views exposing (messageThreadInteractionView, breadcrumbNavView, bannerView, sanitizedTitle)
 import ChapterControlApp.Messages exposing (..)
 import ChapterControlApp.Models exposing (Model, ChapterInteractions)
 
@@ -76,7 +76,7 @@ mainView model =
                   , { title = narration.title
                     , url = "/narrations/" ++ (String.fromInt chapter.narrationId)
                     }
-                  , { title = chapter.title
+                  , { title = sanitizedTitle chapter.title
                     , url = "/chapters/" ++ (String.fromInt chapter.id) ++ "/edit"
                     }
                   ]
