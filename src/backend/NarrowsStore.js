@@ -1123,7 +1123,8 @@ class NarrowsStore {
                 "get",
                 `SELECT C.id, C.name, C.token, C.avatar, C.description,
                         C.backstory, C.novel_token AS novelToken, U.email,
-                        N.id AS narrationId, N.title AS narrationTitle
+                        N.id AS narrationId, N.title AS narrationTitle,
+                        N.status
                    FROM characters C
                    JOIN narrations N
                      ON C.narration_id = N.id
@@ -1146,6 +1147,7 @@ class NarrowsStore {
                 narration: {
                     id: basicStats.narrationId,
                     title: basicStats.narrationTitle,
+                    status: basicStats.status,
                     chapters: chapters,
                     characters: characters.filter(character => (
                         character.id !== basicStats.id

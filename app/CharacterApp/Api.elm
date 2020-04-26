@@ -1,9 +1,11 @@
 module CharacterApp.Api exposing (..)
 
 import Http
-import CharacterApp.Api.Json exposing (parseCharacterInfo, encodeCharacterUpdate)
+
+import Common.Models exposing (CharacterInfo)
+import Common.Api.Json exposing (parseCharacterInfo)
+import CharacterApp.Api.Json exposing (encodeCharacterUpdate)
 import CharacterApp.Messages exposing (Msg, Msg(..))
-import CharacterApp.Models exposing (CharacterInfo)
 
 
 fetchCharacterInfo : String -> Cmd Msg

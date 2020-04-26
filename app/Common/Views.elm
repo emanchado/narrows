@@ -63,6 +63,15 @@ linkify message =
       [ text message ]
 
 
+avatarUrl : Int -> Maybe String -> String
+avatarUrl narrationId maybeAvatar =
+  case maybeAvatar of
+    Just avatar ->
+      "/static/narrations/" ++ (String.fromInt narrationId) ++ "/avatars/" ++ avatar
+    Nothing ->
+      "/img/default-avatar.png"
+
+
 messageView : Message -> Html msg
 messageView message =
   div [ class "message" ]

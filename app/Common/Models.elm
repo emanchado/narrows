@@ -251,6 +251,33 @@ type alias ParticipantCharacter =
     }
 
 
+type alias ChapterSummary =
+    { id : Int
+    , title : String
+    }
+
+
+type alias NarrationSummary =
+    { id : Int
+    , title : String
+    , status : NarrationStatus
+    , chapters : List ChapterSummary
+    , characters : List ParticipantCharacter
+    }
+
+
+type alias CharacterInfo =
+    { id : Int
+    , name : String
+    , avatar : Maybe String
+    , token : String
+    , novelToken : String
+    , description : Json.Decode.Value
+    , backstory : Json.Decode.Value
+    , narration : NarrationSummary
+    }
+
+
 type alias DeviceSettings =
     { backgroundMusic : Bool
     }

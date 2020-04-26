@@ -2,7 +2,7 @@ module Common.Api.Json exposing (..)
 
 import Json.Decode as Json exposing (..)
 import ISO8601
-import Common.Models exposing (Character, ParticipantCharacter, FullCharacter, Narration, NarrationStatus(..), Chapter, FileSet, ChapterMessages, MessageThread, Message, ChapterOverview, NarrationOverview, UserInfo)
+import Common.Models exposing (Character, ParticipantCharacter, FullCharacter, Narration, NarrationStatus(..), Chapter, FileSet, ChapterMessages, MessageThread, Message, ChapterOverview, NarrationOverview, UserInfo, CharacterInfo, ChapterSummary, NarrationSummary)
 
 
 parseUserInfo : Json.Decoder UserInfo
@@ -147,3 +147,33 @@ parseNarrationOverview =
     Json.map2 NarrationOverview
         (field "narration" parseNarration)
         (field "chapters" <| list parseChapterOverview)
+
+
+parseChapterSummary : Json.Decoder ChapterSummary
+parseChapterSummary =
+    Json.map2 ChapterSummary
+        (field "id" int)
+        (field "title" string)
+
+
+parseNarrationSummary : Json.Decoder NarrationSummary
+parseNarrationSummary =
+    Json.map5 NarrationSummary
+        (field "id" int)
+        (field "title" string)
+        (field "status" parseNarrationStatus)
+        (field "chapters" <| list parseChapterSummary)
+        (field "characters" <| list parseParticipantCharacter)
+
+
+parseCharacterInfo : Json.Decoder CharacterInfo
+parseCharacterInfo =
+    Json.map8 CharacterInfo
+        (field "id" int)
+        (field "name" string)
+        (maybe (field "avatar" string))
+        (field "token" string)
+        (field "novelToken" string)
+        (field "description" Json.value)
+        (field "backstory" Json.value)
+        (field "narration" parseNarrationSummary)

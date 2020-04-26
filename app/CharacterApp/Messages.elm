@@ -2,7 +2,7 @@ module CharacterApp.Messages exposing (..)
 
 import Http
 import Json.Encode
-import CharacterApp.Models exposing (..)
+import Common.Models exposing (CharacterInfo)
 import CharacterApp.Ports
 
 

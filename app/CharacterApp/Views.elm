@@ -6,19 +6,10 @@ import Html.Events exposing (onClick, onInput, on)
 
 import Json.Decode
 
-import Common.Models exposing (ParticipantCharacter)
-import Common.Views exposing (bannerView)
-import CharacterApp.Models exposing (Model, CharacterInfo, ChapterSummary)
+import Common.Models exposing (ParticipantCharacter, CharacterInfo, ChapterSummary)
+import Common.Views exposing (bannerView, avatarUrl)
+import CharacterApp.Models exposing (Model)
 import CharacterApp.Messages exposing (..)
-
-
-avatarUrl : Int -> Maybe String -> String
-avatarUrl narrationId maybeAvatar =
-  case maybeAvatar of
-    Just avatar ->
-      "/static/narrations/" ++ (String.fromInt narrationId) ++ "/avatars/" ++ avatar
-    Nothing ->
-      "/img/default-avatar.png"
 
 
 chapterParticipation : String -> ChapterSummary -> Html Msg
