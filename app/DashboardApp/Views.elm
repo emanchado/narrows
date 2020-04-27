@@ -7,7 +7,7 @@ import Html.Events exposing (onClick)
 import Common.Views exposing (loadingView, compactNarrationView, avatarUrl, ribbonForNarrationStatus)
 import Common.Models exposing (CharacterInfo, NarrationStatus(..), narrationStatusString)
 import DashboardApp.Messages exposing (..)
-import DashboardApp.Models exposing (..)
+import DashboardApp.Models exposing (Model, DashboardScreen(..))
 
 
 participationView : CharacterInfo -> Html Msg
@@ -40,8 +40,8 @@ participationView character =
     ]
 
 
-mainView : Model -> Html Msg
-mainView model =
+indexScreenView : Model -> Html Msg
+indexScreenView model =
   main_ [ id "narrator-app"
         , class "app-container"
         ]
@@ -71,3 +71,28 @@ mainView model =
         Nothing ->
           text ""
     ]
+
+
+narrationArchiveView : Model -> Html Msg
+narrationArchiveView model =
+    main_ [ id "narrator-app"
+          , class "app-container"
+          ]
+      [ h1 [] [ text "Narration archive" ]
+      , case model.allNarrations of
+          Just narrations ->
+            div [ class "narration-list" ]
+              (List.map (compactNarrationView NavigateTo) narrations)
+
+          Nothing ->
+            loadingView model.banner
+      ]
+
+
+mainView : Model -> Html Msg
+mainView model =
+    case model.screen of
+      IndexScreen ->
+        indexScreenView model
+      NarrationArchiveScreen ->
+        narrationArchiveView model

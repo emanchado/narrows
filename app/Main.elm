@@ -17,7 +17,6 @@ import ReaderApp
 import CharacterApp
 import CharacterEditApp
 import DashboardApp
-import NarrationArchiveApp
 import NarrationCreationApp
 import NarrationOverviewApp
 import NarrationIntroApp
@@ -41,7 +40,6 @@ initialState flags url key =
     , readerApp = ReaderApp.initialState key
     , characterApp = CharacterApp.initialState key
     , dashboardApp = DashboardApp.initialState key
-    , narrationArchiveApp = NarrationArchiveApp.initialState key
     , narrationCreationApp = NarrationCreationApp.initialState key
     , narrationOverviewApp = NarrationOverviewApp.initialState key
     , narrationIntroApp = NarrationIntroApp.initialState key
@@ -99,7 +97,6 @@ dispatchEnterLocation model =
 
     chapterEditApp = ChapterEditApp.urlUpdate currentRoute model.chapterEditApp
     dashboardApp = DashboardApp.urlUpdate currentRoute model.dashboardApp
-    narrationArchiveApp = NarrationArchiveApp.urlUpdate currentRoute model.narrationArchiveApp
     narrationCreationApp = NarrationCreationApp.urlUpdate currentRoute model.narrationCreationApp
     narrationOverviewApp = NarrationOverviewApp.urlUpdate currentRoute model.narrationOverviewApp
     chapterControlApp = ChapterControlApp.urlUpdate currentRoute model.chapterControlApp
@@ -112,7 +109,6 @@ dispatchEnterLocation model =
               , readerApp = first readerApp
               , characterApp = first characterApp
               , dashboardApp = first dashboardApp
-              , narrationArchiveApp = first narrationArchiveApp
               , narrationCreationApp = first narrationCreationApp
               , narrationOverviewApp = first narrationOverviewApp
               , narrationIntroApp = first narrationIntroApp
@@ -134,7 +130,6 @@ dispatchEnterLocation model =
         (protectedCmds
           model.session
           [ Cmd.map DashboardMsg <| second dashboardApp
-          , Cmd.map NarrationArchiveMsg <| second narrationArchiveApp
           , Cmd.map NarrationCreationMsg <| second narrationCreationApp
           , Cmd.map NarrationOverviewMsg <| second narrationOverviewApp
           , Cmd.map ChapterEditMsg <| second chapterEditApp
@@ -280,15 +275,6 @@ combinedUpdate msg model =
         , protectedCmd model.session <| Cmd.map DashboardMsg cmd
         )
 
-    NarrationArchiveMsg narrationArchiveMsg ->
-      let
-        ( newNarrationArchiveModel, cmd ) =
-          NarrationArchiveApp.update narrationArchiveMsg model.narrationArchiveApp
-      in
-        ( { model | narrationArchiveApp = newNarrationArchiveModel }
-        , protectedCmd model.session <| Cmd.map NarrationArchiveMsg cmd
-        )
-
     NarrationCreationMsg narrationCreationMsg ->
       let
         ( newNarrationCreationModel, cmd ) =
@@ -377,7 +363,6 @@ subscriptions model =
         [ Sub.map ReaderMsg (ReaderApp.subscriptions model.readerApp)
         , Sub.map CharacterMsg (CharacterApp.subscriptions model.characterApp)
         , Sub.map DashboardMsg (DashboardApp.subscriptions model.dashboardApp)
-        , Sub.map NarrationArchiveMsg (NarrationArchiveApp.subscriptions model.narrationArchiveApp)
         , Sub.map NarrationCreationMsg (NarrationCreationApp.subscriptions model.narrationCreationApp)
         , Sub.map NarrationOverviewMsg (NarrationOverviewApp.subscriptions model.narrationOverviewApp)
         , Sub.map NarrationIntroMsg (NarrationIntroApp.subscriptions model.narrationIntroApp)

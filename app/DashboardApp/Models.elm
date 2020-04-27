@@ -4,6 +4,11 @@ import Browser.Navigation as Nav
 import Common.Models exposing (Banner, NarrationOverview, CharacterInfo)
 
 
+type DashboardScreen
+  = IndexScreen
+  | NarrationArchiveScreen
+
+
 -- Just to parse the response
 type alias NarratorOverview =
     { narrations : List NarrationOverview
@@ -11,9 +16,17 @@ type alias NarratorOverview =
     }
 
 
+-- Just to parse the response
+type alias NarrationArchive =
+    { narrations : List NarrationOverview
+    }
+
+
 type alias Model =
     { key : Nav.Key
     , banner : Maybe Banner
+    , screen : DashboardScreen
     , narrations : Maybe (List NarrationOverview)
     , characters : Maybe (List CharacterInfo)
+    , allNarrations : Maybe (List NarrationOverview)
     }

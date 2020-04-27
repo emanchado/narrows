@@ -7,14 +7,21 @@ import Core.Routes exposing (Route(..))
 import Common.Models exposing (errorBanner)
 import DashboardApp.Api
 import DashboardApp.Messages exposing (..)
-import DashboardApp.Models exposing (..)
+import DashboardApp.Models exposing (Model, DashboardScreen(..))
 
 
 urlUpdate : Route -> Model -> (Model, Cmd Msg)
 urlUpdate route model =
   case route of
     Dashboard ->
-      (model, DashboardApp.Api.fetchNarratorOverview)
+      ({ model | screen = IndexScreen }
+      , DashboardApp.Api.fetchNarratorOverview
+      )
+
+    NarrationArchivePage ->
+      ({ model | screen = NarrationArchiveScreen }
+      , DashboardApp.Api.fetchAllNarrations
+      )
 
     _ ->
       (model, Cmd.none)
@@ -58,3 +65,25 @@ update msg model =
 
     NewNarration ->
       (model, Nav.pushUrl model.key "/narrations/new")
+
+    NarrationArchiveFetchResult (Err error) ->
+      case error of
+        Http.BadBody parserError ->
+          ( { model | banner = errorBanner <| "Error! " ++ parserError }
+          , Cmd.none
+          )
+
+        Http.BadStatus status ->
+          ( { model | banner = errorBanner <| "Error! Status: " ++ (String.fromInt status) }
+          , Cmd.none
+          )
+
+        _ ->
+          ( { model | banner = errorBanner "Unknown error!" }
+          , Cmd.none
+          )
+
+    NarrationArchiveFetchResult (Ok narratorOverview) ->
+      ( { model | allNarrations = Just narratorOverview.narrations }
+      , Cmd.none
+      )

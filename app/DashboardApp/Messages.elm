@@ -1,7 +1,7 @@
 module DashboardApp.Messages exposing (..)
 
 import Http
-import DashboardApp.Models exposing (NarratorOverview)
+import DashboardApp.Models exposing (NarratorOverview, NarrationArchive)
 
 
 type Msg
@@ -10,3 +10,4 @@ type Msg
     | NarratorOverviewFetchResult (Result Http.Error NarratorOverview)
     | NarrationArchive
     | NewNarration
+    | NarrationArchiveFetchResult (Result Http.Error NarrationArchive)

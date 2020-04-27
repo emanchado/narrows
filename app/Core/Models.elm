@@ -7,7 +7,6 @@ import Common.Models exposing (Banner, UserInfo, UserSession)
 import ReaderApp
 import CharacterApp
 import DashboardApp
-import NarrationArchiveApp
 import NarrationCreationApp
 import NarrationOverviewApp
 import NarrationIntroApp
@@ -36,7 +35,6 @@ type alias Model =
   , readerApp : ReaderApp.Model
   , characterApp : CharacterApp.Model
   , dashboardApp : DashboardApp.Model
-  , narrationArchiveApp : NarrationArchiveApp.Model
   , narrationCreationApp : NarrationCreationApp.Model
   , narrationOverviewApp : NarrationOverviewApp.Model
   , narrationIntroApp : NarrationIntroApp.Model

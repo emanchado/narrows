@@ -9,7 +9,6 @@ import Common.Models exposing (UserInfo)
 import ReaderApp
 import CharacterApp
 import DashboardApp
-import NarrationArchiveApp
 import NarrationCreationApp
 import NarrationOverviewApp
 import NarrationIntroApp
@@ -41,7 +40,6 @@ type Msg
     | ReaderMsg ReaderApp.Msg
     | CharacterMsg CharacterApp.Msg
     | DashboardMsg DashboardApp.Msg
-    | NarrationArchiveMsg NarrationArchiveApp.Msg
     | NarrationCreationMsg NarrationCreationApp.Msg
     | NarrationOverviewMsg NarrationOverviewApp.Msg
     | NarrationIntroMsg NarrationIntroApp.Msg

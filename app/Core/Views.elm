@@ -14,7 +14,6 @@ import Common.Views exposing (onPreventDefaultClick)
 import ReaderApp
 import CharacterApp
 import DashboardApp
-import NarrationArchiveApp
 import NarrationCreationApp
 import NarrationOverviewApp
 import NarrationIntroApp
@@ -141,7 +140,7 @@ dispatchProtectedPage model =
       Html.map DashboardMsg (DashboardApp.view model.dashboardApp)
 
     NarrationArchivePage ->
-      Html.map NarrationArchiveMsg (NarrationArchiveApp.view model.narrationArchiveApp)
+      Html.map DashboardMsg (DashboardApp.view model.dashboardApp)
 
     NarrationCreationPage ->
       Html.map NarrationCreationMsg (NarrationCreationApp.view model.narrationCreationApp)

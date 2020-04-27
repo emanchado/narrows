@@ -22,8 +22,10 @@ initialState : Nav.Key -> Model
 initialState key =
     { key = key
     , banner = Nothing
+    , screen = IndexScreen
     , narrations = Nothing
     , characters = Nothing
+    , allNarrations = Nothing
     }
 
 
