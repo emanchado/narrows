@@ -7,6 +7,7 @@ import Common.Models exposing (Banner, NarrationOverview, CharacterInfo)
 type DashboardScreen
   = IndexScreen
   | NarrationArchiveScreen
+  | CharacterArchiveScreen
 
 
 -- Just to parse the response
@@ -22,6 +23,12 @@ type alias NarrationArchive =
     }
 
 
+-- Just to parse the response
+type alias CharacterArchive =
+    { characters : List CharacterInfo
+    }
+
+
 type alias Model =
     { key : Nav.Key
     , banner : Maybe Banner
@@ -29,4 +36,5 @@ type alias Model =
     , narrations : Maybe (List NarrationOverview)
     , characters : Maybe (List CharacterInfo)
     , allNarrations : Maybe (List NarrationOverview)
+    , allCharacters : Maybe (List CharacterInfo)
     }

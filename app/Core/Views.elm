@@ -142,6 +142,9 @@ dispatchProtectedPage model =
     NarrationArchivePage ->
       Html.map DashboardMsg (DashboardApp.view model.dashboardApp)
 
+    CharacterArchivePage ->
+      Html.map DashboardMsg (DashboardApp.view model.dashboardApp)
+
     NarrationCreationPage ->
       Html.map NarrationCreationMsg (NarrationCreationApp.view model.narrationCreationApp)
 

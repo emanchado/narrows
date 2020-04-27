@@ -6,6 +6,7 @@ type Route
     | CharacterPage String
     | Dashboard
     | NarrationArchivePage
+    | CharacterArchivePage
     | NarrationCreationPage
     | NarrationEditPage Int
     | NarrationIntroPage String

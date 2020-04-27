@@ -70,15 +70,21 @@ export function getNarrationArchive(req, res) {
     });
 }
 
+export function getCharacterArchive(req, res) {
+    store.getCharacterOverview(req.session.userId).then(characters => {
+        res.json({characters: characters});
+    }).catch(err => {
+        res.status(500).json({
+            errorMessage: `Cannot get character archive for ` +
+                `this user: ${ err }`
+        });
+    });
+}
+
 export function getNarrationOverview(req, res) {
     Q.all([
-        store.getNarrationOverview(
-            req.session.userId,
-            { status: "active" }
-        ),
-        store.getCharacterOverview(
-            req.session.userId
-        )
+        store.getNarrationOverview(req.session.userId, { status: "active" }),
+        store.getCharacterOverview(req.session.userId, { status: "active" })
     ]).spread((narrationOverviewData, characterOverviewData) => {
         res.json({
             narrations: narrationOverviewData.narrations,

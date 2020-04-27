@@ -35,6 +35,7 @@ app.delete("/api/session", endpoints.deleteSession);
 
 app.get("/api/narrations/overview", middlewares.apiAuth, endpoints.getNarrationOverview);
 app.get("/api/narrations", middlewares.apiAuth, endpoints.getNarrationArchive);
+app.get("/api/characters", middlewares.apiAuth, endpoints.getCharacterArchive);
 app.post("/api/narrations", middlewares.apiAuth, endpoints.postNarration);
 app.get("/api/narrations/:narrId", middlewares.apiAuth, endpoints.getNarration);
 app.put("/api/narrations/:narrId", middlewares.apiAuth, endpoints.putNarration);

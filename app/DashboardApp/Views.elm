@@ -4,7 +4,7 @@ import List
 import Html exposing (Html, main_, h1, h2, div, button, ul, li, a, strong, text, img, span, pre)
 import Html.Attributes exposing (id, class, href, src, height, width)
 import Html.Events exposing (onClick)
-import Common.Views exposing (loadingView, compactNarrationView, avatarUrl, ribbonForNarrationStatus)
+import Common.Views exposing (loadingView, compactNarrationView, avatarUrl, ribbonForNarrationStatus, bannerView)
 import Common.Models exposing (CharacterInfo, NarrationStatus(..), narrationStatusString)
 import DashboardApp.Messages exposing (..)
 import DashboardApp.Models exposing (Model, DashboardScreen(..))
@@ -70,6 +70,12 @@ indexScreenView model =
             (List.map participationView characters)
         Nothing ->
           text ""
+    , div [ class "btn-bar" ]
+        [ button [ class "btn"
+                 , onClick CharacterArchive
+                 ]
+            [ text "Character Archive" ]
+        ]
     ]
 
 
@@ -89,10 +95,30 @@ narrationArchiveView model =
       ]
 
 
+characterArchiveView : Model -> Html Msg
+characterArchiveView model =
+    main_ [ id "narrator-app"
+          , class "app-container"
+          ]
+      [ h1 [] [ text "Characters you are playing" ]
+      , case model.allCharacters of
+          Just characters ->
+            div [ class "participation-list" ]
+              (List.map participationView characters)
+          Nothing ->
+            text ""
+      ]
+
+
 mainView : Model -> Html Msg
 mainView model =
-    case model.screen of
-      IndexScreen ->
-        indexScreenView model
-      NarrationArchiveScreen ->
-        narrationArchiveView model
+  div []
+    [ bannerView model.banner
+    , case model.screen of
+        IndexScreen ->
+          indexScreenView model
+        NarrationArchiveScreen ->
+          narrationArchiveView model
+        CharacterArchiveScreen ->
+          characterArchiveView model
+    ]

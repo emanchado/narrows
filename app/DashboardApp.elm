@@ -26,6 +26,7 @@ initialState key =
     , narrations = Nothing
     , characters = Nothing
     , allNarrations = Nothing
+    , allCharacters = Nothing
     }
 
 

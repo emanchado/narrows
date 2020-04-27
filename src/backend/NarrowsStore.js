@@ -448,9 +448,18 @@ class NarrowsStore {
         ));
     }
 
-    getCharacterOverview(userId) {
-        const narrationGraceTime = new Date();
-        narrationGraceTime.setDate(narrationGraceTime.getDate() - 14);
+    getCharacterOverview(userId, opts) {
+        const userOpts = Object.assign({ status: null }, opts);
+        let extraQuery = "";
+        let extraBinds = [];
+
+        if (userOpts.status === "active") {
+            const narrationGraceTime = new Date();
+            narrationGraceTime.setDate(narrationGraceTime.getDate() - 14);
+
+            extraQuery = "HAVING status = 'active' OR last_published > ?";
+            extraBinds = [narrationGraceTime];
+        }
 
         return Q.ninvoke(
             this.db,
@@ -460,9 +469,9 @@ class NarrowsStore {
                JOIN characters CHR ON N.id = CHR.narration_id
               WHERE player_id = ?
            GROUP BY CHR.id
-             HAVING status = 'active' OR last_published > ?
+                    ${extraQuery}
            ORDER BY last_published DESC`,
-            [userId, narrationGraceTime]
+            [userId].concat(extraBinds)
         ).then(rows => (
             Q.all(rows.map(row => this.getFullCharacterStats(row.id)))
         ));

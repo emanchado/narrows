@@ -14,6 +14,7 @@ parser =
         , Parser.map ChapterReaderPage (s "read" </> int </> string)
         , Parser.map CharacterPage (s "characters" </> string)
         , Parser.map NarrationArchivePage (s "narrations")
+        , Parser.map CharacterArchivePage (s "characters")
         , Parser.map NarrationCreationPage (s "narrations" </> s "new")
         , Parser.map NarrationEditPage (s "narrations" </> int </> s "edit")
         , Parser.map ChapterEditNarratorPage (s "chapters" </> int </> s "edit")

@@ -14,13 +14,24 @@ urlUpdate : Route -> Model -> (Model, Cmd Msg)
 urlUpdate route model =
   case route of
     Dashboard ->
-      ({ model | screen = IndexScreen }
+      ({ model | screen = IndexScreen
+               , banner = Nothing
+       }
       , DashboardApp.Api.fetchNarratorOverview
       )
 
     NarrationArchivePage ->
-      ({ model | screen = NarrationArchiveScreen }
+      ({ model | screen = NarrationArchiveScreen
+               , banner = Nothing
+       }
       , DashboardApp.Api.fetchAllNarrations
+      )
+
+    CharacterArchivePage ->
+      ({ model | screen = CharacterArchiveScreen
+               , banner = Nothing
+       }
+      , DashboardApp.Api.fetchAllCharacters
       )
 
     _ ->
@@ -85,5 +96,30 @@ update msg model =
 
     NarrationArchiveFetchResult (Ok narratorOverview) ->
       ( { model | allNarrations = Just narratorOverview.narrations }
+      , Cmd.none
+      )
+
+    CharacterArchive ->
+      (model, Nav.pushUrl model.key "/characters")
+
+    CharacterArchiveFetchResult (Err error) ->
+      case error of
+        Http.BadBody parserError ->
+          ( { model | banner = errorBanner <| "Error! " ++ parserError }
+          , Cmd.none
+          )
+
+        Http.BadStatus status ->
+          ( { model | banner = errorBanner <| "Error! Status: " ++ (String.fromInt status) }
+          , Cmd.none
+          )
+
+        _ ->
+          ( { model | banner = errorBanner "Unknown error!" }
+          , Cmd.none
+          )
+
+    CharacterArchiveFetchResult (Ok narratorOverview) ->
+      ( { model | allCharacters = Just narratorOverview.characters }
       , Cmd.none
       )
