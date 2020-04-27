@@ -13,7 +13,7 @@ import Common.Views exposing (onPreventDefaultClick)
 
 import ReaderApp
 import CharacterApp
-import NarratorDashboardApp
+import DashboardApp
 import NarrationArchiveApp
 import NarrationCreationApp
 import NarrationOverviewApp
@@ -137,8 +137,8 @@ loginView model =
 dispatchProtectedPage : Model -> Html Msg
 dispatchProtectedPage model =
   case model.route of
-    NarratorIndex ->
-      Html.map NarratorDashboardMsg (NarratorDashboardApp.view model.narratorDashboardApp)
+    Dashboard ->
+      Html.map DashboardMsg (DashboardApp.view model.dashboardApp)
 
     NarrationArchivePage ->
       Html.map NarrationArchiveMsg (NarrationArchiveApp.view model.narrationArchiveApp)

@@ -1,20 +1,20 @@
-module NarratorDashboardApp.Update exposing (..)
+module DashboardApp.Update exposing (..)
 
 import Http
 import Browser.Navigation as Nav
 
 import Core.Routes exposing (Route(..))
 import Common.Models exposing (errorBanner)
-import NarratorDashboardApp.Api
-import NarratorDashboardApp.Messages exposing (..)
-import NarratorDashboardApp.Models exposing (..)
+import DashboardApp.Api
+import DashboardApp.Messages exposing (..)
+import DashboardApp.Models exposing (..)
 
 
 urlUpdate : Route -> Model -> (Model, Cmd Msg)
 urlUpdate route model =
   case route of
-    NarratorIndex ->
-      (model, NarratorDashboardApp.Api.fetchNarratorOverview)
+    Dashboard ->
+      (model, DashboardApp.Api.fetchNarratorOverview)
 
     _ ->
       (model, Cmd.none)

@@ -1,8 +1,8 @@
-module NarratorDashboardApp.Api exposing (..)
+module DashboardApp.Api exposing (..)
 
 import Http
-import NarratorDashboardApp.Messages exposing (Msg, Msg(..))
-import NarratorDashboardApp.Api.Json exposing (parseNarratorOverview)
+import DashboardApp.Messages exposing (Msg, Msg(..))
+import DashboardApp.Api.Json exposing (parseNarratorOverview)
 
 
 fetchNarratorOverview : Cmd Msg

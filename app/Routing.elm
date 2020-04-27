@@ -10,7 +10,7 @@ import Core.Routes exposing (Route(..))
 parser : Parser (Route -> a) a
 parser =
     oneOf
-        [ Parser.map NarratorIndex Parser.top
+        [ Parser.map Dashboard Parser.top
         , Parser.map ChapterReaderPage (s "read" </> int </> string)
         , Parser.map CharacterPage (s "characters" </> string)
         , Parser.map NarrationArchivePage (s "narrations")

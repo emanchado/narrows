@@ -1,21 +1,21 @@
-module NarratorDashboardApp exposing (..)
+module DashboardApp exposing (..)
 
 import Html exposing (Html)
 import Browser.Navigation as Nav
 
 import Core.Routes exposing (Route(..))
-import NarratorDashboardApp.Messages exposing (..)
-import NarratorDashboardApp.Models exposing (..)
-import NarratorDashboardApp.Update
-import NarratorDashboardApp.Views
+import DashboardApp.Messages exposing (..)
+import DashboardApp.Models exposing (..)
+import DashboardApp.Update
+import DashboardApp.Views
 
 
 type alias Model =
-    NarratorDashboardApp.Models.Model
+    DashboardApp.Models.Model
 
 
 type alias Msg =
-    NarratorDashboardApp.Messages.Msg
+    DashboardApp.Messages.Msg
 
 
 initialState : Nav.Key -> Model
@@ -29,17 +29,17 @@ initialState key =
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update =
-    NarratorDashboardApp.Update.update
+    DashboardApp.Update.update
 
 
 urlUpdate : Route -> Model -> ( Model, Cmd Msg )
 urlUpdate =
-    NarratorDashboardApp.Update.urlUpdate
+    DashboardApp.Update.urlUpdate
 
 
 view : Model -> Html Msg
 view =
-    NarratorDashboardApp.Views.mainView
+    DashboardApp.Views.mainView
 
 
 subscriptions : Model -> Sub Msg

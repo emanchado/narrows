@@ -1,4 +1,4 @@
-module NarratorDashboardApp.Models exposing (..)
+module DashboardApp.Models exposing (..)
 
 import Browser.Navigation as Nav
 import Common.Models exposing (Banner, NarrationOverview, CharacterInfo)

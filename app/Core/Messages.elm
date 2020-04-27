@@ -8,7 +8,7 @@ import Core.Models exposing (ResetPasswordResponse)
 import Common.Models exposing (UserInfo)
 import ReaderApp
 import CharacterApp
-import NarratorDashboardApp
+import DashboardApp
 import NarrationArchiveApp
 import NarrationCreationApp
 import NarrationOverviewApp
@@ -40,7 +40,7 @@ type Msg
     | LogoutResult (Result Http.Error String)
     | ReaderMsg ReaderApp.Msg
     | CharacterMsg CharacterApp.Msg
-    | NarratorDashboardMsg NarratorDashboardApp.Msg
+    | DashboardMsg DashboardApp.Msg
     | NarrationArchiveMsg NarrationArchiveApp.Msg
     | NarrationCreationMsg NarrationCreationApp.Msg
     | NarrationOverviewMsg NarrationOverviewApp.Msg

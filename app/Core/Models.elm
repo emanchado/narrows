@@ -6,7 +6,7 @@ import Core.Routes exposing (Route(..))
 import Common.Models exposing (Banner, UserInfo, UserSession)
 import ReaderApp
 import CharacterApp
-import NarratorDashboardApp
+import DashboardApp
 import NarrationArchiveApp
 import NarrationCreationApp
 import NarrationOverviewApp
@@ -35,7 +35,7 @@ type alias Model =
   , forgotPasswordUi : Bool
   , readerApp : ReaderApp.Model
   , characterApp : CharacterApp.Model
-  , narratorDashboardApp : NarratorDashboardApp.Model
+  , dashboardApp : DashboardApp.Model
   , narrationArchiveApp : NarrationArchiveApp.Model
   , narrationCreationApp : NarrationCreationApp.Model
   , narrationOverviewApp : NarrationOverviewApp.Model

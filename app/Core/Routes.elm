@@ -4,7 +4,7 @@ module Core.Routes exposing (..)
 type Route
     = ChapterReaderPage Int String
     | CharacterPage String
-    | NarratorIndex
+    | Dashboard
     | NarrationArchivePage
     | NarrationCreationPage
     | NarrationEditPage Int

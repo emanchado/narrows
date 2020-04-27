@@ -16,7 +16,7 @@ import Core.Messages exposing (Msg(..))
 import ReaderApp
 import CharacterApp
 import CharacterEditApp
-import NarratorDashboardApp
+import DashboardApp
 import NarrationArchiveApp
 import NarrationCreationApp
 import NarrationOverviewApp
@@ -40,7 +40,7 @@ initialState flags url key =
     , forgotPasswordUi = False
     , readerApp = ReaderApp.initialState key
     , characterApp = CharacterApp.initialState key
-    , narratorDashboardApp = NarratorDashboardApp.initialState key
+    , dashboardApp = DashboardApp.initialState key
     , narrationArchiveApp = NarrationArchiveApp.initialState key
     , narrationCreationApp = NarrationCreationApp.initialState key
     , narrationOverviewApp = NarrationOverviewApp.initialState key
@@ -98,7 +98,7 @@ dispatchEnterLocation model =
     narrationIntroApp = NarrationIntroApp.urlUpdate currentRoute model.narrationIntroApp
 
     chapterEditApp = ChapterEditApp.urlUpdate currentRoute model.chapterEditApp
-    narratorDashboardApp = NarratorDashboardApp.urlUpdate currentRoute model.narratorDashboardApp
+    dashboardApp = DashboardApp.urlUpdate currentRoute model.dashboardApp
     narrationArchiveApp = NarrationArchiveApp.urlUpdate currentRoute model.narrationArchiveApp
     narrationCreationApp = NarrationCreationApp.urlUpdate currentRoute model.narrationCreationApp
     narrationOverviewApp = NarrationOverviewApp.urlUpdate currentRoute model.narrationOverviewApp
@@ -111,7 +111,7 @@ dispatchEnterLocation model =
     ( { model | route = currentRoute
               , readerApp = first readerApp
               , characterApp = first characterApp
-              , narratorDashboardApp = first narratorDashboardApp
+              , dashboardApp = first dashboardApp
               , narrationArchiveApp = first narrationArchiveApp
               , narrationCreationApp = first narrationCreationApp
               , narrationOverviewApp = first narrationOverviewApp
@@ -133,7 +133,7 @@ dispatchEnterLocation model =
         ]
         (protectedCmds
           model.session
-          [ Cmd.map NarratorDashboardMsg <| second narratorDashboardApp
+          [ Cmd.map DashboardMsg <| second dashboardApp
           , Cmd.map NarrationArchiveMsg <| second narrationArchiveApp
           , Cmd.map NarrationCreationMsg <| second narrationCreationApp
           , Cmd.map NarrationOverviewMsg <| second narrationOverviewApp
@@ -271,13 +271,13 @@ combinedUpdate msg model =
       in
         ( { model | novelReaderApp = newNovelReaderModel }, Cmd.map NovelReaderMsg cmd )
 
-    NarratorDashboardMsg narratorDashboardMsg ->
+    DashboardMsg dashboardMsg ->
       let
-        ( newNarratorDashboardModel, cmd ) =
-          NarratorDashboardApp.update narratorDashboardMsg model.narratorDashboardApp
+        ( newDashboardModel, cmd ) =
+          DashboardApp.update dashboardMsg model.dashboardApp
       in
-        ( { model | narratorDashboardApp = newNarratorDashboardModel }
-        , protectedCmd model.session <| Cmd.map NarratorDashboardMsg cmd
+        ( { model | dashboardApp = newDashboardModel }
+        , protectedCmd model.session <| Cmd.map DashboardMsg cmd
         )
 
     NarrationArchiveMsg narrationArchiveMsg ->
@@ -376,7 +376,7 @@ subscriptions model =
     Sub.batch
         [ Sub.map ReaderMsg (ReaderApp.subscriptions model.readerApp)
         , Sub.map CharacterMsg (CharacterApp.subscriptions model.characterApp)
-        , Sub.map NarratorDashboardMsg (NarratorDashboardApp.subscriptions model.narratorDashboardApp)
+        , Sub.map DashboardMsg (DashboardApp.subscriptions model.dashboardApp)
         , Sub.map NarrationArchiveMsg (NarrationArchiveApp.subscriptions model.narrationArchiveApp)
         , Sub.map NarrationCreationMsg (NarrationCreationApp.subscriptions model.narrationCreationApp)
         , Sub.map NarrationOverviewMsg (NarrationOverviewApp.subscriptions model.narrationOverviewApp)

@@ -1,7 +1,7 @@
-module NarratorDashboardApp.Messages exposing (..)
+module DashboardApp.Messages exposing (..)
 
 import Http
-import NarratorDashboardApp.Models exposing (NarratorOverview)
+import DashboardApp.Models exposing (NarratorOverview)
 
 
 type Msg

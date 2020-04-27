@@ -1,8 +1,8 @@
-module NarratorDashboardApp.Api.Json exposing (..)
+module DashboardApp.Api.Json exposing (..)
 
 import Json.Decode as Json exposing (..)
 import Common.Api.Json exposing (parseNarrationOverview, parseCharacterInfo)
-import NarratorDashboardApp.Models exposing (NarratorOverview)
+import DashboardApp.Models exposing (NarratorOverview)
 
 
 parseNarratorOverview : Json.Decoder NarratorOverview

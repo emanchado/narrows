@@ -1,4 +1,4 @@
-module NarratorDashboardApp.Views exposing (..)
+module DashboardApp.Views exposing (..)
 
 import List
 import Html exposing (Html, main_, h1, h2, div, button, ul, li, a, strong, text, img, span, pre)
@@ -6,8 +6,8 @@ import Html.Attributes exposing (id, class, href, src, height, width)
 import Html.Events exposing (onClick)
 import Common.Views exposing (loadingView, compactNarrationView, avatarUrl, ribbonForNarrationStatus)
 import Common.Models exposing (CharacterInfo, NarrationStatus(..), narrationStatusString)
-import NarratorDashboardApp.Messages exposing (..)
-import NarratorDashboardApp.Models exposing (..)
+import DashboardApp.Messages exposing (..)
+import DashboardApp.Models exposing (..)
 
 
 participationView : CharacterInfo -> Html Msg
