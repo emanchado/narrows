@@ -47,6 +47,10 @@ indexScreenView model =
         ]
     [ h1 [] [ text "Stories you are narrating" ]
     , case model.narrations of
+        Just [] ->
+          div [ class "narration-list" ]
+            [ text "None. Create a new one with the button below." ]
+
         Just narrations ->
           div [ class "narration-list" ]
             (List.map (compactNarrationView NavigateTo) narrations)
@@ -65,9 +69,14 @@ indexScreenView model =
         ]
     , h1 [] [ text "Characters you are playing" ]
     , case model.characters of
+        Just [] ->
+          div [ class "participation-list" ]
+            [ text "None. Claim a character in a story and it will appear here." ]
+
         Just characters ->
           div [ class "participation-list" ]
             (List.map participationView characters)
+
         Nothing ->
           text ""
     , div [ class "btn-bar" ]
@@ -86,6 +95,12 @@ narrationArchiveView model =
           ]
       [ h1 [] [ text "Narration archive" ]
       , case model.allNarrations of
+          Just [] ->
+            div [ class "narration-list" ]
+              [ text "You have never created any narrations."
+              , text " You can create one from the front page."
+              ]
+
           Just narrations ->
             div [ class "narration-list" ]
               (List.map (compactNarrationView NavigateTo) narrations)
@@ -102,9 +117,16 @@ characterArchiveView model =
           ]
       [ h1 [] [ text "Characters you are playing" ]
       , case model.allCharacters of
+          Just [] ->
+            div [ class "participation-list" ]
+              [ text "You have never claimed a character in a narration."
+              , text " Claim one and it will appear here."
+              ]
+
           Just characters ->
             div [ class "participation-list" ]
               (List.map participationView characters)
+
           Nothing ->
             text ""
       ]
