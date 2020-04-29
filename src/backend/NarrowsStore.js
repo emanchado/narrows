@@ -834,8 +834,7 @@ class NarrowsStore {
 
     _addParticipant(chapterId, characterId) {
         return this.getChapter(chapterId).then(() => (
-            this.getChapterParticipants(chapterId,
-                                        { includePrivateFields: true })
+            this.getChapterParticipants(chapterId)
         )).then(participants => {
             if (participants.some(p => p.id === characterId)) {
                 return participants;
@@ -858,10 +857,7 @@ class NarrowsStore {
             `DELETE FROM chapter_participants
                   WHERE chapter_id = ? AND character_id = ?`,
             [chapterId, characterId]
-        ).then(() => (
-            this.getChapterParticipants(chapterId,
-                                        { includePrivateFields: true })
-        ));
+        );
     }
 
     /**
