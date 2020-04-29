@@ -691,7 +691,7 @@ class NarrowsStore {
         });
     }
 
-    updateChapterParticipants(id, newParticipantList) {
+    _updateChapterParticipants(id, newParticipantList) {
         return this.getChapterParticipants(id).then(currentParticipantList => {
             const newHash = {}, currentHash = {};
             newParticipantList.forEach(newParticipant => {
@@ -703,13 +703,13 @@ class NarrowsStore {
 
             newParticipantList.forEach(newParticipant => {
                 if (!currentHash.hasOwnProperty(newParticipant.id)) {
-                    this.addParticipant(id, newParticipant.id);
+                    this._addParticipant(id, newParticipant.id);
                 }
             });
 
             currentParticipantList.forEach(currentParticipant => {
                 if (!newHash.hasOwnProperty(currentParticipant.id)) {
-                    this.removeParticipant(id, currentParticipant.id);
+                    this._removeParticipant(id, currentParticipant.id);
                 }
             });
         });
@@ -743,7 +743,7 @@ class NarrowsStore {
         }
 
         return updatePromise.then(
-            () => this.updateChapterParticipants(id, participants)
+            () => this._updateChapterParticipants(id, participants)
         ).then(
             () => this.getChapter(id, { includePrivateFields: true })
         );
@@ -832,7 +832,7 @@ class NarrowsStore {
         ));
     }
 
-    addParticipant(chapterId, characterId) {
+    _addParticipant(chapterId, characterId) {
         return this.getChapter(chapterId).then(() => (
             this.getChapterParticipants(chapterId,
                                         { includePrivateFields: true })
@@ -851,7 +851,7 @@ class NarrowsStore {
         });
     }
 
-    removeParticipant(chapterId, characterId) {
+    _removeParticipant(chapterId, characterId) {
         return Q.ninvoke(
             this.db,
             "run",
