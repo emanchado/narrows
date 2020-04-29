@@ -7,10 +7,11 @@ import Common.Api.Json exposing (parseUserInfo)
 import ProfileApp.Messages exposing (Msg, Msg(..))
 
 
-encodeUserChanges : String -> Value
-encodeUserChanges newPassword =
+encodeUserChanges : String -> String -> Value
+encodeUserChanges newDisplayName newPassword =
   Json.Encode.object
-    [ ( "password", Json.Encode.string newPassword )
+    [ ( "displayName", Json.Encode.string newDisplayName )
+    , ( "password", Json.Encode.string newPassword )
     ]
 
 
@@ -21,13 +22,13 @@ fetchCurrentUser =
            }
 
 
-saveUser : Int -> String -> Cmd Msg
-saveUser userId newPassword =
+saveUser : Int -> String -> String -> Cmd Msg
+saveUser userId newDisplayName newPassword =
   Http.request
     { method = "PUT"
     , headers = []
     , url = "/api/users/" ++ (String.fromInt userId)
-    , body = Http.jsonBody <| encodeUserChanges newPassword
+    , body = Http.jsonBody <| encodeUserChanges newDisplayName newPassword
     , expect = Http.expectStringResponse SaveUserResult Ok
     , timeout = Nothing
     , tracker = Nothing

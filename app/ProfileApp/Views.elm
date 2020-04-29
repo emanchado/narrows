@@ -1,7 +1,7 @@
 module ProfileApp.Views exposing (..)
 
 import Html exposing (Html, main_, aside, h1, h2, div, form, input, label, button, a, strong, text)
-import Html.Attributes exposing (id, class, href, type_, placeholder, value, checked, for)
+import Html.Attributes exposing (id, class, href, type_, placeholder, value, checked, for, readonly)
 import Html.Events exposing (onInput, onClick, onCheck, onSubmit)
 import Common.Models exposing (UserInfo)
 import Common.Views exposing (bannerView)
@@ -11,38 +11,54 @@ import ProfileApp.Models exposing (..)
 
 userView : UserInfo -> String -> Html Msg
 userView user password =
-  let
-    userLabel = div [ class "user-label" ]
-                  (if user.role == "admin" then
-                     [ strong [] [ text user.email ]
-                     , text " (admin)"
+  div [ class "user" ]
+    [ form [ class "narrow-form vertical-form"
+           , onSubmit SaveUser
+           ]
+        [ div [ class "form-line" ]
+            [ label [ for "email" ] [ text "Email" ]
+            , input [ id "email"
+                    , type_ "text"
+                    , readonly True
+                    , value user.email
+                    ]
+                []
+            ]
+        , div [ class "form-line" ]
+            [ label [ for "role" ] [ text "Admin?" ]
+            , input [ id "role"
+                    , type_ "text"
+                    , readonly True
+                    , value <| if user.role == "admin" then "Yes" else "No"
+                    ]
+                []
+            ]
+        , div [ class "form-line" ]
+            [ label [ for "display-name" ] [ text "New display name" ]
+            , input [ id "display-name"
+                    , type_ "text"
+                    , onInput UpdateDisplayName
+                    , value user.displayName
+                    ]
+                []
+            ]
+        , div [ class "form-line" ]
+            [ label [ for "password" ] [ text "New password" ]
+            , input [ id "password"
+                    , type_ "password"
+                    , onInput UpdatePassword
+                    , value password
+                    ]
+                []
+            ]
+        , div [ class "btn-bar" ]
+            [ button [ type_ "submit"
+                     , class "btn btn-default"
                      ]
-                   else
-                     [ text user.email ])
-  in
-    div [ class "user" ]
-      [ userLabel
-      , form [ class "narrow-form vertical-form"
-             , onSubmit SaveUser
-             ]
-          [ div [ class "form-line" ]
-              [ label [ for "password" ] [ text "New password" ]
-              , input [ id "password"
-                      , type_ "password"
-                      , onInput UpdatePassword
-                      , value password
-                      ]
-                  []
-              ]
-          , div [ class "btn-bar" ]
-              [ button [ type_ "submit"
-                       , class "btn btn-default"
-                       , onClick SaveUser
-                       ]
-                  [ text "Save" ]
-              ]
-          ]
-      ]
+                [ text "Save" ]
+            ]
+        ]
+    ]
 
 
 mainView : Model -> Html Msg

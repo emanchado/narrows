@@ -46,11 +46,26 @@ update msg model =
       , Cmd.none
       )
 
+    UpdateDisplayName newDisplayName ->
+      let
+        updatedUser = case model.user of
+                        Just user ->
+                          Just { user | displayName = newDisplayName }
+                        Nothing ->
+                          model.user
+      in
+        ( { model | user = updatedUser
+                  , banner = Nothing
+          }
+        , Cmd.none
+        )
 
     SaveUser ->
       case model.user of
         Just user ->
-          (model, ProfileApp.Api.saveUser user.id model.newPassword)
+          ( model
+          , ProfileApp.Api.saveUser user.id user.displayName model.newPassword
+          )
         Nothing ->
           (model, Cmd.none)
 

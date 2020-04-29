@@ -7,5 +7,6 @@ type Msg
   = NoOp
   | UserFetchResult (Result Http.Error UserInfo)
   | UpdatePassword String
+  | UpdateDisplayName String
   | SaveUser
   | SaveUserResult (Result Http.Error (Http.Response String))
