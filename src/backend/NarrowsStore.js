@@ -392,12 +392,11 @@ class NarrowsStore {
                     chapters.map(f => f.id)
                 );
             }).then(participants => {
-                participants.forEach(({ chapterId, id, name, avatar, email }) => {
+                participants.forEach(({ chapterId, id, name, avatar }) => {
                     chapterMap[chapterId].participants.push({
                         id: id,
                         name: name,
-                        avatar: avatar,
-                        email: email
+                        avatar: avatar
                     });
                 });
 
