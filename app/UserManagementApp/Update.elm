@@ -55,6 +55,14 @@ update msg model =
                         selectedUser =
                             List.head <| List.filter (\u -> u.id == userId) users
 
+                        displayName =
+                            case selectedUser of
+                                Just user ->
+                                    user.displayName
+
+                                Nothing ->
+                                    ""
+
                         isUserAdmin =
                             case selectedUser of
                                 Just user ->
@@ -67,6 +75,7 @@ update msg model =
                             | userUi =
                                 Just
                                     { userId = userId
+                                    , displayName = displayName
                                     , password = ""
                                     , isAdmin = isUserAdmin
                                     }
@@ -85,6 +94,23 @@ update msg model =
               }
             , Cmd.none
             )
+
+        UpdateDisplayName newDisplayName ->
+            let
+                updatedUserUi =
+                    case model.userUi of
+                        Just userUi ->
+                            Just { userUi | displayName = newDisplayName }
+
+                        Nothing ->
+                            Nothing
+            in
+                ( { model
+                    | userUi = updatedUserUi
+                    , banner = Nothing
+                  }
+                , Cmd.none
+                )
 
         UpdatePassword newPassword ->
             let
@@ -159,14 +185,23 @@ update msg model =
               )
 
         UpdateNewUserEmail newEmail ->
-            ( { model | newUserEmail = newEmail, banner = Nothing }, Cmd.none )
+            ( { model | newUserEmail = newEmail, banner = Nothing }
+            , Cmd.none
+            )
+
+        UpdateNewUserDisplayName newDisplayName ->
+            ( { model | newUserDisplayName = newDisplayName, banner = Nothing }
+            , Cmd.none
+            )
 
         UpdateNewUserIsAdmin newIsAdmin ->
-            ( { model | newUserIsAdmin = newIsAdmin, banner = Nothing }, Cmd.none )
+            ( { model | newUserIsAdmin = newIsAdmin, banner = Nothing }
+            , Cmd.none
+            )
 
         SaveNewUser ->
             ( model
-            , UserManagementApp.Api.saveNewUser model.newUserEmail model.newUserIsAdmin
+            , UserManagementApp.Api.saveNewUser model.newUserEmail model.newUserDisplayName model.newUserIsAdmin
             )
 
         SaveNewUserResult (Err err) ->
@@ -182,6 +217,7 @@ update msg model =
             in
               ( { model | users = updatedUsers
                         , newUserEmail = ""
+                        , newUserDisplayName = ""
                         , newUserIsAdmin = False
                 }
               , Cmd.none

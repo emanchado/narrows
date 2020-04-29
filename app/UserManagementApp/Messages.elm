@@ -10,11 +10,13 @@ type Msg
     | UsersFetchResult (Result Http.Error UserListResponse)
     | SelectUser Int
     | UnselectUser
+    | UpdateDisplayName String
     | UpdatePassword String
     | UpdateIsAdmin Bool
     | SaveUser
     | SaveUserResult (Result Http.Error (Http.Response String))
     | UpdateNewUserEmail String
+    | UpdateNewUserDisplayName String
     | UpdateNewUserIsAdmin Bool
     | SaveNewUser
     | SaveNewUserResult (Result Http.Error UserInfo)

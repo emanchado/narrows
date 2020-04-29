@@ -6,6 +6,7 @@ import Common.Models exposing (Banner, UserInfo)
 
 type alias UserChanges =
     { userId : Int
+    , displayName : String
     , password : String
     , isAdmin : Bool
     }
@@ -22,5 +23,6 @@ type alias Model =
     , users : Maybe (List UserInfo)
     , userUi : Maybe UserChanges
     , newUserEmail : String
+    , newUserDisplayName : String
     , newUserIsAdmin : Bool
     }

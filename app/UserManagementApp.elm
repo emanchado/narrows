@@ -25,6 +25,7 @@ initialState key =
     , users = Nothing
     , userUi = Nothing
     , newUserEmail = ""
+    , newUserDisplayName = ""
     , newUserIsAdmin = False
     }
 

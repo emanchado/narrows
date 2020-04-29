@@ -19,18 +19,20 @@ encodeUserChanges userChanges =
     role = if userChanges.isAdmin then "admin" else ""
   in
     Json.Encode.object
-      [ ( "password", Json.Encode.string userChanges.password )
+      [ ( "displayName", Json.Encode.string userChanges.displayName )
+      , ( "password", Json.Encode.string userChanges.password )
       , ( "role", Json.Encode.string role )
       ]
 
 
-encodeNewUser : String -> Bool -> Value
-encodeNewUser email isAdmin =
+encodeNewUser : String -> String -> Bool -> Value
+encodeNewUser email displayName isAdmin =
   let
     role = if isAdmin then "admin" else ""
   in
     Json.Encode.object
       [ ( "email", Json.Encode.string email )
+      , ( "displayName", Json.Encode.string displayName )
       , ( "role", Json.Encode.string role )
       ]
 
@@ -55,9 +57,9 @@ saveUser userChanges =
     }
 
 
-saveNewUser : String -> Bool -> Cmd Msg
-saveNewUser email isAdmin =
+saveNewUser : String -> String -> Bool -> Cmd Msg
+saveNewUser email displayName isAdmin =
   Http.post { url = "/api/users"
-            , body = Http.jsonBody <| encodeNewUser email isAdmin
+            , body = Http.jsonBody <| encodeNewUser email displayName isAdmin
             , expect = Http.expectJson SaveNewUserResult parseUserInfo
             }

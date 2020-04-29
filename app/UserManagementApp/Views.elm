@@ -11,76 +11,92 @@ import UserManagementApp.Models exposing (..)
 
 userView : Maybe UserChanges -> UserInfo -> Html Msg
 userView maybeUserChanges user =
-    let
-        userLabel =
-            div [ class "user-label" ]
-                (if user.role == "admin" then
-                    [ strong [] [ text user.email ]
-                    , text " (admin)"
-                    ]
-                 else
-                    [ text user.email ]
-                )
-
-        ( isSelected, password, isAdmin ) =
-            case maybeUserChanges of
-                Just userChanges ->
-                    ( userChanges.userId == user.id, userChanges.password, userChanges.isAdmin )
-
-                Nothing ->
-                    ( False, "", False )
-    in
-        li [ class "user" ]
-            [ if isSelected then
-                div [ class "expanded-user" ]
-                    [ userLabel
-                    , form [ onSubmit SaveUser ]
-                        [ div [ class "form-line" ]
-                            [ label [ for "password" ] [ text "Password: " ]
-                            , input
-                                [ id "password"
-                                , type_ "password"
-                                , onInput UpdatePassword
-                                , value password
-                                ]
-                                []
-                            ]
-                        , div [ class "form-line" ]
-                            [ label [ for "is-admin" ] [ text "Admin?" ]
-                            , input
-                                [ id "is-admin"
-                                , type_ "checkbox"
-                                , onCheck UpdateIsAdmin
-                                , checked isAdmin
-                                ]
-                                []
-                            ]
-                        , div [ class "btn-bar" ]
-                            [ button
-                                [ class "btn btn-default"
-                                , type_ "submit"
-                                ]
-                                [ text "Save" ]
-                            , button
-                                [ class "btn"
-                                , onClick UnselectUser
-                                ]
-                                [ text "Cancel" ]
-                            ]
-                        ]
-                    ]
-              else
-                div []
-                    [ userLabel
-                    , div [ class "btn-bar" ]
-                        [ button
-                            [ class "btn"
-                            , onClick (SelectUser user.id)
-                            ]
-                            [ text "Edit" ]
-                        ]
-                    ]
+  let
+    userLabel =
+      label [ class "user"
+            , for <| "default-btn-user-" ++ (String.fromInt user.id)
             ]
+        (if user.role == "admin" then
+           [ strong [] [ text user.email ]
+           , text " (admin)"
+           ]
+         else
+           [ text user.email ])
+
+    userChanges = case maybeUserChanges of
+                    Just changes ->
+                      changes
+                    Nothing ->
+                      { userId = -1
+                      , displayName = user.displayName
+                      , password = ""
+                      , isAdmin = user.role == "admin"
+                      }
+  in
+    if userChanges.userId == user.id then
+      li [ class "expanded-user" ]
+        [ form [ class "vertical-form"
+               , onSubmit SaveUser
+               ]
+            [ div [ class "form-line" ]
+                [ userLabel ]
+            , div [ class "form-line" ]
+                [ label [ for "display-name" ] [ text "Display name: " ]
+                , input
+                    [ id "display-name"
+                    , type_ "text"
+                    , onInput UpdateDisplayName
+                    , value userChanges.displayName
+                    ]
+                    []
+                ]
+            , div [ class "form-line" ]
+                [ label [ for "password" ] [ text "Password: " ]
+                , input
+                    [ id "password"
+                    , type_ "password"
+                    , onInput UpdatePassword
+                    , value userChanges.password
+                    ]
+                    []
+                ]
+            , div [ class "form-line" ]
+                [ label [ for "is-admin" ] [ text "Admin?" ]
+                , input
+                    [ id "is-admin"
+                    , type_ "checkbox"
+                    , onCheck UpdateIsAdmin
+                    , checked userChanges.isAdmin
+                    ]
+                    []
+                ]
+            , div [ class "btn-bar" ]
+                [ button
+                    [ class "btn btn-default"
+                    , type_ "submit"
+                    ]
+                    [ text "Save" ]
+                , button
+                    [ class "btn"
+                    , id <| "default-btn-user-" ++ (String.fromInt user.id)
+                    , onClick UnselectUser
+                    ]
+                    [ text "Cancel" ]
+                ]
+            ]
+        ]
+    else
+      li []
+          [ userLabel
+          , div [ class "btn-bar" ]
+              [ button
+                  [ class "btn"
+                  , id <| "default-btn-user-" ++ (String.fromInt user.id)
+                  , onClick (SelectUser user.id)
+                  ]
+                  [ text "Edit" ]
+              ]
+          ]
 
 
 userListView : Maybe (List UserInfo) -> Maybe UserChanges -> Html Msg
@@ -103,10 +119,9 @@ mainView model =
         [ h1 [] [ text "Users" ]
         , bannerView model.banner
         , userListView model.users model.userUi
-        , form
-            [ class "create-form"
-            , onSubmit SaveNewUser
-            ]
+        , form [ class "vertical-form alt-background"
+               , onSubmit SaveNewUser
+               ]
             [ h2 [] [ text "Create new user" ]
             , div [ class "form-line" ]
                 [ label [ for "new-user-email" ] [ text "E-mail: " ]
@@ -116,6 +131,17 @@ mainView model =
                     , placeholder "user@example.com"
                     , value model.newUserEmail
                     , onInput UpdateNewUserEmail
+                    ]
+                    []
+                ]
+            , div [ class "form-line" ]
+                [ label [ for "new-user-display-name" ] [ text "Display name: " ]
+                , input
+                    [ id "new-user-display-name"
+                    , type_ "text"
+                    , placeholder "Magnifient Roleplayer"
+                    , value model.newUserDisplayName
+                    , onInput UpdateNewUserDisplayName
                     ]
                     []
                 ]

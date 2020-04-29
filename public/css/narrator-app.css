@@ -162,26 +162,17 @@ ul.user-list {
     padding-left: 0;
 }
 ul.user-list li {
-    display: block;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 
-    margin-bottom: 10px;
-    padding-left: 10px;
+    padding: 15px;
 }
-ul.user-list li .user-label {
-    font-size: 120%;
+ul.user-list li label.user {
+    font-size: 20px;
 }
-
-.expanded-user {
-    padding: 10px;
-    background: #ddd;
-}
-
-form.create-form {
-    padding: 10px;
-    background: #ddd;
-}
-form.create-form h2 {
-    margin-top: 0;
+ul.user-list > li:nth-child(odd) {
+    background-color: var(--alt-bg-color2);
 }
 
 /* ProseMirror dialogs */
