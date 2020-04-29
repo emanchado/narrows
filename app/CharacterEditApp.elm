@@ -25,6 +25,7 @@ initialState key =
     , characterId = 0
     , characterInfo = Nothing
     , newAvatarUrl = Nothing
+    , characterModified = False
     , showResetCharacterTokenDialog = False
     , showTokenInfoBox = False
     , showNovelTokenInfoBox = False

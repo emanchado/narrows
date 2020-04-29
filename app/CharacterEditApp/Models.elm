@@ -42,6 +42,7 @@ type alias Model =
     , characterId : Int
     , characterInfo : Maybe CharacterInfo
     , newAvatarUrl : Maybe String
+    , characterModified : Bool
     , showResetCharacterTokenDialog : Bool
     , showTokenInfoBox : Bool
     , showNovelTokenInfoBox : Bool

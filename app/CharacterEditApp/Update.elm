@@ -83,6 +83,7 @@ update msg model =
               { character | description = newDescription }
           in
             ( { model | characterInfo = Just updatedCharacter
+                      , characterModified = True
                       , banner = Nothing
               }
             , Cmd.none
@@ -99,6 +100,7 @@ update msg model =
               { character | backstory = newBackstory }
           in
             ( { model | characterInfo = Just updatedCharacter
+                      , characterModified = True
                       , banner = Nothing
               }
             , Cmd.none
@@ -114,6 +116,7 @@ update msg model =
             updatedCharacter = { character | name = newName }
           in
             ( { model | characterInfo = Just updatedCharacter
+                      , characterModified = True
                       , banner = Nothing
               }
             , Cmd.none
@@ -122,7 +125,7 @@ update msg model =
           ( model, Cmd.none )
 
     UpdateCharacterAvatar elementId ->
-      ( model
+      ( { model | characterModified = True }
       , readAvatarAsUrl { type_ = "narrator"
                         , fileInputId = elementId
                         }
@@ -230,6 +233,7 @@ update msg model =
     SaveCharacterResult (Ok resp) ->
       ( { model | banner = successBanner <| "Saved"
                 , newAvatarUrl = Nothing
+                , characterModified = False
         }
       , case model.newAvatarUrl of
           Just avatar ->

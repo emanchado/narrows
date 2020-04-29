@@ -101,6 +101,7 @@ mainView model =
                     [ button
                       [ class "btn btn-default"
                       , onClick SaveCharacter
+                      , disabled (not model.characterModified)
                       ]
                       [ text "Save" ]
                     ]
