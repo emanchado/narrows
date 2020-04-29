@@ -190,6 +190,7 @@ type alias NarrationOverview =
 type alias UserInfo =
     { id : Int
     , email : String
+    , displayName : String
     , role : String
     }
 
