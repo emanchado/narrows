@@ -42,6 +42,29 @@ test.serial("can create users with a given password", t => {
     ));
 });
 
+test.serial("can create users with a given display name", t => {
+    const email = "displayname@example.com", displayName = "hey yo whats up";
+
+    return t.context.store.createUser({
+        email: email,
+        displayName: displayName
+    }).then(newUser => {
+        t.is(newUser.email, email);
+        t.is(newUser.displayName, displayName);
+    });
+});
+
+test.serial("users always have a display name", t => {
+    const email = "default-displayname@example.com";
+
+    return t.context.store.createUser({
+        email: email
+    }).then(newUser => {
+        t.is(newUser.email, email);
+        t.is(newUser.displayName, "User #" + newUser.id);
+    });
+});
+
 test.serial("ignores spaces when creating users", t => {
     const email = "willaddspaces@example.com", password = "whatevs";
 
@@ -56,7 +79,7 @@ test.serial("ignores spaces when creating users", t => {
 });
 
 test.serial("ignores spaces when searching for users", t => {
-    const email = "ignorewhensearching@example.com", password = "whatevs";
+    const email = "ignore-space-search@example.com", password = "whatevs";
 
     return t.context.store.createUser({
         email: `             ${email}         `,

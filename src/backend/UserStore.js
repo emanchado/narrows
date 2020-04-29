@@ -9,6 +9,7 @@ const PASSWORD_RESET_TOKEN_TTL = 60 * 60; // One hour
 const JSON_TO_DB = {
     id: "id",
     email: "email",
+    displayName: "display_name",
     password: "password",
     role: "role"
 };
@@ -140,23 +141,30 @@ class UserStore {
         const fields = Object.keys(props).map(convertToDb);
         props.email = props.email.trim();
 
-        this.db.query(
+        return Q.ninvoke(
+            this.db,
+            "query",
             `INSERT INTO users (${ fields.join(", ") })
                 VALUES (${ fields.map(() => "?").join(", ") })`,
-            Object.keys(props).map(f => props[f]),
-            function(err, result) {
-                if (err) {
-                    deferred.reject(err);
-                    return;
-                }
+            Object.keys(props).map(f => props[f])
+        ).then(result => {
+            const insertId = result[0].insertId;
+            let promise = Q(true);
 
-                const finalUser = Object.assign({ id: result.insertId },
-                                                props);
-                deferred.resolve(finalUser);
+            if (!("displayName" in props)) {
+                props.displayName = `User #${insertId}`;
+                promise = Q.ninvoke(
+                    this.db,
+                    "query",
+                    `UPDATE users SET display_name = ? WHERE id = ?`,
+                    [props.displayName, insertId]
+                );
             }
-        );
 
-        return deferred.promise;
+            return promise.then(() => (
+                Object.assign({ id: insertId }, props)
+            ));
+        });
     }
 
     isAdmin(userId) {
