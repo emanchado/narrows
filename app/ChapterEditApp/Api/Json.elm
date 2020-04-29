@@ -3,7 +3,7 @@ module ChapterEditApp.Api.Json exposing (..)
 import Json.Decode as Json exposing (..)
 import Json.Encode
 import Common.Models exposing (FullCharacter, Narration, Chapter, FileSet)
-import Common.Api.Json exposing (parseCharacter, parseFullCharacter, parseChapter, parseMessageThread)
+import Common.Api.Json exposing (parseCharacter, parseMessageThread)
 import ChapterEditApp.Models exposing (LastReactionsResponse, LastChapter, NarrationChapterSearchResponse, NarrationChapterSearchResult)
 
 
