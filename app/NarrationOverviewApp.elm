@@ -22,7 +22,6 @@ initialState : Nav.Key -> Model
 initialState key =
     { key = key
     , narrationOverview = Nothing
-    , sendingPendingIntroEmails = False
     , banner = Nothing
     , showUrlInfoBox = False
     , showRemoveNarrationDialog = False

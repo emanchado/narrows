@@ -27,7 +27,6 @@ type alias SendIntroDate =
 type alias Model =
     { key : Nav.Key
     , narrationOverview : Maybe NarrationOverview
-    , sendingPendingIntroEmails : Bool
     , banner : Maybe Banner
     , showUrlInfoBox : Bool
     , showRemoveNarrationDialog : Bool
