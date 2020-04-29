@@ -19,6 +19,16 @@ test.beforeEach(t => {
     t.context.store.connect();
 });
 
+test.serial("cannot create users without an email", t => {
+    return t.context.store.createUser({
+        role: "admin"
+    }).then(newUser => {
+        t.is(1, 0, "The createUser call should fail without an email");
+    }).catch(err => {
+        t.truthy(err);
+    });
+});
+
 test.serial("can create users with a given role", t => {
     return t.context.store.createUser({
         email: "role@example.com",
@@ -91,8 +101,34 @@ test.serial("ignores spaces when searching for users", t => {
     ));
 });
 
+test.serial("ignores case when searching for users", t => {
+    const email = "ignore-case-search@example.com", password = "whatevs";
+
+    return t.context.store.createUser({
+        email: `             ${email}         `,
+        password: password
+    }).then(user => (
+        t.context.store.getUserByEmail(email.toUpperCase()).then(foundUser => (
+            t.is(user.id, foundUser.id)
+        ))
+    ));
+});
+
 test.serial("ignores spaces when authenticating users", t => {
-    const email = "ignorewhenauthenticating@example.com", password = "whatevs";
+    const email = "ignore-spaces-auth@example.com", password = "whatevs";
+
+    return t.context.store.createUser({
+        email: email,
+        password: password
+    }).then(user => (
+        t.context.store.authenticate(` ${email}  `, password).then(userId => (
+            t.is(user.id, userId)
+        ))
+    ));
+});
+
+test.serial("ignores spaces when authenticating users", t => {
+    const email = "ignorecase-auth@example.com", password = "whatevs";
 
     return t.context.store.createUser({
         email: email,
