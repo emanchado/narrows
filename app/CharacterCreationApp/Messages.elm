@@ -10,7 +10,6 @@ type Msg
     | NavigateTo String
     | FetchNarrationResult (Result Http.Error Narration)
     | UpdateName String
-    | UpdateEmail String
     | CreateCharacter
     | CreateCharacterResult (Result Http.Error Character)
     | CancelCreateCharacter

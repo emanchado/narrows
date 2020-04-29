@@ -156,17 +156,6 @@ update msg model =
         , Cmd.none
         )
 
-    UpdatePlayerEmail newEmail ->
-      let
-        updatedCharacter =
-          case model.characterInfo of
-            Just character -> Just { character | email = Just newEmail }
-            Nothing -> Nothing
-      in
-        ( { model | characterInfo = updatedCharacter }
-        , Cmd.none
-        )
-
     ToggleTokenInfoBox ->
       ( { model | showTokenInfoBox = not model.showTokenInfoBox }
       , Cmd.none

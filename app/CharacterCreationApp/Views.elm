@@ -39,16 +39,6 @@ mainView model =
                         ]
                     []
                 ]
-            , div [ class "form-line" ]
-                [ label [ for "email" ] [ text "Email:" ]
-                , input [ id "email"
-                        , type_ "text"
-                        , placeholder "Email"
-                        , value model.playerEmail
-                        , onInput UpdateEmail
-                        ]
-                    []
-                ]
             , div [ class "btn-bar" ]
                 [ button
                     [ class "btn btn-default"

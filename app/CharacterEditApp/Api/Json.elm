@@ -28,7 +28,7 @@ parseCharacterInfo =
       (field "token" string)
     |> andThen (\r ->
                   Json.map7 r
-                    (maybe (field "email" string))
+                    (maybe (field "displayName" string))
                     (field "name" string)
                     (maybe (field "avatar" string))
                     (field "novelToken" string)
@@ -48,9 +48,5 @@ encodeCharacterUpdate characterInfo =
   Json.Encode.object <|
       [ ( "name", Json.Encode.string characterInfo.name )
       , ( "description", characterInfo.description )
-      , ( "email", case characterInfo.email of
-                     Nothing -> Json.Encode.null
-                     Just "" -> Json.Encode.null
-                     Just email -> Json.Encode.string email )
       , ( "backstory", characterInfo.backstory )
       ]

@@ -114,13 +114,13 @@ mainView model =
                     [ div [ class "form-line" ]
                         [ label [] [ text "Player" ]
                         , div [ class "one-line" ]
-                            [ input [ class "large-text-input"
-                                    , type_ "email"
+                            [ input [ readonly True
+                                    , class "large-text-input"
+                                    , type_ "text"
                                     , size 36
-                                    , value <| case characterInfo.email of
-                                                 Just email -> email
-                                                 Nothing -> ""
-                                    , onInput UpdatePlayerEmail
+                                    , value <| case characterInfo.displayName of
+                                                 Just name -> name
+                                                 Nothing -> "<Unclaimed>"
                                     ]
                                 []
                             ]

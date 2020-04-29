@@ -16,7 +16,6 @@ urlUpdate route model =
         CharacterCreationPage narrationId ->
             ( { model | banner = Nothing
                       , narrationId = narrationId
-                      , playerEmail = ""
                       , characterName = ""
               }
             , CharacterCreationApp.Api.fetchNarration narrationId
@@ -56,15 +55,11 @@ update msg model =
         UpdateName newName ->
             ( { model | characterName = newName }, Cmd.none )
 
-        UpdateEmail newEmail ->
-            ( { model | playerEmail = newEmail }, Cmd.none )
-
         CreateCharacter ->
             ( model
             , CharacterCreationApp.Api.createCharacter
                 model.narrationId
                 model.characterName
-                model.playerEmail
             )
 
         CreateCharacterResult (Err error) ->

@@ -22,7 +22,7 @@ type alias NarrationSummary =
 type alias CharacterInfo =
     { id : Int
     , token : String
-    , email : Maybe String
+    , displayName : Maybe String
     , name : String
     , avatar : Maybe String
     , novelToken : String

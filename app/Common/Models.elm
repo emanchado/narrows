@@ -94,7 +94,7 @@ type alias Character =
 type alias FullCharacter =
     { id : Int
     , name : String
-    , email : Maybe String
+    , displayName : Maybe String
     , token : String
     , novelToken : String
     , avatar : Maybe String

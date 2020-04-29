@@ -47,7 +47,7 @@ parseFullCharacter =
     Json.map6 FullCharacter
       (field "id" int)
       (field "name" string)
-      (maybe (field "email" string))
+      (maybe (field "displayName" string))
       (field "token" string)
       (field "novelToken" string)
       (maybe (field "avatar" string))

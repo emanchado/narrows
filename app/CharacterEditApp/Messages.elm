@@ -18,7 +18,6 @@ type Msg
     | UploadAvatarSuccess String
     | UpdateDescriptionText Json.Encode.Value
     | UpdateBackstoryText Json.Encode.Value
-    | UpdatePlayerEmail String
     | ResetCharacterToken
     | ConfirmResetCharacterToken
     | CancelResetCharacterToken

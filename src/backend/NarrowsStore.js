@@ -189,8 +189,8 @@ class NarrowsStore {
         return Q.ninvoke(
             this.db,
             "all",
-            `SELECT characters.id, name, email, token,
-                    novel_token AS novelToken, avatar
+            `SELECT characters.id, name, display_name AS displayName,
+                    token, novel_token AS novelToken, avatar
                FROM characters
           LEFT JOIN users
                  ON characters.player_id = users.id
@@ -629,7 +629,7 @@ class NarrowsStore {
     getChapterParticipants(chapterId, userOpts) {
         const opts = userOpts || {};
         const extraFields = opts.includePrivateFields ?
-                  ", C.player_id, U.email, C.token, C.novel_token AS novelToken, C.notes" : "";
+                  ", C.player_id, U.display_name AS displayName, C.token, C.novel_token AS novelToken, C.notes" : "";
 
         return Q.ninvoke(
             this.db,
@@ -1151,7 +1151,8 @@ class NarrowsStore {
                 this.db,
                 "get",
                 `SELECT C.id, C.name, C.token, C.avatar, C.description,
-                        C.backstory, C.novel_token AS novelToken, U.email,
+                        C.backstory, C.novel_token AS novelToken,
+                        U.display_name AS displayName,
                         N.id AS narrationId, N.title AS narrationTitle,
                         N.status
                    FROM characters C
@@ -1167,7 +1168,7 @@ class NarrowsStore {
             return this._getPublicNarrationCharacters(basicStats.narrationId).then(characters => ({
                 id: basicStats.id,
                 token: basicStats.token,
-                email: basicStats.email,
+                displayName: basicStats.displayName,
                 name: basicStats.name,
                 avatar: basicStats.avatar,
                 novelToken: basicStats.novelToken,

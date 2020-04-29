@@ -13,7 +13,7 @@ import NarrationOverviewApp.Models exposing (Model)
 
 unclaimed : FullCharacter -> Bool
 unclaimed character =
-  character.email == Nothing
+  character.displayName == Nothing
 
 
 narrationCharacterView : Narration -> FullCharacter -> Html Msg
@@ -36,12 +36,12 @@ narrationCharacterView narration character =
           []
       , span []
           [ a [ href <| "/characters/" ++ (String.fromInt character.id) ++ "/edit"
-              , title <| case character.email of
-                           Just email -> "Played by " ++ email
+              , title <| case character.displayName of
+                           Just name -> "Played by " ++ name
                            Nothing -> "Unclaimed character"
               ]
               [ text character.name ]
-          , case character.email of
+          , case character.displayName of
               Just _ ->
                 text ""
               Nothing ->

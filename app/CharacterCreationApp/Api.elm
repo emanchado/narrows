@@ -17,8 +17,8 @@ fetchNarration narrationId =
              }
 
 
-createCharacter : Int -> String -> String -> Cmd Msg
-createCharacter narrationId characterName playerEmail =
+createCharacter : Int -> String -> Cmd Msg
+createCharacter narrationId characterName =
   let
     postNarrationCharacter =
       "/api/narrations/" ++ (String.fromInt narrationId) ++ "/characters"
@@ -26,7 +26,6 @@ createCharacter narrationId characterName playerEmail =
     jsonEncodedBody =
       (Json.Encode.object
          [ ( "name", Json.Encode.string characterName )
-         , ( "email", Json.Encode.string playerEmail )
          ])
   in
     Http.post { url = postNarrationCharacter
