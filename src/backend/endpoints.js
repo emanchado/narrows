@@ -708,7 +708,14 @@ export function getUsers(req, res) {
 export function postUser(req, res) {
     const props = req.body;
 
-    return userStore.createUser(props).then(user => (
+    if (!isValidEmail(props.email)) {
+        res.status(400).json({
+            errorMessage: `'${ props.email }' is not a valid e-mail`
+        });
+        return;
+    }
+
+    userStore.createUser(props).then(user => (
         res.json(user)
     )).catch(err => {
         res.status(500).json({
