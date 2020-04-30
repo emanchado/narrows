@@ -15,6 +15,10 @@ type Msg
     | UpdateIsAdmin Bool
     | SaveUser
     | SaveUserResult (Result Http.Error (Http.Response String))
+    | DeleteUserDialog
+    | CancelDeleteUser
+    | DeleteUser
+    | DeleteUserResult (Result Http.Error (Http.Response String))
     | UpdateNewUserEmail String
     | UpdateNewUserDisplayName String
     | UpdateNewUserIsAdmin Bool

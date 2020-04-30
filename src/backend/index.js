@@ -56,6 +56,7 @@ app.post("/api/chapters/:chptId/messages", middlewares.apiAuth, endpoints.postCh
 app.get("/api/chapters/:chptId/last-reactions", middlewares.apiAuth, endpoints.getChapterLastReactions);
 
 app.put("/api/users/:userId", endpoints.putUser);
+app.delete("/api/users/:userId", endpoints.deleteUser);
 app.get("/api/characters/by-id/:charId", endpoints.getCharacterById);
 app.put("/api/characters/by-id/:charId", endpoints.putCharacterById);
 app.delete("/api/characters/by-id/:charId", endpoints.deleteCharacterById);

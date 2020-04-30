@@ -743,6 +743,24 @@ export function putUser(req, res) {
     });
 }
 
+export function deleteUser(req, res) {
+    const userId = parseInt(req.params.userId, 10);
+
+    userStore.canActAs(req.session.userId, userId).then(() => {
+        userStore.deleteUser(userId).then(() => {
+            res.status(204).json();
+        }).catch(err => {
+            res.status(500).json({
+                errorMessage: `There was a problem updating: ${ err }`
+            });
+        });
+    }).catch(err => {
+        res.status(403).json({
+            errorMessage: `Cannot modify user ${ userId }`
+        });
+    });
+}
+
 export function getNovel(req, res) {
     const novelToken = req.params.novelToken;
 

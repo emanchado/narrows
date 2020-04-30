@@ -25,4 +25,5 @@ type alias Model =
     , newUserEmail : String
     , newUserDisplayName : String
     , newUserIsAdmin : Bool
+    , showDeleteUserDialog : Bool
     }

@@ -184,6 +184,56 @@ update msg model =
               , Cmd.none
               )
 
+        DeleteUserDialog ->
+          ( { model | showDeleteUserDialog = True }
+          , Cmd.none
+          )
+
+        CancelDeleteUser ->
+          ( { model | showDeleteUserDialog = False }
+          , Cmd.none
+          )
+
+        DeleteUser ->
+            case model.userUi of
+                Just userUi ->
+                    ( { model | showDeleteUserDialog = False }
+                    , UserManagementApp.Api.deleteUser userUi.userId
+                    )
+
+                Nothing ->
+                    ( model, Cmd.none )
+
+        DeleteUserResult (Err err) ->
+            let
+                errorString =
+                    case err of
+                        Http.BadBody parserError ->
+                            "Bad payload: " ++ parserError
+
+                        Http.BadStatus status ->
+                            "Got status " ++ (String.fromInt status)
+
+                        _ ->
+                            "Cannot connect to server"
+            in
+                ( { model | banner = errorBanner errorString }, Cmd.none )
+
+        DeleteUserResult (Ok resp) ->
+          case resp of
+            Http.GoodStatus_ _ _ ->
+              ( { model | userUi = Nothing }
+              , UserManagementApp.Api.fetchUsers
+              )
+            Http.BadStatus_ metadata _ ->
+              ( { model | banner = errorBanner <| "Error deleting user, status code " ++ (String.fromInt metadata.statusCode) }
+              , Cmd.none
+              )
+            _ ->
+              ( { model | banner = errorBanner "Error deleting user, network error" }
+              , Cmd.none
+              )
+
         UpdateNewUserEmail newEmail ->
             ( { model | newUserEmail = newEmail, banner = Nothing }
             , Cmd.none

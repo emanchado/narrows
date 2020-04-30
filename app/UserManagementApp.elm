@@ -27,6 +27,7 @@ initialState key =
     , newUserEmail = ""
     , newUserDisplayName = ""
     , newUserIsAdmin = False
+    , showDeleteUserDialog = False
     }
 
 

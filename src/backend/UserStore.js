@@ -273,6 +273,16 @@ class UserStore {
             ));
         });
     }
+
+    deleteUser(userId) {
+        return Q.ninvoke(
+            this.db,
+            "query",
+            `DELETE FROM users
+              WHERE id = ?`,
+            userId
+        );
+    }
 }
 
 export default UserStore;

@@ -4,7 +4,7 @@ import Html exposing (Html, main_, aside, h1, h2, div, form, input, label, butto
 import Html.Attributes exposing (id, class, href, type_, placeholder, value, checked, for)
 import Html.Events exposing (onInput, onClick, onCheck, onSubmit)
 import Common.Models exposing (UserInfo)
-import Common.Views exposing (bannerView)
+import Common.Views exposing (bannerView, showDialog)
 import UserManagementApp.Messages exposing (..)
 import UserManagementApp.Models exposing (..)
 
@@ -77,7 +77,14 @@ userView maybeUserChanges user =
                     ]
                     [ text "Save" ]
                 , button
+                    [ class "btn btn-remove"
+                    , type_ "button"
+                    , onClick DeleteUserDialog
+                    ]
+                    [ text "Delete" ]
+                , button
                     [ class "btn"
+                    , type_ "button"
                     , id <| "default-btn-user-" ++ (String.fromInt user.id)
                     , onClick UnselectUser
                     ]
@@ -118,6 +125,16 @@ mainView model =
         ]
         [ h1 [] [ text "Users" ]
         , bannerView model.banner
+        , if model.showDeleteUserDialog then
+            showDialog
+              "Delete user?"
+              NoOp
+              "Delete"
+              DeleteUser
+              "Cancel"
+              CancelDeleteUser
+          else
+            text ""
         , userListView model.users model.userUi
         , form [ class "vertical-form alt-background"
                , onSubmit SaveNewUser
@@ -136,30 +153,27 @@ mainView model =
                 ]
             , div [ class "form-line" ]
                 [ label [ for "new-user-display-name" ] [ text "Display name: " ]
-                , input
-                    [ id "new-user-display-name"
-                    , type_ "text"
-                    , placeholder "Magnifient Roleplayer"
-                    , value model.newUserDisplayName
-                    , onInput UpdateNewUserDisplayName
-                    ]
+                , input [ id "new-user-display-name"
+                        , type_ "text"
+                        , placeholder "Magnificent Roleplayer"
+                        , value model.newUserDisplayName
+                        , onInput UpdateNewUserDisplayName
+                        ]
                     []
                 ]
             , div [ class "form-line" ]
                 [ label [ for "new-user-is-admin" ] [ text "Admin? " ]
-                , input
-                    [ id "new-user-is-admin"
-                    , type_ "checkbox"
-                    , checked model.newUserIsAdmin
-                    , onCheck UpdateNewUserIsAdmin
-                    ]
+                , input [ id "new-user-is-admin"
+                        , type_ "checkbox"
+                        , checked model.newUserIsAdmin
+                        , onCheck UpdateNewUserIsAdmin
+                        ]
                     []
                 ]
             , div [ class "btn-bar" ]
-                [ button
-                    [ class "btn btn-default"
-                    , type_ "submit"
-                    ]
+                [ button [ class "btn btn-default"
+                         , type_ "submit"
+                         ]
                     [ text "New user" ]
                 ]
             ]

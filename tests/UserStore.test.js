@@ -169,3 +169,21 @@ test.serial("setting empty password doesn't change it", t => {
         ))
     ));
 });
+
+test.serial("users can be deleted", t => {
+    const email = "delete@example.com";
+
+    return t.context.store.createUser({
+        email: email
+    }).then(user => (
+        t.context.store.deleteUser(user.id)
+    )).then(() => (
+        t.context.store.getUserByEmail(email).then(foundUser => {
+            return true;
+        }).catch(err => {
+            return false;
+        })
+    )).then(found => {
+        t.is(found, false, "Users should be there after deleting");
+    });
+});

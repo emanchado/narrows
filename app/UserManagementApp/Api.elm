@@ -63,3 +63,16 @@ saveNewUser email displayName isAdmin =
             , body = Http.jsonBody <| encodeNewUser email displayName isAdmin
             , expect = Http.expectJson SaveNewUserResult parseUserInfo
             }
+
+
+deleteUser : Int -> Cmd Msg
+deleteUser userId =
+  Http.request
+    { method = "DELETE"
+    , headers = []
+    , url = "/api/users/" ++ (String.fromInt userId)
+    , body = Http.emptyBody
+    , expect = Http.expectStringResponse DeleteUserResult Ok
+    , timeout = Nothing
+    , tracker = Nothing
+    }
