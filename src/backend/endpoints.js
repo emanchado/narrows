@@ -407,27 +407,7 @@ export function postNarrationCharacters(req, res) {
           name = req.body.name || "Unnamed character",
           email = req.body.email;
 
-    let promise;
-    if (email) {
-        if (!isValidEmail(email)) {
-            res.status(400).json({
-                errorMessage: `'${ email }' is not a valid e-mail`
-            });
-            return;
-        }
-
-        promise = userStore.getUserByEmail(email).catch(() => (
-            userStore.createUser({ email: email }).then(() => (
-                userStore.getUserByEmail(email)
-            ))
-        )).then(user => user.id);
-    } else {
-        promise = Q(null);
-    }
-
-    promise.then(userId => (
-        store.addCharacter(name, userId, narrationId)
-    )).then(character => (
+    store.addCharacter(name, null, narrationId).then(character => (
         res.json(character)
     )).catch(err => {
         res.status(500).json({
@@ -612,26 +592,7 @@ export function putCharacterById(req, res) {
     );
 
     return store.updateCharacter(characterId, newProps).then(newCharacter => {
-        if (!("email" in req.body)) {
-            return newCharacter;
-        }
-
-        const email = req.body.email;
-        if (email) {
-            return userStore.getUserByEmail(email).catch(() => (
-                userStore.createUser({ email: email }).then(() => (
-                    userStore.getUserByEmail(email)
-                ))
-            )).then(playerUser => (
-                store.updateCharacter(characterId, {
-                    playerId: playerUser.id
-                })
-            ));
-        } else {
-            return store.updateCharacter(characterId, { playerId: null });
-        }
-    }).then(updatedCharacter => {
-        res.json(updatedCharacter);
+        res.json(newCharacter);
     }).catch(err => {
         res.status(500).json({
             errorMessage: `Could not update character with ` +
