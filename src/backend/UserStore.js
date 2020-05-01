@@ -6,12 +6,15 @@ import generateToken from "./token-generator";
 
 const PASSWORD_SALT_ROUNDS = 10;
 const PASSWORD_RESET_TOKEN_TTL = 60 * 60; // One hour
+const UNVERIFIED_USER_TTL = 7 * 24 * 60 * 60; // One week
 const JSON_TO_DB = {
     id: "id",
     email: "email",
     displayName: "display_name",
     password: "password",
-    role: "role"
+    role: "role",
+    verified: "verified",
+    created: "created"
 };
 
 function convertToDb(fieldName) {
@@ -88,7 +91,9 @@ class UserStore {
         return Q.ninvoke(
             this.db,
             "query",
-            `SELECT id, email, COALESCE(role, '') AS role FROM users WHERE email = ?`,
+            `SELECT id, email, COALESCE(role, '') AS role, verified
+               FROM users
+              WHERE email = ?`,
             email.trim()
         ).spread(userRows => {
             if (userRows.length === 0) {
@@ -128,6 +133,53 @@ class UserStore {
         );
     }
 
+    createEmailVerificationToken(userId) {
+        const emailVerificationToken = generateToken();
+
+        return Q.ninvoke(
+            this.db,
+            "query",
+            `INSERT INTO user_tokens (user_id, token, token_type)
+                              VALUES (?, ?, 'email_verification')`,
+            [userId, emailVerificationToken]
+        ).then(() => (
+            emailVerificationToken
+        ));
+    }
+
+    verifyEmail(token) {
+        return Q.ninvoke(
+            this.db,
+            "query",
+            `SELECT user_id AS userId
+               FROM user_tokens
+              WHERE token = ?
+                AND token_type = 'email_verification'`,
+            token
+        ).spread(rows => (
+            rows.length === 1 ?
+                Q.all([
+                    Q.ninvoke(
+                        this.db,
+                        "query",
+                        `UPDATE users
+                            SET verified = TRUE
+                          WHERE id = ?`,
+                        rows[0].userId
+                    ),
+                    Q.ninvoke(
+                        this.db,
+                        "query",
+                        `DELETE FROM user_tokens
+                          WHERE token = ?
+                            AND token_type = 'email_verification'`,
+                        token
+                    )
+                ]) :
+                Q.reject("No such email verification token")
+        ));
+    }
+
     createUser(props) {
         const deferred = Q.defer();
 
@@ -153,21 +205,24 @@ class UserStore {
                 VALUES (${ fields.map(() => "?").join(", ") })`,
             Object.keys(props).map(f => props[f])
         ).then(result => {
-            const insertId = result[0].insertId;
+            const userId = result[0].insertId;
+
             let promise = Q(true);
 
             if (!("displayName" in props)) {
-                props.displayName = `User #${insertId}`;
-                promise = Q.ninvoke(
-                    this.db,
-                    "query",
-                    `UPDATE users SET display_name = ? WHERE id = ?`,
-                    [props.displayName, insertId]
+                props.displayName = `User #${userId}`;
+                promise = promise.then(
+                    Q.ninvoke(
+                        this.db,
+                        "query",
+                        `UPDATE users SET display_name = ? WHERE id = ?`,
+                        [props.displayName, userId]
+                    )
                 );
             }
 
             return promise.then(() => (
-                Object.assign({ id: insertId }, props)
+                Object.assign({ id: userId }, props)
             ));
         });
     }
@@ -188,13 +243,8 @@ class UserStore {
             return Q(true);
         }
 
-        return Q.ninvoke(
-            this.db,
-            "query",
-            "SELECT role FROM users WHERE id = ?",
-            userId
-        ).spread(rows => {
-            if (!rows[0] || rows[0].role !== "admin") {
+        return this.isAdmin(userId).then(isAdmin => {
+            if (!isAdmin) {
                 throw new Error(
                     "User " + userId + " != " + targetUserId + " and " +
                         "not an admin"
@@ -219,7 +269,9 @@ class UserStore {
         return Q.ninvoke(
             this.db,
             "query",
-            `DELETE FROM password_reset_tokens WHERE token = ?`,
+            `DELETE FROM user_tokens
+              WHERE token = ?
+                AND token_type = 'password_reset'`,
             token
         );
     }
@@ -228,9 +280,23 @@ class UserStore {
         return Q.ninvoke(
             this.db,
             "query",
-            `DELETE FROM password_reset_tokens
-              WHERE TIME_TO_SEC(TIMEDIFF(CURRENT_TIMESTAMP, created)) > ?`,
+            `DELETE FROM user_tokens
+              WHERE TIME_TO_SEC(TIMEDIFF(CURRENT_TIMESTAMP, created)) > ?
+                AND token_type = 'password_reset'`,
             PASSWORD_RESET_TOKEN_TTL
+        );
+    }
+
+    deleteOldUnverifiedUsers(unverified_user_ttl) {
+        const ttl = unverified_user_ttl || UNVERIFIED_USER_TTL;
+
+        return Q.ninvoke(
+            this.db,
+            "query",
+            `DELETE FROM users
+              WHERE verified = FALSE
+                AND TIME_TO_SEC(TIMEDIFF(CURRENT_TIMESTAMP, created)) > ?`,
+            ttl
         );
     }
 
@@ -243,8 +309,8 @@ class UserStore {
             return Q.ninvoke(
                 this.db,
                 "query",
-                `INSERT INTO password_reset_tokens (user_id, token)
-                      VALUES (?, ?)`,
+                `INSERT INTO user_tokens (user_id, token, token_type)
+                      VALUES (?, ?, 'password_reset')`,
                 [user.id, passwordResetCode]
             ).then(() => (
                 passwordResetCode
@@ -258,7 +324,9 @@ class UserStore {
                 this.db,
                 "query",
                 `SELECT user_id AS userId
-                   FROM password_reset_tokens WHERE token = ?`,
+                   FROM user_tokens
+                  WHERE token = ?
+                    AND token_type = 'password_reset'`,
                 token
             )
         )).spread(rows => {

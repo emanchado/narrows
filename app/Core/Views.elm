@@ -24,6 +24,7 @@ import CharacterEditApp
 import UserManagementApp
 import NovelReaderApp
 import ProfileApp
+import EmailVerificationApp
 
 
 notFoundView : Html Msg
@@ -197,6 +198,9 @@ appContentView model =
 
     NarrationIntroPage narrationToken ->
       Html.map NarrationIntroMsg (NarrationIntroApp.view model.narrationIntroApp)
+
+    EmailVerificationPage _ ->
+      Html.map EmailVerificationMsg (EmailVerificationApp.view model.emailVerificationApp)
 
     PasswordResetFailure _ ->
       passwordResetFailureView model

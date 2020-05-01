@@ -33,7 +33,7 @@ function createUsers(userStore, emailList) {
 
     emailList.forEach(email => {
         promise = promise.then(partialRes => (
-            userStore.createUser({ email: email }).then(user => (
+            userStore.createUser({ email: email, verified: true }).then(user => (
                 partialRes.concat(user)
             ))
         ));

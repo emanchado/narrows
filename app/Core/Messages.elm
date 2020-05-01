@@ -19,6 +19,7 @@ import CharacterEditApp
 import UserManagementApp
 import NovelReaderApp
 import ProfileApp
+import EmailVerificationApp
 
 
 type Msg
@@ -50,3 +51,4 @@ type Msg
     | UserManagementMsg UserManagementApp.Msg
     | NovelReaderMsg NovelReaderApp.Msg
     | ProfileMsg ProfileApp.Msg
+    | EmailVerificationMsg EmailVerificationApp.Msg

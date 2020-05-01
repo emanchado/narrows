@@ -29,6 +29,7 @@ parser =
         , Parser.map ProfilePage (s "profile")
         , Parser.map PasswordResetFailure (s "password-reset" </> string)
         , Parser.map NarrationIntroPage (s "narrations" </> string </> s "intro")
+        , Parser.map EmailVerificationPage (s "email-verification" </> string)
         ]
 
 fromUrl : Url -> Route

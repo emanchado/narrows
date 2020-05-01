@@ -43,6 +43,10 @@ class Mailer {
         return `${config.publicAddress}/password-reset/${passwordResetToken}`;
     }
 
+    emailVerificationLink(emailVerificationToken) {
+        return `${config.publicAddress}/email-verification/${emailVerificationToken}`;
+    }
+
     sendMail(template, givenRecipient, subject, stash) {
         if (!givenRecipient) {
             // Nothing to do
@@ -217,6 +221,15 @@ class Mailer {
         }).catch(err => {
             console.error("Error sending character claim emails -", err);
         });
+    }
+
+    emailVerification(email, token) {
+        this.sendMail(
+            "emailVerification",
+            email,
+            'NARROWS email verification',
+            {emailVerificationUrl: this.emailVerificationLink(token)}
+        );
     }
 };
 

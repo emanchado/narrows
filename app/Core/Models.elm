@@ -17,6 +17,7 @@ import CharacterEditApp
 import UserManagementApp
 import NovelReaderApp
 import ProfileApp
+import EmailVerificationApp
 
 
 
@@ -45,4 +46,5 @@ type alias Model =
   , userManagementApp : UserManagementApp.Model
   , novelReaderApp : NovelReaderApp.Model
   , profileApp : ProfileApp.Model
+  , emailVerificationApp : EmailVerificationApp.Model
   }

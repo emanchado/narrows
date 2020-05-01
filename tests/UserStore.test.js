@@ -10,6 +10,8 @@ const userTestsDb = Object.assign(
     { database: "narrows-userstore-test" }
 );
 
+const ONE_WEEK = 7 * 24 * 60 * 60;
+
 // Because recreating the database is heavy, we do it only once for
 // all tests
 test.before(t => recreateDb(userTestsDb));
@@ -72,6 +74,66 @@ test.serial("users always have a display name", t => {
     }).then(newUser => {
         t.is(newUser.email, email);
         t.is(newUser.displayName, "User #" + newUser.id);
+    });
+});
+
+test.serial("can create users already verified", t => {
+    const email = "verified@example.com";
+
+    return t.context.store.createUser({
+        email: email,
+        verified: true
+    }).then(newUser => {
+        t.is(newUser.email, email);
+        t.is(newUser.verified, true);
+    });
+});
+
+test.serial("can verify user email addresses", t => {
+    const email = "toverify@example.com";
+
+    return t.context.store.createUser({
+        email: email
+    }).then(user => (
+        t.context.store.createEmailVerificationToken(user.id)
+    )).then(token => (
+        t.context.store.verifyEmail(token)
+    )).then(() => (
+        t.context.store.getUserByEmail(email)
+    )).then(updatedUser => {
+        t.is(updatedUser.verified, 1);
+    });
+});
+
+test.serial("cannot use random tokens to verify user email addresses", t => {
+    const email = "toverify@example.com";
+
+    return t.context.store.createUser({
+        email: email
+    }).then(user => (
+        t.context.store.verifyEmail("abcdef")
+    )).then(() => {
+        t.truthy(false, "verifyEmail should fail for random tokens");
+    }).catch(err => {
+        t.truthy(true, "verifyEmail should fail for random tokens");
+    });
+});
+
+test.serial("cannot verify a user twice", t => {
+    const email = "toverify@example.com";
+
+    return t.context.store.createUser({
+        email: email
+    }).then(user => (
+        t.context.store.createEmailVerificationToken(user.id)
+    )).then(token => (
+        t.context.store.verifyEmail(token)
+    )).then(token => (
+        t.context.store.verifyEmail(token)  // Second time fails
+    )).then(() => {
+        t.truthy(false, "The second verifyEmail should fail!");
+    }).catch(err => {
+        t.truthy(true, "The second verifyEmail should fail");
     });
 });
 
@@ -185,5 +247,45 @@ test.serial("users can be deleted", t => {
         })
     )).then(found => {
         t.is(found, false, "Users should be there after deleting");
+    });
+});
+
+test.serial("old unverified users get cleaned up", t => {
+    const email = "oldunverified@example.com";
+    const email2 = "oldunverified2@example.com";
+    const justOverAWeekOld = new Date();
+    justOverAWeekOld.setDate(justOverAWeekOld.getDate() - 8);
+
+    return Q.all([
+        t.context.store.createUser({email: email, created: '2020-04-01'}),
+        t.context.store.createUser({email: email2, created: justOverAWeekOld})
+    ]).then(() => {
+        return t.context.store.deleteOldUnverifiedUsers(ONE_WEEK);
+    }).then(() => (
+        t.context.store.getUserByEmail(email).then(foundUser => {
+            return true;
+        }).catch(err => {
+            return false;
+        })
+    )).then(found => {
+        t.is(found, false, "Old, unverified users should be deleted");
+    });
+});
+
+test.serial("not old enough, unverified users stay", t => {
+    const email = "notsooldunverified@example.com";
+    const almostAWeekOld = new Date();
+    almostAWeekOld.setDate(almostAWeekOld.getDate() - 6);
+
+    return t.context.store.createUser({email: email, created: almostAWeekOld}).then(() => {
+        return t.context.store.deleteOldUnverifiedUsers(ONE_WEEK);
+    }).then(() => (
+        t.context.store.getUserByEmail(email).then(foundUser => {
+            return true;
+        }).catch(err => {
+            return false;
+        })
+    )).then(found => {
+        t.is(found, true, "Not so old, unverified users should stay");
     });
 });

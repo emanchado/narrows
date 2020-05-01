@@ -59,6 +59,16 @@ export function deleteSession(req, res) {
     res.status(204).json();
 }
 
+export function postVerifyEmail(req, res) {
+    const token = req.params.token;
+
+    userStore.verifyEmail(token).then(() => {
+        res.json();
+    }).catch(() => {
+        res.status(404).json();
+    });
+}
+
 export function getNarrationArchive(req, res) {
     store.getNarrationOverview(req.session.userId).then(narrationOverviewData => {
         res.json(narrationOverviewData);
@@ -119,7 +129,9 @@ export function getNarration(req, res) {
 export function getNarrationByToken(req, res) {
     const narrationToken = req.params.narrToken;
 
-    store.getNarrationByToken(narrationToken).then(narrationData => {
+    userStore.deleteOldUnverifiedUsers().then(() => (
+        store.getNarrationByToken(narrationToken)
+    )).then(narrationData => {
         res.json(narrationData);
     }).catch(err => {
         res.status(404).json({
@@ -242,17 +254,19 @@ export function getChapterCharacter(req, res) {
 export function getNarrationChapters(req, res) {
     const narrationId = parseInt(req.params.narrId, 10);
 
-    Q.all([
-        store.getNarrationChapters(narrationId),
-        store.getNarration(narrationId)
-    ]).spread((chapterListData, narrationData) => {
-        return userStore.canActAs(
+    userStore.deleteOldUnverifiedUsers().then(() => (
+        Q.all([
+            store.getNarrationChapters(narrationId),
+            store.getNarration(narrationId)
+        ])
+    )).spread((chapterListData, narrationData) => (
+        userStore.canActAs(
             req.session.userId,
             narrationData.narratorId
         ).then(() => {
             res.json({ narration: narrationData, chapters: chapterListData });
-        });
-    }).catch(err => {
+        })
+    )).catch(err => {
         res.status(404).json({
             errorMessage: `Cannot find chapters for narration ${ narrationId }: ${ err }`
         });
@@ -695,9 +709,11 @@ export function postUser(req, res) {
         return;
     }
 
-    userStore.createUser(props).then(user => (
-        res.json(user)
-    )).catch(err => {
+    // If they are created by hand, we consider users verified
+    props.verified = true;
+    userStore.createUser(props).then(user => {
+        res.json(user);
+    }).catch(err => {
         res.status(500).json({
             errorMessage: `There was a problem creating the new user: ${ err }`
         });
@@ -705,20 +721,27 @@ export function postUser(req, res) {
 }
 
 export function putUser(req, res) {
-    const userId = parseInt(req.params.userId, 10);
-    const newProps = req.body;
+    const targetUserId = parseInt(req.params.userId, 10);
 
-    userStore.canActAs(req.session.userId, userId).then(() => {
-        userStore.updateUser(userId, newProps).then(user => {
+    userStore.canActAs(req.session.userId, targetUserId).then(() => (
+        userStore.isAdmin(req.session.userId).then(isAdmin => {
+            const extraAvailableProps = isAdmin ? ["role"] : [];
+            const newProps = objectSelect(
+                req.body,
+                ["displayName", "password"].concat(extraAvailableProps)
+            );
+
+            return userStore.updateUser(targetUserId, newProps);
+        }).then(user => {
             res.json(user);
         }).catch(err => {
             res.status(500).json({
                 errorMessage: `There was a problem updating: ${ err }`
             });
-        });
-    }).catch(err => {
+        })
+    )).catch(err => {
         res.status(403).json({
-            errorMessage: `Cannot modify user ${ userId }`
+            errorMessage: `Cannot modify user ${ targetUserId }`
         });
     });
 }
@@ -828,8 +851,12 @@ export function postCharacterClaim(req, res) {
     const email = req.body.email;
 
     return userStore.getUserByEmail(email).catch(() => (
-        userStore.createUser({ email: email }).then(() => (
-            userStore.getUserByEmail(email)
+        userStore.createUser({ email: email }).then(user => (
+            userStore.createEmailVerificationToken(user.id).then(token => {
+                mailer.emailVerification(email, token);
+            }).then(() => (
+                userStore.getUserByEmail(email)
+            ))
         ))
     )).then(user => (
         store.claimCharacter(characterId, user.id)

@@ -26,6 +26,7 @@ import CharacterCreationApp
 import UserManagementApp
 import NovelReaderApp
 import ProfileApp
+import EmailVerificationApp
 
 
 initialState : () -> Url.Url -> Nav.Key -> (Model, Cmd Msg)
@@ -50,6 +51,7 @@ initialState flags url key =
     , userManagementApp = UserManagementApp.initialState key
     , novelReaderApp = NovelReaderApp.initialState key
     , profileApp = ProfileApp.initialState key
+    , emailVerificationApp = EmailVerificationApp.initialState key
     }
   , Core.Api.refreshSession
   )
@@ -104,6 +106,7 @@ dispatchEnterLocation model =
     characterEditApp = CharacterEditApp.urlUpdate currentRoute model.characterEditApp
     userManagementApp = UserManagementApp.urlUpdate currentRoute model.userManagementApp
     profileApp = ProfileApp.urlUpdate currentRoute model.profileApp
+    emailVerificationApp = EmailVerificationApp.urlUpdate currentRoute model.emailVerificationApp
   in
     ( { model | route = currentRoute
               , readerApp = first readerApp
@@ -119,6 +122,7 @@ dispatchEnterLocation model =
               , userManagementApp = first userManagementApp
               , novelReaderApp = first novelReaderApp
               , profileApp = first profileApp
+              , emailVerificationApp = first emailVerificationApp
       }
     , Cmd.batch <|
       List.append
@@ -126,6 +130,7 @@ dispatchEnterLocation model =
         , Cmd.map CharacterMsg <| second characterApp
         , Cmd.map NovelReaderMsg <| second novelReaderApp
         , Cmd.map NarrationIntroMsg <| second narrationIntroApp
+        , Cmd.map EmailVerificationMsg <| second emailVerificationApp
         ]
         (protectedCmds
           model.session
@@ -302,6 +307,15 @@ combinedUpdate msg model =
         , Cmd.map NarrationIntroMsg cmd
         )
 
+    EmailVerificationMsg emailVerificationMsg ->
+      let
+        ( newEmailVerificationModel, cmd ) =
+          EmailVerificationApp.update emailVerificationMsg model.emailVerificationApp
+      in
+        ( { model | emailVerificationApp = newEmailVerificationModel }
+        , Cmd.map EmailVerificationMsg cmd
+        )
+
     ChapterEditMsg chapterEditMsg ->
       let
         ( newNarratorModel, cmd ) =
@@ -373,6 +387,7 @@ subscriptions model =
         , Sub.map UserManagementMsg (UserManagementApp.subscriptions model.userManagementApp)
         , Sub.map NovelReaderMsg (NovelReaderApp.subscriptions model.novelReaderApp)
         , Sub.map ProfileMsg (ProfileApp.subscriptions model.profileApp)
+        , Sub.map EmailVerificationMsg (EmailVerificationApp.subscriptions model.emailVerificationApp)
         ]
 
 

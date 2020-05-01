@@ -21,4 +21,5 @@ type Route
     | NovelReaderChapterPage String Int
     | ProfilePage
     | PasswordResetFailure String
+    | EmailVerificationPage String
     | NotFoundRoute

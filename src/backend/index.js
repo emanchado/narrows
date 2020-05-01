@@ -32,6 +32,7 @@ app.get("/password-reset/:token", middlewares.getPasswordReset);
 app.get("/api/session", endpoints.getSession);
 app.post("/api/session", endpoints.postSession);
 app.delete("/api/session", endpoints.deleteSession);
+app.post("/api/verify-email/:token", endpoints.postVerifyEmail);
 
 app.get("/api/narrations/overview", middlewares.apiAuth, endpoints.getNarrationOverview);
 app.get("/api/narrations", middlewares.apiAuth, endpoints.getNarrationArchive);
