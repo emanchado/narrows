@@ -626,6 +626,25 @@ export function deleteCharacterById(req, res) {
     });
 }
 
+export function deleteCharacterByIdClaim(req, res) {
+    const characterId = parseInt(req.params.charId, 10);
+
+    return store.getCharacterInfoById(characterId, ["narration_id"]).then(character => (
+        store.getNarration(character.narration_id)
+    )).then(narration => (
+        userStore.canActAs(req.session.userId, narration.narratorId)
+    )).then(() => (
+        store.unclaimCharacter(characterId).then(() => {
+            res.status(204).json();
+        })
+    )).catch(err => {
+        res.status(500).json({
+            errorMessage: `Cannot unclaim character with ` +
+                `id '${ characterId }': ${ err }`
+        });
+    });
+}
+
 export function putCharacterAvatar(req, res) {
     const characterToken = req.params.charToken;
     const form = new formidable.IncomingForm();

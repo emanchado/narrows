@@ -123,7 +123,40 @@ mainView model =
                                                  Nothing -> "<Unclaimed>"
                                     ]
                                 []
+                            , button [ class "btn"
+                                     , onClick UnclaimCharacter
+                                     ]
+                                [ text "Unclaim" ]
                             ]
+                        , if model.showUnclaimCharacterDialog then
+                            showDialog
+                              "Unclaim character?"
+                              NoOp
+                              "Unclaim"
+                              ConfirmUnclaimCharacter
+                              "Cancel"
+                              CancelUnclaimCharacter
+                          else
+                            text ""
+                        , div []
+                            [ text "You can free up this character by "
+                            , text "clicking on 'Unclaim'. "
+                            , img [ src "/img/info-black.png"
+                                  , class "help"
+                                  , onClick ToggleUnclaimInfoBox
+                                  ]
+                                []
+                            ]
+                        , if model.showUnclaimInfoBox then
+                            div [ class "floating-tip" ]
+                              [ text "If you want to give this character to "
+                              , text "a different player, e.g. because the "
+                              , text "current player dropped out of the game, "
+                              , text "you can unclaim the character and let "
+                              , text "someone else claim it again."
+                              ]
+                          else
+                            text ""
                         ]
                     , div [ class "form-line" ]
                         [ label [] [ text "Character token" ]

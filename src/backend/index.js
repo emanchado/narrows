@@ -61,6 +61,7 @@ app.get("/api/characters/by-id/:charId", endpoints.getCharacterById);
 app.put("/api/characters/by-id/:charId", endpoints.putCharacterById);
 app.delete("/api/characters/by-id/:charId", endpoints.deleteCharacterById);
 app.post("/api/characters/by-id/:charId/token", endpoints.postCharacterByIdToken);
+app.delete("/api/characters/by-id/:charId/claim", endpoints.deleteCharacterByIdClaim);
 
 // These endpoints are only for admins!
 app.get("/api/users", middlewares.apiAdminAuth, endpoints.getUsers);

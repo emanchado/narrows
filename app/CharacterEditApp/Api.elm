@@ -46,3 +46,15 @@ removeCharacter characterId =
                , timeout = Nothing
                , tracker = Nothing
                }
+
+
+unclaimCharacter : Int -> Cmd Msg
+unclaimCharacter characterId =
+  Http.request { method = "DELETE"
+               , url = "/api/characters/by-id/" ++ (String.fromInt characterId) ++ "/claim"
+               , headers = []
+               , body = Http.emptyBody
+               , expect = Http.expectWhatever UnclaimCharacterResult
+               , timeout = Nothing
+               , tracker = Nothing
+               }

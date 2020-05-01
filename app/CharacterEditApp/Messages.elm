@@ -22,6 +22,11 @@ type Msg
     | ConfirmResetCharacterToken
     | CancelResetCharacterToken
     | ResetCharacterTokenResult (Result Http.Error CharacterTokenResponse)
+    | UnclaimCharacter
+    | ConfirmUnclaimCharacter
+    | CancelUnclaimCharacter
+    | UnclaimCharacterResult (Result Http.Error ())
+    | ToggleUnclaimInfoBox
     | ToggleTokenInfoBox
     | ToggleNovelTokenInfoBox
     | SaveCharacter

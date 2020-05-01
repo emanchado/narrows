@@ -1332,6 +1332,17 @@ class NarrowsStore {
         ));
     }
 
+    unclaimCharacter(characterId) {
+        return Q.ninvoke(
+            this.db,
+            "query",
+            `UPDATE characters
+                SET player_id = NULL
+              WHERE id = ?`,
+            [characterId]
+        );
+    }
+
     removeCharacter(characterId) {
         return Q.ninvoke(
             this.db,

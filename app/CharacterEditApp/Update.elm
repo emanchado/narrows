@@ -156,6 +156,11 @@ update msg model =
         , Cmd.none
         )
 
+    ToggleUnclaimInfoBox ->
+      ( { model | showUnclaimInfoBox = not model.showUnclaimInfoBox }
+      , Cmd.none
+      )
+
     ToggleTokenInfoBox ->
       ( { model | showTokenInfoBox = not model.showTokenInfoBox }
       , Cmd.none
@@ -165,6 +170,44 @@ update msg model =
       ( { model | showNovelTokenInfoBox = not model.showNovelTokenInfoBox }
       , Cmd.none
       )
+
+    UnclaimCharacter ->
+      ( { model | showUnclaimCharacterDialog = True }
+      , Cmd.none
+      )
+
+    ConfirmUnclaimCharacter ->
+      case model.characterInfo of
+        Just character ->
+          ( { model | showUnclaimCharacterDialog = False }
+          , CharacterEditApp.Api.unclaimCharacter character.id
+          )
+
+        Nothing ->
+          ( { model | showUnclaimCharacterDialog = False }, Cmd.none )
+
+    CancelUnclaimCharacter ->
+      ( { model | showUnclaimCharacterDialog = False }
+      , Cmd.none
+      )
+
+    UnclaimCharacterResult (Err error) ->
+      ( { model | banner = errorBanner "Error unclaiming character" }
+      , Cmd.none
+      )
+
+    UnclaimCharacterResult (Ok ()) ->
+      case model.characterInfo of
+        Just character ->
+          let
+            updatedCharacter = { character | displayName = Nothing }
+          in
+            ( { model | characterInfo = Just updatedCharacter }
+            , Cmd.none
+            )
+
+        Nothing ->
+          ( model, Cmd.none )
 
     ResetCharacterToken ->
       ( { model | showResetCharacterTokenDialog = True }

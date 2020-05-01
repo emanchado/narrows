@@ -291,11 +291,11 @@ export default function testcases(test, stash) {
             narratorId: stash.narratorUserId,
             title: "Character claim narration 1"
         }).then(narration => (
-            stash.store.addCharacter("Char 1", null, narration.id).then(char => (
-                stash.store.claimCharacter(char.id, userId).then(id => {
-                    t.is(id, userId);
-                })
-            ))
+            stash.store.addCharacter("Char 1", null, narration.id)
+        )).then(char => (
+            stash.store.claimCharacter(char.id, userId).then(id => {
+                t.is(id, userId);
+            })
         ));
     });
 
@@ -363,6 +363,56 @@ export default function testcases(test, stash) {
         }).catch(err => {
             t.truthy(err);
         });
+    });
+
+    test.serial("can unclaim a character", t => {
+        const ctx = t.context;
+        const narrationId = ctx.testNarration.id;
+        const userId = ctx.userId1;
+
+        return stash.store.createNarration({
+            narratorId: stash.narratorUserId,
+            title: "Character claim narration 1"
+        }).then(narration => (
+            stash.store.addCharacter("Char 1", null, narration.id)
+        )).then(char => (
+            stash.store.claimCharacter(char.id, userId).then(id => {
+                t.is(id, userId);
+            }).then(() => (
+                stash.store.unclaimCharacter(char.id)
+            )).then(() => (
+                stash.store.getCharacterInfoById(char.id,
+                                                 ['player_id AS playerId'])
+            )).then(char => {
+                t.is(char.playerId, null);
+            })
+        ));
+    });
+
+    test.serial("can unclaim an unclaimed character", t => {
+        const ctx = t.context;
+        const narrationId = ctx.testNarration.id;
+        const userId = ctx.userId1;
+
+        return stash.store.createNarration({
+            narratorId: stash.narratorUserId,
+            title: "Character claim narration 1"
+        }).then(narration => (
+            stash.store.addCharacter("Char 1", null, narration.id)
+        )).then(char => (
+            stash.store.claimCharacter(char.id, userId).then(id => {
+                t.is(id, userId);
+            }).then(() => (
+                stash.store.unclaimCharacter(char.id)
+            )).then(() => (
+                stash.store.unclaimCharacter(char.id)
+            )).then(() => {
+                t.truthy(true, "Unclaim should be a idempotent operation");
+            }).catch(() => {
+                t.truthy(false,
+                         "Unclaiming a character twice should not fail");
+            })
+        ));
     });
 
     test.serial("can delete a character", t => {
