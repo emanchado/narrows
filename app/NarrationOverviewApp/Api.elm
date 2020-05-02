@@ -5,7 +5,7 @@ import Json.Decode as Json exposing (..)
 import Json.Encode
 
 import Common.Models exposing (NarrationStatus, narrationStatusString)
-import Common.Api.Json exposing (parseNarrationOverview, parseNarration, parseIso8601Date)
+import Common.Api.Json exposing (parseNarrationOverview, parseNarration)
 import NarrationOverviewApp.Messages exposing (Msg, Msg(..))
 import NarrationOverviewApp.Models exposing (NarrationNovel, SendPendingIntroEmailsResponse, SendIntroDate)
 

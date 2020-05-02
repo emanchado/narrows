@@ -2,7 +2,6 @@ module CharacterEditApp.Api.Json exposing (..)
 
 import Json.Decode as Json exposing (..)
 import Json.Encode
-import Common.Api.Json exposing (parseIso8601Date)
 import CharacterEditApp.Models exposing (CharacterInfo, ChapterSummary, NarrationSummary, CharacterTokenResponse)
 
 
