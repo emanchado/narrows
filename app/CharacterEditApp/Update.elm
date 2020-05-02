@@ -202,7 +202,9 @@ update msg model =
           let
             updatedCharacter = { character | displayName = Nothing }
           in
-            ( { model | characterInfo = Just updatedCharacter }
+            ( { model | characterInfo = Just updatedCharacter
+                      , banner = Nothing
+              }
             , Cmd.none
             )
 
@@ -240,7 +242,9 @@ update msg model =
           let
             updatedCharacter = { character | token = newTokenResponse.token }
           in
-            ( { model | characterInfo = Just updatedCharacter }
+            ( { model | characterInfo = Just updatedCharacter
+                      , banner = Nothing
+              }
             , Cmd.none
             )
 
