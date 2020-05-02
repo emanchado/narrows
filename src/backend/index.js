@@ -25,15 +25,15 @@ app.use(expressSession({
     cookie: { maxAge: 7 * 24 * 60 * 60 * 1000 }
 }));
 
-app.get("/feeds/:charToken", endpoints.getFeedsCharacter);
 // Note that this is just a "middleware"
 app.get("/password-reset/:token", middlewares.getPasswordReset);
 
+// Session endpoints
 app.get("/api/session", endpoints.getSession);
 app.post("/api/session", endpoints.postSession);
 app.delete("/api/session", endpoints.deleteSession);
-app.post("/api/verify-email/:token", endpoints.postVerifyEmail);
 
+// Regular API endpoints only for logged-in users
 app.get("/api/narrations/overview", middlewares.apiAuth, endpoints.getNarrationOverview);
 app.get("/api/narrations", middlewares.apiAuth, endpoints.getNarrationArchive);
 app.get("/api/characters", middlewares.apiAuth, endpoints.getCharacterArchive);
@@ -56,17 +56,17 @@ app.get("/api/chapters/:chptId/interactions", middlewares.apiAuth, endpoints.get
 app.post("/api/chapters/:chptId/messages", middlewares.apiAuth, endpoints.postChapterMessages);
 app.get("/api/chapters/:chptId/last-reactions", middlewares.apiAuth, endpoints.getChapterLastReactions);
 
-app.put("/api/users/:userId", endpoints.putUser);
-app.delete("/api/users/:userId", endpoints.deleteUser);
-app.get("/api/characters/by-id/:charId", endpoints.getCharacterById);
-app.put("/api/characters/by-id/:charId", endpoints.putCharacterById);
-app.delete("/api/characters/by-id/:charId", endpoints.deleteCharacterById);
-app.post("/api/characters/by-id/:charId/token", endpoints.postCharacterByIdToken);
-app.delete("/api/characters/by-id/:charId/claim", endpoints.deleteCharacterByIdClaim);
+app.put("/api/users/:userId", middlewares.apiAuth, endpoints.putUser);
+app.delete("/api/users/:userId", middlewares.apiAuth, endpoints.deleteUser);
+app.get("/api/characters/by-id/:charId", middlewares.apiAuth, endpoints.getCharacterById);
+app.put("/api/characters/by-id/:charId", middlewares.apiAuth, endpoints.putCharacterById);
+app.delete("/api/characters/by-id/:charId", middlewares.apiAuth, endpoints.deleteCharacterById);
+app.post("/api/characters/by-id/:charId/token", middlewares.apiAuth, endpoints.postCharacterByIdToken);
+app.delete("/api/characters/by-id/:charId/claim", middlewares.apiAuth, endpoints.deleteCharacterByIdClaim);
 
-// These endpoints are only for admins!
-app.get("/api/users", middlewares.apiAdminAuth, endpoints.getUsers);
-app.post("/api/users", middlewares.apiAdminAuth, endpoints.postUser);
+// This are only for admins
+app.get("/api/users", middlewares.apiAuth, endpoints.getUsers);
+app.post("/api/users", middlewares.apiAuth, endpoints.postUser);
 
 // Public endpoints, only protected by an unguessable string
 app.get("/api/narrations/by-token/:narrToken", endpoints.getNarrationByToken);
@@ -78,9 +78,12 @@ app.get("/api/characters/:charToken", endpoints.getCharacter);
 app.put("/api/characters/:charToken", endpoints.putCharacter);
 app.put("/api/characters/:charToken/avatar", endpoints.putCharacterAvatar);
 app.get("/api/novels/:novelToken", endpoints.getNovel);
-app.post("/api/password-reset", endpoints.postPasswordReset);
-// Public endpoint
+app.post("/api/verify-email/:token", endpoints.postVerifyEmail);
+// This is an RSS feed (public, only protected by an unguessable string)
+app.get("/feeds/:charToken", endpoints.getFeedsCharacter);
+// Public API endpoints
 app.post("/api/characters/by-id/:charId/claim", endpoints.postCharacterClaim);
+app.post("/api/password-reset", endpoints.postPasswordReset);
 
 // Catch-all for non-existent API paths
 app.use("/api", function(req, res) {

@@ -228,11 +228,15 @@ class UserStore {
     }
 
     isAdmin(userId) {
+        if (!userId) {
+            throw new Error(`You need to pass a userId to the function`);
+        }
+
         return Q.ninvoke(
             this.db,
             "query",
             "SELECT role FROM users WHERE id = ?",
-            userId
+            [userId]
         ).spread(rows => (
             rows[0] && rows[0].role === "admin"
         ));

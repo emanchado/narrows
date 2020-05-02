@@ -265,6 +265,10 @@ export function getNarrationChapters(req, res) {
             narrationData.narratorId
         ).then(() => {
             res.json({ narration: narrationData, chapters: chapterListData });
+        }).catch(err => {
+            res.status(403).json({
+                errorMessage: `Cannot find chapters for narration ${ narrationId }: ${ err }`
+            });
         })
     )).catch(err => {
         res.status(404).json({
@@ -605,11 +609,24 @@ export function putCharacterById(req, res) {
         ["name", "description", "backstory", "notes"]
     );
 
-    return store.updateCharacter(characterId, newProps).then(newCharacter => {
-        res.json(newCharacter);
-    }).catch(err => {
-        res.status(500).json({
-            errorMessage: `Could not update character with ` +
+    return store.getCharacterInfoById(characterId).then(character => (
+        // First we need to check if the user can access this! Only
+        // the narrator or an admin should have access.
+        store.getNarration(character.narrationId)
+    )).then(narration => (
+        userStore.canActAs(req.session.userId, narration.narratorId)
+    )).then(() => (
+        store.updateCharacter(characterId, newProps).then(newCharacter => {
+            res.json(newCharacter);
+        }).catch(err => {
+            res.status(500).json({
+                errorMessage: `Could not update character with ` +
+                    `id '${ characterId }': ${ err }`
+            });
+        })
+    )).catch(err => {
+        res.status(403).json({
+            errorMessage: `Cannot modify character with ` +
                 `id '${ characterId }': ${ err }`
         });
     });
@@ -623,17 +640,22 @@ export function deleteCharacterById(req, res) {
     )).then(narration => (
         userStore.canActAs(req.session.userId, narration.narratorId)
     )).then(() => (
-        store.removeCharacter(characterId)
-    )).then(success => {
-        if (success) {
-            res.status(204).json();
-        } else {
-            res.status(404).json({
-                errorMessage: `Cannot find character with id '${ characterId }'`
+        store.removeCharacter(characterId).then(success => {
+            if (success) {
+                res.status(204).json();
+            } else {
+                res.status(404).json({
+                    errorMessage: `Cannot find character with id '${ characterId }'`
+                });
+            }
+        }).catch(err => {
+            res.status(500).json({
+                errorMessage: `Cannot delete character with ` +
+                    `id '${ characterId }': ${ err }`
             });
-        }
-    }).catch(err => {
-        res.status(500).json({
+        })
+    )).catch(err => {
+        res.status(403).json({
             errorMessage: `Cannot delete character with ` +
                 `id '${ characterId }': ${ err }`
         });
@@ -650,9 +672,14 @@ export function deleteCharacterByIdClaim(req, res) {
     )).then(() => (
         store.unclaimCharacter(characterId).then(() => {
             res.status(204).json();
+        }).catch(err => {
+            res.status(500).json({
+                errorMessage: `Cannot unclaim character with ` +
+                    `id '${ characterId }': ${ err }`
+            });
         })
     )).catch(err => {
-        res.status(500).json({
+        res.status(403).json({
             errorMessage: `Cannot unclaim character with ` +
                 `id '${ characterId }': ${ err }`
         });
@@ -690,9 +717,18 @@ export function putCharacterAvatar(req, res) {
 }
 
 export function getUsers(req, res) {
-    return userStore.getUsers().then(users => (
-        res.json({ users: users })
-    )).catch(err => {
+    userStore.isAdmin(req.session.userId).then(isAdmin => {
+        if (!isAdmin) {
+            res.status(403).json({
+                errorMessage: 'Cannot get list of users'
+            });
+            return;
+        }
+
+        userStore.getUsers().then(users => (
+            res.json({ users: users })
+        ));
+    }).catch(err => {
         res.status(500).json({
             errorMessage: `There was a problem getting the users: ${ err }`
         });
@@ -702,20 +738,29 @@ export function getUsers(req, res) {
 export function postUser(req, res) {
     const props = req.body;
 
-    if (!isValidEmail(props.email)) {
-        res.status(400).json({
-            errorMessage: `'${ props.email }' is not a valid e-mail`
-        });
-        return;
-    }
+    userStore.isAdmin(req.session.userId).then(isAdmin => {
+        if (!isAdmin) {
+            res.status(403).json({
+                errorMessage: 'Cannot create users'
+            });
+            return;
+        }
 
-    // If they are created by hand, we consider users verified
-    props.verified = true;
-    userStore.createUser(props).then(user => {
-        res.json(user);
-    }).catch(err => {
-        res.status(500).json({
-            errorMessage: `There was a problem creating the new user: ${ err }`
+        if (!isValidEmail(props.email)) {
+            res.status(400).json({
+                errorMessage: `'${ props.email }' is not a valid e-mail`
+            });
+            return;
+        }
+
+        // If they are created by hand, we consider users verified
+        props.verified = true;
+        userStore.createUser(props).then(user => {
+            res.json(user);
+        }).catch(err => {
+            res.status(500).json({
+                errorMessage: `There was a problem creating the new user: ${ err }`
+            });
         });
     });
 }
@@ -807,7 +852,18 @@ export function getCharacterById(req, res) {
     const characterId = parseInt(req.params.charId, 10);
 
     return store.getFullCharacterStats(characterId).then(stats => {
-        res.json(stats);
+        // First we need to check if the user can access this! Only
+        // the narrator or an admin should have access.
+        store.getNarration(stats.narration.id).then(narration => (
+            userStore.canActAs(req.session.userId, narration.narratorId)
+        )).then(() => {
+            res.json(stats);
+        }).catch(err => {
+            res.status(403).json({
+                errorMessage: `No permission to get character stats for ` +
+                    `character '${ characterId }': ${ err }`
+            });
+        });
     }).catch(err => {
         res.status(500).json({
             errorMessage: `Could not get full character stats for ` +
@@ -819,10 +875,21 @@ export function getCharacterById(req, res) {
 export function postCharacterByIdToken(req, res) {
     const characterId = parseInt(req.params.charId, 10);
 
-    return store.resetCharacterToken(characterId).then(newCharacter => {
-        res.json(newCharacter);
-    }).catch(err => {
-        res.status(500).json({
+    return store.getCharacterInfoById(characterId).then(character => (
+        store.getNarration(character.narrationId)
+    )).then(narration => (
+        userStore.canActAs(req.session.userId, narration.narratorId)
+    )).then(() => (
+        store.resetCharacterToken(characterId).then(newCharacter => {
+            res.json(newCharacter);
+        }).catch(err => {
+            res.status(500).json({
+                errorMessage: `Could not reset character token for ` +
+                    `character '${ characterId }': ${ err }`
+            });
+        })
+    )).catch(err => {
+        res.status(403).json({
             errorMessage: `Could not reset character token for ` +
                 `character '${ characterId }': ${ err }`
         });
