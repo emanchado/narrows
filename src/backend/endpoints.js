@@ -837,12 +837,9 @@ export function postCharacterClaim(req, res) {
         store.updateCharacter(characterId, { introSent: new Date() })
     )).then(() => (
         store.getCharacterInfoById(characterId).then(character => (
-            store.getNarration(character.narrationId).then(narration => (
-                userStore.getUser(narration.narratorId).then(narrator => {
-                    narration.narrator = narrator;
-                    mailer.characterClaimed(email, narration, character);
-                })
-            )).then(() => {
+            store.getNarration(character.narrationId).then(narration => {
+                mailer.characterClaimed(email, narration, character);
+            }).then(() => {
                 res.json({
                     id: characterId,
                     email: email

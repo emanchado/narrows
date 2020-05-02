@@ -162,47 +162,60 @@ class Mailer {
         );
     }
 
-    characterClaimed(email, narration, character) {
+    characterClaimed(email, narration, claimedCharacter) {
         // Send the user an intro message
         this.sendMail(
             "characterClaimed",
             email,
-            `Your character ${character.name} for "${narration.title}" in NARROWS`,
+            `Your character ${claimedCharacter.name} for "${narration.title}" in NARROWS`,
             {narrationTitle: narration.title,
-             characterName: character.name,
-             characterSheetLink: this.characterUrlFor(character.token)}
+             characterName: claimedCharacter.name,
+             characterSheetLink: this.characterUrlFor(claimedCharacter.token)}
         );
 
-        // Calculate the number of unclaimed characters
-        const numberUnclaimed = narration.characters.filter(
-            c => c.email === null
-        ).length;
+        Q.all([
+            this.store.getNarratorEmail(narration.id),
+            this.store.getCharacterInfoBulk(narration.characters.map(c => c.id))
+        ]).spread((narratorEmail, charactersWithEmailHash) => {
+            // Object.values might not be available, so do it by hand
+            const charactersWithEmail =
+                  Object.keys(charactersWithEmailHash).map(
+                      id => charactersWithEmailHash[id]
+                  );
 
-        // Tell the narrator a character was claimed
-        this.sendMail(
-            "characterClaimedNarrator",
-            narration.narrator.email,
-            `${character.name} was claimed in "${narration.title}"`,
-            {narrationTitle: narration.title,
-             characterName: character.name,
-             characterSheetLink: this.characterUrlFor(character.token),
-             narrationLink: this.narrationUrlFor(narration.id),
-             numberUnclaimed: numberUnclaimed}
-        );
+            // Calculate the number of unclaimed characters
+            const numberUnclaimed = charactersWithEmail.filter(
+                c => c.email === null
+            ).length;
 
-        // Tell the other players that a character was claimed
-        narration.characters.forEach(character => {
-            if (character.email && character.email !== email) {
-                this.sendMail(
-                    "characterClaimedFellowPlayer",
-                     character.email,
-                    `${character.name} was claimed in "${narration.title}"`,
-                    {narrationTitle: narration.title,
-                     characterName: character.name,
-                     narrationLink: narration.introUrl,
-                     numberUnclaimed: numberUnclaimed}
-                );
-            }
+            // Tell the narrator a character was claimed
+            this.sendMail(
+                "characterClaimedNarrator",
+                narratorEmail,
+                `${claimedCharacter.name} was claimed in "${narration.title}"`,
+                {narrationTitle: narration.title,
+                 characterName: claimedCharacter.name,
+                 characterSheetLink: this.characterUrlFor(claimedCharacter.token),
+                 narrationLink: this.narrationUrlFor(narration.id),
+                 numberUnclaimed: numberUnclaimed}
+            );
+
+            // Tell the other players that a character was claimed
+            charactersWithEmail.forEach(character => {
+                if (character.email && character.email !== email) {
+                    this.sendMail(
+                        "characterClaimedFellowPlayer",
+                        character.email,
+                        `${claimedCharacter.name} was claimed in "${narration.title}"`,
+                        {narrationTitle: narration.title,
+                         characterName: claimedCharacter.name,
+                         narrationLink: narration.introUrl,
+                         numberUnclaimed: numberUnclaimed}
+                    );
+                }
+            });
+        }).catch(err => {
+            console.error("Error sending character claim emails -", err);
         });
     }
 };

@@ -790,9 +790,9 @@ class NarrowsStore {
             this.db,
             "all",
             `SELECT C.id, C.name, U.email
-               FROM users U
-               JOIN characters C
-                 ON U.id = C.player_id
+               FROM characters C
+          LEFT JOIN users U
+                 ON C.player_id = U.id
               WHERE C.id IN (${placeholders.join(', ')})`,
             characterIds
         ).then(rows => {
