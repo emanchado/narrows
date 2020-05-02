@@ -1,9 +1,12 @@
 module UserManagementApp.Views exposing (..)
 
+import ISO8601
+
 import Html exposing (Html, main_, aside, h1, h2, div, form, input, label, button, ul, li, a, strong, text)
-import Html.Attributes exposing (id, class, href, type_, placeholder, value, checked, for)
+import Html.Attributes exposing (id, class, href, type_, placeholder, value, checked, for, title)
 import Html.Events exposing (onInput, onClick, onCheck, onSubmit)
-import Common.Models exposing (UserInfo)
+
+import Common.Models exposing (UserInfo, toUtcString)
 import Common.Views exposing (bannerView, showDialog)
 import UserManagementApp.Messages exposing (..)
 import UserManagementApp.Models exposing (..)
@@ -13,15 +16,11 @@ userView : Maybe UserChanges -> UserInfo -> Html Msg
 userView maybeUserChanges user =
   let
     userLabel =
-      label [ class "user"
+      label [ class <| "user" ++ (if user.verified then "" else " unverified")  ++ (if user.role == "admin" then " admin" else "")
             , for <| "default-btn-user-" ++ (String.fromInt user.id)
+            , title <| if user.verified then "" else "Joined on " ++ (toUtcString <| ISO8601.toPosix user.created)
             ]
-        (if user.role == "admin" then
-           [ strong [] [ text user.email ]
-           , text " (admin)"
-           ]
-         else
-           [ text user.email ])
+        [ text user.email ]
 
     userChanges = case maybeUserChanges of
                     Just changes ->

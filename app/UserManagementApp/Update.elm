@@ -2,7 +2,7 @@ module UserManagementApp.Update exposing (..)
 
 import Http
 import Core.Routes exposing (Route(..))
-import Common.Models exposing (errorBanner)
+import Common.Models exposing (errorBanner, bannerForHttpError)
 import UserManagementApp.Api
 import UserManagementApp.Messages exposing (..)
 import UserManagementApp.Models exposing (..)
@@ -255,7 +255,7 @@ update msg model =
             )
 
         SaveNewUserResult (Err err) ->
-            ( { model | banner = errorBanner "Error creating user" }
+            ( { model | banner = bannerForHttpError err }
             , Cmd.none
             )
 

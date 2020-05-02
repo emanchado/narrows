@@ -7,11 +7,13 @@ import Common.Models exposing (Character, ParticipantCharacter, FullCharacter, N
 
 parseUserInfo : Json.Decoder UserInfo
 parseUserInfo =
-    Json.map4 UserInfo
+    Json.map6 UserInfo
       (field "id" int)
       (field "email" string)
       (field "displayName" string)
       (field "role" string)
+      (field "verified" bool)
+      (field "created" parseIso8601Date)
 
 
 parseCharacter : Json.Decoder Character

@@ -3,7 +3,8 @@ module Common.Models exposing (..)
 import Http
 import Json.Decode
 import Json.Encode
-import ISO8601
+import ISO8601 exposing (Time)
+import Time exposing (utc, toYear, toMonth, toDay, toHour, toMinute, toSecond)
 
 
 loadingPlaceholderChapter : Chapter
@@ -77,6 +78,38 @@ narrationStatusString status =
     Active -> "active"
     Finished -> "finished"
     Abandoned -> "abandoned"
+
+
+toMonthNumber : Time.Month -> Int
+toMonthNumber month =
+  case month of
+    Time.Jan -> 1
+    Time.Feb -> 2
+    Time.Mar -> 3
+    Time.Apr -> 4
+    Time.May -> 5
+    Time.Jun -> 6
+    Time.Jul -> 7
+    Time.Aug -> 8
+    Time.Sep -> 9
+    Time.Oct -> 10
+    Time.Nov -> 11
+    Time.Dec -> 12
+
+
+toUtcString : Time.Posix -> String
+toUtcString time =
+  String.fromInt (toYear utc time)
+  ++ "-" ++
+  String.padLeft 2 '0' (String.fromInt (toMonthNumber <| toMonth utc time))
+  ++ "-" ++
+  String.padLeft 2 '0' (String.fromInt (toDay utc time))
+  ++ " " ++
+  String.padLeft 2 '0' (String.fromInt (toHour utc time))
+  ++ ":" ++
+  String.padLeft 2 '0' (String.fromInt (toMinute utc time))
+  ++ ":" ++
+  String.padLeft 2 '0' (String.fromInt (toSecond utc time))
 
 
 type alias Banner =
@@ -192,6 +225,8 @@ type alias UserInfo =
     , email : String
     , displayName : String
     , role : String
+    , verified : Bool
+    , created : ISO8601.Time
     }
 
 

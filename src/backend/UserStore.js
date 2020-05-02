@@ -62,11 +62,16 @@ class UserStore {
             this.db,
             "query",
             `SELECT id, email, display_name AS displayName,
-                    COALESCE(role, '') AS role
+                    COALESCE(role, '') AS role, verified, created
                FROM users`
-        ).spread(userRows => (
-            userRows
-        ));
+        ).spread(userRows => {
+            // Force the "verified" field to be boolean. It comes as
+            // an integer from MySQL, annoyingly.
+            userRows.forEach(row => {
+                row.verified = !!row.verified;
+            });
+            return userRows;
+        });
     }
 
     getUser(userId) {
@@ -74,7 +79,7 @@ class UserStore {
             this.db,
             "query",
             `SELECT id, email, display_name AS displayName,
-                    COALESCE(role, '') AS role
+                    COALESCE(role, '') AS role, verified, created
                FROM users
               WHERE id = ?`,
             userId
@@ -83,6 +88,7 @@ class UserStore {
                 throw new Error(`Cannot find user ${ userId }`);
             }
 
+            userRows[0].verified = !!userRows[0].verified;
             return userRows[0];
         });
     }
@@ -222,7 +228,7 @@ class UserStore {
             }
 
             return promise.then(() => (
-                Object.assign({ id: userId }, props)
+                this.getUser(userId)
             ));
         });
     }

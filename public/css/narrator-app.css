@@ -171,6 +171,18 @@ ul.user-list li {
 ul.user-list li label.user {
     font-size: 20px;
 }
+ul.user-list li label.unverified {
+    font-style: italic;
+}
+ul.user-list li label.unverified:after {
+    content: ' (unverified)'
+}
+ul.user-list li label.admin {
+    font-weight: bold;
+}
+ul.user-list li label.admin:after {
+    content: ' (admin)'
+}
 ul.user-list > li:nth-child(odd) {
     background-color: var(--alt-bg-color2);
 }
