@@ -604,8 +604,8 @@ export function putCharacterById(req, res) {
 export function deleteCharacterById(req, res) {
     const characterId = parseInt(req.params.charId, 10);
 
-    return store.getCharacterInfoById(characterId, ["narration_id"]).then(character => (
-        store.getNarration(character.narration_id)
+    return store.getCharacterInfoById(characterId).then(character => (
+        store.getNarration(character.narrationId)
     )).then(narration => (
         userStore.canActAs(req.session.userId, narration.narratorId)
     )).then(() => (
@@ -629,8 +629,8 @@ export function deleteCharacterById(req, res) {
 export function deleteCharacterByIdClaim(req, res) {
     const characterId = parseInt(req.params.charId, 10);
 
-    return store.getCharacterInfoById(characterId, ["narration_id"]).then(character => (
-        store.getNarration(character.narration_id)
+    return store.getCharacterInfoById(characterId).then(character => (
+        store.getNarration(character.narrationId)
     )).then(narration => (
         userStore.canActAs(req.session.userId, narration.narratorId)
     )).then(() => (
@@ -836,8 +836,8 @@ export function postCharacterClaim(req, res) {
     )).then(() => (
         store.updateCharacter(characterId, { introSent: new Date() })
     )).then(() => (
-        store.getCharacterInfoById(characterId, ["narration_id"]).then(character => (
-            store.getNarration(character.narration_id).then(narration => (
+        store.getCharacterInfoById(characterId).then(character => (
+            store.getNarration(character.narrationId).then(narration => (
                 userStore.getUser(narration.narratorId).then(narrator => {
                     narration.narrator = narrator;
                     mailer.characterClaimed(email, narration, character);
