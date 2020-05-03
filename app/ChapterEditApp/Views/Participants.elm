@@ -1,7 +1,7 @@
 module ChapterEditApp.Views.Participants exposing (participantListView, participantPreviewsView)
 
 import Html exposing (Html, div, ul, li, img, label, a, s, text)
-import Html.Attributes exposing (class, style, href, src, target)
+import Html.Attributes exposing (class, href, src, target)
 import Html.Events exposing (onClick)
 import Common.Models exposing (FullCharacter)
 import ChapterEditApp.Messages exposing (..)
@@ -53,7 +53,12 @@ characterPreviewView chapterId character =
     , target "_blank"
     , class "btn btn-small"
     ]
-    [ text character.name ]
+    [ text character.name
+    , text " "
+    , div [ class <| "mention-square mention-" ++ (String.fromInt <| (modBy 5 character.id) + 1)
+          ]
+        []
+    ]
 
 
 participantPreviewsView : Int -> List FullCharacter -> Html Msg

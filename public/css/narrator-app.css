@@ -58,6 +58,11 @@ ul.search-results {
 
 
 /* Mentions */
+.mention-square {
+    display: inline-block;
+    width: 15px;
+    height: 15px;
+}
 .mention-1, .mention-1 img { background: linear-gradient(to top, #eaa, rgba(0, 0, 0, 0)); }
 .mention-2, .mention-2 img { background: linear-gradient(to top, #aae, rgba(0, 0, 0, 0)); }
 .mention-3, .mention-3 img { background: linear-gradient(to top, #aea, rgba(0, 0, 0, 0)); }
