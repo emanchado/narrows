@@ -62,6 +62,18 @@ app.ports.startNarration.subscribe(evt => {
         }
     }
 
+    // Load the narration-specific styles
+    let styleEl = document.getElementById("narration-styles");
+    if (!styleEl) {
+        styleEl = document.createElement("link");
+        styleEl.id = "narration-styles";
+        styleEl.type = "text/css";
+        styleEl.rel = "stylesheet";
+
+        document.head.appendChild(styleEl);
+    }
+    styleEl.href = "/static/narrations/" + evt.narrationId + "/styles.css";
+
     // Make chapter text fade-in after a short pause
     const breathHoldingTime = 700;
     setTimeout(() => {
@@ -270,4 +282,13 @@ app.ports.copyText.subscribe(text => {
     navigator.clipboard.writeText(text).catch(err => {
         console.error("Could not copy:", err);
     });
+});
+
+app.ports.updateFontFaceDefinition.subscribe(evt => {
+    const fontFaceName = evt.fontFaceName;
+    const fontUrl = evt.fontUrl;
+
+    const newFont = new FontFace(fontFaceName, `url(${fontUrl})`);
+    document.fonts.add(newFont);
+    newFont.load();
 });

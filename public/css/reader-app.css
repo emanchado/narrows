@@ -75,11 +75,11 @@
 
     color: black;
     font-family: StoryFont;
+    font-size: 18px;
 }
 
 .chapter > p, .chapter > blockquote {
-    max-width: 40em;
-    font-size: 18px;
+    max-width: 720px;
     line-height: 27px;
     text-align: justify;
 
@@ -144,15 +144,15 @@
     margin: 0 auto;
     padding-left: 20px;
     padding-right: 20px;
-    color: black;
     background-color: #e5e5e5;
+    font-size: 180%;
 }
 
 .interaction {
     position: relative;
     z-index: 5;
 
-    max-width: 40em;
+    max-width: 720px;
     margin: 40px auto 0 auto;
     padding: 20px;
 

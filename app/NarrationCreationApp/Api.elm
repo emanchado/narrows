@@ -2,10 +2,9 @@ module NarrationCreationApp.Api exposing (..)
 
 import Http
 
-import Common.Api.Json exposing (parseNarration)
 import NarrationCreationApp.Messages exposing (Msg, Msg(..))
 import NarrationCreationApp.Models exposing (NewNarrationProperties, NarrationUpdateProperties)
-import NarrationCreationApp.Api.Json exposing (encodeNewNarration, encodeNarrationUpdate, parseCreateNarrationResponse)
+import NarrationCreationApp.Api.Json exposing (encodeNewNarration, encodeNarrationUpdate, parseCreateNarrationResponse, parseNarrationInternal)
 
 
 fetchNarration : Int -> Cmd Msg
@@ -14,7 +13,7 @@ fetchNarration narrationId =
     narrationApiUrl = "/api/narrations/" ++ (String.fromInt narrationId)
   in
     Http.get { url = narrationApiUrl
-             , expect = Http.expectJson FetchNarrationResult parseNarration
+             , expect = Http.expectJson FetchNarrationResult parseNarrationInternal
              }
 
 createNarration : NewNarrationProperties -> Cmd Msg
@@ -37,7 +36,7 @@ saveNarration narrationId props =
                  , url = narrationApiUrl
                  , headers = []
                  , body = Http.jsonBody <| encodeNarrationUpdate props
-                 , expect = Http.expectJson SaveNarrationResult parseNarration
+                 , expect = Http.expectJson SaveNarrationResult parseNarrationInternal
                  , timeout = Nothing
                  , tracker = Nothing
                  }

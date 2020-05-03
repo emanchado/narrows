@@ -2,7 +2,37 @@ module NarrationCreationApp.Models exposing (..)
 
 import Json.Decode
 import Browser.Navigation as Nav
-import Common.Models exposing (Banner, FileSet)
+import Common.Models exposing (Banner, FileSet, FullCharacter, NarrationStatus)
+
+
+type alias StyleSet =
+    { titleFont : Maybe String
+    , titleFontSize : Maybe String
+    , titleColor : Maybe String
+    , titleShadowColor : Maybe String
+    , bodyTextFont : Maybe String
+    , bodyTextFontSize : Maybe String
+    , bodyTextColor : Maybe String
+    , bodyTextBackgroundColor : Maybe String
+    , separatorImage : Maybe String
+    }
+
+
+type alias NarrationInternal =
+    { id : Int
+    , title : String
+    , status : NarrationStatus
+    , intro : Json.Decode.Value
+    , introUrl : String
+    , introAudio : Maybe String
+    , introBackgroundImage : Maybe String
+    , notes : String
+    , characters : List FullCharacter
+    , defaultAudio : Maybe String
+    , defaultBackgroundImage : Maybe String
+    , files : FileSet
+    , styles : StyleSet
+    }
 
 
 type alias NewNarrationProperties =
@@ -17,6 +47,7 @@ type alias NarrationUpdateProperties =
     , introAudio : Maybe String
     , defaultBackgroundImage : Maybe String
     , defaultAudio : Maybe String
+    , styles : StyleSet
     }
 
 
@@ -44,7 +75,10 @@ type alias Model =
     , introUrl : String
     , defaultAudio : Maybe String
     , defaultBackgroundImage : Maybe String
+    , styles : StyleSet
     , uploadingAudio : Bool
     , uploadingBackgroundImage : Bool
+    , uploadingImage : Bool
+    , uploadingFont : Bool
     , narrationModified : Bool
     }

@@ -4,6 +4,7 @@ import path from "path";
 import config from "config";
 import mysql from "mysql";
 import Q from "q";
+import ejs from "ejs";
 
 import generateToken from "./token-generator";
 
@@ -32,6 +33,65 @@ const JSON_TO_DB = {
 const AUDIO_REGEXP = new RegExp("\.mp3$", "i");
 
 const VALID_NARRATION_STATUSES = ['active', 'finished', 'abandoned'];
+
+const NARRATION_STYLES_CSS_TEMPLATE = `
+<% if (titleFont) { %>
+@font-face {
+  font-family: "NARROWS heading user font";
+  src: url("fonts/<%= titleFont %>");
+}
+<% } %>
+<% if (bodyTextFont) { %>
+@font-face {
+  font-family: "NARROWS body user font";
+  src: url("fonts/<%= bodyTextFont %>");
+}
+<% } %>
+<% if (titleFont || titleColor || titleShadowColor) { %>
+#top-image {
+<% if (titleFont) { %>
+    font-family: "NARROWS heading user font";
+<% } %>
+<% if (titleFontSize) { %>
+    font-size: <%= titleFontSize %>px;
+<% } %>
+<% if (titleColor) { %>
+    color: <%= titleColor %>;
+<% } %>
+<% if (titleShadowColor) { %>
+    text-shadow: 3px 3px 0 <%= titleShadowColor %>, -1px -1px 0 <%= titleShadowColor %>, 1px -1px 0 <%= titleShadowColor %>, -1px 1px 0 <%= titleShadowColor %>, 1px 1px 0 <%= titleShadowColor %>;
+<% } %>
+}
+<% } %>
+
+<% if (bodyTextFont || bodyTextFontSize) { %>
+.chapter {
+<% if (bodyTextFont) { %>
+    font-family: "NARROWS body user font";
+<% } %>
+<% if (bodyTextFontSize) { %>
+    font-size: <%= bodyTextFontSize %>px;
+<% } %>
+}
+<% } %>
+<% if (bodyTextColor || bodyTextBackgroundColor) { %>
+.chapter > p, .chapter > blockquote,
+.chapter > h1, .chapter > h2, .chapter > h3,
+.chapter ul, .chapter ol, .chapter .separator {
+<% if (bodyTextColor) { %>
+    color: <%= bodyTextColor %>;
+<% } %>
+<% if (bodyTextBackgroundColor) { %>
+    background-color: <%= bodyTextBackgroundColor %>;
+<% } %>
+}
+<% } %>
+<% if (separatorImage) { %>
+.chapter .separator {
+    background-image: url(/static/narrations/<%= narrationId %>/images/<%= separatorImage %>);
+}
+<% } %>
+`;
 
 function convertToDb(fieldName) {
     if (!(fieldName in JSON_TO_DB)) {
@@ -99,6 +159,12 @@ function parseIntroText(introText) {
     return parsedIntro;
 }
 
+function escapeCss(cssText) {
+    return (typeof cssText === 'string') ?
+        cssText.replace(new RegExp('[/;]', 'ig'), '') :
+        cssText;
+}
+
 class NarrowsStore {
     constructor(connConfig, narrationDir) {
         this.connConfig = connConfig;
@@ -158,13 +224,70 @@ class NarrowsStore {
         return deferred.promise;
     }
 
+    _updateNarrationStyles(narrationId, newStyles) {
+        const cssFilePath = path.join(config.files.path,
+                                      narrationId.toString(),
+                                      "styles.css");
+
+        if (
+            Object.keys(newStyles).every(name => (
+                newStyles[name] === null || newStyles[name] === ''
+            ))
+        ) {
+            return Q.ninvoke(
+                this.db,
+                "run",
+                "DELETE FROM narration_styles WHERE narration_id = ?",
+                narrationId
+            ).then(() => {
+                fs.unlinkSync(cssFilePath);
+            });
+        } else {
+            return Q.ninvoke(
+                this.db,
+                "run",
+                `REPLACE INTO narration_styles
+                                  (narration_id, title_font, title_font_size,
+                                   title_color, title_shadow_color,
+                                   body_text_font, body_text_font_size,
+                                   body_text_color, body_text_background_color,
+                                   separator_image)
+                           VALUES (?, ?, ?,
+                                   ?, ?,
+                                   ?, ?,
+                                   ?, ?,
+                                   ?)`,
+                [narrationId, newStyles.titleFont, newStyles.titleFontSize,
+                 newStyles.titleColor, newStyles.titleShadowColor,
+                 newStyles.bodyTextFont, newStyles.bodyTextFontSize,
+                 newStyles.bodyTextColor, newStyles.bodyTextBackgroundColor,
+                 newStyles.separatorImage]
+            ).then(() => {
+                const cssText = ejs.render(
+                    NARRATION_STYLES_CSS_TEMPLATE,
+                    Object.assign({narrationId: narrationId}, newStyles),
+                    {escape: escapeCss}
+                );
+                fs.writeFileSync(cssFilePath, cssText);
+            });
+        }
+    }
+
     updateNarration(narrationId, newProps) {
+        let initialPromise = Q(null);
+
         if ("status" in newProps &&
                 VALID_NARRATION_STATUSES.indexOf(newProps.status) === -1) {
             return Q.reject(new Error("Invalid status '" + newProps.status + "'"));
         }
         if ("intro" in newProps) {
             newProps.intro = JSON.stringify(newProps.intro);
+        }
+        if ("styles" in newProps) {
+            const newStyles = newProps.styles;
+            delete newProps.styles;
+
+            initialPromise = this._updateNarrationStyles(narrationId, newStyles);
         }
 
         const propNames = Object.keys(newProps).map(convertToDb),
@@ -175,14 +298,16 @@ class NarrowsStore {
             return this.getNarration(narrationId);
         }
 
-        return Q.ninvoke(
-            this.db,
-            "run",
-            `UPDATE narrations SET ${ propNameStrings.join(", ") } WHERE id = ?`,
-            propValues.concat(narrationId)
-        ).then(
-            () => this.getNarration(narrationId)
-        );
+        return initialPromise.then(() => (
+            Q.ninvoke(
+                this.db,
+                "run",
+                `UPDATE narrations SET ${ propNameStrings.join(", ") } WHERE id = ?`,
+                propValues.concat(narrationId)
+            ).then(
+                () => this.getNarration(narrationId)
+            )
+        ));
     }
 
     _getNarrationCharacters(narrationId) {
@@ -223,9 +348,10 @@ class NarrowsStore {
         return Q.all([
             filesInDir(path.join(filesDir, "background-images")),
             filesInDir(path.join(filesDir, "audio")),
-            filesInDir(path.join(filesDir, "images"))
-        ]).spread((backgroundImages, audio, images) => {
-            return { backgroundImages, audio, images };
+            filesInDir(path.join(filesDir, "images")),
+            filesInDir(path.join(filesDir, "fonts"))
+        ]).spread((backgroundImages, audio, images, fonts) => {
+            return { backgroundImages, audio, images, fonts };
         });
     }
 
@@ -444,6 +570,25 @@ class NarrowsStore {
                     chapters: chapters
                 }))
             }))
+        ));
+    }
+
+    getNarrationStyles(narrationId) {
+        return Q.ninvoke(
+            this.db,
+            "all",
+            `SELECT title_font AS titleFont, title_font_size AS titleFontSize,
+                    title_color AS titleColor, title_shadow_color AS titleShadowColor,
+                    body_text_font AS bodyTextFont,
+                    body_text_font_size AS bodyTextFontSize,
+                    body_text_color AS bodyTextColor,
+                    body_text_background_color AS bodyTextBackgroundColor,
+                    separator_image AS separatorImage
+               FROM narration_styles
+              WHERE narration_id = ?`,
+            narrationId
+        ).then(rows => (
+            rows.length ? rows[0] : {}
         ));
     }
 

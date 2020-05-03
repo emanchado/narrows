@@ -22,6 +22,12 @@ type alias InitEditorInfo =
     }
 
 
+type alias NarrationInfo =
+    { audioElemId : String
+    , narrationId : Int
+    }
+
+
 type alias NarrationMediaInfo =
     { audioElemId : String
     }
@@ -55,7 +61,7 @@ type alias DeviceSettingValue =
 
 port renderText : RenderTextInfo -> Cmd msg
 port initEditor : InitEditorInfo -> Cmd msg
-port startNarration : NarrationMediaInfo -> Cmd msg
+port startNarration : NarrationInfo -> Cmd msg
 port playPauseNarrationMusic : NarrationMediaInfo -> Cmd msg
 port playNarrationMusic : NarrationMediaInfo -> Cmd msg
 port pauseNarrationMusic : NarrationMediaInfo -> Cmd msg

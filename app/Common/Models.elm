@@ -36,6 +36,7 @@ loadingPlaceholderNarration =
     , files = { audio = []
               , backgroundImages = []
               , images = []
+              , fonts = []
               }
     }
 
@@ -138,6 +139,7 @@ type alias FileSet =
     { audio : List String
     , backgroundImages : List String
     , images : List String
+    , fonts : List String
     }
 
 
@@ -243,14 +245,18 @@ type alias Breadcrumb =
 
 type MediaType
   = Audio
+  | Image
   | BackgroundImage
+  | Font
 
 
 mediaTypeString : MediaType -> String
 mediaTypeString mediaType =
   case mediaType of
     Audio -> "audio"
+    Image -> "images"
     BackgroundImage -> "background-images"
+    Font -> "fonts"
 
 
 type alias FileUploadError =
@@ -271,8 +277,14 @@ updateNarrationFiles fileSet uploadResponse =
     "audio" ->
       { fileSet | audio = uploadResponse.name :: fileSet.audio }
 
+    "images" ->
+      { fileSet | images = uploadResponse.name :: fileSet.images }
+
     "backgroundImages" ->
       { fileSet | backgroundImages = uploadResponse.name :: fileSet.backgroundImages }
+
+    "fonts" ->
+      { fileSet | fonts = uploadResponse.name :: fileSet.fonts }
 
     _ ->
       fileSet

@@ -160,6 +160,12 @@ ul li {
 .vertical-form textarea {
     width: 100%;
 }
+.vertical-form input[type="color"] {
+    display: block;
+}
+.vertical-form input[type="color"]:disabled {
+    opacity: 15%;
+}
 .vertical-form input[type="text"],
 .vertical-form input[type="password"],
 .vertical-form input[type="email"],

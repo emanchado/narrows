@@ -46,6 +46,7 @@ app.post("/api/narrations/:narrId/chapters", middlewares.apiAuth, endpoints.post
 app.post("/api/narrations/:narrId/images", middlewares.apiAuth, endpoints.postNarrationImages);
 app.post("/api/narrations/:narrId/background-images", middlewares.apiAuth, endpoints.postNarrationBackgroundImages);
 app.post("/api/narrations/:narrId/audio", middlewares.apiAuth, endpoints.postNarrationAudio);
+app.post("/api/narrations/:narrId/fonts", middlewares.apiAuth, endpoints.postNarrationFonts);
 app.post("/api/narrations/:narrId/characters", middlewares.apiAuth, endpoints.postNarrationCharacters);
 app.get("/api/narrations/:narrId/last-reactions", middlewares.apiAuth, endpoints.getNarrationLastReactions);
 app.get("/api/narrations/:narrId/search", middlewares.apiAuth, endpoints.getNarrationChapterSearch);

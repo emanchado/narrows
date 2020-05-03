@@ -133,7 +133,9 @@ update msg model =
                                , text = chapterData.text
                                , proseMirrorType = "chapter"
                                }
-                  , startNarration { audioElemId = audioElemId }
+                  , startNarration { audioElemId = audioElemId
+                                   , narrationId = chapterData.narrationId
+                                   }
                   , setDeviceSetting { name = "backgroundMusic"
                                      , value = if model.backgroundMusic then
                                                  "1"

@@ -58,10 +58,11 @@ parseFullCharacter =
 
 parseFileSet : Json.Decoder FileSet
 parseFileSet =
-    Json.map3 FileSet
+    Json.map4 FileSet
         (field "audio" <| list string)
         (field "backgroundImages" <| list string)
         (field "images" <| list string)
+        (field "fonts" <| list string)
 
 
 parseNarrationStatus : Json.Decoder NarrationStatus

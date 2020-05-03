@@ -32,6 +32,7 @@ initialState key =
     , savingChapter = False
     , uploadingAudio = False
     , uploadingBackgroundImage = False
+    , uploadingFont = False
     , narrationChapterSearchTerm = ""
     , narrationChapterSearchLoading = False
     , narrationChapterSearchResults = Nothing

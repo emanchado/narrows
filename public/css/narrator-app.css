@@ -116,6 +116,11 @@ ul.search-results {
     max-height: 100px;
 }
 
+.separator-image-preview {
+    max-width: 300px;
+    max-height: 50px;
+}
+
 .image-preview {
     display: block;
 
@@ -364,4 +369,19 @@ ul.user-list > li:nth-child(odd) {
 .message-counter {
     display: inline-block;
     width: 35px;
+}
+
+.narration-styles-preview {
+    width: 100%;
+    margin-left: 0;
+    padding: 20px;
+}
+
+.narration-styles-preview .title-preview {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.narration-styles-preview .body-text-preview {
+    padding: 15px;
 }

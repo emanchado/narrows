@@ -63,6 +63,7 @@ mainView model =
                        { audio = []
                        , backgroundImages = []
                        , images = []
+                       , fonts = []
                        }
                    }
   in

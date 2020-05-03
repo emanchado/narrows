@@ -115,7 +115,10 @@ export function getNarration(req, res) {
         return userStore.canActAs(
             req.session.userId,
             narrationData.narratorId
-        ).then(() => {
+        ).then(() => (
+            store.getNarrationStyles(narrationId)
+        )).then(styles => {
+            narrationData.styles = styles;
             res.json(narrationData);
         });
     }).catch(err => {
@@ -151,9 +154,12 @@ export function putNarration(req, res) {
         ).then(() => (
             store.updateNarration(narrationId, newProps)
         ))
-    )).then(narrationData => {
-        res.json(narrationData);
-    }).catch(err => {
+    )).then(narrationData => (
+        store.getNarrationStyles(narrationId).then(styles => {
+            narrationData.styles = styles;
+            res.json(narrationData);
+        })
+    )).catch(err => {
         res.status(404).json({
             errorMessage: `Cannot update narration ${ narrationId } as ` +
                 `this user: ${ err }`
@@ -418,6 +424,10 @@ export function postNarrationBackgroundImages(req, res) {
 
 export function postNarrationAudio(req, res) {
     uploadFile(req, res, "audio");
+}
+
+export function postNarrationFonts(req, res) {
+    uploadFile(req, res, "fonts");
 }
 
 export function postNarrationCharacters(req, res) {

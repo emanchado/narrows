@@ -7,14 +7,6 @@ import Common.Api.Json exposing (parseCharacter, parseMessageThread)
 import ChapterEditApp.Models exposing (LastReactionsResponse, LastChapter, NarrationChapterSearchResponse, NarrationChapterSearchResult)
 
 
-parseFileSet : Json.Decoder FileSet
-parseFileSet =
-    Json.map3 FileSet
-        (field "audio" <| list string)
-        (field "backgroundImages" <| list string)
-        (field "images" <| list string)
-
-
 parseLastReactionResponse : Json.Decoder LastReactionsResponse
 parseLastReactionResponse =
     Json.map LastReactionsResponse

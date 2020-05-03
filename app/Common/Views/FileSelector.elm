@@ -43,7 +43,7 @@ fileSelector updateMsg openFileSelectorMsg uploadMsg newFileInputId isUploading 
       , button [ class "btn btn-small btn-add"
                , type_ "button"
                , onPreventDefaultClick (openFileSelectorMsg newFileInputId)
-               , disabled False
+               , disabled isUploading
                ]
           [ text "Upload" ]
       , input [ type_ "file"

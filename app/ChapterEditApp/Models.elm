@@ -56,6 +56,7 @@ type alias Model =
     , savingChapter : Bool
     , uploadingAudio : Bool
     , uploadingBackgroundImage : Bool
+    , uploadingFont : Bool
     , narrationChapterSearchTerm : String
     , narrationChapterSearchLoading : Bool
     , narrationChapterSearchResults : Maybe (List NarrationChapterSearchResult)

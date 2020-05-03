@@ -33,8 +33,20 @@ initialState key =
     , introUrl = ""
     , defaultAudio = Nothing
     , defaultBackgroundImage = Nothing
+    , styles = { titleFont = Nothing
+               , titleFontSize = Nothing
+               , titleColor = Nothing
+               , titleShadowColor = Nothing
+               , bodyTextFont = Nothing
+               , bodyTextFontSize = Nothing
+               , bodyTextColor = Nothing
+               , bodyTextBackgroundColor = Nothing
+               , separatorImage = Nothing
+               }
     , uploadingAudio = False
+    , uploadingImage = False
     , uploadingBackgroundImage = False
+    , uploadingFont = False
     , narrationModified = False
     }
 
@@ -62,4 +74,8 @@ subscriptions model =
         , NarrationCreationApp.Ports.narrationIntroEditUploadFileSuccess (AddMediaFileSuccess NarrationIntroTarget)
         , NarrationCreationApp.Ports.narrationDefaultEditUploadFileError (AddMediaFileError NarrationDefaultTarget)
         , NarrationCreationApp.Ports.narrationDefaultEditUploadFileSuccess (AddMediaFileSuccess NarrationDefaultTarget)
+        , NarrationCreationApp.Ports.narrationTitleStylesEditUploadFileError (AddMediaFileError NarrationTitleStylesTarget)
+        , NarrationCreationApp.Ports.narrationTitleStylesEditUploadFileSuccess (AddMediaFileSuccess NarrationTitleStylesTarget)
+        , NarrationCreationApp.Ports.narrationBodyTextStylesEditUploadFileError (AddMediaFileError NarrationBodyTextStylesTarget)
+        , NarrationCreationApp.Ports.narrationBodyTextStylesEditUploadFileSuccess (AddMediaFileSuccess NarrationBodyTextStylesTarget)
         ]

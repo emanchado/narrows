@@ -97,7 +97,9 @@ update msg model =
                                    , text = narrationIntro.intro
                                    , proseMirrorType = "chapter"
                                    }
-                      , startNarration { audioElemId = audioElemId }
+                      , startNarration { audioElemId = audioElemId
+                                       , narrationId = narrationIntro.id
+                                       }
                       ]
                       (List.map descriptionRenderCommand narrationIntro.characters)
     

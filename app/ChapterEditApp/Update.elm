@@ -311,6 +311,8 @@ update msg model =
               case mediaType of
                 Audio -> { model | uploadingAudio = True }
                 BackgroundImage -> { model | uploadingBackgroundImage = True }
+                Font -> { model | uploadingFont = True }
+                Image -> model
           in
             ( modelWithUploadFlag
             , uploadFile { type_ = mediaTypeString mediaType

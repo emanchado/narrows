@@ -4,10 +4,14 @@ import Http
 import Json.Encode
 
 import Common.Models exposing (MediaType, FileUploadError, FileUploadSuccess, Narration, Banner)
-import NarrationCreationApp.Models exposing (CreateNarrationResponse)
+import NarrationCreationApp.Models exposing (CreateNarrationResponse, NarrationInternal)
 
 
-type MediaTarget = NarrationIntroTarget | NarrationDefaultTarget
+type MediaTarget
+  = NarrationIntroTarget
+  | NarrationDefaultTarget
+  | NarrationTitleStylesTarget
+  | NarrationBodyTextStylesTarget
 
 type Msg
     = NoOp
@@ -18,6 +22,21 @@ type Msg
     | UpdateSelectedIntroAudio String
     | UpdateSelectedDefaultBackgroundImage String
     | UpdateSelectedDefaultAudio String
+    | UpdateSelectedTitleFont String
+    | ToggleCustomTitleFontSize
+    | UpdateTitleFontSize String
+    | ToggleCustomTitleColor
+    | UpdateTitleColor String
+    | ToggleCustomTitleShadowColor
+    | UpdateTitleShadowColor String
+    | UpdateSelectedBodyTextFont String
+    | ToggleCustomBodyTextFontSize
+    | UpdateBodyTextFontSize String
+    | ToggleCustomBodyTextColor
+    | UpdateBodyTextColor String
+    | ToggleCustomBodyTextBackgroundColor
+    | UpdateBodyTextBackgroundColor String
+    | UpdateSelectedSeparatorImage String
     | OpenMediaFileSelector String
     | AddMediaFile MediaType MediaTarget String
     | AddMediaFileError MediaTarget FileUploadError
@@ -26,8 +45,8 @@ type Msg
     | CreateNarration
     | CreateNarrationResult (Result Http.Error CreateNarrationResponse)
     | SaveNarration
-    | SaveNarrationResult (Result Http.Error Narration)
-    | FetchNarrationResult (Result Http.Error Narration)
+    | SaveNarrationResult (Result Http.Error NarrationInternal)
+    | FetchNarrationResult (Result Http.Error NarrationInternal)
     | CancelCreateNarration
     | SetFlashMessage (Maybe Banner)
     | RemoveFlashMessage
