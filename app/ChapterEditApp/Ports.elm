@@ -23,7 +23,6 @@ type alias AddMentionInfo =
 
 
 port updateParticipants : UpdateParticipantsInfo -> Cmd msg
-port playPauseAudioPreview : String -> Cmd msg
 
 port editorContentChanged : (Json.Encode.Value -> msg) -> Sub msg
 port chapterEditUploadFileError : (FileUploadError -> msg) -> Sub msg

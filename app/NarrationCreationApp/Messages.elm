@@ -22,6 +22,7 @@ type Msg
     | AddMediaFile MediaType MediaTarget String
     | AddMediaFileError MediaTarget FileUploadError
     | AddMediaFileSuccess MediaTarget FileUploadSuccess
+    | PlayPauseAudioPreview
     | CreateNarration
     | CreateNarrationResult (Result Http.Error CreateNarrationResponse)
     | SaveNarration

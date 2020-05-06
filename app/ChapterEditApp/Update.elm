@@ -9,11 +9,11 @@ import Time
 
 import Core.Routes exposing (Route(..))
 import Common.Models exposing (Banner, Narration, Chapter, FileSet, FileUploadError, FileUploadSuccess, MediaType(..), errorBanner, successBanner, bannerForHttpError, mediaTypeString, updateNarrationFiles, toUtcString)
-import Common.Ports exposing (initEditor, renderText, openFileInput, uploadFile)
+import Common.Ports exposing (initEditor, renderText, openFileInput, uploadFile, playPauseAudioPreview)
 import ChapterEditApp.Api
 import ChapterEditApp.Messages exposing (..)
 import ChapterEditApp.Models exposing (..)
-import ChapterEditApp.Ports exposing (updateParticipants, playPauseAudioPreview)
+import ChapterEditApp.Ports exposing (updateParticipants)
 
 
 initNewChapterCmd : Narration -> Cmd Msg

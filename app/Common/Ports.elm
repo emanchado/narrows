@@ -64,6 +64,7 @@ port flashElement : String -> Cmd msg
 port pageScrollListener : (Int -> msg) -> Sub msg
 port markNarrationAsStarted : (Int -> msg) -> Sub msg
 
+port playPauseAudioPreview : String -> Cmd msg
 
 port openFileInput : String -> Cmd msg
 port uploadFile : FileUploadInfo -> Cmd msg

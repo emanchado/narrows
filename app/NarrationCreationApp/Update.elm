@@ -6,7 +6,7 @@ import Task
 
 import Core.Routes exposing (Route(..))
 import Common.Models exposing (Banner, successBanner, errorBanner, updateNarrationFiles, mediaTypeString, MediaType(..))
-import Common.Ports exposing (initEditor, openFileInput, uploadFile)
+import Common.Ports exposing (initEditor, openFileInput, uploadFile, playPauseAudioPreview)
 import NarrationCreationApp.Api
 import NarrationCreationApp.Messages exposing (..)
 import NarrationCreationApp.Models exposing (..)
@@ -210,6 +210,9 @@ update msg model =
           }
         , Cmd.none
         )
+
+    PlayPauseAudioPreview ->
+      ( model, playPauseAudioPreview "audio-preview" )
 
     CreateNarration ->
       ( model
