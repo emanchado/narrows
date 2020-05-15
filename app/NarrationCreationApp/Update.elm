@@ -428,7 +428,7 @@ update msg model =
                   )
               _ ->
                 ( model, Cmd.none )
-          else if resp.type_ == "background-image" then
+          else if resp.type_ == "backgroundImages" then
             case mediaTarget of
               NarrationIntroTarget ->
                 ( { model | uploadingBackgroundImage = False
