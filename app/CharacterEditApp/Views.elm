@@ -1,7 +1,7 @@
 module CharacterEditApp.Views exposing (mainView)
 
 import Html exposing (Html, main_, section, h2, h3, div, span, ul, li, img, input, button, a, label, em, text)
-import Html.Attributes exposing (id, class, for, src, href, type_, value, checked, readonly, size, disabled, title)
+import Html.Attributes exposing (id, class, for, src, href, type_, value, checked, readonly, disabled, title)
 import Html.Events exposing (onClick, onInput, on)
 
 import Json.Decode
@@ -117,7 +117,6 @@ mainView model =
                             [ input [ readonly True
                                     , class "large-text-input"
                                     , type_ "text"
-                                    , size 36
                                     , value <| case characterInfo.displayName of
                                                  Just name -> name
                                                  Nothing -> "<Unclaimed>"
@@ -164,7 +163,6 @@ mainView model =
                             [ input [ readonly True
                                     , class "large-text-input"
                                     , type_ "text"
-                                    , size 36
                                     , value characterInfo.token
                                     ]
                                 []
@@ -212,7 +210,6 @@ mainView model =
                         , input [ readonly True
                                 , class "large-text-input"
                                 , type_ "text"
-                                , size 36
                                 , value characterInfo.novelToken
                                 ]
                             []
