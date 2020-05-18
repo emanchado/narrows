@@ -185,5 +185,7 @@ mainView model =
         , introView model
         ]
     Nothing ->
-      div [ id "loader-contents" ]
-        [ loadingView model.banner ]
+      div [ id "loader" ]
+        [ div [ id "loader-contents" ]
+            [ loadingView model.banner ]
+        ]
