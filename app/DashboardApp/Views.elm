@@ -1,7 +1,7 @@
 module DashboardApp.Views exposing (..)
 
 import List
-import Html exposing (Html, main_, h1, h2, div, button, ul, li, a, strong, text, img, span, pre)
+import Html exposing (Html, main_, h1, h2, div, button, ul, li, a, strong, em, text, img, span, pre)
 import Html.Attributes exposing (id, class, href, src, height, width)
 import Html.Events exposing (onClick)
 import Common.Views exposing (loadingView, compactNarrationView, avatarUrl, ribbonForNarrationStatus, bannerView)
@@ -28,15 +28,15 @@ participationView character =
                 [ text character.name ]
             ]
         ]
-    , case List.head <| List.reverse character.narration.chapters of
-        Just chapter ->
-          div []
+    , div []
             [ text "Latest chapter: "
-            , a [ href <| "/read/" ++ (String.fromInt chapter.id) ++ "/" ++ character.token ]
-                [ text chapter.title ]
+            , case List.head <| List.reverse character.narration.chapters of
+                Just chapter ->
+                  a [ href <| "/read/" ++ (String.fromInt chapter.id) ++ "/" ++ character.token ]
+                    [ text chapter.title ]
+                Nothing ->
+                  em [] [ text "None yet" ]
             ]
-        Nothing ->
-          text ""
     ]
 
 

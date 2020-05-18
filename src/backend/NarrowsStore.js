@@ -628,9 +628,11 @@ class NarrowsStore {
         return Q.ninvoke(
             this.db,
             "all",
-            `SELECT CHR.id, status, MAX(published) AS last_published
-               FROM chapters C JOIN narrations N ON C.narration_id = N.id
-               JOIN characters CHR ON N.id = CHR.narration_id
+            `SELECT CHR.id, status,
+                    COALESCE(MAX(published), NOW()) AS last_published
+               FROM narrations N
+               JOIN characters CHR ON CHR.narration_id = N.id
+          LEFT JOIN chapters C ON C.narration_id = N.id
               WHERE player_id = ?
            GROUP BY CHR.id
                     ${extraQuery}
