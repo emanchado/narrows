@@ -196,20 +196,12 @@ update msg model =
       , Cmd.none
       )
 
-    UnclaimCharacterResult (Ok ()) ->
-      case model.characterInfo of
-        Just character ->
-          let
-            updatedCharacter = { character | displayName = Nothing }
-          in
-            ( { model | characterInfo = Just updatedCharacter
-                      , banner = Nothing
-              }
-            , Cmd.none
-            )
-
-        Nothing ->
-          ( model, Cmd.none )
+    UnclaimCharacterResult (Ok character) ->
+      ( { model | characterInfo = Just character
+                , banner = Nothing
+        }
+      , Cmd.none
+      )
 
     ResetCharacterToken ->
       ( { model | showResetCharacterTokenDialog = True }

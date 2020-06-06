@@ -671,8 +671,10 @@ export function deleteCharacterByIdClaim(req, res) {
     )).then(narratorId => (
         userStore.canActAs(req.session.userId, narratorId)
     )).then(() => (
-        store.unclaimCharacter(characterId).then(() => {
-            res.status(204).json();
+        store.unclaimCharacter(characterId).then(() => (
+            store.getFullCharacterStats(characterId)
+        )).then(updatedCharacter => {
+            res.status(200).json(updatedCharacter);
         }).catch(err => {
             res.status(500).json({
                 errorMessage: `Cannot unclaim character with ` +

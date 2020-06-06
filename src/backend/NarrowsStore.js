@@ -1507,7 +1507,9 @@ class NarrowsStore {
                 SET player_id = NULL
               WHERE id = ?`,
             [characterId]
-        );
+        ).then(() => (
+            this.resetCharacterToken(characterId)
+        ));
     }
 
     removeCharacter(characterId) {

@@ -25,7 +25,7 @@ type Msg
     | UnclaimCharacter
     | ConfirmUnclaimCharacter
     | CancelUnclaimCharacter
-    | UnclaimCharacterResult (Result Http.Error ())
+    | UnclaimCharacterResult (Result Http.Error CharacterInfo)
     | ToggleUnclaimInfoBox
     | ToggleTokenInfoBox
     | ToggleNovelTokenInfoBox

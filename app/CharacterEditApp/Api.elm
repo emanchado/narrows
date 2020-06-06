@@ -54,7 +54,7 @@ unclaimCharacter characterId =
                , url = "/api/characters/by-id/" ++ (String.fromInt characterId) ++ "/claim"
                , headers = []
                , body = Http.emptyBody
-               , expect = Http.expectWhatever UnclaimCharacterResult
+               , expect = Http.expectJson UnclaimCharacterResult parseCharacterInfo
                , timeout = Nothing
                , tracker = Nothing
                }
