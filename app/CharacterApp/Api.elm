@@ -28,3 +28,15 @@ saveCharacter characterToken characterInfo =
                , timeout = Nothing
                , tracker = Nothing
                }
+
+
+abandonCharacter : String -> Cmd Msg
+abandonCharacter characterToken =
+  Http.request { method = "DELETE"
+               , url = "/api/characters/" ++ characterToken ++ "/claim"
+               , headers = []
+               , body = Http.emptyBody
+               , expect = Http.expectStringResponse AbandonCharacterResult Ok
+               , timeout = Nothing
+               , tracker = Nothing
+               }

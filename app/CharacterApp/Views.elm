@@ -7,7 +7,7 @@ import Html.Events exposing (onClick, onInput, on)
 import Json.Decode
 
 import Common.Models exposing (ParticipantCharacter, CharacterInfo, ChapterSummary)
-import Common.Views exposing (bannerView, avatarUrl)
+import Common.Views exposing (bannerView, avatarUrl, showDialog)
 import CharacterApp.Models exposing (Model)
 import CharacterApp.Messages exposing (..)
 
@@ -152,6 +152,25 @@ mainView model =
                     , h3 [] [ text "Other characters in the story:" ]
                     , ul [ class "dramatis-personae" ]
                         (List.map (characterView characterInfo.narration.id) characterInfo.narration.characters)
+                    , h3 [] [ text "Abandon character" ]
+                    , text "If you do not want or cannot play this character "
+                    , text "anymore, you can abandon it with the button below."
+                    , div [ class "btn-bar" ]
+                        [ button [ class "btn btn-remove"
+                                 , onClick AbandonCharacter
+                                 ]
+                            [ text "Abandon" ]
+                        ]
+                    , if model.showAbandonCharacterDialog then
+                        showDialog
+                          "Abandon character?"
+                          NoOp
+                          "Abandon"
+                          ConfirmAbandonCharacter
+                          "Cancel"
+                          CancelAbandonCharacter
+                      else
+                        text ""
                     ]
 
                 Nothing ->

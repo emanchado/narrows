@@ -191,3 +191,30 @@ update msg model =
       ( { model | showNovelTip = not model.showNovelTip }
       , Cmd.none
       )
+
+    AbandonCharacter ->
+      ( { model | showAbandonCharacterDialog = True }
+      , Cmd.none
+      )
+
+    ConfirmAbandonCharacter ->
+      ( model
+      , CharacterApp.Api.abandonCharacter model.characterToken
+      )
+
+    CancelAbandonCharacter ->
+      ( { model | showAbandonCharacterDialog = False }
+      , Cmd.none
+      )
+
+    AbandonCharacterResult (Err error) ->
+      ( { model | banner = errorBanner "Error abandoning character"
+                , showAbandonCharacterDialog = False
+        }
+      , Cmd.none
+      )
+
+    AbandonCharacterResult (Ok resp) ->
+      ( model
+      , Nav.pushUrl model.key "/"
+      )

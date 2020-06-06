@@ -27,6 +27,7 @@ initialState key =
     , newAvatarUrl = Nothing
     , banner = Nothing
     , showNovelTip = False
+    , showAbandonCharacterDialog = False
     }
 
 

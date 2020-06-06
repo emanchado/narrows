@@ -223,6 +223,20 @@ class Mailer {
         });
     }
 
+    characterUnclaimed(narration, character) {
+        this.store.getNarratorEmail(narration.id).then(narratorEmail => {
+            this.sendMail(
+                "characterUnclaimed",
+                narratorEmail,
+                `${character.name} was abandoned in "${narration.title}"`,
+                {narrationTitle: narration.title,
+                 characterName: character.name,
+                 characterSheetLink: this.characterUrlFor(character.token),
+                 narrationLink: narration.introUrl}
+            );
+        });
+    }
+
     emailVerification(email, token) {
         this.sendMail(
             "emailVerification",

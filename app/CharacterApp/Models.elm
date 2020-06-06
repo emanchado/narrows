@@ -12,4 +12,5 @@ type alias Model =
     , newAvatarUrl : Maybe String
     , banner : Maybe Banner
     , showNovelTip : Bool
+    , showAbandonCharacterDialog : Bool
     }

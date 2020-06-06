@@ -20,3 +20,7 @@ type Msg
     | SaveCharacter
     | SaveCharacterResult (Result Http.Error (Http.Response String))
     | ToggleNovelTip
+    | AbandonCharacter
+    | ConfirmAbandonCharacter
+    | CancelAbandonCharacter
+    | AbandonCharacterResult (Result Http.Error (Http.Response String))

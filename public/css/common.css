@@ -458,7 +458,8 @@ div.ProseMirror-menubar {
     padding: 15px;
 
     text-align: center;
-    background-color: #eee;
+    color: var(--text-color);
+    background-color: var(--alt-bg-color);
 }
 
 .dialog-text {

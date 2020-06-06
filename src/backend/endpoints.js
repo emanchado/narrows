@@ -947,3 +947,28 @@ export function postCharacterClaim(req, res) {
         });
     });
 }
+
+export function deleteCharacterClaim(req, res) {
+    const characterToken = req.params.charToken;
+
+    return store.getCharacterInfo(
+        characterToken, ["narration_id AS narrationId"]
+    ).then(character => (
+        store.unclaimCharacter(character.id).then(() => (
+            store.getNarration(character.narrationId)
+        )).then(narration => {
+            mailer.characterUnclaimed(narration, character);
+        }).then(() => {
+            res.status(204).json();
+        }).catch(err => {
+            res.status(500).json({
+                errorMessage: `Cannot unclaim character with ` +
+                    `id '${ character.id }': ${ err }`
+            });
+        })
+    )).catch(err => {
+        res.status(400).json({
+            errorMessage: `Could not get character info for ${characterToken}: ${ err }`
+        });
+    });
+}

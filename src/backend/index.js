@@ -84,6 +84,7 @@ app.post("/api/verify-email/:token", endpoints.postVerifyEmail);
 app.get("/feeds/:charToken", endpoints.getFeedsCharacter);
 // Public API endpoints
 app.post("/api/characters/by-id/:charId/claim", endpoints.postCharacterClaim);
+app.delete("/api/characters/:charToken/claim", endpoints.deleteCharacterClaim);
 app.post("/api/password-reset", endpoints.postPasswordReset);
 
 // Catch-all for non-existent API paths
