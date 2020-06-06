@@ -238,7 +238,6 @@ ul li {
 }
 #loader-contents {
     padding-top: 40vh;
-    font-family: "StoryFont";
 }
 #loader-contents .banner {
     font-family: "Roboto";
@@ -247,7 +246,6 @@ ul li {
     font-size: 36px;
 }
 #loader button {
-    font-family: StoryFont;
     padding: 15px;
 }
 
