@@ -152,7 +152,8 @@ mainView model =
                               , text "a different player, e.g. because the "
                               , text "current player dropped out of the game, "
                               , text "you can unclaim the character and let "
-                              , text "someone else claim it again."
+                              , text "someone else claim it again. This will "
+                              , text "also reset the character token."
                               ]
                           else
                             text ""
@@ -194,13 +195,12 @@ mainView model =
                             ]
                         , if model.showTokenInfoBox then
                             div [ class "floating-tip" ]
-                              [ text "You can share the link above with the "
-                              , text "player playing this character. The link "
-                              , text "contains the character token, which is "
-                              , text "meant to be secret (only known to the "
-                              , text "narrator and the player). If you "
-                              , text "suspect anyone else knows this token, "
-                              , text "you can reset it with the button above."
+                              [ text "The character sheet link contains the "
+                              , text "character token, which is meant to be "
+                              , text "secret (only known to the narrator and "
+                              , text "the player). If you suspect anyone else "
+                              , text "knows this token, you can reset it with "
+                              , text "the button above."
                               ]
                           else
                             text ""
