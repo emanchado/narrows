@@ -9,20 +9,21 @@
 }
 
 :root {
-    --main-bg-color: #eee;
-    --alt-bg-color: #e5e5e5;
-    --alt-bg-color2: #ddd;
-    --input-bg-color: #eee;
+    --main-bg-color: #eff0f1;
+    --alt-bg-color: #fcfcfc;
+    --alt-bg-color2: #e0dfde;
+    --input-bg-color: #fcfcfc;
+    --button-bg-color: #e0dfde;
     --readonly-bg-color: #ddd;
-    --disabled-bg-color: #ddd;
+    --disabled-bg-color: #888786;
     --link-color: #0066cc;
-    --heading-color: black;
-    --border-color: #ccc;
-    --soft-border-color: #ddd;
-    --input-border-color: black;
-    --text-color: black;
-    --readonly-color: black;
-    --disabled-color: #aaa;
+    --heading-color: #31363b;
+    --border-color: #3e8acc;
+    --soft-border-color: #3daee9;
+    --input-border-color: #8ecbe9;
+    --text-color: #31363b;
+    --readonly-color: #31363b;
+    --disabled-color: #afb0b3;
 }
 
 body {
@@ -307,7 +308,7 @@ ul li {
 }
 
 .btn {
-    border: 1px solid var(--soft-border-color);
+    border: 1px solid var(--button-bg-color);
     margin: 0 3px;
     padding: 5px 10px;
 
@@ -470,9 +471,9 @@ div.ProseMirror-menubar {
 .editor-container {
     width: 100%;
     margin: 0;
-    border: 1px solid black;
+    border: 1px solid var(--input-border-color);
 
-    background-color: #eee;
+    background-color: var(--input-bg-color);
 }
 
 .editor-container .ProseMirror {
