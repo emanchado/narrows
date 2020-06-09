@@ -305,8 +305,8 @@ class UserStore {
             "query",
             `DELETE FROM users
               WHERE verified = FALSE
-                AND TIME_TO_SEC(TIMEDIFF(CURRENT_TIMESTAMP, created)) > ?`,
-            ttl
+                AND created < NOW() - INTERVAL ? SECOND`,
+            [ttl]
         );
     }
 
