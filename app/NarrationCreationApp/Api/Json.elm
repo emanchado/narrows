@@ -3,24 +3,10 @@ module NarrationCreationApp.Api.Json exposing (..)
 import Json.Decode as Json exposing (..)
 import Json.Encode
 
-import Common.Api.Json exposing (parseNarrationStatus, parseFullCharacter, parseFileSet)
-import NarrationCreationApp.Models exposing (NewNarrationProperties, NarrationUpdateProperties, CreateNarrationResponse, NarrationInternal, StyleSet)
+import Common.Api.Json exposing (parseNarrationStatus, parseFullCharacter, parseFileSet, parseStyleSet)
+import Common.Models exposing (StyleSet)
+import NarrationCreationApp.Models exposing (NewNarrationProperties, NarrationUpdateProperties, CreateNarrationResponse, NarrationInternal)
 
-
-parseStyleSet : Json.Decoder StyleSet
-parseStyleSet =
-    Json.map8 StyleSet
-        (maybe (field "titleFont" string))
-        (maybe (field "titleFontSize" string))
-        (maybe (field "titleColor" string))
-        (maybe (field "titleShadowColor" string))
-        (maybe (field "bodyTextFont" string))
-        (maybe (field "bodyTextFontSize" string))
-        (maybe (field "bodyTextColor" string))
-        (maybe (field "bodyTextBackgroundColor" string))
-    |> andThen (\r ->
-                  Json.map r
-                    (maybe (field "separatorImage" string)))
 
 parseNarrationInternal : Json.Decoder NarrationInternal
 parseNarrationInternal =

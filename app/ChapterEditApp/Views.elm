@@ -167,7 +167,8 @@ lastChapterView participantChapterIds chapter =
         " invisible"
   in
     li []
-      [ h3 [ class extraClass ] [ text chapter.title ]
+      [ h3 [ class extraClass ]
+          [ text chapter.title ]
       , div [ id <| "chapter-text-" ++ (String.fromInt chapter.id)
             , class <| "chapter" ++ extraClass
             ]

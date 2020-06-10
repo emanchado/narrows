@@ -2,7 +2,7 @@ module Common.Api.Json exposing (..)
 
 import Json.Decode as Json exposing (..)
 import ISO8601
-import Common.Models exposing (Character, ParticipantCharacter, FullCharacter, Narration, NarrationStatus(..), Chapter, FileSet, ChapterMessages, MessageThread, Message, ChapterOverview, NarrationOverview, UserInfo, CharacterInfo, ChapterSummary, NarrationSummary)
+import Common.Models exposing (Character, ParticipantCharacter, FullCharacter, Narration, NarrationStatus(..), Chapter, FileSet, ChapterMessages, MessageThread, Message, ChapterOverview, NarrationOverview, UserInfo, CharacterInfo, ChapterSummary, NarrationSummary, StyleSet)
 
 
 parseUserInfo : Json.Decoder UserInfo
@@ -79,6 +79,22 @@ parseNarrationStatus =
     string |> andThen convert
 
 
+parseStyleSet : Json.Decoder StyleSet
+parseStyleSet =
+    Json.map8 StyleSet
+        (maybe (field "titleFont" string))
+        (maybe (field "titleFontSize" string))
+        (maybe (field "titleColor" string))
+        (maybe (field "titleShadowColor" string))
+        (maybe (field "bodyTextFont" string))
+        (maybe (field "bodyTextFontSize" string))
+        (maybe (field "bodyTextColor" string))
+        (maybe (field "bodyTextBackgroundColor" string))
+    |> andThen (\r ->
+                  Json.map r
+                    (maybe (field "separatorImage" string)))
+
+
 parseNarration : Json.Decoder Narration
 parseNarration =
     Json.map8 Narration
@@ -91,11 +107,12 @@ parseNarration =
         (maybe (field "introBackgroundImage" string))
         (field "notes" string)
     |> andThen (\r ->
-               Json.map4 r
+               Json.map5 r
                  (field "characters" <| list parseFullCharacter)
                  (maybe (field "defaultAudio" string))
                  (maybe (field "defaultBackgroundImage" string))
-                 (field "files" parseFileSet))
+                 (field "files" parseFileSet)
+                 (field "styles" parseStyleSet))
 
 
 parseChapter : Json.Decoder Chapter

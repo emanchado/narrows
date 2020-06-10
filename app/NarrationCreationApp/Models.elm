@@ -2,20 +2,7 @@ module NarrationCreationApp.Models exposing (..)
 
 import Json.Decode
 import Browser.Navigation as Nav
-import Common.Models exposing (Banner, FileSet, FullCharacter, NarrationStatus)
-
-
-type alias StyleSet =
-    { titleFont : Maybe String
-    , titleFontSize : Maybe String
-    , titleColor : Maybe String
-    , titleShadowColor : Maybe String
-    , bodyTextFont : Maybe String
-    , bodyTextFontSize : Maybe String
-    , bodyTextColor : Maybe String
-    , bodyTextBackgroundColor : Maybe String
-    , separatorImage : Maybe String
-    }
+import Common.Models exposing (Banner, FileSet, FullCharacter, NarrationStatus, StyleSet)
 
 
 type alias NarrationInternal =

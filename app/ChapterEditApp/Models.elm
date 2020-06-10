@@ -41,8 +41,10 @@ type alias NarrationChapterSearchResult =
     , title : String
     }
 
+
 type alias NarrationChapterSearchResponse =
     { results : List (NarrationChapterSearchResult) }
+
 
 type alias Model =
     { key : Nav.Key

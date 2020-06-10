@@ -38,6 +38,16 @@ loadingPlaceholderNarration =
               , images = []
               , fonts = []
               }
+    , styles = { titleFont = Nothing
+               , titleFontSize = Nothing
+               , titleColor = Nothing
+               , titleShadowColor = Nothing
+               , bodyTextFont = Nothing
+               , bodyTextFontSize = Nothing
+               , bodyTextColor = Nothing
+               , bodyTextBackgroundColor = Nothing
+               , separatorImage = Nothing
+               }
     }
 
 
@@ -149,6 +159,19 @@ type NarrationStatus
   | Abandoned
 
 
+type alias StyleSet =
+    { titleFont : Maybe String
+    , titleFontSize : Maybe String
+    , titleColor : Maybe String
+    , titleShadowColor : Maybe String
+    , bodyTextFont : Maybe String
+    , bodyTextFontSize : Maybe String
+    , bodyTextColor : Maybe String
+    , bodyTextBackgroundColor : Maybe String
+    , separatorImage : Maybe String
+    }
+
+
 type alias Narration =
     { id : Int
     , title : String
@@ -162,6 +185,7 @@ type alias Narration =
     , defaultAudio : Maybe String
     , defaultBackgroundImage : Maybe String
     , files : FileSet
+    , styles : StyleSet
     }
 
 

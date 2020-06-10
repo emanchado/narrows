@@ -4,7 +4,7 @@ import Html exposing (Html, main_, h1, h2, section, div, span, form, input, labe
 import Html.Attributes exposing (id, class, style, href, target, type_, name, placeholder, value, disabled, src, checked)
 import Html.Events exposing (onInput, onClick, on)
 
-import Common.Models exposing (MediaType(..))
+import Common.Models exposing (MediaType(..), StyleSet)
 import Common.Views exposing (onPreventDefaultClick, bannerView, breadcrumbNavView, horizontalSpinner)
 import Common.Views.FileSelector exposing (fileSelector)
 import NarrationCreationApp.Messages exposing (..)

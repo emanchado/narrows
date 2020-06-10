@@ -65,6 +65,16 @@ mainView model =
                        , images = []
                        , fonts = []
                        }
+                   , styles = { titleFont = Nothing
+                              , titleFontSize = Nothing
+                              , titleColor = Nothing
+                              , titleShadowColor = Nothing
+                              , bodyTextFont = Nothing
+                              , bodyTextFontSize = Nothing
+                              , bodyTextColor = Nothing
+                              , bodyTextBackgroundColor = Nothing
+                              , separatorImage = Nothing
+                              }
                    }
   in
     main_ [ id "narrator-app", class "app-container" ]

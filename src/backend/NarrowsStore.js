@@ -379,10 +379,12 @@ class NarrowsStore {
 
             return Q.all([
                 this._getNarrationCharacters(id),
-                this._getNarrationFiles(id)
-            ]).spread((characters, files) => {
+                this._getNarrationFiles(id),
+                this._getNarrationStyles(id)
+            ]).spread((characters, files, styles) => {
                 narrationInfo.characters = characters;
                 narrationInfo.files = files;
+                narrationInfo.styles = styles;
                 return narrationInfo;
             });
         });
@@ -575,12 +577,14 @@ class NarrowsStore {
                     this.getNarrationChapters(row.id, { limit: 5 })
                 ))),
                 Q.all(rows.map(row => this._getNarrationCharacters(row.id))),
-                Q.all(rows.map(row => this._getNarrationFiles(row.id)))
-            ]).spread((chapterLists, characterLists, fileLists) => ({
+                Q.all(rows.map(row => this._getNarrationFiles(row.id))),
+                Q.all(rows.map(row => this._getNarrationStyles(row.id)))
+            ]).spread((chapterLists, characterLists, fileLists, styleLists) => ({
                 narrations: chapterLists.map((chapters, i) => ({
                     narration: Object.assign(rows[i],
                                              {characters: characterLists[i],
                                               files: fileLists[i],
+                                              styles: styleLists[i],
                                               intro: parseIntroText(rows[i].intro),
                                               introUrl: `${config.publicAddress}/narrations/${rows[i].token}/intro`}),
                     chapters: chapters
@@ -589,7 +593,7 @@ class NarrowsStore {
         ));
     }
 
-    getNarrationStyles(narrationId) {
+    _getNarrationStyles(narrationId) {
         return Q.ninvoke(
             this.db,
             "all",

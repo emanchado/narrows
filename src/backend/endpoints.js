@@ -115,10 +115,7 @@ export function getNarration(req, res) {
         return userStore.canActAs(
             req.session.userId,
             narrationData.narratorId
-        ).then(() => (
-            store.getNarrationStyles(narrationId)
-        )).then(styles => {
-            narrationData.styles = styles;
+        ).then(() => {
             res.json(narrationData);
         });
     }).catch(err => {
@@ -154,12 +151,9 @@ export function putNarration(req, res) {
         ).then(() => (
             store.updateNarration(narrationId, newProps)
         ))
-    )).then(narrationData => (
-        store.getNarrationStyles(narrationId).then(styles => {
-            narrationData.styles = styles;
-            res.json(narrationData);
-        })
-    )).catch(err => {
+    )).then(narrationData => {
+        res.json(narrationData);
+    }).catch(err => {
         res.status(404).json({
             errorMessage: `Cannot update narration ${ narrationId } as ` +
                 `this user: ${ err }`
