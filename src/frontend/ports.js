@@ -31,6 +31,21 @@ function bumpVolume(audioEl) {
     }
 }
 
+function setCustomNarrationStyles(narrationId) {
+    // Load the narration-specific styles
+    let styleEl = document.getElementById("narration-styles");
+    if (!styleEl) {
+        styleEl = document.createElement("link");
+        styleEl.id = "narration-styles";
+        styleEl.type = "text/css";
+        styleEl.rel = "stylesheet";
+
+        document.head.appendChild(styleEl);
+    }
+
+    styleEl.href = "/static/narrations/" + narrationId + "/styles.css";
+}
+
 app.ports.renderText.subscribe(evt => {
     // Make sure the DOM elements are already rendered
     requestAnimationFrame(() => {
@@ -62,23 +77,17 @@ app.ports.startNarration.subscribe(evt => {
         }
     }
 
-    // Load the narration-specific styles
-    let styleEl = document.getElementById("narration-styles");
-    if (!styleEl) {
-        styleEl = document.createElement("link");
-        styleEl.id = "narration-styles";
-        styleEl.type = "text/css";
-        styleEl.rel = "stylesheet";
-
-        document.head.appendChild(styleEl);
-    }
-    styleEl.href = "/static/narrations/" + evt.narrationId + "/styles.css";
+    setCustomNarrationStyles(evt.narrationId);
 
     // Make chapter text fade-in after a short pause
     const breathHoldingTime = 700;
     setTimeout(() => {
         app.ports.markNarrationAsStarted.send(breathHoldingTime);
     }, breathHoldingTime);
+});
+
+app.ports.setCustomNarrationStyles.subscribe(narrationId => {
+    setCustomNarrationStyles(narrationId);
 });
 
 app.ports.playPauseNarrationMusic.subscribe(evt => {

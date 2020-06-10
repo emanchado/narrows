@@ -9,7 +9,7 @@ import Time
 
 import Core.Routes exposing (Route(..))
 import Common.Models exposing (Banner, Narration, Chapter, FileSet, FileUploadError, FileUploadSuccess, MediaType(..), errorBanner, successBanner, bannerForHttpError, mediaTypeString, updateNarrationFiles, toUtcString)
-import Common.Ports exposing (initEditor, renderText, openFileInput, uploadFile, playPauseAudioPreview)
+import Common.Ports exposing (initEditor, renderText, openFileInput, uploadFile, playPauseAudioPreview, setCustomNarrationStyles)
 import ChapterEditApp.Api
 import ChapterEditApp.Messages exposing (..)
 import ChapterEditApp.Models exposing (..)
@@ -150,7 +150,9 @@ update msg model =
                          }
       in
         ( { model | narration = Just narration }
-        , action
+        , Cmd.batch [ action
+                    , setCustomNarrationStyles narration.id
+                    ]
         )
 
     NarrationLastReactionsFetchResult (Err error) ->
@@ -159,15 +161,22 @@ update msg model =
       )
 
     NarrationLastReactionsFetchResult (Ok lastReactions) ->
-      ( { model | lastChapters = Just lastReactions.lastChapters }
-      , Cmd.batch <|
-          List.map
-            (\c -> renderText { elemId = "chapter-text-" ++ (String.fromInt c.id)
-                              , text = c.text
-                              , proseMirrorType = "chapter"
-                              })
-            lastReactions.lastChapters
-      )
+      let
+        narrationId = case model.narration of
+                        Just narr -> narr.id
+                        Nothing -> -1
+      in
+        ( { model | lastChapters = Just lastReactions.lastChapters }
+        , Cmd.batch <| List.append
+            (List.map
+              (\c -> renderText { elemId = "chapter-text-" ++ (String.fromInt c.id)
+                                , text = c.text
+                                , proseMirrorType = "chapter"
+                                })
+              lastReactions.lastChapters)
+            [ setCustomNarrationStyles narrationId
+            ]
+        )
 
     LastReactionsFetchResult (Err error) ->
       ( { model | banner = bannerForHttpError error }

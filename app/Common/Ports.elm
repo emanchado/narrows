@@ -61,14 +61,14 @@ type alias DeviceSettingValue =
 
 port renderText : RenderTextInfo -> Cmd msg
 port initEditor : InitEditorInfo -> Cmd msg
+port flashElement : String -> Cmd msg
+
 port startNarration : NarrationInfo -> Cmd msg
+port markNarrationAsStarted : (Int -> msg) -> Sub msg
 port playPauseNarrationMusic : NarrationMediaInfo -> Cmd msg
 port playNarrationMusic : NarrationMediaInfo -> Cmd msg
 port pauseNarrationMusic : NarrationMediaInfo -> Cmd msg
-port flashElement : String -> Cmd msg
-
 port pageScrollListener : (Int -> msg) -> Sub msg
-port markNarrationAsStarted : (Int -> msg) -> Sub msg
 
 port playPauseAudioPreview : String -> Cmd msg
 
@@ -80,3 +80,5 @@ port uploadAvatar : AvatarUploadInfo -> Cmd msg
 
 port readDeviceSettings : String -> Cmd msg
 port setDeviceSetting : DeviceSettingValue -> Cmd msg
+
+port setCustomNarrationStyles : Int -> Cmd msg

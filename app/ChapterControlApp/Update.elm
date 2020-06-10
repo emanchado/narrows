@@ -4,7 +4,7 @@ import Http
 import Browser.Navigation as Nav
 import Core.Routes exposing (Route(..))
 import Common.Models exposing (Banner, Character, errorBanner)
-import Common.Ports exposing (renderText)
+import Common.Ports exposing (renderText, setCustomNarrationStyles)
 import ChapterControlApp.Api
 import ChapterControlApp.Messages exposing (..)
 import ChapterControlApp.Models exposing (..)
@@ -65,6 +65,7 @@ update msg model =
                 , proseMirrorType = "chapter"
                 }
             , ChapterControlApp.Api.fetchNarrationInfo interactions.chapter.narrationId
+            , setCustomNarrationStyles interactions.chapter.narrationId
             ]
         )
 
