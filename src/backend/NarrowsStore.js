@@ -388,6 +388,22 @@ class NarrowsStore {
         });
     }
 
+    getNarratorId(narrationId) {
+        return Q.ninvoke(
+            this.db,
+            "get",
+            `SELECT narrator_id AS narratorId
+               FROM narrations WHERE id = ?`,
+            narrationId
+        ).then(narrationInfo => {
+            if (!narrationInfo) {
+                throw new Error("Cannot find narration " + narrationId);
+            }
+
+            return narrationInfo.narratorId;
+        });
+    }
+
     getNarrationByToken(token) {
         return Q.ninvoke(
             this.db,

@@ -195,13 +195,10 @@ export function deleteNarration(req, res) {
     const narrationId = parseInt(req.params.narrId, 10);
     const newProps = req.body;
 
-    store.getNarration(narrationId).then(narrationData => (
-        userStore.canActAs(
-            req.session.userId,
-            narrationData.narratorId
-        ).then(() => (
-            store.deleteNarration(narrationId, newProps)
-        ))
+    store.getNarratorId(narrationId).then(narratorId => (
+        userStore.canActAs(req.session.userId, narratorId)
+    )).then(() => (
+        store.deleteNarration(narrationId, newProps)
     )).then(narrationData => {
         res.status(204).json();
     }).catch(err => {
@@ -216,8 +213,8 @@ export function getChapter(req, res) {
     const chapterId = parseInt(req.params.chptId, 10);
 
     store.getChapter(chapterId, { includePrivateFields: true }).then(chapterData => (
-        store.getNarration(chapterData.narrationId).then(narrationData => (
-            userStore.canActAs(req.session.userId, narrationData.narratorId)
+        store.getNarratorId(chapterData.narrationId).then(narratorId => (
+            userStore.canActAs(req.session.userId, narratorId)
         )).then(() => (
             res.json(chapterData)
         ))
@@ -288,8 +285,8 @@ export function putChapter(req, res) {
     const newProps = req.body;
 
     store.getChapter(chapterId).then(origChapter => (
-        store.getNarration(origChapter.narrationId).then(narrationData => (
-            userStore.canActAs(req.session.userId, narrationData.narratorId)
+        store.getNarratorId(origChapter.narrationId).then(narratorId => (
+            userStore.canActAs(req.session.userId, narratorId)
         )).then(() => {
             const origPublished = origChapter.published;
 
@@ -315,8 +312,8 @@ export function getChapterInteractions(req, res) {
         store.getChapter(chapterId, { includePrivateFields: true }),
         store.getAllChapterMessages(chapterId)
     ]).spread((chapter, messages) => (
-        store.getNarration(chapter.narrationId).then(narrationData => (
-            userStore.canActAs(req.session.userId, narrationData.narratorId)
+        store.getNarratorId(chapter.narrationId).then(narratorId => (
+            userStore.canActAs(req.session.userId, narratorId)
         )).then(() => (
             res.json({
                 chapter: chapter,
@@ -336,9 +333,9 @@ export function postChapterMessages(req, res) {
           messageRecipients = req.body.recipients || [];
 
     return store.getChapter(chapterId).then(chapterData => (
-        store.getNarration(chapterData.narrationId)
-    )).then(narrationData => (
-        userStore.canActAs(req.session.userId, narrationData.narratorId)
+        store.getNarratorId(chapterData.narrationId)
+    )).then(narratorId => (
+        userStore.canActAs(req.session.userId, narratorId)
     )).then(() => (
         store.addMessage(
             chapterId,
@@ -367,8 +364,8 @@ export function postChapterMessages(req, res) {
 export function postNewChapter(req, res) {
     const narrationId = parseInt(req.params.narrId, 10);
 
-    store.getNarration(narrationId).then(narrationData => (
-        userStore.canActAs(req.session.userId, narrationData.narratorId)
+    store.getNarratorId(narrationId).then(narratorId => (
+        userStore.canActAs(req.session.userId, narratorId)
     )).then(() => (
         store.createChapter(narrationId, req.body)
     )).then(chapterData => {
@@ -390,8 +387,8 @@ function uploadFile(req, res, type) {
     const form = new formidable.IncomingForm();
     form.uploadDir = config.files.tmpPath;
 
-    store.getNarration(narrationId).then(narrationData => (
-        userStore.canActAs(req.session.userId, narrationData.narratorId)
+    store.getNarratorId(narrationId).then(narratorId => (
+        userStore.canActAs(req.session.userId, narratorId)
     )).then(() => (
         Q.ninvoke(form, "parse", req)
     )).spread(function(fields, files) {
@@ -447,8 +444,8 @@ export function postNarrationCharacters(req, res) {
 export function getNarrationLastReactions(req, res) {
     const narrationId = parseInt(req.params.narrId, 10);
 
-    store.getNarration(narrationId).then(narrationData => (
-        userStore.canActAs(req.session.userId, narrationData.narratorId)
+    store.getNarratorId(narrationId).then(narratorId => (
+        userStore.canActAs(req.session.userId, narratorId)
     )).then(() => (
         store.getNarrationLastReactions(narrationId)
     )).then(lastChapters => {
@@ -464,9 +461,9 @@ export function getChapterLastReactions(req, res) {
     const chapterId = parseInt(req.params.chptId, 10);
 
     store.getChapter(chapterId).then(chapterData => (
-        store.getNarration(chapterData.narrationId)
-    )).then(narrationData => (
-        userStore.canActAs(req.session.userId, narrationData.narratorId)
+        store.getNarratorId(chapterData.narrationId)
+    )).then(narratorId => (
+        userStore.canActAs(req.session.userId, narratorId)
     )).then(() => (
         store.getChapterLastReactions(chapterId)
     )).then(lastChapters => {
@@ -622,9 +619,9 @@ export function putCharacterById(req, res) {
     return store.getCharacterInfoById(characterId).then(character => (
         // First we need to check if the user can access this! Only
         // the narrator or an admin should have access.
-        store.getNarration(character.narrationId)
-    )).then(narration => (
-        userStore.canActAs(req.session.userId, narration.narratorId)
+        store.getNarratorId(character.narrationId)
+    )).then(narratorId => (
+        userStore.canActAs(req.session.userId, narratorId)
     )).then(() => (
         store.updateCharacter(characterId, newProps).then(newCharacter => {
             res.json(newCharacter);
@@ -646,9 +643,9 @@ export function deleteCharacterById(req, res) {
     const characterId = parseInt(req.params.charId, 10);
 
     return store.getCharacterInfoById(characterId).then(character => (
-        store.getNarration(character.narrationId)
-    )).then(narration => (
-        userStore.canActAs(req.session.userId, narration.narratorId)
+        store.getNarratorId(character.narrationId)
+    )).then(narratorId => (
+        userStore.canActAs(req.session.userId, narratorId)
     )).then(() => (
         store.removeCharacter(characterId).then(success => {
             if (success) {
@@ -676,9 +673,9 @@ export function deleteCharacterByIdClaim(req, res) {
     const characterId = parseInt(req.params.charId, 10);
 
     return store.getCharacterInfoById(characterId).then(character => (
-        store.getNarration(character.narrationId)
-    )).then(narration => (
-        userStore.canActAs(req.session.userId, narration.narratorId)
+        store.getNarratorId(character.narrationId)
+    )).then(narratorId => (
+        userStore.canActAs(req.session.userId, narratorId)
     )).then(() => (
         store.unclaimCharacter(characterId).then(() => {
             res.status(204).json();
@@ -864,8 +861,8 @@ export function getCharacterById(req, res) {
     return store.getFullCharacterStats(characterId).then(stats => {
         // First we need to check if the user can access this! Only
         // the narrator or an admin should have access.
-        store.getNarration(stats.narration.id).then(narration => (
-            userStore.canActAs(req.session.userId, narration.narratorId)
+        store.getNarratorId(stats.narration.id).then(narratorId => (
+            userStore.canActAs(req.session.userId, narratorId)
         )).then(() => {
             res.json(stats);
         }).catch(err => {
@@ -886,9 +883,9 @@ export function postCharacterByIdToken(req, res) {
     const characterId = parseInt(req.params.charId, 10);
 
     return store.getCharacterInfoById(characterId).then(character => (
-        store.getNarration(character.narrationId)
-    )).then(narration => (
-        userStore.canActAs(req.session.userId, narration.narratorId)
+        store.getNarratorId(character.narrationId)
+    )).then(narratorId => (
+        userStore.canActAs(req.session.userId, narratorId)
     )).then(() => (
         store.resetCharacterToken(characterId).then(newCharacter => {
             res.json(newCharacter);
@@ -910,8 +907,8 @@ export function getNarrationChapterSearch(req, res) {
     const narrationId = parseInt(req.params.narrId, 10);
     const searchTerms = req.query.terms;
 
-    store.getNarration(narrationId).then(narrationData => (
-        userStore.canActAs(req.session.userId, narrationData.narratorId)
+    store.getNarratorId(narrationId).then(narratorId => (
+        userStore.canActAs(req.session.userId, narratorId)
     )).then(() => (
         store.searchNarration(narrationId, searchTerms)
     )).then(chapters => {
