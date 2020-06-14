@@ -5,6 +5,7 @@ import Html exposing (Html, h2, div, a, strong, text, img, br, audio, ul, li)
 import Html.Attributes exposing (id, class, style, src, preload, loop, alt, width, height)
 import Html.Events exposing (onClick)
 import Common.Models exposing (ParticipantCharacter)
+import Common.Views exposing (avatarUrl)
 import Common.Views.Reading exposing (backgroundImageStyle, chapterContainerClass)
 import NovelReaderApp.Models exposing (Model, findChapter, isFirstChapter, isLastChapter)
 import NovelReaderApp.Messages exposing (..)
@@ -12,20 +13,11 @@ import NovelReaderApp.Messages exposing (..)
 
 characterView : Int -> ParticipantCharacter -> Html Msg
 characterView narrationId participant =
-  let
-    avatarUrl =
-      case participant.avatar of
-        Just avatar ->
-          "/static/narrations/" ++ (String.fromInt narrationId) ++ "/avatars/" ++ avatar
-
-        Nothing ->
-          "/img/default-avatar.png"
-  in
     li []
       [ img [ class "avatar"
             , width 100
             , height 100
-            , src avatarUrl
+            , src <| avatarUrl narrationId participant.avatar
             ]
           []
       , div []

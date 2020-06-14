@@ -18,7 +18,10 @@ parseUserInfo =
 
 parseCharacter : Json.Decoder Character
 parseCharacter =
-    Json.map2 Character (field "id" int) (field "name" string)
+    Json.map3 Character
+      (field "id" int)
+      (field "name" string)
+      (maybe (field "avatar" string))
 
 
 parseParticipantCharacter : Json.Decoder ParticipantCharacter

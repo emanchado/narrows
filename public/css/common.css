@@ -393,6 +393,24 @@ ul.thread-list li .btn-bar {
     padding: 10px 5px 10px 0;
 }
 
+.thread-participants {
+    display: flex;
+    align-items: center;
+
+    font-weight: bold;
+    font-size: 18px;
+}
+.thread-participants * {
+    margin-top: 5px;
+    margin-bottom: 5px;
+    margin-left: 5px;
+}
+
+.new-message {
+    display: block;
+    margin: 10px auto 20px auto;
+}
+
 .ProseMirror {
     padding: 5px;
     color: #113;

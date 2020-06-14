@@ -132,6 +132,7 @@ type alias Banner =
 type alias Character =
     { id : Int
     , name : String
+    , avatar : Maybe String
     }
 
 

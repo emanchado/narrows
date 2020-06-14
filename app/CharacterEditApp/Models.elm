@@ -3,7 +3,7 @@ module CharacterEditApp.Models exposing (..)
 import Browser.Navigation as Nav
 import Json.Decode
 import ISO8601
-import Common.Models exposing (Character, Banner)
+import Common.Models exposing (Banner)
 
 
 type alias ChapterSummary =

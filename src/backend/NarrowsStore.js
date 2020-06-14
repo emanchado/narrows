@@ -1058,17 +1058,18 @@ class NarrowsStore {
             "all",
             `SELECT MD.message_id AS messageId,
                         MD.recipient_id AS recipientId,
-                        C.name
+                        C.name, C.avatar
                    FROM message_deliveries MD JOIN characters C
                      ON MD.recipient_id = C.id
                   WHERE message_id IN (${ placeholders })`,
             messageIds
         ).then(deliveries => {
             const deliveryMap = {};
-            deliveries.forEach(({ messageId, recipientId, name }) => {
+            deliveries.forEach(({ messageId, recipientId, name, avatar }) => {
                 deliveryMap[messageId] = deliveryMap[messageId] || [];
                 deliveryMap[messageId].push({ id: recipientId,
-                                              name: name });
+                                              name: name,
+                                              avatar: avatar });
             });
 
             messages.forEach(message => {
@@ -1082,13 +1083,15 @@ class NarrowsStore {
             return Q.ninvoke(
                 this.db,
                 "all",
-                `SELECT id, name FROM characters
+                `SELECT id, name, avatar FROM characters
                       WHERE id IN (${ placeholders })`,
                 messages.map(m => m.senderId)
             ).then(characters => {
                 const characterMap = {};
                 characters.forEach(c => {
-                    characterMap[c.id] = {id: c.id, name: c.name};
+                    characterMap[c.id] = {id: c.id,
+                                          name: c.name,
+                                          avatar: c.avatar};
                 });
 
                 messages.forEach(m => {

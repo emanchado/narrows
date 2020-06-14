@@ -4,7 +4,7 @@ import Json.Decode
 import Json.Encode
 import Browser.Navigation as Nav
 
-import Common.Models exposing (Character, ReplyInformation, ParticipantCharacter)
+import Common.Models exposing (ReplyInformation, ParticipantCharacter)
 import Common.Models.Reading exposing (PageState)
 
 

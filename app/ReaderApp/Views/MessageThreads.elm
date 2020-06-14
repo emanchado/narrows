@@ -40,13 +40,13 @@ recipientListView possibleRecipients currentRecipients =
 listView : Model -> Html Msg
 listView model =
     let
-        character =
+        (narrationId, character) =
             case model.chapter of
                 Just chapter ->
-                    chapter.character
+                    (chapter.narrationId, chapter.character)
 
                 Nothing ->
-                    { id = 0, name = "", token = "", notes = Nothing }
+                    (-1, { id = 0, name = "", token = "", notes = Nothing })
 
         otherParticipants =
             case model.chapter of
@@ -65,7 +65,7 @@ listView model =
                         List.map
                             (\t ->
                                 messageThreadInteractionView
-                                    (Just character.id)
+                                    narrationId
                                     (ShowReply t.participants)
                                     UpdateReplyText
                                     SendReply

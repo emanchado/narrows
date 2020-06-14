@@ -5,7 +5,7 @@ import Html.Attributes exposing (id, class, href, type_, value, disabled, checke
 import Html.Events exposing (onInput, onClick, onCheck)
 import Json.Encode
 
-import Common.Models exposing (Character, FullCharacter, Narration, NarrationStatus(..), loadingPlaceholderChapter)
+import Common.Models exposing (FullCharacter, Narration, NarrationStatus(..), loadingPlaceholderChapter)
 import Common.Views exposing (messageThreadInteractionView, breadcrumbNavView, bannerView, sanitizedTitle)
 import ChapterControlApp.Messages exposing (..)
 import ChapterControlApp.Models exposing (Model, ChapterInteractions)
@@ -122,7 +122,7 @@ mainView model =
                   (List.map
                       (\mt ->
                           messageThreadInteractionView
-                              Nothing
+                              chapter.narrationId
                               (ShowReply mt.participants)
                               UpdateReplyText
                               SendReply

@@ -14,13 +14,6 @@ import NovelReaderApp.Models exposing (..)
 import NovelReaderApp.Ports exposing (scrollTo)
 
 
-messageRecipients : List Character -> Int -> List Int
-messageRecipients recipients senderId =
-  List.filter
-    (\r -> r /= senderId)
-    (List.map (\r -> r.id) recipients)
-
-
 maxBlurriness : Int
 maxBlurriness = 10
 

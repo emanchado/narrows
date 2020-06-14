@@ -7,7 +7,7 @@ import Html.Events exposing (onInput, onClick)
 
 import Common.Models exposing (ParticipantCharacter, UserSession(..))
 import Common.Models.Reading exposing (PageState(..))
-import Common.Views exposing (bannerView, horizontalSpinner, loadingView)
+import Common.Views exposing (avatarUrl, bannerView, horizontalSpinner, loadingView)
 import Common.Views.Reading exposing (backgroundImageStyle, chapterContainerClass)
 import NarrationIntroApp.Messages exposing (..)
 import NarrationIntroApp.Models exposing (Model)
@@ -38,20 +38,11 @@ loadedView maybeAudio backgroundMusicOn =
 
 characterView : String -> Int -> Bool -> ParticipantCharacter -> Html Msg
 characterView email narrationId showEmailBox participant =
-  let
-    avatarUrl =
-      case participant.avatar of
-        Just avatar ->
-          "/static/narrations/" ++ (String.fromInt narrationId) ++ "/avatars/" ++ avatar
-
-        Nothing ->
-          "/img/default-avatar.png"
-  in
     li [ class "peekaboo-container" ]
       [ img [ class "avatar"
             , width 100
             , height 100
-            , src avatarUrl
+            , src <| avatarUrl narrationId participant.avatar
             ]
           []
       , div [ class "character-description-container" ]

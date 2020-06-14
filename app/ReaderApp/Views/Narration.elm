@@ -4,7 +4,7 @@ import String
 import Html exposing (Html, h2, h3, div, span, a, input, textarea, em, strong, text, img, label, button, br, audio, ul, li, blockquote, p)
 import Html.Attributes exposing (id, class, style, for, src, href, target, type_, checked, preload, loop, alt, rows, placeholder, width, height)
 import Html.Events exposing (onClick, onInput)
-import Common.Views exposing (bannerView)
+import Common.Views exposing (avatarUrl, bannerView)
 import Common.Views.Reading exposing (backgroundImageStyle, chapterContainerClass)
 import Common.Models exposing (ParticipantCharacter)
 import ReaderApp.Models exposing (Model, Chapter, OwnCharacter, Banner)
@@ -14,20 +14,11 @@ import ReaderApp.Views.MessageThreads
 
 characterView : Int -> OwnCharacter -> ParticipantCharacter -> Html Msg
 characterView narrationId ownCharacter participant =
-  let
-    avatarUrl =
-      case participant.avatar of
-        Just avatar ->
-          "/static/narrations/" ++ (String.fromInt narrationId) ++ "/avatars/" ++ avatar
-
-        Nothing ->
-          "/img/default-avatar.png"
-  in
     li []
       [ img [ class "avatar"
             , width 100
             , height 100
-            , src avatarUrl
+            , src <| avatarUrl narrationId participant.avatar
             ]
           []
       , div []

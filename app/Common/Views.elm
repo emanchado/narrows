@@ -4,7 +4,7 @@ import String
 import Regex
 import Json.Decode
 import Html exposing (Html, h2, div, nav, textarea, button, span, ul, li, img, a, em, strong, text)
-import Html.Attributes exposing (class, rows, value, disabled, href, src, title)
+import Html.Attributes exposing (class, rows, value, disabled, href, src, width, height, alt, title)
 import Html.Events exposing (onClick, onInput, preventDefaultOn, stopPropagationOn)
 import Common.Models exposing (MessageThread, Message, Banner, ReplyInformation, Breadcrumb, ChapterOverview, Narration, NarrationOverview, NarrationStatus(..), narrationStatusString)
 
@@ -89,8 +89,8 @@ messageView message =
     ]
 
 
-messageThreadInteractionView : Maybe Int -> msg -> (String -> msg) -> msg -> msg -> Maybe ReplyInformation -> Bool -> MessageThread -> Html msg
-messageThreadInteractionView maybeCharacterId showReplyMessage updateReplyMessage sendReplyMessage closeReplyMessage maybeReply replyButtonDisabled thread =
+messageThreadInteractionView : Int -> msg -> (String -> msg) -> msg -> msg -> Maybe ReplyInformation -> Bool -> MessageThread -> Html msg
+messageThreadInteractionView narrationId showReplyMessage updateReplyMessage sendReplyMessage closeReplyMessage maybeReply replyButtonDisabled thread =
   let
     replyButtonDiv =
       div [ class "btn-bar" ]
@@ -128,41 +128,32 @@ messageThreadInteractionView maybeCharacterId showReplyMessage updateReplyMessag
         Nothing ->
           replyButtonDiv
   in
-    messageThreadView maybeCharacterId [ replyBoxDiv ] thread
+    messageThreadView narrationId [ replyBoxDiv ] thread
 
 
-messageThreadView : Maybe Int -> List (Html msg) -> MessageThread -> Html msg
-messageThreadView maybeCharacterId extraUi thread =
+messageThreadView : Int -> List (Html msg) -> MessageThread -> Html msg
+messageThreadView narrationId extraUi thread =
   let
-    participants =
-      List.map
-        (\c -> c.name)
-        (case maybeCharacterId of
-          Just characterId ->
-            List.filter (\c -> c.id /= characterId) thread.participants
-          Nothing ->
-            thread.participants)
-
-    participantString =
-      String.join ", " participants
-
-    participantStringEnd =
-      case maybeCharacterId of
-        Nothing ->
-          if List.length participants > 1 then
-            ", and you"
-          else
-            " and you"
-
-        Just _ ->
-          if List.length participants > 0 then
-            ", the narrator, and you"
-          else
-            "the narrator and you"
+    participantAvatars =
+      List.intersperse
+        (text " ")
+        (List.map
+           (\p ->
+              let
+                url = avatarUrl narrationId p.avatar
+              in
+                img [ src url
+                    , width 50
+                    , height 50
+                    , alt p.name
+                    , title p.name
+                    ]
+                  [])
+           (List.sortBy .id thread.participants))
 
     participantsDiv =
-      div [ class "thread-participants" ]
-        [ text ("Between " ++ participantString ++ participantStringEnd) ]
+      div [ class "thread-participants" ] <|
+        participantAvatars
   in
     li []
       (List.concat

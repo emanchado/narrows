@@ -1,7 +1,7 @@
 module ChapterControlApp.Models exposing (..)
 
 import Browser.Navigation as Nav
-import Common.Models exposing (Narration, Chapter, Banner, Character, MessageThread, ReplyInformation)
+import Common.Models exposing (Narration, Chapter, Banner, MessageThread, ReplyInformation)
 
 
 type alias ChapterInteractions =

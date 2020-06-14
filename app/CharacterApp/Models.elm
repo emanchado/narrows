@@ -2,7 +2,7 @@ module CharacterApp.Models exposing (..)
 
 import Browser.Navigation as Nav
 import Json.Decode
-import Common.Models exposing (Character, ParticipantCharacter, Banner, CharacterInfo)
+import Common.Models exposing (Banner, CharacterInfo)
 
 
 type alias Model =

@@ -189,15 +189,6 @@ ul.thread-list.reader li .btn-bar {
     background-color: black;
 }
 
-.thread-participants {
-    font-weight: bold;
-}
-
-.new-message {
-    display: block;
-    margin: 10px auto 20px auto;
-}
-
 #save-notes-message {
     margin-right: 15px;
     color: #2b2;

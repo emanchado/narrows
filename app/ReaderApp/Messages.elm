@@ -1,7 +1,7 @@
 module ReaderApp.Messages exposing (..)
 
 import Http
-import Common.Models exposing (Character, DeviceSettings)
+import Common.Models exposing (Character, DeviceSettings, ChapterMessages)
 import ReaderApp.Models exposing (..)
 
 

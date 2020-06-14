@@ -4,7 +4,7 @@ import Json.Encode
 import Json.Decode
 import Browser.Navigation as Nav
 
-import Common.Models exposing (FullCharacter, Character, Narration, Chapter, Banner, MessageThread)
+import Common.Models exposing (Character, Narration, Chapter, Banner, MessageThread)
 
 
 newEmptyChapter : Narration -> Chapter
