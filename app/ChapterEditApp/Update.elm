@@ -309,6 +309,14 @@ update msg model =
     PlayPauseAudioPreview ->
       ( model, playPauseAudioPreview "audio-preview" )
 
+    ToggleLastReactions ->
+      let
+        newShowLastReactions = not model.showLastReactions
+      in
+        ( { model | showLastReactions = newShowLastReactions }
+        , Cmd.none
+        )
+
     OpenMediaFileSelector fileInputId ->
       ( model, openFileInput fileInputId )
 

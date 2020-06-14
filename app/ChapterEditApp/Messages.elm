@@ -33,6 +33,7 @@ type Msg
     | AddMediaFileError FileUploadError
     | AddMediaFileSuccess FileUploadSuccess
     | PlayPauseAudioPreview
+    | ToggleLastReactions
     | SaveChapter
     | SaveChapterResult (Result Http.Error (Http.Response String))
     | SaveNewChapter

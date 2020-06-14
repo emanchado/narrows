@@ -25,6 +25,7 @@ initialState key =
     , chapter = Nothing
     , narration = Nothing
     , lastChapters = Nothing
+    , showLastReactions = True
     , banner = Nothing
     , chapterModified = False
     , flash = Nothing

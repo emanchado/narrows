@@ -51,6 +51,7 @@ type alias Model =
     , chapter : Maybe Chapter
     , narration : Maybe Narration
     , lastChapters : Maybe (List LastChapter)
+    , showLastReactions : Bool
     , banner : Maybe Banner
     , chapterModified : Bool
     , flash : Maybe Banner

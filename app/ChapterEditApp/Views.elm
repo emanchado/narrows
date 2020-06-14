@@ -176,8 +176,8 @@ lastChapterView participantChapterIds chapter =
       ]
 
 
-lastReactionListView : List LastChapter -> Chapter -> Html Msg
-lastReactionListView lastChapters chapter =
+lastReactionListView : List LastChapter -> Chapter -> Bool -> Html Msg
+lastReactionListView lastChapters chapter showLastReactions =
   let
     participantIds =
       List.map (\p -> p.id) chapter.participants
@@ -198,24 +198,33 @@ lastReactionListView lastChapters chapter =
         lastChapters
   in
     div []
-      [ h2 [] [ text "Last reactions" ]
-      , div []
-          (List.map
-            (\lastChapter ->
-              if List.member lastChapter.id participantChapterIds then
-                div []
-                  [ h3 [] [ text lastChapter.title ]
-                  , if List.isEmpty lastChapter.messageThreads then
-                      em [] [ text "No messages." ]
-                    else
-                      ul [ class "thread-list narrator" ]
-                        (List.map
-                           (messageThreadView Nothing [])
-                           lastChapter.messageThreads)
-                  ]
-              else
-                text "")
-            lastChapters)
+      [ h2 []
+          [ text "Last reactions"
+          , button [ class "btn btn-small"
+                   , onClick ToggleLastReactions
+                   ]
+              [ text <| if showLastReactions then "Hide" else "Show" ]
+          ]
+      , if showLastReactions then
+          div []
+            (List.map
+              (\lastChapter ->
+                if List.member lastChapter.id participantChapterIds then
+                  div []
+                    [ h3 [] [ text lastChapter.title ]
+                    , if List.isEmpty lastChapter.messageThreads then
+                        em [] [ text "No messages." ]
+                      else
+                        ul [ class "thread-list narrator" ]
+                          (List.map
+                             (messageThreadView Nothing [])
+                             lastChapter.messageThreads)
+                    ]
+                else
+                  text "")
+              lastChapters)
+        else
+          text ""
       , h2 [] [ text "Last chapters" ]
       , ul [ class "last-chapters narrator" ]
           (List.map
@@ -315,7 +324,7 @@ mainView model =
                   ]
               , case model.lastChapters of
                   Just lastReactions ->
-                    lastReactionListView lastReactions chapter
+                    lastReactionListView lastReactions chapter model.showLastReactions
                   Nothing ->
                     text "Loading reactions…"
               ]
