@@ -4,7 +4,7 @@ import List
 import Html exposing (Html, main_, h1, h2, div, button, ul, li, a, strong, em, text, img, span, pre)
 import Html.Attributes exposing (id, class, href, src, height, width)
 import Html.Events exposing (onClick)
-import Common.Views exposing (loadingView, compactNarrationView, avatarUrl, ribbonForNarrationStatus, bannerView)
+import Common.Views exposing (loadingView, compactNarrationView, ribbonForNarrationStatus, bannerView, characterAvatarView, AvatarSize(..))
 import Common.Models exposing (CharacterInfo, NarrationStatus(..), narrationStatusString)
 import DashboardApp.Messages exposing (..)
 import DashboardApp.Models exposing (Model, DashboardScreen(..))
@@ -16,12 +16,7 @@ participationView character =
     [ ribbonForNarrationStatus character.narration.status
     , h2 [] [ text character.narration.title ]
     , div [ class "character-container" ]
-        [ img [ class "avatar"
-              , width 50
-              , height 50
-              , src <| avatarUrl character.narration.id character.avatar
-              ]
-            []
+        [ characterAvatarView character.narration.id Small character
         , span []
             [ a [ href <| "/characters/" ++ character.token
                 ]

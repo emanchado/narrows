@@ -7,7 +7,7 @@ import Html.Events exposing (onClick, onInput, on)
 import Json.Decode
 import ISO8601
 
-import Common.Views exposing (breadcrumbNavView, bannerView, showDialog, avatarUrl)
+import Common.Views exposing (breadcrumbNavView, bannerView, showDialog, characterAvatarView, AvatarSize(..))
 import CharacterEditApp.Models exposing (Model, CharacterInfo, ChapterSummary)
 import CharacterEditApp.Messages exposing (..)
 
@@ -54,7 +54,7 @@ mainView model =
                     div []
                       [ div [ class "avatars form-line" ]
                           [ div [ class "current-avatar" ]
-                              [ img [ src <| avatarUrl characterInfo.narration.id characterInfo.avatar ] []
+                              [ characterAvatarView characterInfo.narration.id Normal characterInfo
                               ]
                           , div [ class "upload-new-avatar" ]
                               [ div [ class "new-avatar-controls" ]

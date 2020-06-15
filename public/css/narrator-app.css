@@ -325,7 +325,7 @@ ul.user-list > li:nth-child(odd) {
     margin-bottom: 15px;
     font-size: 20px;
 }
-.character-container > img.avatar {
+.character-container > .avatar {
     margin-right: 10px;
 }
 .narration-status label {

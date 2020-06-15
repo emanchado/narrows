@@ -7,7 +7,7 @@ import Html.Events exposing (onClick, onInput, on)
 import Json.Decode
 
 import Common.Models exposing (ParticipantCharacter, CharacterInfo, ChapterSummary)
-import Common.Views exposing (bannerView, avatarUrl, showDialog)
+import Common.Views exposing (bannerView, showDialog, characterAvatarView, AvatarSize(..))
 import CharacterApp.Models exposing (Model)
 import CharacterApp.Messages exposing (..)
 
@@ -23,12 +23,7 @@ chapterParticipation characterToken chapter =
 characterView : Int -> ParticipantCharacter -> Html Msg
 characterView narrationId participant =
   li []
-    [ img [ class "avatar"
-          , width 100
-          , height 100
-          , src <| avatarUrl narrationId participant.avatar
-          ]
-        []
+    [ characterAvatarView narrationId Normal participant
     , div []
         [ strong [] [ text participant.name ]
         , br [] []
@@ -63,7 +58,7 @@ mainView model =
                   div [ class "form-line" ]
                     [ div [ class "avatars" ]
                         [ div [ class "current-avatar" ]
-                            [ img [ src <| avatarUrl characterInfo.narration.id characterInfo.avatar ] []
+                            [ characterAvatarView characterInfo.narration.id Normal characterInfo
                             ]
                         , div [ class "upload-new-avatar" ]
                             [ div [ class "new-avatar-controls" ]

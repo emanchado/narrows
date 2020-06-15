@@ -63,13 +63,43 @@ linkify message =
       [ text message ]
 
 
-avatarUrl : Int -> Maybe String -> String
-avatarUrl narrationId maybeAvatar =
-  case maybeAvatar of
-    Just avatar ->
-      "/static/narrations/" ++ (String.fromInt narrationId) ++ "/avatars/" ++ avatar
-    Nothing ->
-      "/img/default-avatar.png"
+characterInitials : String -> String
+characterInitials name =
+  String.join "" <|
+    List.take 2 <|
+      List.map
+        (\word -> String.left 1 word)
+        (String.words name)
+
+
+type AvatarSize
+  = Small
+  | Normal
+
+
+characterAvatarView : Int -> AvatarSize -> { a | name : String, avatar : Maybe String } -> Html msg
+characterAvatarView narrationId avatarSize character =
+  let
+    (size, sizeClassPostfix) = case avatarSize of
+                                 Small -> (50, " small")
+                                 Normal -> (100, "")
+  in
+    case character.avatar of
+      Just avatar ->
+        img [ class <| "avatar" ++ sizeClassPostfix
+            , src <| "/static/narrations/" ++ (String.fromInt narrationId) ++ "/avatars/" ++ avatar
+            , alt character.name
+            , title character.name
+            , width size
+            , height size
+            ]
+          []
+      Nothing ->
+        div [ class <| "avatar placeholder" ++ sizeClassPostfix
+            , title character.name
+            ]
+          [ text <| characterInitials character.name
+          ]
 
 
 messageView : Message -> Html msg
@@ -138,17 +168,7 @@ messageThreadView narrationId extraUi thread =
       List.intersperse
         (text " ")
         (List.map
-           (\p ->
-              let
-                url = avatarUrl narrationId p.avatar
-              in
-                img [ src url
-                    , width 50
-                    , height 50
-                    , alt p.name
-                    , title p.name
-                    ]
-                  [])
+           (characterAvatarView narrationId Small)
            (List.sortBy .id thread.participants))
 
     participantsDiv =

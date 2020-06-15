@@ -6,7 +6,7 @@ import Html.Attributes exposing (id, class, for, checked, disabled, name, title,
 import Html.Events exposing (onClick, onInput, onSubmit)
 
 import Common.Models exposing (Narration, NarrationStatus(..), ChapterOverview, NarrationOverview, FullCharacter, narrationStatusString)
-import Common.Views exposing (avatarUrl, breadcrumbNavView, narrationOverviewView, loadingView, ribbonForNarrationStatus, showDialog, bannerView, sanitizedTitle)
+import Common.Views exposing (breadcrumbNavView, narrationOverviewView, loadingView, ribbonForNarrationStatus, showDialog, bannerView, sanitizedTitle, characterAvatarView, AvatarSize(..))
 import NarrationOverviewApp.Messages exposing (..)
 import NarrationOverviewApp.Models exposing (Model)
 
@@ -19,12 +19,7 @@ unclaimed character =
 narrationCharacterView : Narration -> FullCharacter -> Html Msg
 narrationCharacterView narration character =
     li []
-      [ img [ class "avatar"
-            , width 100
-            , height 100
-            , src <| avatarUrl narration.id character.avatar
-            ]
-          []
+      [ characterAvatarView narration.id Small character
       , span []
           [ a [ href <| "/characters/" ++ (String.fromInt character.id) ++ "/edit"
               , title <| case character.displayName of

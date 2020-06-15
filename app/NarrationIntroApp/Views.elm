@@ -2,12 +2,12 @@ module NarrationIntroApp.Views exposing (..)
 
 import String
 import Html exposing (Html, main_, aside, h1, h2, div, form, input, label, button, br, audio, img, ul, li, a, strong, text)
-import Html.Attributes exposing (id, class, style, src, preload, loop, alt, href, type_, placeholder, value, checked, for, width, height)
+import Html.Attributes exposing (id, class, style, src, preload, loop, alt, title, href, type_, placeholder, value, checked, for, width, height)
 import Html.Events exposing (onInput, onClick)
 
 import Common.Models exposing (ParticipantCharacter, UserSession(..))
 import Common.Models.Reading exposing (PageState(..))
-import Common.Views exposing (avatarUrl, bannerView, horizontalSpinner, loadingView)
+import Common.Views exposing (bannerView, horizontalSpinner, loadingView, characterAvatarView, AvatarSize(..))
 import Common.Views.Reading exposing (backgroundImageStyle, chapterContainerClass)
 import NarrationIntroApp.Messages exposing (..)
 import NarrationIntroApp.Models exposing (Model)
@@ -39,12 +39,7 @@ loadedView maybeAudio backgroundMusicOn =
 characterView : String -> Int -> Bool -> ParticipantCharacter -> Html Msg
 characterView email narrationId showEmailBox participant =
     li [ class "peekaboo-container" ]
-      [ img [ class "avatar"
-            , width 100
-            , height 100
-            , src <| avatarUrl narrationId participant.avatar
-            ]
-          []
+      [ characterAvatarView narrationId Normal participant
       , div [ class "character-description-container" ]
           [ strong [] [ text participant.name ]
           , br [] []
