@@ -1,5 +1,6 @@
 module ChapterEditApp.Models exposing (..)
 
+import Time
 import Json.Encode
 import Json.Decode
 import Browser.Navigation as Nav
@@ -48,6 +49,7 @@ type alias NarrationChapterSearchResponse =
 
 type alias Model =
     { key : Nav.Key
+    , nowMilliseconds : Int
     , chapter : Maybe Chapter
     , narration : Maybe Narration
     , lastChapters : Maybe (List LastChapter)

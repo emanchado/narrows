@@ -3,10 +3,12 @@ module Common.Views exposing (..)
 import String
 import Regex
 import Json.Decode
+import ISO8601
+
 import Html exposing (Html, h2, div, nav, textarea, button, span, ul, li, img, a, em, strong, text)
 import Html.Attributes exposing (class, rows, value, disabled, href, src, width, height, alt, title)
 import Html.Events exposing (onClick, onInput, preventDefaultOn, stopPropagationOn)
-import Common.Models exposing (MessageThread, Message, Banner, ReplyInformation, Breadcrumb, ChapterOverview, Narration, NarrationOverview, NarrationStatus(..), narrationStatusString)
+import Common.Models exposing (MessageThread, Message, Banner, ReplyInformation, Breadcrumb, ChapterOverview, Narration, NarrationOverview, NarrationStatus(..), narrationStatusString, toUtcString)
 
 
 onPreventDefaultClick : msg -> Html.Attribute msg
@@ -102,25 +104,59 @@ characterAvatarView narrationId avatarSize character =
           ]
 
 
-messageView : Message -> Html msg
-messageView message =
-  div [ class "message" ]
-    [ strong []
-        [ text (case message.sender of
-                  Just sender -> sender.name
-                  Nothing -> "Narrator")
-        ]
-    , text ": "
-    , span [ class (case message.sender of
-                      Just sender -> ""
-                      Nothing -> "narrator")
-           ]
-        (linkify message.body)
-    ]
+humanTimeDifference : Int -> String
+humanTimeDifference timeDifference =
+  let
+    secondsDifference = timeDifference // 1000
+    minutesDifference = secondsDifference // 60
+    hoursDifference = minutesDifference // 60
+    daysDifference = hoursDifference // 24
+    weeksDifference = daysDifference // 7
+  in
+    if secondsDifference < 0 then
+      "unknown"
+    else if secondsDifference < 60 then
+      "less than one minute ago"
+    else if minutesDifference < 2 then
+      "one minute ago"
+    else if minutesDifference < 60 then
+      (String.fromInt <| minutesDifference) ++ " minutes ago"
+    else if hoursDifference < 2 then
+      "one hour ago"
+    else if hoursDifference < 24 then
+      (String.fromInt <| hoursDifference) ++ " hours ago"
+    else if daysDifference < 2 then
+      "one day ago"
+    else if daysDifference < 7 then
+      (String.fromInt <| daysDifference) ++ " days ago"
+    else
+      (String.fromInt <| weeksDifference) ++ " weeks ago"
 
 
-messageThreadInteractionView : Int -> msg -> (String -> msg) -> msg -> msg -> Maybe ReplyInformation -> Bool -> MessageThread -> Html msg
-messageThreadInteractionView narrationId showReplyMessage updateReplyMessage sendReplyMessage closeReplyMessage maybeReply replyButtonDisabled thread =
+messageView : Int -> Message -> Html msg
+messageView nowMilliseconds message =
+  let
+    sentAtPosix = ISO8601.toPosix message.sentAt
+    sentAtMilliseconds = ISO8601.toTime message.sentAt
+    timeDifference = nowMilliseconds - sentAtMilliseconds
+  in
+    div [ class "message" ]
+      [ strong [ title <| (humanTimeDifference timeDifference) ++ " – " ++ (toUtcString sentAtPosix) ]
+          [ text (case message.sender of
+                    Just sender -> sender.name
+                    Nothing -> "Narrator")
+          ]
+      , text ": "
+      , span [ class (case message.sender of
+                        Just sender -> ""
+                        Nothing -> "narrator")
+             ]
+          (linkify message.body)
+      ]
+
+
+messageThreadInteractionView : Int -> msg -> (String -> msg) -> msg -> msg -> Maybe ReplyInformation -> Bool -> Int -> MessageThread -> Html msg
+messageThreadInteractionView narrationId showReplyMessage updateReplyMessage sendReplyMessage closeReplyMessage maybeReply replyButtonDisabled nowMilliseconds thread =
   let
     replyButtonDiv =
       div [ class "btn-bar" ]
@@ -158,11 +194,11 @@ messageThreadInteractionView narrationId showReplyMessage updateReplyMessage sen
         Nothing ->
           replyButtonDiv
   in
-    messageThreadView narrationId [ replyBoxDiv ] thread
+    messageThreadView narrationId [ replyBoxDiv ] nowMilliseconds thread
 
 
-messageThreadView : Int -> List (Html msg) -> MessageThread -> Html msg
-messageThreadView narrationId extraUi thread =
+messageThreadView : Int -> List (Html msg) -> Int -> MessageThread -> Html msg
+messageThreadView narrationId extraUi nowMilliseconds thread =
   let
     participantAvatars =
       List.intersperse
@@ -178,7 +214,7 @@ messageThreadView narrationId extraUi thread =
     li []
       (List.concat
         [ [ participantsDiv ]
-        , List.map messageView thread.messages
+        , List.map (messageView nowMilliseconds) thread.messages
         , extraUi
         ])
 

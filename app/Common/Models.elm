@@ -205,7 +205,7 @@ type alias Chapter =
 type alias Message =
     { id : Int
     , body : String
-    , sentAt : String
+    , sentAt : ISO8601.Time
     , sender : Maybe Character
     , recipients : Maybe (List Character)
     }

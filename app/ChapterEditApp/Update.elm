@@ -46,6 +46,7 @@ urlUpdate route model =
       , Cmd.batch
         [ ChapterEditApp.Api.fetchChapterInfo chapterId
         , ChapterEditApp.Api.fetchLastReactions chapterId
+        , Task.perform ReceiveCurrentPosixTime Time.now
         ]
       )
 
@@ -60,6 +61,7 @@ urlUpdate route model =
       , Cmd.batch
         [ ChapterEditApp.Api.fetchNarrationInfo narrationId
         , ChapterEditApp.Api.fetchNarrationLastReactions narrationId
+        , Task.perform ReceiveCurrentPosixTime Time.now
         ]
       )
 
@@ -85,6 +87,11 @@ update msg model =
 
     NavigateTo url ->
       ( model, Nav.pushUrl model.key url )
+
+    ReceiveCurrentPosixTime posixTime ->
+      ( { model | nowMilliseconds = Time.posixToMillis posixTime }
+      , Cmd.none
+      )
 
     SetFlashMessage flashType maybeBanner ->
       ( if flashType == ChapterSaveFlash then

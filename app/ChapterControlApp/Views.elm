@@ -129,6 +129,7 @@ mainView model =
                               CloseReply
                               model.reply
                               model.replySending
+                              model.nowMilliseconds
                               mt)
                       messageThreads)
               , div [ class "new-message" ]

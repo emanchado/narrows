@@ -1,5 +1,6 @@
 module ChapterControlApp.Messages exposing (..)
 
+import Time
 import Http
 import Common.Models exposing (Character, Narration, ChapterMessages)
 import ChapterControlApp.Models exposing (ChapterInteractions)
@@ -8,6 +9,7 @@ import ChapterControlApp.Models exposing (ChapterInteractions)
 type Msg
     = NoOp
     | NavigateTo String
+    | ReceiveCurrentPosixTime Time.Posix
     | ChapterInteractionsFetchResult (Result Http.Error ChapterInteractions)
     | NarrationFetchResult (Result Http.Error Narration)
     | UpdateNewMessageText String

@@ -72,6 +72,7 @@ listView model =
                                     CloseReply
                                     model.reply
                                     model.replySending
+                                    model.nowMilliseconds
                                     t)
                             threads
 

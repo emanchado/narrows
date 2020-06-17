@@ -136,7 +136,7 @@ parseMessage =
     Json.map5 Message
         (field "id" int)
         (field "body" string)
-        (field "sentAt" string)
+        (field "sentAt" parseIso8601Date)
         (maybe (field "sender" parseCharacter))
         (maybe (field "recipients" <| list parseCharacter))
 

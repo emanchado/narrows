@@ -12,6 +12,7 @@ type alias ChapterInteractions =
 
 type alias Model =
     { key : Nav.Key
+    , nowMilliseconds : Int
     , narration : Maybe Narration
     , interactions : Maybe ChapterInteractions
     , banner : Maybe Banner

@@ -3,6 +3,7 @@ module ChapterEditApp.Messages exposing (..)
 import Http
 import Json.Encode
 import Time
+
 import Common.Models exposing (FullCharacter, Narration, Chapter, Banner, MediaType, FileUploadError, FileUploadSuccess)
 import ChapterEditApp.Models exposing (LastReactionsResponse, NarrationChapterSearchResponse)
 
@@ -15,6 +16,7 @@ type FlashMessageType
 type Msg
     = NoOp
     | NavigateTo String
+    | ReceiveCurrentPosixTime Time.Posix
     | SetFlashMessage FlashMessageType (Maybe Banner)
     | RemoveFlashMessage FlashMessageType
     | ChapterFetchResult (Result Http.Error Chapter)

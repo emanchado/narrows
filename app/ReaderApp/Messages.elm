@@ -1,5 +1,6 @@
 module ReaderApp.Messages exposing (..)
 
+import Time
 import Http
 import Common.Models exposing (Character, DeviceSettings, ChapterMessages)
 import ReaderApp.Models exposing (..)
@@ -7,6 +8,7 @@ import ReaderApp.Models exposing (..)
 
 type Msg
     = NavigateTo String
+    | ReceiveCurrentPosixTime Time.Posix
     | ReceiveDeviceSettings DeviceSettings
     | StartNarration
       -- The parameter is useless here, but is a subscription so it needs it

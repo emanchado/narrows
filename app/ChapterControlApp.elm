@@ -21,6 +21,7 @@ type alias Msg =
 initialState : Nav.Key -> Model
 initialState key =
     { key = key
+    , nowMilliseconds = -1
     , narration = Nothing
     , interactions = Nothing
     , banner = Nothing

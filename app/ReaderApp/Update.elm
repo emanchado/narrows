@@ -1,6 +1,9 @@
 module ReaderApp.Update exposing (..)
 
+import Time
+import Task
 import String
+
 import Http
 import Browser.Navigation as Nav
 import Json.Decode exposing (decodeString)
@@ -33,6 +36,7 @@ urlUpdate route model =
       ( { model | state = Loader }
       , Cmd.batch
           [ ReaderApp.Api.fetchChapterInfo chapterId characterToken
+          , Task.perform ReceiveCurrentPosixTime Time.now
           , readDeviceSettings "receiveDeviceSettingsReader"
           ]
       )
@@ -64,6 +68,11 @@ update msg model =
   case msg of
     NavigateTo url ->
       ( model, Nav.pushUrl model.key url )
+
+    ReceiveCurrentPosixTime posixTime ->
+      ( { model | nowMilliseconds = Time.posixToMillis posixTime }
+      , Cmd.none
+      )
 
     ReceiveDeviceSettings newSettings ->
       ( { model | backgroundMusic = newSettings.backgroundMusic

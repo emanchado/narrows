@@ -38,6 +38,7 @@ type alias Chapter =
 
 type alias Model =
   { key : Nav.Key
+  , nowMilliseconds : Int
   , state : PageState
   , chapter : Maybe Chapter
   , messageThreads : Maybe (List MessageThread)

@@ -176,8 +176,8 @@ lastChapterView participantChapterIds chapter =
       ]
 
 
-lastReactionListView : Int -> List LastChapter -> Chapter -> Bool -> Html Msg
-lastReactionListView narrationId lastChapters chapter showLastReactions =
+lastReactionListView : Int -> Int -> List LastChapter -> Chapter -> Bool -> Html Msg
+lastReactionListView narrationId nowMilliseconds lastChapters chapter showLastReactions =
   let
     participantIds =
       List.map (\p -> p.id) chapter.participants
@@ -217,7 +217,7 @@ lastReactionListView narrationId lastChapters chapter showLastReactions =
                       else
                         ul [ class "thread-list narrator" ]
                           (List.map
-                             (messageThreadView narrationId [])
+                             (messageThreadView narrationId [] nowMilliseconds)
                              lastChapter.messageThreads)
                     ]
                 else
@@ -324,7 +324,7 @@ mainView model =
                   ]
               , case model.lastChapters of
                   Just lastReactions ->
-                    lastReactionListView narration.id lastReactions chapter model.showLastReactions
+                    lastReactionListView narration.id model.nowMilliseconds lastReactions chapter model.showLastReactions
                   Nothing ->
                     text "Loading reactions…"
               ]

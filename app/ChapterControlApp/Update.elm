@@ -1,5 +1,8 @@
 module ChapterControlApp.Update exposing (..)
 
+import Time
+import Task
+
 import Http
 import Browser.Navigation as Nav
 import Core.Routes exposing (Route(..))
@@ -17,6 +20,7 @@ urlUpdate route model =
       ( model
       , Cmd.batch
         [ ChapterControlApp.Api.fetchChapterInteractions chapterId
+        , Task.perform ReceiveCurrentPosixTime Time.now
         ]
       )
     _ ->
@@ -36,6 +40,11 @@ update msg model =
 
     NavigateTo url ->
       ( model, Nav.pushUrl model.key url )
+
+    ReceiveCurrentPosixTime posixTime ->
+      ( { model | nowMilliseconds = Time.posixToMillis posixTime }
+      , Cmd.none
+      )
 
     ChapterInteractionsFetchResult (Err error) ->
       let
