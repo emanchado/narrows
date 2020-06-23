@@ -1442,7 +1442,8 @@ class NarrowsStore {
             `SELECT id, title
                FROM chapters
               WHERE narration_id = ?
-                AND (main_text LIKE ? OR title LIKE ?)`,
+                AND (main_text LIKE ? OR title LIKE ?)
+                AND published IS NOT NULL`,
             [narrationId, `%${searchTerms}%`, `%${searchTerms}%`]
         ).spread(results => (
             results.map(result => ({
