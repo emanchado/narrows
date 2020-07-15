@@ -20,7 +20,7 @@ userView maybeUserChanges user =
             , for <| "default-btn-user-" ++ (String.fromInt user.id)
             , title <| if user.verified then "" else "Joined on " ++ (toUtcString <| ISO8601.toPosix user.created)
             ]
-        [ text user.email ]
+        [ text <| user.email ++ " – " ++ user.displayName ]
 
     userChanges = case maybeUserChanges of
                     Just changes ->
