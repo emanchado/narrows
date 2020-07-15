@@ -215,7 +215,7 @@ class UserStore {
 
             let promise = Q(true);
 
-            if (!("displayName" in props)) {
+            if (!("displayName" in props) || props.displayName === "") {
                 props.displayName = `User #${userId}`;
                 promise = promise.then(
                     Q.ninvoke(

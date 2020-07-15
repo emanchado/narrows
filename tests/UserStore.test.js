@@ -67,13 +67,18 @@ test.serial("can create users with a given display name", t => {
 });
 
 test.serial("users always have a display name", t => {
-    const email = "default-displayname@example.com";
+    const email1 = "default-displayname@example.com",
+          email2 = "empty-displayname@example.com";
 
-    return t.context.store.createUser({
-        email: email
-    }).then(newUser => {
-        t.is(newUser.email, email);
-        t.is(newUser.displayName, "User #" + newUser.id);
+    return Q.all([
+        t.context.store.createUser({email: email1}),
+        t.context.store.createUser({email: email2, displayName: ""})
+    ]).spread((newUser1, newUser2) => {
+        t.is(newUser1.email, email1);
+        t.is(newUser1.displayName, "User #" + newUser1.id);
+
+        t.is(newUser2.email, email2);
+        t.is(newUser2.displayName, "User #" + newUser2.id);
     });
 });
 
