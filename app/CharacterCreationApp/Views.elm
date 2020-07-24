@@ -10,9 +10,7 @@ import CharacterCreationApp.Models exposing (..)
 
 mainView : Model -> Html Msg
 mainView model =
-    main_ [ id "narrator-app"
-          , class "app-container app-container-simple"
-          ]
+    main_ [ class "app-container app-container-simple" ]
         [ breadcrumbNavView
             [ { title = "Home"
               , url = "/"

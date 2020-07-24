@@ -118,9 +118,7 @@ mainView model =
                                               ++ image
                               Nothing -> "/img/separator.png"
   in
-    main_ [ id "narrator-app"
-          , class "app-container"
-          ]
+    main_ [ class "app-container" ]
       [ breadcrumbNavView
           [ { title = "Home"
             , url = "/"

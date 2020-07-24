@@ -157,12 +157,12 @@ ul.search-results {
     white-space: pre-wrap;
 }
 
-.last-chapters.narrator {
+.last-chapters {
     display: block;
     margin-top: 0;
     padding-left: 0;
 }
-.last-chapters.narrator li {
+.last-chapters li {
     display: block;
     margin-bottom: 20px;
 }

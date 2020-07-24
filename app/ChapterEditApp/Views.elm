@@ -226,7 +226,7 @@ lastReactionListView narrationId nowMilliseconds lastChapters chapter showLastRe
         else
           text ""
       , h2 [] [ text "Last chapters" ]
-      , ul [ class "last-chapters narrator" ]
+      , ul [ class "last-chapters" ]
           (List.map
              (lastChapterView participantChapterIds)
              lastChapters)
@@ -243,7 +243,7 @@ mainView model =
                   Just narr -> narr
                   Nothing -> Common.Models.loadingPlaceholderNarration
   in
-    div [ id "narrator-app", class "app-container" ]
+    div [ class "app-container" ]
       [ breadcrumbNavView
           [ { title = "Home"
             , url = "/"

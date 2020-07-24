@@ -77,7 +77,7 @@ mainView model =
                               }
                    }
   in
-    main_ [ id "narrator-app", class "app-container" ]
+    main_ [ class "app-container" ]
       [ div [ class "reaction-header" ]
           [ div []
               [ breadcrumbNavView

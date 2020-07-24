@@ -63,9 +63,7 @@ userView user password =
 
 mainView : Model -> Html Msg
 mainView model =
-  main_ [ id "narrator-app"
-        , class "app-container app-container-simple"
-        ]
+  main_ [ class "app-container app-container-simple" ]
     [ h1 [] [ text "Profile" ]
     , bannerView model.banner
     , case model.user of

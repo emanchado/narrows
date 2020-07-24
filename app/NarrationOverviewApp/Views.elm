@@ -55,7 +55,7 @@ overviewView overview showUrlInfoBox showRemoveNarrationDialog notesModified =
                        else
                          text ""
   in
-    main_ [ id "narrator-app", class "app-container" ]
+    main_ [ class "app-container" ]
       [ breadcrumbNavView
           [ { title = "Home"
             , url = "/"

@@ -37,9 +37,7 @@ participationView character =
 
 indexScreenView : Model -> Html Msg
 indexScreenView model =
-  main_ [ id "narrator-app"
-        , class "app-container"
-        ]
+  main_ [ class "app-container" ]
     [ h1 [] [ text "Stories you are narrating" ]
     , case model.narrations of
         Just [] ->
@@ -85,9 +83,7 @@ indexScreenView model =
 
 narrationArchiveView : Model -> Html Msg
 narrationArchiveView model =
-    main_ [ id "narrator-app"
-          , class "app-container"
-          ]
+    main_ [ class "app-container" ]
       [ h1 [] [ text "Narration archive" ]
       , case model.allNarrations of
           Just [] ->
@@ -107,9 +103,7 @@ narrationArchiveView model =
 
 characterArchiveView : Model -> Html Msg
 characterArchiveView model =
-    main_ [ id "narrator-app"
-          , class "app-container"
-          ]
+    main_ [ class "app-container" ]
       [ h1 [] [ text "Characters you are playing" ]
       , case model.allCharacters of
           Just [] ->

@@ -8,9 +8,7 @@ import EmailVerificationApp.Models exposing (..)
 
 mainView : Model -> Html Msg
 mainView model =
-  main_ [ id "narrator-app"
-        , class "app-container app-container-simple"
-        ]
+  main_ [ class "app-container app-container-simple" ]
     [ h1 [] [ text "Email verification" ]
     , if model.checking then
         text "Checking token…"
