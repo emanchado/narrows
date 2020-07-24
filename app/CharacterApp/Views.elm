@@ -37,7 +37,7 @@ characterView narrationId participant =
 
 mainView : Model -> Html Msg
 mainView model =
-  main_ [ id "reader-app", class "app-container" ]
+  main_ [ class "app-container" ]
     [ h2 []
       (case model.characterInfo of
         Just characterInfo ->
