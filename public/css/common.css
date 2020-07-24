@@ -521,6 +521,9 @@ div.ProseMirror-menubar {
 .avatar {
     width: 100px;
     height: 100px;
+    /* This is needed because otherwise Flexbox will shrink this avatar to
+       make room for the character description besides it. */
+    flex-shrink: 0;
 }
 .avatar.small {
     width: 50px;
