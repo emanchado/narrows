@@ -1,6 +1,6 @@
 module CharacterApp.Views exposing (mainView)
 
-import Html exposing (Html, main_, section, h2, h3, div, span, ul, li, img, input, button, a, label, em, text, br, strong)
+import Html exposing (Html, main_, section, h1, h2, div, span, ul, li, img, input, button, a, label, em, text, br, strong)
 import Html.Attributes exposing (id, class, for, src, href, type_, value, checked, width, height)
 import Html.Events exposing (onClick, onInput, on)
 
@@ -38,7 +38,7 @@ characterView narrationId participant =
 mainView : Model -> Html Msg
 mainView model =
   main_ [ class "app-container" ]
-    [ h2 []
+    [ h1 []
       (case model.characterInfo of
         Just characterInfo ->
           [ text <| characterInfo.name ++ ", character in "
@@ -111,7 +111,7 @@ mainView model =
               ]
             ]
         , section []
-            [ h3 [] [ text "Appears in these chapters:" ]
+            [ h2 [] [ text "Story chapters" ]
             , case model.characterInfo of
                 Just characterInfo ->
                   div []
@@ -144,12 +144,15 @@ mainView model =
                             else
                               text ""
                           ]
-                    , h3 [] [ text "Other characters in the story:" ]
-                    , ul [ class "dramatis-personae" ]
-                        (List.map (characterView characterInfo.narration.id) characterInfo.narration.characters)
-                    , h3 [] [ text "Abandon character" ]
+                    , h2 [] [ text "Other characters in the story" ]
+                    , if List.length characterInfo.narration.characters == 0 then
+                        em [] [ text "No other characters." ]
+                      else
+                        ul [ class "dramatis-personae" ]
+                          (List.map (characterView characterInfo.narration.id) characterInfo.narration.characters)
+                    , h2 [] [ text "Abandon character" ]
                     , text "If you do not want or cannot play this character "
-                    , text "anymore, you can abandon it with the button below."
+                    , text "anymore, you can abandon it by clicking button below."
                     , div [ class "btn-bar" ]
                         [ button [ class "btn btn-remove"
                                  , onClick AbandonCharacter
