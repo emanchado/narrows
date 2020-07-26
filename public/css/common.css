@@ -508,7 +508,7 @@ div.ProseMirror-menubar {
 }
 .dramatis-personae > li {
     display: flex;
-    margin: 10px 0;
+    margin: 20px 0;
 }
 .dramatis-personae.compact > li {
     align-items: center;

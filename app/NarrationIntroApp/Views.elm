@@ -47,7 +47,6 @@ characterView email narrationId showEmailBox participant =
                 , class "character-description"
                 ]
               []
-          , br [] []
           , (if participant.claimed then
                text ""
              else

@@ -235,6 +235,10 @@ ul.thread-list.reader li .btn-bar {
 }
 .character-description p {
     margin-top: 0;
+    margin-bottom: 10px;
+}
+.character-description p:last-child {
+    margin-bottom: 0;
 }
 
 .avatars {
