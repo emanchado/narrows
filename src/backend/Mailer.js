@@ -89,7 +89,7 @@ class Mailer {
                     this.sendMail(
                         "chapterPublished",
                         info[participant.id].email,
-                        `New chapter published: "${chapter.title}"`,
+                        `New chapter published: “${chapter.title}”`,
                         {narrationTitle: narration.title,
                          chapterTitle: chapter.title,
                          chapterUrl: this.chapterUrlFor(chapter.id,
@@ -121,7 +121,7 @@ class Mailer {
                     this.sendMail(
                         "messagePosted",
                         info[recipientId] && info[recipientId].email,
-                        `${message.sender.name} sent a message in "${chapter.title}"`,
+                        `${message.sender.name} sent a message in “${chapter.title}”`,
                         {senderName: message.sender.name,
                          recipientListString: recipients,
                          messageText: message.text,
@@ -142,7 +142,7 @@ class Mailer {
                     this.sendMail(
                         "messagePosted",
                         email,
-                        `${message.sender.name} sent a message in "${chapter.title}"`,
+                        `${message.sender.name} sent a message in “${chapter.title}”`,
                         {senderName: message.sender.name,
                          recipientListString: recipients,
                          messageText: message.text,
@@ -171,7 +171,7 @@ class Mailer {
         this.sendMail(
             "characterClaimed",
             email,
-            `Your character ${claimedCharacter.name} for "${narration.title}" in NARROWS`,
+            `Your character ${claimedCharacter.name} for “${narration.title}” in NARROWS`,
             {narrationTitle: narration.title,
              characterName: claimedCharacter.name,
              characterSheetLink: this.characterUrlFor(claimedCharacter.token)}
@@ -210,7 +210,7 @@ class Mailer {
                     this.sendMail(
                         "characterClaimedFellowPlayer",
                         character.email,
-                        `${claimedCharacter.name} was claimed in "${narration.title}"`,
+                        `${claimedCharacter.name} was claimed in “${narration.title}”`,
                         {narrationTitle: narration.title,
                          characterName: claimedCharacter.name,
                          narrationLink: narration.introUrl,
@@ -228,7 +228,7 @@ class Mailer {
             this.sendMail(
                 "characterUnclaimed",
                 narratorEmail,
-                `${character.name} was abandoned in "${narration.title}"`,
+                `${character.name} was abandoned in “${narration.title}”`,
                 {narrationTitle: narration.title,
                  characterName: character.name,
                  characterSheetLink: this.characterUrlFor(character.token),

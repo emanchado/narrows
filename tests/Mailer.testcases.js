@@ -48,7 +48,7 @@ export default function testcases(test, stash) {
                 })
            ]).spread((charToken2, charToken3, _) => {
                const expectedSubject =
-                     `${stash.characterName1} sent a message in "Intro"`;
+                     `${stash.characterName1} sent a message in “Intro”`;
                t.is(sendMailCalls.length, 3);
                t.deepEqual(
                    sendMailCalls.map(c => c.template),
@@ -108,7 +108,7 @@ export default function testcases(test, stash) {
                 text: "First message"
             }).then(() => {
                 const expectedSubject =
-                      `${stash.characterName1} sent a message in "Intro"`;
+                      `${stash.characterName1} sent a message in “Intro”`;
                 t.is(sendMailCalls.length, 1);
 
                 t.is(sendMailCalls[0].recipient, stash.narratorEmail);
@@ -142,7 +142,7 @@ export default function testcases(test, stash) {
                 text: "First message"
             }).then(() => {
                 const expectedSubject =
-                      `${stash.characterName1} sent a message in "Intro"`;
+                      `${stash.characterName1} sent a message in “Intro”`;
                 t.is(sendMailCalls.length, 2);
 
                 const orderedCalls = sendMailCalls.sort(sendMailCallOrderer);
@@ -182,7 +182,7 @@ export default function testcases(test, stash) {
                 sender: {id: null, name: "Narrator"},
                 text: "First message"
             }).then(() => {
-                const expectedSubject = `Narrator sent a message in "Intro"`;
+                const expectedSubject = `Narrator sent a message in “Intro”`;
                 t.is(sendMailCalls.length, 1);
 
                 t.is(sendMailCalls[0].recipient, stash.userEmail1);
@@ -214,7 +214,7 @@ export default function testcases(test, stash) {
                 sender: {id: null, name: "Narrator"},
                 text: "First message"
             }).then(() => {
-                const expectedSubject = `Narrator sent a message in "Intro"`;
+                const expectedSubject = `Narrator sent a message in “Intro”`;
                 t.is(sendMailCalls.length, 2);
 
                 const orderedCalls = sendMailCalls.sort(sendMailCallOrderer);
