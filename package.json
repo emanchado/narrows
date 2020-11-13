@@ -20,7 +20,7 @@
     "express-session": "^1.14.1",
     "formidable": "^1.0.17",
     "fs-extra": "^0.30.0",
-    "nodemailer": "^4.0.1",
+    "nodemailer": "^6.4.16",
     "prosemirror-inputrules": "^1.0.2",
     "prosemirror-keymap": "^1.0.1",
     "prosemirror-menu": "^1.0.5",
