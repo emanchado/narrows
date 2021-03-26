@@ -29,11 +29,10 @@ server connected to the internet to be used. To install you need to
 run the following steps:
 
 1. Clone the code somewhere.
-1. Make sure you have Node.js (at least version 6) and NPM (at least
+1. Make sure you have Node.js (at least version 10) and NPM (at least
    version 4).
 1. Run `npm install`
-1. Run `npm install -g elm@0.18`
-1. Run `elm-package install`
+1. [Install Elm 0.19.1](https://guide.elm-lang.org/install/elm.html)
 1. Run `npm run build`
 1. Install MySQL, create a new user and an empty MySQL database. Make
    sure the new user has all privileges to that database.
