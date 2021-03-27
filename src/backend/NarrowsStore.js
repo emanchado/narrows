@@ -240,7 +240,7 @@ class NarrowsStore {
                 "DELETE FROM narration_styles WHERE narration_id = ?",
                 narrationId
             ).then(() => {
-                fs.unlinkSync(cssFilePath);
+                fs.removeSync(cssFilePath);
             });
         } else {
             return Q.ninvoke(
