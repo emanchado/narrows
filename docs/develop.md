@@ -1,10 +1,15 @@
 # Developer notes
 
-If you know Elm, it should be reasonably easy to get into this
-code. However, some things that are particularly involved. This
-document explains those things.
+## Development setup
+
+To develop, open a terminal with `npm run startdev`, another one with
+`npm run watchfe`, and a third one with `npm run watchbe`. The
+application should be running on port 3000.
 
 ## Creating new pages
+
+If you know Elm, it should be reasonably easy to get into this
+code. Creating new pages, however, is particularly involved.
 
 1. In `Main.elm`, add a new import line for the new page app.
 1. In `Main.elm`, add a new key to `initialState` at the top.
