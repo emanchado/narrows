@@ -214,7 +214,7 @@ ul.thread-list.reader li .btn-bar {
     margin: 0 auto;
     border: 15px solid transparent;
 
-    cursor: hand;
+    cursor: pointer;
 }
 .arrow-up {
     border-bottom-color: white;
