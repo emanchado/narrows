@@ -19,7 +19,8 @@ export function firstTimeSetup(req, res, next) {
                 userStore.createUser({
                     email: req.body.email,
                     password: req.body.password,
-                    role: "admin"
+                    role: "admin",
+                    verified: true
                 }).then(newUser => {
                     req.session.userId = newUser.id;
 
