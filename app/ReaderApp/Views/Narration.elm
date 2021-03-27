@@ -62,7 +62,9 @@ reactionView model =
           [ h2 (if model.referenceInformationVisible then
                   [ style "display" "none" ]
                 else
-                  [])
+                  [ style "cursor" "pointer"
+                  , onClick ShowReferenceInformation
+                  ])
               [ text "Reference information" ]
         , h2 [] [ text ("Story notes for " ++ character.name) ]
         , div []
