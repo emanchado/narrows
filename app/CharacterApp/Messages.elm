@@ -17,6 +17,9 @@ type Msg
     | UploadAvatarSuccess String
     | UpdateDescriptionText Json.Encode.Value
     | UpdateBackstoryText Json.Encode.Value
+    | UpdateNotesText String
+    | SendNotes
+    | SendNotesResult (Result Http.Error String)
     | SaveCharacter
     | SaveCharacterResult (Result Http.Error (Http.Response String))
     | ToggleNovelTip

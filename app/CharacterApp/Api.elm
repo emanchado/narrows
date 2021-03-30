@@ -1,5 +1,6 @@
 module CharacterApp.Api exposing (..)
 
+import Json.Encode
 import Http
 
 import Common.Models exposing (CharacterInfo)
@@ -40,3 +41,22 @@ abandonCharacter characterToken =
                , timeout = Nothing
                , tracker = Nothing
                }
+
+
+sendNotes : String -> String -> Cmd Msg
+sendNotes characterToken updatedNotes =
+  let
+    sendNotesApiUrl = "/api/notes/" ++ characterToken
+
+    jsonEncodedBody =
+      (Json.Encode.object [ ( "notes", Json.Encode.string updatedNotes ) ])
+  in
+    Http.request
+      { method = "PUT"
+      , url = sendNotesApiUrl
+      , headers = []
+      , body = Http.jsonBody jsonEncodedBody
+      , expect = Http.expectStringResponse SendNotesResult (\_ -> Ok "")
+      , timeout = Nothing
+      , tracker = Nothing
+      }

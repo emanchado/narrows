@@ -200,4 +200,7 @@ parseCharacterInfo =
         (field "novelToken" string)
         (field "description" Json.value)
         (field "backstory" Json.value)
-        (field "narration" parseNarrationSummary)
+        (maybe (field "notes" string))
+    |> andThen (\r ->
+               Json.map r
+        (field "narration" parseNarrationSummary))

@@ -1,7 +1,7 @@
 module CharacterApp.Views exposing (mainView)
 
-import Html exposing (Html, main_, section, h1, h2, div, span, ul, li, img, input, button, a, label, em, text, br, strong)
-import Html.Attributes exposing (id, class, for, src, href, type_, value, checked, width, height)
+import Html exposing (Html, main_, section, h1, h2, div, span, ul, li, img, input, textarea, button, a, label, em, text, br, strong)
+import Html.Attributes exposing (id, class, style, for, src, href, type_, value, checked, width, height, placeholder, rows)
 import Html.Events exposing (onClick, onInput, on)
 
 import Json.Decode
@@ -110,12 +110,31 @@ mainView model =
                   ]
               ]
             ]
-        , section []
-            [ h2 [] [ text "Story chapters" ]
-            , case model.characterInfo of
-                Just characterInfo ->
-                  div []
-                    [ if List.length characterInfo.narration.chapters == 0 then
+        , case model.characterInfo of
+            Just characterInfo ->
+                section []
+                    [ h2 [] [ text "Story notes" ]
+                    , div [ class "vertical-form" ]
+                        [ textarea [ placeholder "You can write some notes here. These are remembered between chapters!"
+                                   , rows 10
+                                   , onInput UpdateNotesText
+                                   ]
+                            [ text (case characterInfo.notes of
+                                      Just notes -> notes
+                                      Nothing -> "") ]
+                        ]
+                    , div [ class "btn-bar" ]
+                        [ span [ id "save-notes-message"
+                               , style "display" "none"
+                               ]
+                            [ text "Notes saved" ]
+                        , button [ class "btn"
+                                 , onClick SendNotes
+                                 ]
+                            [ text "Save " ]
+                        ]
+                    , h2 [] [ text "Story chapters" ]
+                    , if List.length characterInfo.narration.chapters == 0 then
                         em [] [ text "None." ]
                       else
                         div []
@@ -171,8 +190,9 @@ mainView model =
                         text ""
                     ]
 
-                Nothing ->
-                  em [] [ text "None." ]
-            ]
+            Nothing ->
+                section []
+                    [ em [] [ text "Error fetching the character information." ]
+                    ]
         ]
     ]

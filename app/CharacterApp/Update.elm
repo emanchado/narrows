@@ -5,7 +5,8 @@ import Browser.Navigation as Nav
 
 import Core.Routes exposing (Route(..))
 import Common.Models exposing (errorBanner, successBanner)
-import Common.Ports exposing (initEditor, readAvatarAsUrl, uploadAvatar, renderText)
+import Common.Ports exposing (initEditor, readAvatarAsUrl, uploadAvatar, renderText, flashElement)
+import Common.Views exposing (formatError)
 import CharacterApp.Api
 import CharacterApp.Messages exposing (..)
 import CharacterApp.Models exposing (..)
@@ -112,6 +113,22 @@ update msg model =
         Nothing ->
           ( model, Cmd.none )
 
+    UpdateNotesText newNotes ->
+      case model.characterInfo of
+        Just character ->
+          let
+            updatedCharacter =
+              { character | notes = Just newNotes }
+          in
+            ( { model | characterInfo = Just updatedCharacter
+                      , banner = Nothing
+              }
+            , Cmd.none
+            )
+
+        Nothing ->
+          ( model, Cmd.none )
+
     UpdateCharacterName newName ->
       case model.characterInfo of
         Just character ->
@@ -157,6 +174,28 @@ update msg model =
         ( { model | characterInfo = updatedCharacter }
         , Cmd.none
         )
+
+    SendNotes ->
+      case model.characterInfo of
+        Just character ->
+          case character.notes of
+            Just notes ->
+              ( model
+              , CharacterApp.Api.sendNotes character.token notes
+              )
+            Nothing ->
+              ( model, Cmd.none )
+
+        Nothing ->
+          ( model, Cmd.none )
+
+    SendNotesResult (Err error) ->
+      ( { model | banner = errorBanner <| formatError error }
+      , Cmd.none
+      )
+
+    SendNotesResult (Ok _) ->
+      ( { model | banner = Nothing }, flashElement "save-notes-message" )
 
     SaveCharacter ->
       case model.characterInfo of

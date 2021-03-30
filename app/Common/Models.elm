@@ -347,6 +347,7 @@ type alias CharacterInfo =
     , novelToken : String
     , description : Json.Decode.Value
     , backstory : Json.Decode.Value
+    , notes : Maybe String
     , narration : NarrationSummary
     }
 
