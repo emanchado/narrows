@@ -4,6 +4,7 @@ import String
 import Regex
 import Json.Decode
 import ISO8601
+import Http
 
 import Html exposing (Html, h2, div, nav, textarea, button, span, ul, li, img, a, em, strong, text)
 import Html.Attributes exposing (class, rows, value, disabled, href, src, width, height, alt, title)
@@ -72,6 +73,15 @@ characterInitials name =
       List.map
         (\word -> String.left 1 word)
         (String.words name)
+
+
+formatError : Http.Error -> String
+formatError httpError =
+  case httpError of
+    Http.BadStatus status ->
+      "Got status " ++ (String.fromInt status)
+    _ ->
+      "Unknown network error"
 
 
 type AvatarSize

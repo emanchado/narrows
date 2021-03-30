@@ -11,6 +11,7 @@ import Json.Decode exposing (decodeString)
 import Core.Routes exposing (Route(..))
 import Common.Ports exposing (readDeviceSettings, setDeviceSetting, renderText, startNarration, playPauseNarrationMusic, flashElement)
 import Common.Models exposing (Character, ParticipantCharacter, errorBanner, successBanner)
+import Common.Views exposing (formatError)
 import Common.Models.Reading exposing (PageState(..))
 import ReaderApp.Api
 import ReaderApp.Messages exposing (..)
@@ -52,15 +53,6 @@ descriptionRenderCommand character =
         , text = character.description
         , proseMirrorType = "description"
         }
-
-
-formatError : Http.Error -> String
-formatError httpError =
-  case httpError of
-    Http.BadStatus status ->
-      "Got status " ++ (String.fromInt status)
-    _ ->
-      "Unknown network error"
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
