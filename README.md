@@ -31,7 +31,7 @@ run the following steps:
 1. Clone the code somewhere.
 1. Make sure you have Node.js (at least version 6) and NPM (at least
    version 4).
-1. Run `npm install`
+1. Run `npm install` (note that you **cannot** use yarn!)
 1. Run `npm install -g elm@0.18`
 1. Run `elm-package install`
 1. Run `npm run build`
