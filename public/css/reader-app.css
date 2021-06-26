@@ -146,6 +146,7 @@
     padding-right: 20px;
     background-color: #e5e5e5;
     font-size: 180%;
+    color: inherit;
 }
 
 .interaction {
