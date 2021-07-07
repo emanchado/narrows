@@ -4,10 +4,10 @@ The character <%= characterName %> in the narration “<%= narrationTitle %>” 
 
 <% if (numberUnclaimed) { %>
 There are still <%= numberUnclaimed %> unclaimed character(s) in the
-story, but the narrator might still write the first chapter before
-they are claimed.
+story<% if (narrationChapters.length == 0) { %>, but the narrator might still write the first chapter before
+they are claimed<% } %>.
 <% } else { %>
-That means that now all characters in the story are claimed! Now it is
+That means that now all characters in the story are claimed! <% if (narrationChapters.length == 0) { %>Now it is
 just a matter of waiting until the narrator publishes the first
-chapter. Have fun!
+chapter. Have fun!<% } %>
 <% } %>

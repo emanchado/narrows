@@ -934,8 +934,11 @@ export function postCharacterClaim(req, res) {
         store.updateCharacter(characterId, { introSent: new Date() })
     )).then(() => (
         store.getCharacterInfoById(characterId).then(character => (
-            store.getNarration(character.narrationId).then(narration => {
-                mailer.characterClaimed(email, narration, character);
+            Q.all([
+                store.getNarration(character.narrationId),
+                store.getNarrationChapters(character.narrationId)
+            ]).spread((narration, chapters) => {
+                mailer.characterClaimed(email, narration, chapters, character);
             }).then(() => {
                 res.json({
                     id: characterId,

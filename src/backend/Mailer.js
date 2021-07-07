@@ -166,7 +166,7 @@ class Mailer {
         );
     }
 
-    characterClaimed(email, narration, claimedCharacter) {
+    characterClaimed(email, narration, chapters, claimedCharacter) {
         // Send the user an intro message
         this.sendMail(
             "characterClaimed",
@@ -174,7 +174,8 @@ class Mailer {
             `Your character ${claimedCharacter.name} for “${narration.title}” in NARROWS`,
             {narrationTitle: narration.title,
              characterName: claimedCharacter.name,
-             characterSheetLink: this.characterUrlFor(claimedCharacter.token)}
+             characterSheetLink: this.characterUrlFor(claimedCharacter.token),
+             narrationChapters: chapters}
         );
 
         Q.all([
@@ -201,7 +202,8 @@ class Mailer {
                  characterName: claimedCharacter.name,
                  characterSheetLink: this.characterUrlFor(claimedCharacter.token),
                  narrationLink: this.narrationUrlFor(narration.id),
-                 numberUnclaimed: numberUnclaimed}
+                 numberUnclaimed: numberUnclaimed,
+                 narrationChapters: chapters}
             );
 
             // Tell the other players that a character was claimed
@@ -214,7 +216,8 @@ class Mailer {
                         {narrationTitle: narration.title,
                          characterName: claimedCharacter.name,
                          narrationLink: narration.introUrl,
-                         numberUnclaimed: numberUnclaimed}
+                         numberUnclaimed: numberUnclaimed,
+                         narrationChapters: chapters}
                     );
                 }
             });
@@ -234,6 +237,8 @@ class Mailer {
                  characterSheetLink: this.characterUrlFor(character.token),
                  narrationLink: narration.introUrl}
             );
+        }).catch(err => {
+            console.error("Error sending character unclaim email -", err);
         });
     }
 

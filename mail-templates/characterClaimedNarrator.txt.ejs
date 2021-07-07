@@ -3,9 +3,9 @@ The character <%= characterName %> in the narration “<%= narrationTitle %>” 
 <%= characterSheetLink %>
 
 <% if (numberUnclaimed) { %>
-There are still <%= numberUnclaimed %> unclaimed characters in your story, but you can still go to the narration page and create the first chapter if you want.
+There are still <%= numberUnclaimed %> unclaimed character(s) in your story<% if (narrationChapters.length == 0) { %>, but you can still go to the narration page and create the first chapter if you want<% } %>.
 <% } else { %>
-Now all characters in your story are claimed! You can go to the narration page and create the first chapter. Have fun!
+Now all characters in your story are claimed!<% if (narrationChapters.length == 0) { %> You can go to the narration page and create the first chapter. Have fun!<% } %>
 <% } %>
 
 <%= narrationLink %>

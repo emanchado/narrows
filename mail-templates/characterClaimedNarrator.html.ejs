@@ -1,7 +1,7 @@
 <p>The character <%= characterName %> in the narration “<a href="<%= narrationLink %>"><%= narrationTitle %></a>” was claimed. You can see the <a href="<%= characterSheetLink %>">character sheet</a> for reference.</p>
 
 <% if (numberUnclaimed) { %>
-  <p>There are still <%= numberUnclaimed %> unclaimed character(s) in your story, but you can still go to the <a href="<%= narrationLink %>">narration page</a> and create the first chapter if you want.</p>
+  <p>There are still <%= numberUnclaimed %> unclaimed character(s) in your story<% if (narrationChapters.length == 0) { %>, but you can still go to the <a href="<%= narrationLink %>">narration page</a> and create the first chapter if you want<% } %>.</p>
 <% } else { %>
-<p>Now all characters in your story are claimed! You can go to the <a href="<%= narrationLink %>">narration page</a> and create the first chapter. Have fun!</p>
+  <p>Now all characters in your story are claimed!<% if (narrationChapters.length == 0) { %> You can go to the <a href="<%= narrationLink %>">narration page</a> and create the first chapter. Have fun!<% } %></p>
 <% } %>
