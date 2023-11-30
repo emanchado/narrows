@@ -19,7 +19,7 @@
     "express-mysql-session": "1.2.3",
     "express-session": "^1.14.1",
     "formidable": "^1.0.17",
-    "fs-extra": "^0.30.0",
+    "fs-extra": "^1.0.0",
     "nodemailer": "^6.4.16",
     "prosemirror-inputrules": "^1.0.2",
     "prosemirror-keymap": "^1.0.1",
@@ -31,7 +31,7 @@
     "q": "^1.4.1",
     "rss": "^1.2.1",
     "sharp": "^0.25.4",
-    "sqlite3": "^4.0.0",
+    "sqlite3": "^5.0.3",
     "yarn": "^1.22.4"
   },
   "scripts": {
