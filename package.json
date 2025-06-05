@@ -4,7 +4,7 @@
   "description": "NARRate On Web System",
   "license": "BSD",
   "dependencies": {
-    "babel-brunch": "^6.0.6",
+    "babel-brunch": "^7.0.0",
     "babel-cli": "^6.14.0",
     "babel-plugin-transform-es2015-modules-commonjs": "^6.14.0",
     "babel-preset-es2015": "^6.14.0",
